@@ -28,7 +28,4 @@ export class CreateOrUpdateFaqsDto {
   @IsNotEmpty()
   @IsString()
   description: string;
-
-  @IsOptional()
-  user: User;
 }

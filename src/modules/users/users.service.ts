@@ -7,15 +7,17 @@ import {
 import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../models/User';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import {
   CreateUserOptions,
   GetOneUserSelections,
+  GetUsersSelections,
   UpdateUserOptions,
   UpdateUserSelections,
 } from './users.type';
 import { useCatch } from '../../app/utils/use-catch';
 import { generateLongUUID } from '../../app/utils/commons/generate-random';
+import { withPagination } from '../../app/utils/pagination';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +25,89 @@ export class UsersService {
     @InjectRepository(User)
     private driver: Repository<User>,
   ) {}
+
+  async findAll(selections: GetUsersSelections): Promise<any> {
+    const { search, pagination } = selections;
+    let query = this.driver
+      .createQueryBuilder('user')
+      .select('user.id', 'id')
+      .addSelect('user.email', 'email')
+      .addSelect('user.profileId', 'profileId')
+      .addSelect(
+        'user.organizationInUtilizationId',
+        'organizationInUtilizationId',
+      )
+      .addSelect('user.username', 'username')
+      .addSelect('user.confirmedAt', 'confirmedAt')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'userId', "user"."id",
+          'id', "profile"."id",
+          'firstName', "profile"."firstName",
+          'lastName', "profile"."lastName",
+          'image', "profile"."image",
+          'color', "profile"."color",
+          'currencyId', "profile"."currencyId",
+          'countryId', "profile"."countryId",
+          'url', "profile"."url"
+      ) AS "profile"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'name', "con"."role"
+        )
+        FROM "contributor" "con"
+        WHERE "user"."id" = "con"."userId"
+        AND "user"."organizationInUtilizationId" = "con"."organizationId"
+        ) AS "role"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'id', "organization"."id",
+          'color', "organization"."color",
+          'userId', "organization"."userId",
+          'name', "organization"."name"
+      ) AS "organization"`,
+      )
+      .where('user.deletedAt IS NULL')
+      .leftJoin('user.profile', 'profile')
+      .leftJoin('user.organizationInUtilization', 'organization');
+
+    if (search) {
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('user.email ::text ILIKE :search', {
+            search: `%${search}%`,
+          })
+            .orWhere('profile.firstName ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('profile.lastName ::text ILIKE :search', {
+              search: `%${search}%`,
+            });
+        }),
+      );
+    }
+
+    const [errorRowCount, rowCount] = await useCatch(query.getCount());
+    if (errorRowCount) throw new NotFoundException(errorRowCount);
+
+    const [error, users] = await useCatch(
+      query
+        .orderBy('user.createdAt', pagination?.sort)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
+        .getRawMany(),
+    );
+    if (error) throw new NotFoundException(error);
+
+    return withPagination({
+      pagination,
+      rowCount,
+      value: users,
+    });
+  }
 
   async findOneBy(selections: GetOneUserSelections): Promise<User> {
     const { option1, option2, option5, option6 } = selections;

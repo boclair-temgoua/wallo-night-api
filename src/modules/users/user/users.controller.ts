@@ -13,6 +13,7 @@ import {
   HttpException,
   HttpStatus,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../../app/utils/reply';
 import { useCatch } from '../../../app/utils/use-catch';
@@ -28,6 +29,13 @@ import { CheckUserService } from '../middleware/check-user.service';
 import Ipapi from '../../integrations/ipapi/ipapi';
 import { ContributorsService } from '../../contributors/contributors.service';
 import { ContributorRole } from '../../contributors/contributors.type';
+import { JwtAuthGuard } from '../middleware';
+import {
+  RequestPaginationDto,
+  addPagination,
+  PaginationType,
+} from '../../../app/utils/pagination';
+import { SearchQueryDto } from '../../../app/utils/search-query';
 
 @Controller('users')
 export class UsersController {
@@ -39,9 +47,27 @@ export class UsersController {
     private readonly organizationsService: OrganizationsService,
   ) {}
 
+  /** Get all users */
+  @Get(`/`)
+  @UseGuards(JwtAuthGuard)
+  async findAllUsers(
+    @Res() res,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const users = await this.usersService.findAll({ search, pagination });
+
+    return reply({ res, results: users });
+  }
+
   /** Get one user */
   @Get(`/show/:userId`)
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async getOneByIdUser(
     @Res() res,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -52,7 +78,7 @@ export class UsersController {
   }
 
   @Get(`/profile/show/:profileId`)
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async getOneByProfileId(
     @Res() res,
     @Param('profileId', ParseUUIDPipe) profileId: string,

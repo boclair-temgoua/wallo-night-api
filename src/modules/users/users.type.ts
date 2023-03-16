@@ -1,4 +1,5 @@
 import { User } from '../../models/User';
+import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type JwtPayloadType = {
   id: string;
@@ -6,6 +7,11 @@ export type JwtPayloadType = {
   firstName: string;
   lastName: string;
   organizationInUtilizationId: string;
+};
+
+export type GetUsersSelections = {
+  search?: string;
+  pagination?: PaginationType;
 };
 
 export type GetOneUserSelections = {

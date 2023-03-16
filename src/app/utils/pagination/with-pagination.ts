@@ -1,10 +1,11 @@
-import { type } from 'os';
 import { SortType } from './request-pagination.dto';
 
 export type PaginationType = {
   page: number;
   take: number;
   skip?: number;
+  limit?: number;
+  offset?: number;
   sort: SortType;
 };
 
@@ -20,6 +21,8 @@ export const addPagination = (options: PaginationType) => {
     skip: takeSkip < 0 ? takeSkip * -1 : takeSkip,
   };
   pagination.page = pageTakeSkip?.page;
+  pagination.limit = pageTakeSkip?.take;
+  pagination.offset = takeSkip;
   pagination.take = pageTakeSkip?.take;
   pagination.skip = pageTakeSkip?.skip;
   pagination.sort = sort;

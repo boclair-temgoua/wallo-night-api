@@ -61,8 +61,8 @@ export class FaqsService {
         .skip(pagination.skip)
         .getRawMany(),
     );
-
     if (error) throw new NotFoundException(error);
+
     return withPagination({
       pagination,
       rowCount,
@@ -88,7 +88,7 @@ export class FaqsService {
         id: faqId,
       });
     }
-    const [error, result] = await useCatch(query.getOne());
+    const [error, result] = await useCatch(query.getRawOne());
     if (error) throw new HttpException('Faq not found', HttpStatus.NOT_FOUND);
 
     return result;

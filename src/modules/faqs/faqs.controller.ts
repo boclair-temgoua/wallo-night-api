@@ -1,24 +1,24 @@
 import {
   Controller,
   Post,
-  Response,
   NotFoundException,
   Body,
   Param,
   ParseUUIDPipe,
   Delete,
   UseGuards,
-  Request,
   Put,
   Res,
   Req,
   Get,
   Query,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { useCatch } from '../../app/utils/use-catch';
 import { CreateOrUpdateFaqsDto } from './faqs.dto';
-//import { JwtAuthGuard } from '../../user/middleware';
+import { JwtAuthGuard } from '../users/middleware';
 
 import { FaqsService } from './faqs.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
@@ -27,12 +27,12 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import { JwtAuthGuard } from '../users/middleware';
 
 @Controller('faqs')
 export class FaqsController {
   constructor(private readonly faqsService: FaqsService) {}
 
+  /** Get all faqs */
   @Get(`/`)
   async findAllFaqs(
     @Res() res,
@@ -44,44 +44,87 @@ export class FaqsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const [errors, results] = await useCatch(
-      this.faqsService.findAll({ search, pagination }),
-    );
-    if (errors) {
-      throw new NotFoundException(errors);
-    }
-    return reply({ res, results });
+    const faqs = await this.faqsService.findAll({ search, pagination });
+
+    return reply({ res, results: faqs });
   }
 
+  /** get one faq */
   @Get(`/show/:faqId`)
   @UseGuards(JwtAuthGuard)
   async getOneByUUIDFaq(
     @Res() res,
     @Param('faqId', ParseUUIDPipe) faqId: string,
   ) {
-    const [error, result] = await useCatch(
-      this.faqsService.findOneBy({ option1: { faqId } }),
-    );
+    const faq = await this.faqsService.findOneBy({ option1: { faqId } });
 
-    if (error) {
-      throw new NotFoundException(error);
-    }
-    return reply({ res, results: result });
+    return reply({ res, results: faq });
   }
 
-  @Post(`/create`)
+  /** Create Faq */
+  @Post(`/`)
   @UseGuards(JwtAuthGuard)
   async createOneFaq(
     @Res() res,
     @Req() req,
-    @Body() createOrUpdateFaqDto: CreateOrUpdateFaqsDto,
+    @Body() body: CreateOrUpdateFaqsDto,
   ) {
-    //const { user } = req;
+    const { title, status, description } = body;
 
-    const [error, faq] = await useCatch(
-      this.faqsService.createOne({ ...createOrUpdateFaqDto }),
+    const faq = await this.faqsService.createOne({
+      title,
+      status,
+      description,
+    });
+
+    return reply({ res, results: faq });
+  }
+
+  /** Update faq */
+  @Put(`/:faqId`)
+  @UseGuards(JwtAuthGuard)
+  async updateOneFaq(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateOrUpdateFaqsDto,
+    @Param('faqId', ParseUUIDPipe) faqId: string,
+  ) {
+    const { title, status, description } = body;
+
+    const findOneFaq = await this.faqsService.findOneBy({ option1: { faqId } });
+    if (!findOneFaq)
+      throw new HttpException(
+        `This faq ${faqId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const faq = await this.faqsService.updateOne(
+      { option1: { faqId: findOneFaq?.id } },
+      { title, status, description },
     );
-    if (error) throw new NotFoundException(error);
+
+    return reply({ res, results: faq });
+  }
+
+  /** Delete faq */
+  @Delete(`/:faqId`)
+  @UseGuards(JwtAuthGuard)
+  async deleteOneFaq(
+    @Res() res,
+    @Req() req,
+    @Param('faqId', ParseUUIDPipe) faqId: string,
+  ) {
+    const findOneFaq = await this.faqsService.findOneBy({ option1: { faqId } });
+    if (!findOneFaq)
+      throw new HttpException(
+        `This faq ${faqId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const faq = await this.faqsService.updateOne(
+      { option1: { faqId: findOneFaq?.id } },
+      { deletedAt: new Date() },
+    );
 
     return reply({ res, results: faq });
   }
