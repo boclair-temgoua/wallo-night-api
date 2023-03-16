@@ -4,11 +4,27 @@ import { SortType } from './request-pagination.dto';
 export type PaginationType = {
   page: number;
   take: number;
+  skip?: number;
   sort: SortType;
-  current_page: number;
-  next_page: number;
-  prev_page: number;
-  count: number;
+};
+
+export const addPagination = (options: PaginationType) => {
+  let pagination: any = {};
+  const { page, take, sort } = options;
+  const takePage = Number(page);
+  const currentTake = Number(take);
+  const takeSkip = (Number(page) - 1) * currentTake;
+  const pageTakeSkip = {
+    page: takePage <= 0 ? 1 : takePage,
+    take: currentTake,
+    skip: takeSkip < 0 ? takeSkip * -1 : takeSkip,
+  };
+  pagination.page = pageTakeSkip?.page;
+  pagination.take = pageTakeSkip?.take;
+  pagination.skip = pageTakeSkip?.skip;
+  pagination.sort = sort;
+
+  return pagination;
 };
 
 export const withPagination = async <T>(options: {
@@ -16,16 +32,29 @@ export const withPagination = async <T>(options: {
   rowCount?: number;
   pagination?: PaginationType;
 }) => {
-  const { rowCount, value, pagination } = { ...options };
+  const { rowCount, value, pagination } = options;
+
+  const n_pages = Math.ceil(Number(rowCount) / Number(pagination.take));
+
+  const next_page =
+    pagination?.page && pagination?.page < n_pages
+      ? pagination?.page + 1
+      : undefined;
+
+  const prev_page =
+    pagination?.page && pagination?.page > 1 ? pagination?.page - 1 : undefined;
+
   return {
-    page: pagination?.page ?? 1,
-    take: pagination?.take ?? 0,
+    total: rowCount,
+    per_page: pagination?.take ?? 0,
+    current_page: pagination?.page,
+    next_page: next_page,
+    prev_page: prev_page,
+    last_next: n_pages ? n_pages : undefined,
+    skip: pagination?.skip,
     sort: pagination?.sort ?? 'DESC',
-    current_page: pagination?.page ?? 1,
-    next_page: pagination?.page + 1 ?? 1,
-    prev_page: pagination?.page - 1 ?? 1,
-    count: rowCount,
-    total_pages: Math.ceil(rowCount / pagination.take),
+    total_page: n_pages,
+    total_value: Array.isArray(value) ? value.length : 0,
     value,
   };
 };

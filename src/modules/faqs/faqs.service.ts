@@ -41,7 +41,7 @@ export class FaqsService {
       .andWhere('faq.deletedAt IS NULL');
 
     if (option1) {
-      const { userId } = { ...option1 };
+      const { userId } = option1;
       query = query.andWhere('faq.userId = :userId', { userId });
     }
 
@@ -54,13 +54,11 @@ export class FaqsService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const skip: number =
-      pagination.page === 1 ? 0 : (pagination.page - 1) * pagination.take;
     const [error, faqs] = await useCatch(
       query
         .orderBy('faq.createdAt', pagination?.sort)
         .take(pagination.take)
-        .skip(skip)
+        .skip(pagination.skip)
         .getRawMany(),
     );
 
@@ -85,7 +83,7 @@ export class FaqsService {
       .where('faq.deletedAt IS NULL');
 
     if (option1) {
-      const { faqId } = { ...option1 };
+      const { faqId } = option1;
       query = query.andWhere('faq.id = :id', {
         id: faqId,
       });

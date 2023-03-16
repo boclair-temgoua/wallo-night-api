@@ -3,10 +3,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetFaqsSelections = {
   search?: string;
-  data?: any[];
-  option1?: {
-    userId: Faq['userId'];
-  };
+  option1?: { userId: Faq['userId'] };
   pagination?: PaginationType;
 };
 

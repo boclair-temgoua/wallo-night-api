@@ -15,11 +15,6 @@ export type TypeFaq = 'PRICING' | 'HELP';
 export const typeFaqArrays = ['PRICING', 'HELP'];
 
 export class CreateOrUpdateFaqsDto {
-  //@IsNotEmpty()
-  //@IsString()
-  //@IsIn(typeFaqArrays)
-  //type: TypeFaq;
-
   @IsOptional()
   @IsBoolean()
   status: boolean;
@@ -36,18 +31,4 @@ export class CreateOrUpdateFaqsDto {
 
   @IsOptional()
   user: User;
-}
-
-export class FaqUuidDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsUUID()
-  faqId: string;
-}
-
-export class FaqTypeDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(typeFaqArrays)
-  type: TypeFaq;
 }

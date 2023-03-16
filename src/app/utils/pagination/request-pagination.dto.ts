@@ -26,37 +26,9 @@ export class RequestPaginationDto {
   @IsPositive()
   page: number;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsIn(['ASC', 'DESC'])
   @Type(() => String)
   sort: SortType;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  @IsPositive()
-  count: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  @IsPositive()
-  current_page: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  @IsPositive()
-  next_page: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  @IsPositive()
-  prev_page: number;
 }

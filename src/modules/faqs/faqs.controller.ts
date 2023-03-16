@@ -17,12 +17,17 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { useCatch } from '../../app/utils/use-catch';
-import { CreateOrUpdateFaqsDto, FaqTypeDto } from './faqs.dto';
+import { CreateOrUpdateFaqsDto } from './faqs.dto';
 //import { JwtAuthGuard } from '../../user/middleware';
 
 import { FaqsService } from './faqs.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import {
+  addPagination,
+  PaginationType,
+} from '../../app/utils/pagination/with-pagination';
+import { JwtAuthGuard } from '../users/middleware';
 
 @Controller('faqs')
 export class FaqsController {
@@ -31,10 +36,14 @@ export class FaqsController {
   @Get(`/`)
   async findAllFaqs(
     @Res() res,
-    @Query() pagination: RequestPaginationDto,
+    @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
     const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
     const [errors, results] = await useCatch(
       this.faqsService.findAll({ search, pagination }),
     );
@@ -45,7 +54,7 @@ export class FaqsController {
   }
 
   @Get(`/show/:faqId`)
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async getOneByUUIDFaq(
     @Res() res,
     @Param('faqId', ParseUUIDPipe) faqId: string,
@@ -61,7 +70,7 @@ export class FaqsController {
   }
 
   @Post(`/create`)
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async createOneFaq(
     @Res() res,
     @Req() req,
