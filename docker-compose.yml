@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+    # birevo_v3_host_db:
+    #     image: 'postgres:14-alpine'
+    #     container_name: 'db_berivo_db'
+    #     restart: always
+    #     env_file:
+    #         - ./.env
+    #     ports:
+    #         - '5432:5432'
+    #     volumes:
+    #         - ./database/db_local_birevo_v3:/var/lib/postgresql/data/
+    #     entrypoint: /bin/sh './scripts/be-node-dev.sh'
+    birevo_v3_api:
+        container_name: 'birevo_v3_api'
+        build: .
+        restart: always
+        volumes:
+            - .:/app/
+            - /app/node_modules
+        entrypoint: /bin/sh './scripts/be-node-dev.sh'
+        env_file:
+            - ./.env
+        ports:
+            - '4800:4800'
+        depends_on:
+            - birevo_v3_host_db
+        links:
+            - birevo_v3_host_db
