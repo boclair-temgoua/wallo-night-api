@@ -78,12 +78,10 @@ export class AuthUserController {
 
     /** Create Contributor */
     await this.contributorsService.createOne({
-      contributeType: 'ORGANIZATION',
-      contributeId: organization?.id,
-      organizationId: organization?.id,
-      userCreatedId: user?.id,
       userId: user?.id,
+      userCreatedId: user?.id,
       role: ContributorRole.ADMIN,
+      organizationId: organization?.id,
     });
     /** Update Organization */
     await this.organizationsService.updateOne(

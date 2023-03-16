@@ -9,19 +9,16 @@ import {
 
 import { User } from './User';
 import { Organization } from './Organization';
-import { BaseEntity } from '../app/databases/common/BaseEntity';
-import { ContributorRole } from '../modules/contributors/contributors.type';
+import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import {
+  ContributorRole,
+  ContributorType,
+} from '../modules/contributors/contributors.type';
 
 @Entity('contributor')
-export class Contributor extends BaseEntity {
+export class Contributor extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
-
-  @Column({ nullable: true })
-  contributeType?: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  contributeId?: string;
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
@@ -42,6 +39,13 @@ export class Contributor extends BaseEntity {
   @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'userCreatedId', referencedColumnName: 'id' }])
   userCreated?: User;
+
+  @Column({
+    type: 'enum',
+    enum: ContributorType,
+    default: ContributorType.ORGANIZATION,
+  })
+  type?: ContributorType;
 
   @Column({
     type: 'enum',

@@ -1,5 +1,6 @@
 import { User } from '../../models/User';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { ContributorRole } from '../contributors/contributors.type';
 
 export type JwtPayloadType = {
   id: string;
@@ -48,3 +49,29 @@ export type UpdateUserSelections = {
 export type CreateUserOptions = Partial<User>;
 
 export type UpdateUserOptions = Partial<User>;
+
+export type GetOnUserPublic = {
+  id: string;
+  confirmedAt: Date;
+  email: string;
+  profileId: string;
+  organizationInUtilizationId: string;
+  profile: {
+    id: string;
+    url: string;
+    color: string;
+    image: string;
+    userId: string;
+    lastName: string;
+    countryId: string;
+    firstName: string;
+    currencyId: string;
+  };
+  role: { name: ContributorRole };
+  organization: {
+    id: string;
+    name: string;
+    color: string;
+    userId: string;
+  };
+};

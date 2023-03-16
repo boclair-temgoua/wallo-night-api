@@ -1,18 +1,13 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { configurations } from '../../../app/configurations';
-import {
-  UnauthorizedException,
-  NotFoundException,
-  Injectable,
-} from '@nestjs/common';
-import { useCatch } from '../../../app/utils/use-catch';
-import { User } from '../../../models/User';
+import { UnauthorizedException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users.service';
 import { ContributorsUtil } from '../../contributors/contributors.util';
+import { GetOnUserPublic } from '../users.type';
 
 @Injectable()
-export class JwtAuthStrategy extends PassportStrategy(Strategy) {
+export class JwtAuthAdminStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly usersService: UsersService,
     private readonly contributorsUtil: ContributorsUtil,
@@ -24,11 +19,14 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload): Promise<any> {
-    const user = await this.usersService.findOneBy({
+  async validate(payload): Promise<GetOnUserPublic> {
+    const user = await this.usersService.findOneInfoBy({
       option1: { userId: payload?.id },
     });
     if (!user) throw new UnauthorizedException('Invalid user');
+    /** This condition check if user is ADMIN */
+    if (!['ADMIN'].includes(user?.role?.name))
+      throw new UnauthorizedException('Not authorized! Change permission');
 
     /** Check permission contributor */
     const { contributor } =

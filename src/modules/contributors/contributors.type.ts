@@ -1,5 +1,5 @@
 import { Contributor } from '../../models/Contributor';
-import { SortType } from '../../app/utils/pagination';
+import { PaginationType, SortType } from '../../app/utils/pagination';
 
 export enum ContributorRole {
   ADMIN = 'ADMIN',
@@ -8,33 +8,29 @@ export enum ContributorRole {
   GHOST = 'GHOST',
 }
 
+export enum ContributorType {
+  ORGANIZATION = 'ORGANIZATION',
+}
+
 export type GetContributorsSelections = {
-  is_paginate?: boolean;
-  filterQuery?: any;
-  data?: any[];
-  pagination?: {
-    sort: SortType;
-    page: number;
-    limit: number;
-  };
+  search?: string;
+  pagination?: PaginationType;
   option1?: {
-    userId: Contributor['userId'];
-    contributeType: Contributor['contributeType'];
+    organizationId: Contributor['organizationId'];
   };
   option2?: {
-    contributeId: Contributor['contributeId'];
-    contributeType: Contributor['contributeType'];
+    userId: Contributor['userId'];
   };
 };
 
 export type GetOneContributorSelections = {
   option1?: {
-    contributorId: Contributor['id'];
-  };
-  option2?: {
     userId: Contributor['userId'];
-    contributeId: Contributor['contributeId'];
-    contributeType: Contributor['contributeType'];
+    organizationId: Contributor['organizationId'];
+  };
+  option2?: { contributorId: Contributor['id'] };
+  option3?: {
+    contributorId: Contributor['id'];
     organizationId: Contributor['organizationId'];
   };
 };

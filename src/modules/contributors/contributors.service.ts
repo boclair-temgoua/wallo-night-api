@@ -8,16 +8,18 @@ import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contributor } from '../../models/Contributor';
 import { getRandomElement } from '../../app/utils/array/get-random-element';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import {
   CreateContributorOptions,
   DeleteContributorSelections,
+  GetContributorsSelections,
   GetOneContributorSelections,
   UpdateContributorOptions,
   UpdateContributorSelections,
 } from './contributors.type';
 import { useCatch } from '../../app/utils/use-catch';
 import { colorsArrays } from '../../app/utils/commons';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
 
 @Injectable()
 export class ContributorsService {
@@ -26,31 +28,133 @@ export class ContributorsService {
     private driver: Repository<Contributor>,
   ) {}
 
+  async findAll(
+    selections: GetContributorsSelections,
+  ): Promise<GetContributorsSelections | any> {
+    const { option1, option2, search, pagination } = selections;
+
+    let query = this.driver
+      .createQueryBuilder('contributor')
+      .select('contributor.id', 'id')
+      .addSelect('contributor.userCreatedId', 'userCreatedId')
+      .addSelect('contributor.userId', 'userId')
+      .addSelect('contributor.organizationId', 'organizationId')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'id', "organization"."id",
+          'email', "userOrganization"."email",
+          'userId', "organization"."userId",
+          'color', "organization"."color",
+          'name', "organization"."name"
+      ) AS "organization"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'firstName', "profile"."firstName",
+              'lastName', "profile"."lastName",
+              'image', "profile"."image",
+              'color', "profile"."color",
+              'userId', "user"."id",
+              'email', "user"."email"
+          ) AS "profile"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'name', "contributor"."role"
+      ) AS "role"`,
+      )
+      .addSelect('contributor.createdAt', 'createdAt')
+      .where('contributor.deletedAt IS NULL');
+
+    if (option1) {
+      const { organizationId } = option1;
+      query = query.andWhere('contributor.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
+    if (search) {
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('organization.name ::text ILIKE :search', {
+            search: `%${search}%`,
+          })
+            .orWhere('profile.firstName ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('profile.lastName ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('user.username ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('user.email ::text ILIKE :search', {
+              search: `%${search}%`,
+            });
+        }),
+      );
+    }
+
+    query = query
+      .leftJoin('contributor.organization', 'organization')
+      .leftJoin('organization.user', 'userOrganization')
+      .leftJoin('contributor.user', 'user')
+      .leftJoin('user.profile', 'profile');
+
+    const [errorRowCount, rowCount] = await useCatch(query.getCount());
+    if (errorRowCount) throw new NotFoundException(errorRowCount);
+
+    const [error, users] = await useCatch(
+      query
+        .orderBy('user.createdAt', pagination?.sort)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
+        .getRawMany(),
+    );
+    if (error) throw new NotFoundException(error);
+
+    return withPagination({
+      pagination,
+      rowCount,
+      value: users,
+    });
+  }
+
   async findOneBy(
     selections: GetOneContributorSelections,
   ): Promise<Contributor> {
-    const { option1, option2 } = selections;
+    const { option1, option2, option3 } = selections;
     let query = this.driver
       .createQueryBuilder('contributor')
+      .where('contributor.deletedAt IS NULL')
       .leftJoinAndSelect('contributor.organization', 'organization');
 
     if (option1) {
-      const { contributorId } = option1;
-      query = query.where('contributor.id = :id', { id: contributorId });
-    }
-
-    if (option2) {
-      const { userId, organizationId, contributeType, contributeId } = option2;
+      const { organizationId, userId } = option1;
       query = query
-        .where('contributor.userId = :userId', { userId })
-        .andWhere('contributor.contributeType = :contributeType', {
-          contributeType,
+        .andWhere('contributor.userId = :userId', {
+          userId,
         })
         .andWhere('contributor.organizationId = :organizationId', {
           organizationId,
+        });
+    }
+
+    if (option2) {
+      const { contributorId } = option2;
+      query = query.andWhere('contributor.id = :id', {
+        id: contributorId,
+      });
+    }
+
+    if (option3) {
+      const { contributorId, organizationId } = option3;
+      query = query
+        .andWhere('contributor.id = :id', {
+          id: contributorId,
         })
-        .andWhere('contributor.contributeId = :contributeId', {
-          contributeId,
+        .andWhere('contributor.organizationId = :organizationId', {
+          organizationId,
         });
     }
 
@@ -63,22 +167,13 @@ export class ContributorsService {
 
   /** Create one Contributor to the database. */
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
-    const {
-      contributeType,
-      contributeId,
-      organizationId,
-      userCreatedId,
-      role,
-      userId,
-    } = options;
+    const { userId, organizationId, userCreatedId, role } = options;
 
     const contributor = new Contributor();
-    contributor.contributeType = contributeType;
-    contributor.contributeId = contributeId;
+    contributor.userId = userId;
     contributor.organizationId = organizationId;
     contributor.userCreatedId = userCreatedId;
     contributor.role = role;
-    contributor.userId = userId;
 
     const query = this.driver.save(contributor);
 

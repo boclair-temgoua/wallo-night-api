@@ -11,7 +11,7 @@ import { ContributorsService } from '../contributors/contributors.service';
 import { Contributor } from '../../models/Contributor';
 import { CheckUserService } from './middleware/check-user.service';
 import { UsersController } from './user/users.controller';
-import { JwtAuthStrategy } from './middleware';
+import { JwtAuthAdminStrategy, JwtAuthStrategy } from './middleware';
 import { ContributorsUtil } from '../contributors/contributors.util';
 
 @Module({
@@ -24,6 +24,7 @@ import { ContributorsUtil } from '../contributors/contributors.util';
     ProfilesService,
     CheckUserService,
     JwtAuthStrategy,
+    JwtAuthAdminStrategy,
     OrganizationsService,
     ContributorsService,
     ContributorsUtil,

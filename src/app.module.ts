@@ -8,6 +8,7 @@ import { FaqsModule } from './modules/faqs/faqs.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { UsersModule } from './modules/users/users.module';
 import { ApplicationsModule } from './modules/applications/applications.module';
+import { ContributorsModule } from './modules/contributors/contributors.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ApplicationsModule } from './modules/applications/applications.module';
     OrganizationsModule,
     ProfilesModule,
     UsersModule,
+    ContributorsModule,
     ApplicationsModule,
   ],
 })

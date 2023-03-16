@@ -11,6 +11,7 @@ import { Brackets, Repository } from 'typeorm';
 import {
   CreateUserOptions,
   GetOneUserSelections,
+  GetOnUserPublic,
   GetUsersSelections,
   UpdateUserOptions,
   UpdateUserSelections,
@@ -32,17 +33,17 @@ export class UsersService {
       .createQueryBuilder('user')
       .select('user.id', 'id')
       .addSelect('user.email', 'email')
+      .addSelect('user.confirmedAt', 'confirmedAt')
+      .addSelect('user.username', 'username')
       .addSelect('user.profileId', 'profileId')
       .addSelect(
         'user.organizationInUtilizationId',
         'organizationInUtilizationId',
       )
-      .addSelect('user.username', 'username')
-      .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-          'userId', "user"."id",
           'id', "profile"."id",
+          'userId', "user"."id",
           'firstName', "profile"."firstName",
           'lastName', "profile"."lastName",
           'image', "profile"."image",
@@ -151,12 +152,15 @@ export class UsersService {
   }
 
   /** FindOne one User to the database. */
-  async findOneInfoBy(selections: GetOneUserSelections): Promise<any> {
+  async findOneInfoBy(
+    selections: GetOneUserSelections,
+  ): Promise<GetOnUserPublic> {
     const { option1, option2 } = selections;
     let query = this.driver
       .createQueryBuilder('user')
       .select('user.id', 'id')
       .addSelect('user.email', 'email')
+      .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
       .addSelect(
         'user.organizationInUtilizationId',
@@ -164,42 +168,17 @@ export class UsersService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-        'name', currency.name,
-        'code', currency.code,
-        'amount', currency.amount,
-        'symbol', currency.symbol
-    ) AS "currency"`,
+          'id', "profile"."id",
+          'userId', "user"."id",
+          'firstName', "profile"."firstName",
+          'lastName', "profile"."lastName",
+          'image', "profile"."image",
+          'color', "profile"."color",
+          'currencyId', "profile"."currencyId",
+          'countryId', "profile"."countryId",
+          'url', "profile"."url"
+      ) AS "profile"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-      'id', "profile"."id",
-      'userId', "user"."id",
-      'firstName', "profile"."firstName",
-      'lastName', "profile"."lastName",
-      'image', "profile"."image",
-      'color', "profile"."color",
-      'currencyId', "profile"."currencyId",
-      'countryId', "profile"."countryId",
-      'url', "profile"."url"
-  ) AS "profile"`,
-      )
-      // .addSelect(
-      //   /*sql*/ `(
-      //   SELECT jsonb_build_object(
-      //   'total', CAST(SUM("amu"."amountUsage") AS DECIMAL),
-      //   'currentMonth', DATE_TRUNC('month', "amu"."createdAt")
-      //   )
-      //   FROM "amount_usage" "amu"
-      //   INNER JOIN "amount" "am" ON "amu"."amountId" = "am"."id"
-      //   WHERE "amu"."organizationId" = "am"."organizationId"
-      //   AND "amu"."userId" = "am"."userId"
-      //   AND "user"."organizationInUtilizationId" = "amu"."organizationId"
-      //   AND "user"."organizationInUtilizationId" = "am"."organizationId"
-      //   AND DATE_TRUNC('month', "amu"."createdAt") = DATE_TRUNC('month', NOW())
-      //   GROUP BY "amu"."organizationId", "amu"."userId", "am"."userId",
-      //   "user"."organizationInUtilizationId", DATE_TRUNC('month', "amu"."createdAt")
-      //   ) AS "billing"`,
-      // )
       .addSelect(
         /*sql*/ `(
         SELECT jsonb_build_object(
@@ -210,20 +189,6 @@ export class UsersService {
         AND "user"."organizationInUtilizationId" = "con"."organizationId"
         ) AS "role"`,
       )
-      // .addSelect(
-      //   /*sql*/ `(
-      //   SELECT jsonb_build_object(
-      //   'total', CAST(SUM("amb"."amountBalance") AS DECIMAL)
-      //   )
-      //   FROM "amount_balance" "amb"
-      //   INNER JOIN "amount" "am" ON "amb"."amountId" = "am"."id"
-      //   WHERE "amb"."organizationId" = "am"."organizationId"
-      //   AND "amb"."userId" = "am"."userId"
-      //   AND "user"."organizationInUtilizationId" = "amb"."organizationId"
-      //   AND "user"."organizationInUtilizationId" = "am"."organizationId"
-      //   GROUP BY "amb"."organizationId", "amb"."userId", "am"."userId", "user"."organizationInUtilizationId"
-      //   ) AS "balance"`,
-      // )
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "organization"."id",

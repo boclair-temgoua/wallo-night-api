@@ -13,23 +13,17 @@ export class ContributorsUtil {
   async getAuthorizationToContributor(options: {
     userId: string;
     organizationId: string;
-    type: string;
   }): Promise<any> {
-    const { userId, organizationId, type } = options;
+    const { organizationId, userId } = options;
     if (organizationId) {
       const organization = await this.organizationsService.findOneBy({
         option1: { organizationId },
       });
 
-      const contributorOrganization = await this.contributorsService.findOneBy({
-        option2: {
-          userId,
-          organizationId,
-          contributeType: type,
-          contributeId: organization.id,
-        },
+      const contributor = await this.contributorsService.findOneBy({
+        option1: { organizationId, userId },
       });
-      return { organization, contributorOrganization };
+      return { organization, contributor };
     }
 
     return null;
