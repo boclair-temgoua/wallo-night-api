@@ -181,6 +181,16 @@ export class UsersService {
       )
       .addSelect(
         /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT con) AS INT)
+      FROM "contributor" "con"
+      WHERE ("con"."userId" = "user"."id"
+      AND "con"."type" IN ('ORGANIZATION'))
+      GROUP BY "con"."userId", "con"."type", "user"."id"
+      ) AS "organizationTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
         SELECT jsonb_build_object(
         'name', "con"."role"
         )

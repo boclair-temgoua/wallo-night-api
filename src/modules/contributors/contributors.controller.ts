@@ -15,7 +15,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthAdminGuard, JwtAuthGuard } from '../users/middleware';
+import { JwtAuthGuard } from '../users/middleware';
 import {
   addPagination,
   PaginationType,
@@ -26,6 +26,7 @@ import { ContributorsService } from './contributors.service';
 import { UsersService } from '../users/users.service';
 import { ContributorRole } from './contributors.type';
 import { UpdateRoleContributorDto } from './contributors.dto';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Controller('contributors')
 export class ContributorsController {
@@ -59,13 +60,19 @@ export class ContributorsController {
   }
 
   @Post(`/`)
-  @UseGuards(JwtAuthAdminGuard)
+  @UseGuards(JwtAuthGuard)
   async createOneContributor(
     @Res() res,
     @Req() req,
     @Query('userId', ParseUUIDPipe) userId: string,
   ) {
     const { user } = req;
+    const findOneUser = await this.usersService.findOneInfoBy({
+      option1: { userId: user?.id },
+    });
+    /** This condition check if user is ADMIN */
+    if (!['ADMIN'].includes(findOneUser?.role?.name))
+      throw new UnauthorizedException('Not authorized! Change permission');
 
     const findOneContributor = await this.contributorsService.findOneBy({
       option1: {
@@ -146,13 +153,20 @@ export class ContributorsController {
   }
 
   @Put(`/role`)
-  @UseGuards(JwtAuthAdminGuard)
+  @UseGuards(JwtAuthGuard)
   async updateOneRoleContributor(
     @Res() res,
     @Req() req,
     @Body() body: UpdateRoleContributorDto,
   ) {
     const { user } = req;
+    const findOneUser = await this.usersService.findOneInfoBy({
+      option1: { userId: user?.id },
+    });
+    /** This condition check if user is ADMIN */
+    if (!['ADMIN'].includes(findOneUser?.role?.name))
+      throw new UnauthorizedException('Not authorized! Change permission');
+
     const { contributorId, role } = body;
 
     const findOneContributor = await this.contributorsService.findOneBy({

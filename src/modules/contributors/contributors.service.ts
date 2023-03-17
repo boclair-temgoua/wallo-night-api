@@ -73,6 +73,11 @@ export class ContributorsService {
       });
     }
 
+    if (option2) {
+      const { userId } = option2;
+      query = query.andWhere('contributor.userId = :userId', { userId });
+    }
+
     if (search) {
       query = query.andWhere(
         new Brackets((qb) => {

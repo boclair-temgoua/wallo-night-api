@@ -28,23 +28,23 @@ export class OrganizationsService {
   async findOneBy(
     selections: GetOneOrganizationSelections,
   ): Promise<Organization> {
-    const { option1 } = { ...selections };
+    const { option1 } = selections;
     let query = this.driver
       .createQueryBuilder('organization')
       .select('organization.name', 'name')
       .addSelect('organization.id', 'id')
       .addSelect('organization.color', 'color')
       .addSelect('organization.userId', 'userId')
-      // .addSelect(
-      //   /*sql*/ `(
-      // SELECT
-      //     CAST(COUNT(DISTINCT con) AS INT)
-      // FROM "contributor" "con"
-      // WHERE ("con"."userId" = "organization"."id"
-      // AND "con"."contributeType" IN ('ORGANIZATION'))
-      // GROUP BY "con"."contributeId", "organization"."id"
-      // ) AS "contributorTotal"`,
-      // )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT con) AS INT)
+      FROM "contributor" "con"
+      WHERE ("con"."organizationId" = "organization"."id"
+      AND "con"."type" IN ('ORGANIZATION'))
+      GROUP BY "con"."organizationId", "con"."type", "organization"."id"
+      ) AS "contributorTotal"`,
+      )
       .addSelect(
         /*sql*/ `(
            SELECT jsonb_build_object(
