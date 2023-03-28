@@ -11,6 +11,7 @@ import { ApplicationsModule } from './modules/applications/applications.module';
 import { ContributorsModule } from './modules/contributors/contributors.module';
 import { UserAddressModule } from './modules/user-address/user-address.module';
 import { AppSeedDataSource } from './app/databases/config/orm-config-seed';
+import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AppSeedDataSource } from './app/databases/config/orm-config-seed';
     UserAddressModule,
     ContributorsModule,
     ApplicationsModule,
+    ResetPasswordsModule,
   ],
 })
 export class AppModule {}

@@ -13,10 +13,18 @@ import { CheckUserService } from './middleware/check-user.service';
 import { UsersController } from './user/users.controller';
 import { JwtAuthStrategy } from './middleware';
 import { ContributorsUtil } from '../contributors/contributors.util';
+import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
+import { ResetPassword } from '../../models/ResetPassword';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Profile, Organization, Contributor]),
+    TypeOrmModule.forFeature([
+      User,
+      Profile,
+      Organization,
+      Contributor,
+      ResetPassword,
+    ]),
   ],
   controllers: [AuthUserController, UsersController],
   providers: [
@@ -26,6 +34,7 @@ import { ContributorsUtil } from '../contributors/contributors.util';
     JwtAuthStrategy,
     OrganizationsService,
     ContributorsService,
+    ResetPasswordsService,
     ContributorsUtil,
   ],
 })

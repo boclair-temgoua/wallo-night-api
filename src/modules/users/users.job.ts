@@ -55,12 +55,12 @@ export const authPasswordResetJob = async (options: { channel; queue }) => {
   await channel.consume(
     queue,
     async (msg) => {
-      const saveItem = JSON.parse(msg.content.toString());
+      const data = JSON.parse(msg.content.toString());
       console.log(
         '\x1b[33m%s\x1b[0m',
         '**** Processing reset password Job message user start ****',
       );
-      authPasswordResetMail({ resetPassword: saveItem });
+      authPasswordResetMail({ resetPassword: data });
       console.log(
         '\x1b[32m%s\x1b[0m',
         '**** Processed reset password Job message user finish ****',

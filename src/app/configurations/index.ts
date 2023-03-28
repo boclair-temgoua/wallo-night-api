@@ -134,6 +134,7 @@ export const configurations = {
       port: Number(process.env.MAIL_PORT),
       user: process.env.MAIL_USERNAME,
       pass: process.env.MAIL_PASSWORD,
+      email: process.env.MAIL_SMTP_EMAIL,
     },
     /**
      * Aws smtp
