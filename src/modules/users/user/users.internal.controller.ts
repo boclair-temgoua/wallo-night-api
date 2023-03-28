@@ -1,34 +1,16 @@
 import {
   Controller,
-  Post,
-  NotFoundException,
-  Body,
-  Put,
   Param,
   Res,
   Query,
   Get,
-  Headers,
-  Req,
-  HttpException,
-  HttpStatus,
   ParseUUIDPipe,
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../../app/utils/reply';
-import { useCatch } from '../../../app/utils/use-catch';
-import * as amqplib from 'amqplib';
 
-import { getIpRequest } from '../../../app/utils/commons/get-ip-request';
 import { UsersService } from '../users.service';
-import { CreateLoginUserDto, CreateRegisterUserDto } from '../users.dto';
 import { ProfilesService } from '../../profiles/profiles.service';
-import { OrganizationsService } from '../../organizations/organizations.service';
-import { JwtPayloadType } from '../users.type';
-import { CheckUserService } from '../middleware/check-user.service';
-import Ipapi from '../../integrations/ipapi/ipapi';
-import { ContributorsService } from '../../contributors/contributors.service';
-import { ContributorRole } from '../../contributors/contributors.type';
 import { JwtAuthGuard } from '../middleware';
 import {
   RequestPaginationDto,
@@ -38,13 +20,10 @@ import {
 import { SearchQueryDto } from '../../../app/utils/search-query';
 
 @Controller('users')
-export class UsersController {
+export class UsersInternalController {
   constructor(
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
-    private readonly checkUserService: CheckUserService,
-    private readonly contributorsService: ContributorsService,
-    private readonly organizationsService: OrganizationsService,
   ) {}
 
   /** Get all users */

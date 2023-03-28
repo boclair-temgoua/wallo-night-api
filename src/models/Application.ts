@@ -1,14 +1,5 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  Generated,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 
 @Entity('application')

@@ -14,22 +14,22 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { reply } from '../../../app/utils/reply';
+import { JwtAuthGuard } from '../../users/middleware';
 import {
   addPagination,
   PaginationType,
   RequestPaginationDto,
-} from '../../app/utils/pagination';
-import { SearchQueryDto } from '../../app/utils/search-query';
-import { ContributorsService } from './contributors.service';
-import { UsersService } from '../users/users.service';
-import { ContributorRole } from './contributors.type';
-import { UpdateRoleContributorDto } from './contributors.dto';
+} from '../../../app/utils/pagination';
+import { SearchQueryDto } from '../../../app/utils/search-query';
+import { ContributorsService } from '../contributors.service';
+import { UsersService } from '../../users/users.service';
+import { ContributorRole } from '../contributors.type';
+import { UpdateRoleContributorDto } from '../contributors.dto';
 import { UnauthorizedException } from '@nestjs/common';
 
 @Controller('contributors')
-export class ContributorsController {
+export class ContributorsInternalController {
   constructor(
     private readonly contributorsService: ContributorsService,
     private readonly usersService: UsersService,

@@ -131,8 +131,31 @@ export class ContributorsService {
     const { option1, option2, option3 } = selections;
     let query = this.driver
       .createQueryBuilder('contributor')
+      .select('contributor.id', 'id')
+      .addSelect('contributor.userCreatedId', 'userCreatedId')
+      .addSelect('contributor.userId', 'userId')
+      .addSelect('contributor.organizationId', 'organizationId')
+      .addSelect('contributor.type', 'type')
+      .addSelect('contributor.createdAt', 'createdAt')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'id', "organization"."id",
+          'email', "userOrganization"."email",
+          'userId', "organization"."userId",
+          'color', "organization"."color",
+          'name', "organization"."name"
+      ) AS "organization"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'name', "contributor"."role"
+      ) AS "role"`,
+      )
       .where('contributor.deletedAt IS NULL')
-      .leftJoinAndSelect('contributor.organization', 'organization');
+      .leftJoin('contributor.organization', 'organization')
+      .leftJoin('organization.user', 'userOrganization')
+      .leftJoin('contributor.user', 'user')
+      .leftJoin('user.profile', 'profile');
 
     if (option1) {
       const { organizationId, userId } = option1;
@@ -163,7 +186,7 @@ export class ContributorsService {
         });
     }
 
-    const [error, result] = await useCatch(query.getOne());
+    const [error, result] = await useCatch(query.getRawOne());
     if (error)
       throw new HttpException('contributor not found', HttpStatus.NOT_FOUND);
 

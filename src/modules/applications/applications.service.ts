@@ -55,16 +55,19 @@ export class ApplicationsService {
   async findOneBy(
     selections: GetOneApplicationSelections,
   ): Promise<Application> {
-    const { option1 } = selections;
+    const { option1, option2 } = selections;
     let query = this.driver
       .createQueryBuilder('application')
       .where('application.deletedAt IS NULL');
 
     if (option1) {
       const { applicationId } = option1;
-      query = query.andWhere('application.id = :id', {
-        id: applicationId,
-      });
+      query = query.andWhere('application.id = :id', { id: applicationId });
+    }
+
+    if (option2) {
+      const { token } = option2;
+      query = query.andWhere('application.token = :token', { token });
     }
 
     const [error, result] = await useCatch(query.getOne());

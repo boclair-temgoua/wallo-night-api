@@ -1,22 +1,35 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Contributor } from '../../models/Contributor';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { ContributorsService } from './contributors.service';
 import { ContributorsUtil } from './contributors.util';
 import { Organization } from '../../models/Organization';
-import { ContributorsController } from './contributors.controller';
+import { ContributorsInternalController } from './controllers/contributors.internal.controller';
+import { ContributorsExternalController } from './controllers/contributors.external.controller';
 import { UsersService } from '../users/users.service';
 import { User } from '../../models/User';
+import { AuthTokenMiddleware } from '../users/middleware';
+import { Application } from '../../models/Application';
+import { ApplicationsService } from '../applications/applications.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Contributor, Organization, User])],
-  controllers: [ContributorsController],
+  imports: [
+    TypeOrmModule.forFeature([Contributor, Organization, User, Application]),
+  ],
+  controllers: [ContributorsInternalController, ContributorsExternalController],
   providers: [
     ContributorsService,
     ContributorsUtil,
     OrganizationsService,
     UsersService,
+    ApplicationsService,
   ],
 })
-export class ContributorsModule {}
+export class ContributorsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthTokenMiddleware)
+      .forRoutes(ContributorsExternalController);
+  }
+}
