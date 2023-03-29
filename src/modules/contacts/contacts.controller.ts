@@ -19,26 +19,54 @@ import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { CreateOrUpdateContactDto } from './contacts.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { generateLongUUID } from '../../app/utils/commons/generate-random';
+import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
+import {
+  addPagination,
+  PaginationType,
+} from '../../app/utils/pagination/with-pagination';
 
 @Controller('contacts')
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
+  /** Get all contacts */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
   async findAllContacts(
     @Res() res,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const contacts = await this.contactsService.findAll({ search, pagination });
+
+    return reply({ res, results: contacts });
+  }
+
+  @Get(`/organizations`)
+  @UseGuards(JwtAuthGuard)
+  async findAllContactsByOrganizationId(
+    @Res() res,
     @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
     const { user } = req;
     const { search } = searchQuery;
 
-    const Contacts = await this.contactsService.findAll({
-      search: String(search || ''),
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const contacts = await this.contactsService.findAll({
+      search,
+      pagination,
+      option1: { organizationId: user?.organizationInUtilizationId },
     });
 
-    return reply({ res, results: Contacts });
+    return reply({ res, results: contacts });
   }
 
   @Post(`/`)

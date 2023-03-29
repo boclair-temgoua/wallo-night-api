@@ -12,6 +12,7 @@ import { ContributorsModule } from './modules/contributors/contributors.module';
 import { UserAddressModule } from './modules/user-address/user-address.module';
 import { AppSeedDataSource } from './app/databases/config/orm-config-seed';
 import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.module';
+import { ContactsModule } from './modules/contacts/contacts.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.
     ContributorsModule,
     ApplicationsModule,
     ResetPasswordsModule,
+    ContactsModule
   ],
 })
 export class AppModule {}

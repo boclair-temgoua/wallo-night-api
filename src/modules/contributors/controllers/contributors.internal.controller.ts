@@ -51,9 +51,9 @@ export class ContributorsInternalController {
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const contributors = await this.contributorsService.findAll({
-      option1: { organizationId: user?.organizationInUtilizationId },
       search,
       pagination,
+      option1: { organizationId: user?.organizationInUtilizationId },
     });
 
     return reply({ res, results: contributors });
