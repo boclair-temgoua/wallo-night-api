@@ -4,7 +4,7 @@ import { configurations } from '../../configurations/index';
 export type TypeDatabase = 'mysql' | 'postgres';
 
 export const AppDataSource = new DataSource({
-  url: 'postgres://temgoua2013:7CnD6lxwcTvW@ep-rough-bar-357098.eu-central-1.aws.neon.tech/neondb',
+  // url: configurations.database.url,
   type: configurations.database.postgres.type,
   host: configurations.database.postgres.host,
   port: configurations.database.postgres.port,

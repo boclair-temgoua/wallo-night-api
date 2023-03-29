@@ -50,6 +50,7 @@ export const configurations = {
    * Database
    */
   database: {
+    url: process.env.DATABASE_URL,
     mysql: {
       type: 'mysql' as TypeDatabase,
       host: process.env.MYSQL_HOST,
