@@ -11,10 +11,10 @@ export class Contact extends BaseDeleteEntity {
   isRed?: boolean;
 
   @Column({ nullable: true })
-  slug?: string;
+  ipLocation?: string;
 
   @Column({ nullable: true })
-  ipLocation?: string;
+  subject?: string;
 
   @Column({ nullable: true })
   fullName?: string;
