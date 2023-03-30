@@ -4,6 +4,7 @@ import {
   authUserVerifyIsConfirmMail,
 } from './mails';
 import { authNewUserCreateMail } from './mails/auth-new-user-create-mail';
+import { userContributorCreateMail } from './mails/user-contributor-create-mail';
 
 export const authRegisterJob = async (options: { channel; queue }) => {
   const { channel, queue } = options;
@@ -64,6 +65,28 @@ export const authPasswordResetJob = async (options: { channel; queue }) => {
       console.log(
         '\x1b[32m%s\x1b[0m',
         '**** Processed reset password Job message user finish ****',
+      );
+    },
+    { noAck: true },
+  );
+};
+
+/** Send Job Reset password */
+export const userContributorCreateJob = async (options: { channel; queue }) => {
+  const { channel, queue } = options;
+
+  await channel.consume(
+    queue,
+    async (msg) => {
+      const data = JSON.parse(msg.content.toString());
+      console.log(
+        '\x1b[33m%s\x1b[0m',
+        '**** Processing user contributor create Job message user start ****',
+      );
+      userContributorCreateMail({ contributor: data });
+      console.log(
+        '\x1b[32m%s\x1b[0m',
+        '**** Processed user contributor create Job message user finish ****',
       );
     },
     { noAck: true },

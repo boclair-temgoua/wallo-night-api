@@ -12,10 +12,19 @@ import { User } from '../../models/User';
 import { AuthTokenMiddleware } from '../users/middleware';
 import { Application } from '../../models/Application';
 import { ApplicationsService } from '../applications/applications.service';
+import { ProfilesService } from '../profiles/profiles.service';
+import { Profile } from '../../models/Profile';
+import { CheckUserService } from '../users/middleware/check-user.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Contributor, Organization, User, Application]),
+    TypeOrmModule.forFeature([
+      Contributor,
+      Organization,
+      User,
+      Application,
+      Profile,
+    ]),
   ],
   controllers: [ContributorsInternalController, ContributorsExternalController],
   providers: [
@@ -23,6 +32,8 @@ import { ApplicationsService } from '../applications/applications.service';
     ContributorsUtil,
     OrganizationsService,
     UsersService,
+    CheckUserService,
+    ProfilesService,
     ApplicationsService,
   ],
 })

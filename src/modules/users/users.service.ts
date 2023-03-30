@@ -234,7 +234,6 @@ export class UsersService {
       email,
       username,
       password,
-      noHashPassword,
       profileId,
       organizationInUtilizationId,
     } = options;
@@ -244,7 +243,6 @@ export class UsersService {
     user.email = email;
     user.hashPassword(password);
     user.username = username;
-    user.noHashPassword = noHashPassword;
     user.profileId = profileId;
     user.organizationInUtilizationId = organizationInUtilizationId;
 
@@ -266,7 +264,6 @@ export class UsersService {
       email,
       username,
       password,
-      noHashPassword,
       accessToken,
       refreshToken,
       organizationInUtilizationId,
@@ -296,7 +293,6 @@ export class UsersService {
     if (password) {
       findItem.hashPassword(password);
     }
-    findItem.noHashPassword = noHashPassword;
     findItem.accessToken = accessToken;
     findItem.refreshToken = refreshToken;
     findItem.organizationInUtilizationId = organizationInUtilizationId;

@@ -21,10 +21,11 @@ import { ContributorRole } from '../../../modules/contributors/contributors.type
 export class Seeds1590529635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
     const driver = AppSeedDataSource;
-    const firstName = faker.name.firstName();
-    const lastName = faker.name.lastName();
 
     for (let i = 0; i < 20; i++) {
+      const firstName = faker.name.firstName();
+      const lastName = faker.name.lastName();
+
       const country = await driver
         .createQueryBuilder(Country, 'country')
         .select('country.id', 'id')

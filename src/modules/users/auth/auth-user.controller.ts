@@ -18,7 +18,6 @@ import { reply } from '../../../app/utils/reply';
 import { useCatch } from '../../../app/utils/use-catch';
 import * as amqplib from 'amqplib';
 
-import { getIpRequest } from '../../../app/utils/commons/get-ip-request';
 import { UsersService } from '../users.service';
 import {
   CreateLoginUserDto,
@@ -84,6 +83,7 @@ export class AuthUserController {
       email,
       password,
       profileId: profile?.id,
+      username: `${firstName}.${lastName}`.toLowerCase(),
       organizationInUtilizationId: organization?.id,
     });
 

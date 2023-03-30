@@ -41,9 +41,6 @@ export class User extends BaseDeleteEntity {
   @Column({ nullable: true })
   password?: string;
 
-  @Column({ nullable: true })
-  noHashPassword?: string;
-
   @Column({ type: 'uuid', nullable: true })
   profileId?: string;
 

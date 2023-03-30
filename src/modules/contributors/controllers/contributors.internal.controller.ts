@@ -1,3 +1,6 @@
+import { userContributorCreateJob } from './../../users/users.job';
+import { JwtPayloadType } from './../../users/users.type';
+import { generateLongUUID } from './../../../app/utils/commons/generate-random';
 import {
   Controller,
   Param,
@@ -13,6 +16,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { reply } from '../../../app/utils/reply';
 import { JwtAuthGuard } from '../../users/middleware';
@@ -25,12 +29,20 @@ import { SearchQueryDto } from '../../../app/utils/search-query';
 import { ContributorsService } from '../contributors.service';
 import { UsersService } from '../../users/users.service';
 import { ContributorRole } from '../contributors.type';
-import { UpdateRoleContributorDto } from '../contributors.dto';
-import { UnauthorizedException } from '@nestjs/common';
+import {
+  CreateOneNewUserContributorsDto,
+  UpdateRoleContributorDto,
+} from '../contributors.dto';
+import * as amqplib from 'amqplib';
+import { ProfilesService } from '../../profiles/profiles.service';
+import { CheckUserService } from '../../users/middleware/check-user.service';
+import { configurations } from '../../../app/configurations/index';
 
 @Controller('contributors')
 export class ContributorsInternalController {
   constructor(
+    private readonly profilesService: ProfilesService,
+    private readonly checkUserService: CheckUserService,
     private readonly contributorsService: ContributorsService,
     private readonly usersService: UsersService,
   ) {}
@@ -95,6 +107,89 @@ export class ContributorsInternalController {
     });
 
     /** Send notification to Contributor */
+
+    return reply({ res, results: 'contributor save successfully' });
+  }
+
+  @Post(`/new-user`)
+  @UseGuards(JwtAuthGuard)
+  async createOneNewUserContributor(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateOneNewUserContributorsDto,
+  ) {
+    const { email, role, firstName, lastName } = body;
+
+    const { user } = req;
+    const findOneUserAdmin = await this.usersService.findOneInfoBy({
+      option1: { userId: user?.id },
+    });
+    /** This condition check if user is ADMIN */
+    if (!['ADMIN'].includes(findOneUserAdmin?.role?.name))
+      throw new UnauthorizedException('Not authorized! Change permission');
+
+    const findOneUser = await this.usersService.findOneBy({
+      option2: { email },
+    });
+    if (findOneUser)
+      throw new HttpException(
+        `Email ${email} already exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    /** Create Profile */
+    const profile = await this.profilesService.createOne({
+      firstName,
+      lastName,
+    });
+
+    /** Create User */
+    const userSave = await this.usersService.createOne({
+      email,
+      profileId: profile?.id,
+      password: generateLongUUID(8),
+      token: generateLongUUID(30),
+      username: `${firstName}.${lastName}`.toLowerCase(),
+      organizationInUtilizationId: user?.organizationInUtilizationId,
+    });
+
+    /** Create Contributor */
+    await this.contributorsService.createOne({
+      userId: userSave?.id,
+      userCreatedId: user?.id,
+      role: role as ContributorRole,
+      organizationId: user?.organizationInUtilizationId,
+    });
+
+    /** Update User */
+    const jwtPayload: JwtPayloadType = {
+      id: userSave?.id,
+      profileId: profile?.id,
+      firstName: profile?.firstName,
+      lastName: profile?.lastName,
+      organizationInUtilizationId: user.organizationInUtilizationId,
+    };
+    await this.usersService.updateOne(
+      { option1: { userId: userSave?.id } },
+      { accessToken: await this.checkUserService.createJwtTokens(jwtPayload) },
+    );
+    /** Send notification to Contributor */
+    const queue = 'user-contributor-create';
+    const connect = await amqplib.connect(
+      configurations.implementations.amqp.link,
+    );
+    const channel = await connect.createChannel();
+    await channel.assertQueue(queue, { durable: false });
+    await channel.sendToQueue(
+      queue,
+      Buffer.from(
+        JSON.stringify({
+          email: userSave?.email,
+          organization: findOneUserAdmin?.organization,
+        }),
+      ),
+    );
+    await userContributorCreateJob({ channel, queue });
 
     return reply({ res, results: 'contributor save successfully' });
   }
