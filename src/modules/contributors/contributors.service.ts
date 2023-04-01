@@ -229,6 +229,7 @@ export class ContributorsService {
     if (option1) {
       const { type, organizationId, userId } = option1;
       query = query
+        .andWhere('contributor.projectId IS NULL')
         .andWhere('contributor.type = :type', { type })
         .andWhere('contributor.userId = :userId', {
           userId,

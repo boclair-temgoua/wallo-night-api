@@ -7,6 +7,8 @@ import {
   Get,
   Req,
   Query,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   addPagination,
@@ -56,8 +58,23 @@ export class OrganizationsController {
   @UseGuards(JwtAuthGuard)
   async getOneByUUIDOrganization(
     @Res() res,
+    @Req() req,
     @Param('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
+    const { user } = req;
+    const getOneContributor = await this.contributorsService.findOneBy({
+      option1: {
+        userId: user?.id,
+        organizationId: organizationId,
+        type: ContributorType.ORGANIZATION,
+      },
+    });
+    if (!getOneContributor)
+      throw new HttpException(
+        `Not authorized in this organization ${organizationId} please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
     const organization = await this.organizationsService.findOneBy({
       option1: { organizationId },
     });

@@ -9,6 +9,8 @@ import {
   Query,
   Post,
   Body,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import {
   addPagination,
@@ -52,7 +54,6 @@ export class ProjectsController {
     const projects = await this.contributorsService.findAll({
       option2: {
         userId: user?.id,
-        // organizationId: user?.organizationInUtilizationId,
         type: ContributorType.PROJECT,
       },
       search,
@@ -121,8 +122,25 @@ export class ProjectsController {
   @UseGuards(JwtAuthGuard)
   async getOneByUUIDProject(
     @Res() res,
+    @Req() req,
     @Param('projectId', ParseUUIDPipe) projectId: string,
   ) {
+    const { user } = req;
+
+    const getOneContributor = await this.contributorsService.findOneBy({
+      option4: {
+        userId: user?.id,
+        projectId,
+        organizationId: user?.organizationInUtilizationId,
+        type: ContributorType.PROJECT,
+      },
+    });
+    if (!getOneContributor)
+      throw new HttpException(
+        `Not authorized in this project ${projectId} please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
     const project = await this.projectsService.findOneBy({
       option1: { projectId },
     });
