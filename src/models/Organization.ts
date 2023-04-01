@@ -5,8 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
-  Generated,
 } from 'typeorm';
 
 import { User } from './User';
@@ -14,6 +12,7 @@ import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Contributor } from './Contributor';
 import { UserAddress } from './UserAddress';
 import { Project } from './Project';
+import { SubProject } from './SubProject';
 
 @Entity('organization')
 export class Organization extends BaseDeleteEntity {
@@ -41,6 +40,11 @@ export class Organization extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   projects?: Project[];
+
+  @OneToMany(() => SubProject, (subProject) => subProject.organization, {
+    onDelete: 'CASCADE',
+  })
+  subProjects?: SubProject[];
 
   @OneToMany(() => UserAddress, (userAddress) => userAddress.organization)
   userAddress?: UserAddress[];

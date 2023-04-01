@@ -11,10 +11,10 @@ import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Contributor } from './Contributor';
 import { Organization } from './Organization';
-import { SubProject } from './SubProject';
+import { Project } from './Project';
 
-@Entity('project')
-export class Project extends BaseDeleteEntity {
+@Entity('sub_project')
+export class SubProject extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -31,8 +31,16 @@ export class Project extends BaseDeleteEntity {
   userCreatedId?: string;
 
   @Column({ type: 'uuid', nullable: true })
+  projectId?: string;
+  @ManyToOne(() => Project, (project) => project.subProjects, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  project?: Project;
+
+  @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.projects, {
+  @ManyToOne(() => Organization, (organization) => organization.subProjects, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
@@ -42,9 +50,4 @@ export class Project extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
-
-  @OneToMany(() => SubProject, (subProject) => subProject.project, {
-    onDelete: 'CASCADE',
-  })
-  subProjects?: SubProject[];
 }

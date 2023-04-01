@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -305,5 +306,20 @@ export class UsersService {
     if (errorUp) throw new NotFoundException(errorUp);
 
     return result;
+  }
+
+  /** Permission. */
+  async canPermission(options: { userId: string }): Promise<any> {
+    const { userId } = options;
+
+    const findOneUser = await this.findOneInfoBy({
+      option1: { userId: userId },
+    });
+
+    /** This condition check if user is ADMIN */
+    if (!['ADMIN'].includes(findOneUser?.role?.name))
+      throw new UnauthorizedException('Not authorized! Change permission');
+
+    return findOneUser;
   }
 }

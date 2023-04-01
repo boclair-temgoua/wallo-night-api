@@ -14,6 +14,7 @@ import { AppSeedDataSource } from './app/databases/config/orm-config-seed';
 import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.module';
 import { ContactsModule } from './modules/contacts/contacts.module';
 import { ProjectsModule } from './modules/projects/projects.module';
+import { SubProjectsModule } from './modules/sub-projects/sub-projects.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ProjectsModule } from './modules/projects/projects.module';
     ProfilesModule,
     UsersModule,
     ProjectsModule,
+    SubProjectsModule,
     UserAddressModule,
     ContributorsModule,
     ApplicationsModule,

@@ -15,6 +15,7 @@ import {
   ContributorType,
 } from '../modules/contributors/contributors.type';
 import { Project } from './Project';
+import { SubProject } from './SubProject';
 
 @Entity('contributor')
 export class Contributor extends BaseDeleteEntity {
@@ -48,7 +49,15 @@ export class Contributor extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  project?: Organization;
+  project?: Project;
+
+  @Column({ type: 'uuid', nullable: true })
+  subProjectId?: string;
+  @ManyToOne(() => SubProject, (subProject) => subProject.contributors, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  subProject?: SubProject;
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;

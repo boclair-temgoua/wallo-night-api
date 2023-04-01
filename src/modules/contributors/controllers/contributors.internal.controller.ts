@@ -31,6 +31,7 @@ import { UsersService } from '../../users/users.service';
 import { ContributorRole, ContributorType } from '../contributors.type';
 import {
   CreateOneContributorProjectDto,
+  CreateOneContributorSubProjectDto,
   CreateOneNewUserContributorsDto,
   UpdateRoleContributorDto,
 } from '../contributors.dto';
@@ -39,6 +40,7 @@ import { ProfilesService } from '../../profiles/profiles.service';
 import { CheckUserService } from '../../users/middleware/check-user.service';
 import { configurations } from '../../../app/configurations/index';
 import { ProjectsService } from '../../projects/projects.service';
+import { SubProjectsService } from '../../sub-projects/sub-projects.service';
 
 @Controller('contributors')
 export class ContributorsInternalController {
@@ -46,6 +48,7 @@ export class ContributorsInternalController {
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly projectsService: ProjectsService,
+    private readonly subProjectsService: SubProjectsService,
     private readonly checkUserService: CheckUserService,
     private readonly contributorsService: ContributorsService,
   ) {}
@@ -108,6 +111,54 @@ export class ContributorsInternalController {
       option3: {
         projectId: getOneProject?.id,
         type: ContributorType.PROJECT,
+        organizationId: user?.organizationInUtilizationId,
+      },
+    });
+
+    return reply({ res, results: contributors });
+  }
+
+  @Get(`/sub-project`)
+  @UseGuards(JwtAuthGuard)
+  async findAllContributorsBySubProjectId(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+    @Query('subProjectId', ParseUUIDPipe) subProjectId: string,
+  ) {
+    const { user } = req;
+    /** get contributor filter by project */
+    const { search } = searchQuery;
+
+    const getOneSubProject = await this.subProjectsService.findOneBy({
+      option1: { subProjectId },
+    });
+    if (!getOneSubProject)
+      throw new HttpException(
+        `Sub project ${subProjectId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const getOneProject = await this.projectsService.findOneBy({
+      option1: { projectId: getOneSubProject?.projectId },
+    });
+    if (!getOneProject)
+      throw new HttpException(
+        `Project ${getOneSubProject?.projectId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const contributors = await this.contributorsService.findAll({
+      search,
+      pagination,
+      option4: {
+        projectId: getOneProject?.id,
+        type: ContributorType.SUBPROJECT,
+        subProjectId: getOneSubProject?.id,
         organizationId: user?.organizationInUtilizationId,
       },
     });
@@ -239,6 +290,84 @@ export class ContributorsInternalController {
       role: ContributorRole.ADMIN,
       organizationId: user?.organizationInUtilizationId,
       type: ContributorType.PROJECT,
+    });
+    /** Send notification to Contributor */
+
+    return reply({ res, results: 'Contributor save successfully' });
+  }
+  /** Post contributor to sub projectId */
+  @Post(`/sub-project`)
+  @UseGuards(JwtAuthGuard)
+  async createOneContributorSubProject(
+    @Res() res,
+    @Req() req,
+    @Query() query: CreateOneContributorSubProjectDto,
+  ) {
+    const { userId, subProjectId } = query;
+    const { user } = req;
+
+    await this.usersService.canPermission({ userId: user?.id });
+
+    const getOneUser = await this.usersService.findOneBy({
+      option1: { userId },
+    });
+    if (!getOneUser)
+      throw new HttpException(
+        `User ${userId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    const getOneSubProject = await this.subProjectsService.findOneBy({
+      option1: { subProjectId },
+    });
+    if (!getOneSubProject)
+      throw new HttpException(
+        `Sub project ${subProjectId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    /** Ici je controlle si l'utilisateur appartient deja
+     * dans l'organization car je dois l'ajouter dans un project */
+    const contributorsProject =
+      await this.contributorsService.findAllNotPaginate({
+        option3: {
+          projectId: getOneSubProject?.projectId,
+          organizationId: user?.organizationInUtilizationId,
+          type: ContributorType.PROJECT,
+        },
+      });
+    const findOneContributorsProject = contributorsProject.find(
+      (item) => item.userId === userId,
+    );
+    if (!findOneContributorsProject)
+      throw new UnauthorizedException(
+        "This user don't exist in this organization",
+      );
+
+    const findOneContributorSubProject =
+      await this.contributorsService.findOneBy({
+        option5: {
+          userId: getOneUser?.id,
+          subProjectId: getOneSubProject?.id,
+          projectId: getOneSubProject?.projectId,
+          organizationId: user?.organizationInUtilizationId,
+          type: ContributorType.SUBPROJECT,
+        },
+      });
+    if (findOneContributorSubProject)
+      throw new HttpException(
+        `This contributor already exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    /** Create Contributor */
+    await this.contributorsService.createOne({
+      userId: getOneUser?.id,
+      subProjectId: getOneSubProject?.id,
+      userCreatedId: user?.id,
+      projectId: getOneSubProject?.projectId,
+      role: ContributorRole.MODERATOR,
+      organizationId: user?.organizationInUtilizationId,
+      type: ContributorType.SUBPROJECT,
     });
     /** Send notification to Contributor */
 
