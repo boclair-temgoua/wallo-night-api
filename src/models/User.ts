@@ -14,6 +14,7 @@ import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Profile } from './Profile';
 import { Organization } from './Organization';
 import { Contributor } from './Contributor';
+import { Project } from './Project';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {

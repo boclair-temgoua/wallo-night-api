@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { ContributorsService } from './contributors.service';
+import { ContributorType } from './contributors.type';
 
 @Injectable()
 export class ContributorsUtil {
@@ -21,7 +22,7 @@ export class ContributorsUtil {
       });
 
       const contributor = await this.contributorsService.findOneBy({
-        option1: { organizationId, userId },
+        option1: { organizationId, userId, type: ContributorType.ORGANIZATION },
       });
       return { organization, contributor };
     }

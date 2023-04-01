@@ -28,13 +28,14 @@ export class ContributorsService {
   async findAll(
     selections: GetContributorsSelections,
   ): Promise<GetContributorsSelections | any> {
-    const { option1, option2, search, pagination } = selections;
+    const { option1, option2, option3, search, pagination } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
       .select('contributor.id', 'id')
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
+      .addSelect('contributor.type', 'type')
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -64,15 +65,30 @@ export class ContributorsService {
       .where('contributor.deletedAt IS NULL');
 
     if (option1) {
-      const { organizationId } = option1;
-      query = query.andWhere('contributor.organizationId = :organizationId', {
-        organizationId,
-      });
+      const { type, organizationId } = option1;
+      query = query
+        .andWhere('contributor.projectId IS NULL')
+        .andWhere('contributor.type = :type', { type })
+        .andWhere('contributor.organizationId = :organizationId', {
+          organizationId,
+        });
     }
 
     if (option2) {
       const { userId } = option2;
       query = query.andWhere('contributor.userId = :userId', { userId });
+    }
+
+    if (option3) {
+      const { type, projectId, organizationId } = option3;
+      query = query
+        .andWhere('contributor.type = :type', { type })
+        .andWhere('contributor.projectId = :projectId', {
+          projectId,
+        })
+        .andWhere('contributor.organizationId = :organizationId', {
+          organizationId,
+        });
     }
 
     if (search) {
@@ -108,7 +124,7 @@ export class ContributorsService {
 
     const [error, users] = await useCatch(
       query
-        .orderBy('user.createdAt', pagination?.sort)
+        .orderBy('contributor.createdAt', pagination?.sort)
         .limit(pagination.limit)
         .offset(pagination.offset)
         .getRawMany(),
@@ -122,15 +138,59 @@ export class ContributorsService {
     });
   }
 
+  async findAllNotPaginate(
+    selections: GetContributorsSelections,
+  ): Promise<GetContributorsSelections | any> {
+    const { option1, option2, option3 } = selections;
+
+    let query = this.driver
+      .createQueryBuilder('contributor')
+      .addSelect('contributor.createdAt', 'createdAt')
+      .where('contributor.deletedAt IS NULL');
+
+    if (option1) {
+      const { type, organizationId } = option1;
+      query = query
+        .andWhere('contributor.type = :type', { type })
+        .andWhere('contributor.organizationId = :organizationId', {
+          organizationId,
+        });
+    }
+
+    if (option2) {
+      const { userId } = option2;
+      query = query.andWhere('contributor.userId = :userId', { userId });
+    }
+
+    if (option3) {
+      const { projectId, organizationId } = option3;
+      query = query
+        .andWhere('contributor.projectId = :projectId', {
+          projectId,
+        })
+        .andWhere('contributor.organizationId = :organizationId', {
+          organizationId,
+        });
+    }
+
+    const [error, contributors] = await useCatch(
+      query.orderBy('contributor.createdAt', 'DESC').getMany(),
+    );
+    if (error) throw new NotFoundException(error);
+
+    return contributors;
+  }
+
   async findOneBy(
     selections: GetOneContributorSelections,
   ): Promise<Contributor> {
-    const { option1, option2, option3 } = selections;
+    const { option1, option2, option3, option4 } = selections;
     let query = this.driver
       .createQueryBuilder('contributor')
       .select('contributor.id', 'id')
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
+      .addSelect('contributor.projectId', 'projectId')
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect('contributor.type', 'type')
       .addSelect('contributor.createdAt', 'createdAt')
@@ -155,8 +215,9 @@ export class ContributorsService {
       .leftJoin('user.profile', 'profile');
 
     if (option1) {
-      const { organizationId, userId } = option1;
+      const { type, organizationId, userId } = option1;
       query = query
+        .andWhere('contributor.type = :type', { type })
         .andWhere('contributor.userId = :userId', {
           userId,
         })
@@ -183,6 +244,21 @@ export class ContributorsService {
         });
     }
 
+    if (option4) {
+      const { organizationId, userId, projectId, type } = option4;
+      query = query
+        .andWhere('contributor.type = :type', { type })
+        .andWhere('contributor.userId = :userId', {
+          userId,
+        })
+        .andWhere('contributor.projectId = :projectId', {
+          projectId,
+        })
+        .andWhere('contributor.organizationId = :organizationId', {
+          organizationId,
+        });
+    }
+
     const [error, result] = await useCatch(query.getRawOne());
     if (error)
       throw new HttpException('contributor not found', HttpStatus.NOT_FOUND);
@@ -192,11 +268,14 @@ export class ContributorsService {
 
   /** Create one Contributor to the database. */
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
-    const { userId, organizationId, userCreatedId, role } = options;
+    const { userId, organizationId, projectId, userCreatedId, role, type } =
+      options;
 
     const contributor = new Contributor();
     contributor.userId = userId;
+    contributor.type = type;
     contributor.organizationId = organizationId;
+    contributor.projectId = projectId;
     contributor.userCreatedId = userCreatedId;
     contributor.role = role;
 

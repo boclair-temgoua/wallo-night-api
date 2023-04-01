@@ -197,6 +197,7 @@ export class UsersService {
         FROM "contributor" "con"
         WHERE "user"."id" = "con"."userId"
         AND "user"."organizationInUtilizationId" = "con"."organizationId"
+        AND "con"."type" IN ('ORGANIZATION')
         ) AS "role"`,
       )
       .addSelect(

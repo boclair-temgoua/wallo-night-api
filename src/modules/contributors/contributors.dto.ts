@@ -5,8 +5,20 @@ import {
   IsUUID,
   IsEnum,
 } from 'class-validator';
-import { ContributorRole } from './contributors.type';
+import { ContributorRole, ContributorType } from './contributors.type';
 import { MaxLength, IsEmail } from 'class-validator';
+
+export class CreateOneContributorProjectDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  userId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  projectId: string;
+}
 
 export class UpdateRoleContributorDto {
   @IsNotEmpty()
@@ -19,7 +31,6 @@ export class UpdateRoleContributorDto {
   @IsEnum(ContributorRole)
   role: ContributorRole;
 }
-
 export class CreateOneNewUserContributorsDto {
   @IsNotEmpty()
   @IsString()

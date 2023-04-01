@@ -15,6 +15,8 @@ import { ApplicationsService } from '../applications/applications.service';
 import { ProfilesService } from '../profiles/profiles.service';
 import { Profile } from '../../models/Profile';
 import { CheckUserService } from '../users/middleware/check-user.service';
+import { ProjectsService } from '../projects/projects.service';
+import { Project } from '../../models/Project';
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { CheckUserService } from '../users/middleware/check-user.service';
       Contributor,
       Organization,
       User,
+      Project,
       Application,
       Profile,
     ]),
@@ -34,6 +37,7 @@ import { CheckUserService } from '../users/middleware/check-user.service';
     UsersService,
     CheckUserService,
     ProfilesService,
+    ProjectsService,
     ApplicationsService,
   ],
 })

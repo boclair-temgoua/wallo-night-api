@@ -10,27 +10,39 @@ export enum ContributorRole {
 
 export enum ContributorType {
   ORGANIZATION = 'ORGANIZATION',
+  PROJECT = 'PROJECT',
 }
 
 export type GetContributorsSelections = {
   search?: string;
   pagination?: PaginationType;
   option1?: {
+    type: Contributor['type'];
     organizationId: Contributor['organizationId'];
   };
-  option2?: {
-    userId: Contributor['userId'];
+  option2?: { userId: Contributor['userId'] };
+  option3?: {
+    type: Contributor['type'];
+    projectId: Contributor['projectId'];
+    organizationId: Contributor['organizationId'];
   };
 };
 
 export type GetOneContributorSelections = {
   option1?: {
+    type: Contributor['type'];
     userId: Contributor['userId'];
     organizationId: Contributor['organizationId'];
   };
   option2?: { contributorId: Contributor['id'] };
   option3?: {
     contributorId: Contributor['id'];
+    organizationId: Contributor['organizationId'];
+  };
+  option4?: {
+    type: Contributor['type'];
+    userId: Contributor['userId'];
+    projectId: Contributor['projectId'];
     organizationId: Contributor['organizationId'];
   };
 };

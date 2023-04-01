@@ -14,6 +14,7 @@ import {
   ContributorRole,
   ContributorType,
 } from '../modules/contributors/contributors.type';
+import { Project } from './Project';
 
 @Entity('contributor')
 export class Contributor extends BaseDeleteEntity {
@@ -26,6 +27,13 @@ export class Contributor extends BaseDeleteEntity {
   @JoinColumn()
   user?: User;
 
+  @Column({
+    type: 'enum',
+    enum: ContributorType,
+    default: ContributorType.ORGANIZATION,
+  })
+  type?: ContributorType;
+
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
   @ManyToOne(() => Organization, (organization) => organization.contributors, {
@@ -35,17 +43,18 @@ export class Contributor extends BaseDeleteEntity {
   organization?: Organization;
 
   @Column({ type: 'uuid', nullable: true })
+  projectId?: string;
+  @ManyToOne(() => Project, (project) => project.contributors, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  project?: Organization;
+
+  @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;
   @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'userCreatedId', referencedColumnName: 'id' }])
   userCreated?: User;
-
-  @Column({
-    type: 'enum',
-    enum: ContributorType,
-    default: ContributorType.ORGANIZATION,
-  })
-  type?: ContributorType;
 
   @Column({
     type: 'enum',

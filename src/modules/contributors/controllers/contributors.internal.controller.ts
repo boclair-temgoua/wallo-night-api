@@ -28,8 +28,9 @@ import {
 import { SearchQueryDto } from '../../../app/utils/search-query';
 import { ContributorsService } from '../contributors.service';
 import { UsersService } from '../../users/users.service';
-import { ContributorRole } from '../contributors.type';
+import { ContributorRole, ContributorType } from '../contributors.type';
 import {
+  CreateOneContributorProjectDto,
   CreateOneNewUserContributorsDto,
   UpdateRoleContributorDto,
 } from '../contributors.dto';
@@ -37,19 +38,21 @@ import * as amqplib from 'amqplib';
 import { ProfilesService } from '../../profiles/profiles.service';
 import { CheckUserService } from '../../users/middleware/check-user.service';
 import { configurations } from '../../../app/configurations/index';
+import { ProjectsService } from '../../projects/projects.service';
 
 @Controller('contributors')
 export class ContributorsInternalController {
   constructor(
+    private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
+    private readonly projectsService: ProjectsService,
     private readonly checkUserService: CheckUserService,
     private readonly contributorsService: ContributorsService,
-    private readonly usersService: UsersService,
   ) {}
 
-  @Get(`/`)
+  @Get(`/organization`)
   @UseGuards(JwtAuthGuard)
-  async findAllContributorsBy(
+  async findAllContributorsByOrganizationId(
     @Res() res,
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
@@ -65,19 +68,130 @@ export class ContributorsInternalController {
     const contributors = await this.contributorsService.findAll({
       search,
       pagination,
-      option1: { organizationId: user?.organizationInUtilizationId },
+      option1: {
+        type: ContributorType.ORGANIZATION,
+        organizationId: user?.organizationInUtilizationId,
+      },
     });
 
     return reply({ res, results: contributors });
   }
 
-  @Post(`/`)
+  @Get(`/project`)
   @UseGuards(JwtAuthGuard)
-  async createOneContributor(
+  async findAllContributorsByProjectId(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+    @Query('projectId', ParseUUIDPipe) projectId: string,
+  ) {
+    const { user } = req;
+    /** get contributor filter by project */
+    const { search } = searchQuery;
+
+    const getOneProject = await this.projectsService.findOneBy({
+      option1: { projectId },
+    });
+    if (!getOneProject)
+      throw new HttpException(
+        `Project ${projectId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const contributors = await this.contributorsService.findAll({
+      search,
+      pagination,
+      option3: {
+        projectId: getOneProject?.id,
+        type: ContributorType.PROJECT,
+        organizationId: user?.organizationInUtilizationId,
+      },
+    });
+
+    return reply({ res, results: contributors });
+  }
+
+  @Post(`/organization`)
+  @UseGuards(JwtAuthGuard)
+  async createOneContributorOrganization(
     @Res() res,
     @Req() req,
     @Query('userId', ParseUUIDPipe) userId: string,
   ) {
+    const { user } = req;
+    const getOneUser = await this.usersService.findOneBy({
+      option1: { userId },
+    });
+    if (!getOneUser)
+      throw new HttpException(
+        `User ${userId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    const findOneUser = await this.usersService.findOneInfoBy({
+      option1: { userId: user?.id },
+    });
+    /** This condition check if user is ADMIN */
+    if (!['ADMIN'].includes(findOneUser?.role?.name))
+      throw new UnauthorizedException('Not authorized! Change permission');
+
+    const findOneContributorOrganization =
+      await this.contributorsService.findOneBy({
+        option1: {
+          userId,
+          type: ContributorType.ORGANIZATION,
+          organizationId: user?.organizationInUtilizationId,
+        },
+      });
+    if (findOneContributorOrganization)
+      throw new HttpException(
+        `This contributor already exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    /** Create Contributor */
+    await this.contributorsService.createOne({
+      userId: getOneUser?.id,
+      userCreatedId: user?.id,
+      role: ContributorRole.MODERATOR,
+      organizationId: user?.organizationInUtilizationId,
+    });
+
+    /** Send notification to Contributor */
+
+    return reply({ res, results: 'Contributor save successfully' });
+  }
+
+  /** Post contributor to project */
+  @Post(`/project`)
+  @UseGuards(JwtAuthGuard)
+  async createOneContributorProject(
+    @Res() res,
+    @Req() req,
+    @Query() query: CreateOneContributorProjectDto,
+  ) {
+    const { userId, projectId } = query;
+
+    const getOneUser = await this.usersService.findOneBy({
+      option1: { userId },
+    });
+    if (!getOneUser)
+      throw new HttpException(
+        `User ${userId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    const getOneProject = await this.projectsService.findOneBy({
+      option1: { projectId },
+    });
+    if (!getOneProject)
+      throw new HttpException(
+        `Project ${projectId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
     const { user } = req;
     const findOneUser = await this.usersService.findOneInfoBy({
       option1: { userId: user?.id },
@@ -86,13 +200,32 @@ export class ContributorsInternalController {
     if (!['ADMIN'].includes(findOneUser?.role?.name))
       throw new UnauthorizedException('Not authorized! Change permission');
 
-    const findOneContributor = await this.contributorsService.findOneBy({
-      option1: {
-        userId,
+    /** Ici je controlle si l'utilisateur appartient deja
+     * dans l'organization car je dois l'ajouter dans un project */
+    const contributorsOrganization =
+      await this.contributorsService.findAllNotPaginate({
+        option1: {
+          organizationId: user?.organizationInUtilizationId,
+          type: ContributorType.ORGANIZATION,
+        },
+      });
+    const findOneContributorsOrganization = contributorsOrganization.find(
+      (item) => item.userId === userId,
+    );
+    if (!findOneContributorsOrganization)
+      throw new UnauthorizedException(
+        "This user don't exist in this organization",
+      );
+
+    const findOneContributorProject = await this.contributorsService.findOneBy({
+      option4: {
+        userId: userId,
+        projectId: projectId,
         organizationId: user?.organizationInUtilizationId,
+        type: ContributorType.PROJECT,
       },
     });
-    if (findOneContributor)
+    if (findOneContributorProject)
       throw new HttpException(
         `This contributor already exists please change`,
         HttpStatus.NOT_FOUND,
@@ -100,12 +233,13 @@ export class ContributorsInternalController {
 
     /** Create Contributor */
     await this.contributorsService.createOne({
-      userId: userId,
+      userId: getOneUser?.id,
+      projectId: getOneProject?.id,
       userCreatedId: user?.id,
-      role: ContributorRole.MODERATOR,
+      role: ContributorRole.ADMIN,
       organizationId: user?.organizationInUtilizationId,
+      type: ContributorType.PROJECT,
     });
-
     /** Send notification to Contributor */
 
     return reply({ res, results: 'Contributor save successfully' });
