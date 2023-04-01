@@ -237,7 +237,7 @@ export class ContributorsService {
     return result;
   }
 
-  /** Update one contributor to the database. */
+  /** Update one Contributor to the database. */
   async deleteOne(selections: DeleteContributorSelections): Promise<any> {
     const { option1 } = selections;
 

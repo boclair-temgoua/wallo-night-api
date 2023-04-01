@@ -49,7 +49,7 @@ export class FaqsController {
     return reply({ res, results: faqs });
   }
 
-  /** get one faq */
+  /** Get one faq */
   @Get(`/show/:faqId`)
   @UseGuards(JwtAuthGuard)
   async getOneByUUIDFaq(

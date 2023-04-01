@@ -87,7 +87,7 @@ export class UsersInternalController {
       { firstName, lastName, countryId, image, color, url },
     );
 
-    return reply({ res, results: 'profile updated successfully' });
+    return reply({ res, results: 'Profile updated successfully' });
   }
 
   @Put(`/change-email`)
@@ -117,6 +117,23 @@ export class UsersInternalController {
       { email: email },
     );
 
-    return reply({ res, results: 'user updated successfully' });
+    return reply({ res, results: 'User updated successfully' });
+  }
+
+  @Get(`/change-organization/:organizationId`)
+  @UseGuards(JwtAuthGuard)
+  async updateUserOrganization(
+    @Res() res,
+    @Req() req,
+    @Param('organizationId', ParseUUIDPipe) organizationId: string,
+  ) {
+    const { user } = req;
+
+    await this.usersService.updateOne(
+      { option1: { userId: user?.id } },
+      { organizationInUtilizationId: organizationId },
+    );
+
+    return reply({ res, results: 'User organization updated successfully' });
   }
 }

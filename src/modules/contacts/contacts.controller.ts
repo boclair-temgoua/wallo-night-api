@@ -18,7 +18,6 @@ import { ContactsService } from './contacts.service';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { CreateOrUpdateContactDto } from './contacts.dto';
 import { JwtAuthGuard } from '../users/middleware';
-import { generateLongUUID } from '../../app/utils/commons/generate-random';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   addPagination,
@@ -69,6 +68,7 @@ export class ContactsController {
     return reply({ res, results: contacts });
   }
 
+  /** Post one contact */
   @Post(`/`)
   async createOneContact(
     @Res() res,
@@ -103,6 +103,7 @@ export class ContactsController {
     return reply({ res, results: user });
   }
 
+  /** Delete one contact */
   @Delete(`/delete/:contactId`)
   @UseGuards(JwtAuthGuard)
   async deleteOneContact(

@@ -108,7 +108,7 @@ export class ContributorsInternalController {
 
     /** Send notification to Contributor */
 
-    return reply({ res, results: 'contributor save successfully' });
+    return reply({ res, results: 'Contributor save successfully' });
   }
 
   @Post(`/new-user`)
@@ -191,7 +191,7 @@ export class ContributorsInternalController {
     );
     await userContributorCreateJob({ channel, queue });
 
-    return reply({ res, results: 'contributor save successfully' });
+    return reply({ res, results: 'Contributor save successfully' });
   }
 
   @Get(`/show`)
@@ -244,7 +244,7 @@ export class ContributorsInternalController {
       option1: { contributorId },
     });
 
-    return reply({ res, results: 'contributor deleted successfully' });
+    return reply({ res, results: 'Contributor deleted successfully' });
   }
 
   @Put(`/role`)
@@ -281,6 +281,6 @@ export class ContributorsInternalController {
       { role },
     );
 
-    return reply({ res, results: 'contributor updated successfully' });
+    return reply({ res, results: 'Contributor updated successfully' });
   }
 }
