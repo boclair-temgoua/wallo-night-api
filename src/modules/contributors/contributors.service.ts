@@ -48,6 +48,15 @@ export class ContributorsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
+          'id', "project"."id",
+          'name', "project"."name",
+          'description', "project"."description",
+          'color', "project"."color",
+          'organizationId', "project"."organizationId"
+      ) AS "project"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
               'firstName', "profile"."firstName",
               'lastName', "profile"."lastName",
               'image', "profile"."image",
@@ -75,8 +84,10 @@ export class ContributorsService {
     }
 
     if (option2) {
-      const { userId } = option2;
-      query = query.andWhere('contributor.userId = :userId', { userId });
+      const { userId, type } = option2;
+      query = query
+        .andWhere('contributor.type = :type', { type })
+        .andWhere('contributor.userId = :userId', { userId });
     }
 
     if (option3) {
@@ -114,6 +125,7 @@ export class ContributorsService {
     }
 
     query = query
+      .leftJoin('contributor.project', 'project')
       .leftJoin('contributor.organization', 'organization')
       .leftJoin('organization.user', 'userOrganization')
       .leftJoin('contributor.user', 'user')

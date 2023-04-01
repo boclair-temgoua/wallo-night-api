@@ -19,6 +19,7 @@ import { OrganizationsService } from './organizations.service';
 import { JwtAuthGuard } from '../users/middleware';
 import { ContributorsService } from '../contributors/contributors.service';
 import { Organization } from '../../models/Organization';
+import { ContributorType } from '../contributors/contributors.type';
 
 @Controller('organizations')
 export class OrganizationsController {
@@ -43,7 +44,7 @@ export class OrganizationsController {
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const Organizations = await this.contributorsService.findAll({
-      option2: { userId: user?.id },
+      option2: { userId: user?.id, type: ContributorType.ORGANIZATION },
       search,
       pagination,
     });

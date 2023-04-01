@@ -49,13 +49,17 @@ export class ProjectsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const Projects = await this.contributorsService.findAll({
-      option2: { userId: user?.id },
+    const projects = await this.contributorsService.findAll({
+      option2: {
+        userId: user?.id,
+        // organizationId: user?.organizationInUtilizationId,
+        type: ContributorType.PROJECT,
+      },
       search,
       pagination,
     });
 
-    return reply({ res, results: Projects });
+    return reply({ res, results: projects });
   }
 
   /** Get Projects */

@@ -20,7 +20,7 @@ export type GetContributorsSelections = {
     type: Contributor['type'];
     organizationId: Contributor['organizationId'];
   };
-  option2?: { userId: Contributor['userId'] };
+  option2?: { type: Contributor['type']; userId: Contributor['userId'] };
   option3?: {
     type: Contributor['type'];
     projectId: Contributor['projectId'];
