@@ -1,13 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { configurations } from '../../../app/configurations';
-import {
-  UnauthorizedException,
-  NotFoundException,
-  Injectable,
-} from '@nestjs/common';
-import { useCatch } from '../../../app/utils/use-catch';
-import { User } from '../../../models/User';
+import { UnauthorizedException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users.service';
 import { ContributorsUtil } from '../../contributors/contributors.util';
 

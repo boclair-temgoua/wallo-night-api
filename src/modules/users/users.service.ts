@@ -275,14 +275,14 @@ export class UsersService {
 
     if (option1) {
       const { userId } = option1;
-      findQuery = findQuery.andWhere('user.id = :id', {
+      findQuery = findQuery.where('user.id = :id', {
         id: userId,
       });
     }
 
     if (option2) {
       const { email } = option2;
-      findQuery = findQuery.andWhere('user.email = :email', { email });
+      findQuery = findQuery.where('user.email = :email', { email });
     }
 
     const [errorFind, findItem] = await useCatch(findQuery.getOne());

@@ -4,10 +4,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contributor } from '../../models/Contributor';
-import { getRandomElement } from '../../app/utils/array/get-random-element';
 import { Brackets, Repository } from 'typeorm';
 import {
   CreateContributorOptions,
@@ -18,7 +16,6 @@ import {
   UpdateContributorSelections,
 } from './contributors.type';
 import { useCatch } from '../../app/utils/use-catch';
-import { colorsArrays } from '../../app/utils/commons';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 
 @Injectable()

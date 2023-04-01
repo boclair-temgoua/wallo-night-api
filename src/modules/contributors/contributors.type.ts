@@ -1,5 +1,5 @@
 import { Contributor } from '../../models/Contributor';
-import { PaginationType, SortType } from '../../app/utils/pagination';
+import { PaginationType } from '../../app/utils/pagination';
 
 export enum ContributorRole {
   ADMIN = 'ADMIN',

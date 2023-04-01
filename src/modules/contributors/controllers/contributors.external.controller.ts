@@ -1,21 +1,15 @@
 import {
   Controller,
-  Param,
   ParseUUIDPipe,
-  UseGuards,
   Res,
   Query,
   Req,
   Post,
-  Delete,
-  Put,
-  Body,
   Get,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { reply } from '../../../app/utils/reply';
-import { JwtAuthGuard } from '../../users/middleware';
 import {
   addPagination,
   PaginationType,
@@ -25,7 +19,6 @@ import { SearchQueryDto } from '../../../app/utils/search-query';
 import { ContributorsService } from '../contributors.service';
 import { UsersService } from '../../users/users.service';
 import { ContributorRole } from '../contributors.type';
-import { UpdateRoleContributorDto } from '../contributors.dto';
 import { UnauthorizedException } from '@nestjs/common';
 
 @Controller('re/contributors')

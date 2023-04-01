@@ -6,6 +6,7 @@ import {
   MinLength,
   IsInt,
   IsOptional,
+  IsUUID,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
 export class UpdateInfoUserDto {
@@ -167,17 +168,7 @@ export class ConfirmOneRegisterCreateUserDto {
   @Match('password')
   passwordConfirm: string;
 }
-export class CreateOneUserDto {
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  lastName: string;
-
+export class UpdateOneEmailUserDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
@@ -185,17 +176,36 @@ export class CreateOneUserDto {
   email: string;
 
   @IsNotEmpty()
-  @IsInt()
-  roleId: number;
+  @MinLength(8)
+  @IsString()
+  password: string;
+}
+
+export class UpdateProfileDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50)
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50)
+  lastName: string;
 
   @IsOptional()
   @IsString()
-  ipLocation: string;
+  @IsUUID()
+  countryId: string;
 
   @IsOptional()
   @IsString()
-  userAgent: string;
+  color: string;
 
   @IsOptional()
-  user: any;
+  @IsString()
+  url: string;
+
+  @IsOptional()
+  @IsString()
+  image: string;
 }

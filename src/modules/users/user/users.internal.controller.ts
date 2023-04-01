@@ -6,6 +6,11 @@ import {
   Get,
   ParseUUIDPipe,
   UseGuards,
+  HttpException,
+  HttpStatus,
+  Body,
+  Req,
+  Put,
 } from '@nestjs/common';
 import { reply } from '../../../app/utils/reply';
 
@@ -18,6 +23,7 @@ import {
   PaginationType,
 } from '../../../app/utils/pagination';
 import { SearchQueryDto } from '../../../app/utils/search-query';
+import { UpdateOneEmailUserDto, UpdateProfileDto } from '../users.dto';
 
 @Controller('users')
 export class UsersInternalController {
@@ -67,5 +73,50 @@ export class UsersInternalController {
     });
 
     return reply({ res, results: profile });
+  }
+
+  @Put(`/update/profile`)
+  @UseGuards(JwtAuthGuard)
+  async updateProfile(@Res() res, @Req() req, @Body() body: UpdateProfileDto) {
+    const { user } = req;
+
+    const { firstName, lastName, countryId, image, color, url } = body;
+
+    await this.profilesService.updateOne(
+      { option1: { profileId: user?.profileId } },
+      { firstName, lastName, countryId, image, color, url },
+    );
+
+    return reply({ res, results: 'profile updated successfully' });
+  }
+
+  @Put(`/change-email`)
+  @UseGuards(JwtAuthGuard)
+  async updateUserEmail(
+    @Res() res,
+    @Req() req,
+    @Body() body: UpdateOneEmailUserDto,
+  ) {
+    const { user } = req;
+    const { email, password } = body;
+    if (!user?.checkIfPasswordMatch(password))
+      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
+
+    const findOneUser = await this.usersService.findOneBy({
+      option2: { email },
+    });
+
+    if (findOneUser && findOneUser?.email !== user?.email)
+      throw new HttpException(
+        `Email ${email} already exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.usersService.updateOne(
+      { option1: { userId: user?.id } },
+      { email: email },
+    );
+
+    return reply({ res, results: 'user updated successfully' });
   }
 }
