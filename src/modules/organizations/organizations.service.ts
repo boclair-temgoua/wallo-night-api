@@ -34,6 +34,7 @@ export class OrganizationsService {
       .select('organization.name', 'name')
       .addSelect('organization.id', 'id')
       .addSelect('organization.color', 'color')
+      .addSelect('organization.image', 'image')
       .addSelect('organization.userId', 'userId')
       .addSelect(
         /*sql*/ `(
@@ -145,7 +146,7 @@ export class OrganizationsService {
     options: UpdateOrganizationOptions,
   ): Promise<Organization> {
     const { option1 } = selections;
-    const { userId, name, requiresPayment, deletedAt } = options;
+    const { userId, name, requiresPayment, image, deletedAt } = options;
 
     let findQuery = this.driver.createQueryBuilder('organization');
 
@@ -161,6 +162,7 @@ export class OrganizationsService {
 
     findItem.userId = userId;
     findItem.name = name;
+    findItem.image = image;
     findItem.requiresPayment = requiresPayment;
     findItem.deletedAt = deletedAt;
 

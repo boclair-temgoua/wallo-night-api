@@ -29,6 +29,9 @@ export class Organization extends BaseDeleteEntity {
   @Column({ nullable: true })
   color?: string;
 
+  @Column({ nullable: true })
+  image?: string;
+
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
 

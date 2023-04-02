@@ -83,6 +83,7 @@ export class SubProjectsService {
       .select('subProject.name', 'name')
       .addSelect('subProject.id', 'id')
       .addSelect('subProject.color', 'color')
+      .addSelect('subProject.image', 'image')
       .addSelect('subProject.projectId', 'projectId')
       .addSelect('subProject.organizationId', 'organizationId')
       .addSelect(
@@ -120,11 +121,18 @@ export class SubProjectsService {
 
   /** Create one SubProject to the database. */
   async createOne(options: CreateSubProjectOptions): Promise<SubProject> {
-    const { name, userCreatedId, description, organizationId, projectId } =
-      options;
+    const {
+      name,
+      image,
+      userCreatedId,
+      description,
+      organizationId,
+      projectId,
+    } = options;
 
     const subProject = new SubProject();
     subProject.name = name;
+    subProject.image = image;
     subProject.projectId = projectId;
     subProject.userCreatedId = userCreatedId;
     subProject.organizationId = organizationId;
@@ -145,9 +153,9 @@ export class SubProjectsService {
     options: UpdateSubProjectOptions,
   ): Promise<SubProject> {
     const { option1 } = selections;
-    const { name, description, deletedAt } = options;
+    const { name, description, image, deletedAt } = options;
 
-    let findQuery = this.driver.createQueryBuilder('SubProject');
+    let findQuery = this.driver.createQueryBuilder('subProject');
 
     if (option1) {
       const { subProjectId } = option1;
@@ -160,6 +168,7 @@ export class SubProjectsService {
     if (errorFind) throw new NotFoundException(errorFind);
 
     findItem.name = name;
+    findItem.image = image;
     findItem.description = description;
     findItem.deletedAt = deletedAt;
 

@@ -78,6 +78,7 @@ export class ProjectsService {
       .createQueryBuilder('project')
       .select('project.name', 'name')
       .addSelect('project.id', 'id')
+      .addSelect('project.image', 'image')
       .addSelect('project.color', 'color')
       .addSelect('project.organizationId', 'organizationId')
       .addSelect(
@@ -115,10 +116,11 @@ export class ProjectsService {
 
   /** Create one Project to the database. */
   async createOne(options: CreateProjectOptions): Promise<Project> {
-    const { name, userCreatedId, description, organizationId } = options;
+    const { name, userCreatedId, description, image, organizationId } = options;
 
     const project = new Project();
     project.name = name;
+    project.image = image;
     project.userCreatedId = userCreatedId;
     project.organizationId = organizationId;
     project.description = description;
@@ -138,7 +140,7 @@ export class ProjectsService {
     options: UpdateProjectOptions,
   ): Promise<Project> {
     const { option1 } = selections;
-    const { name, description, deletedAt } = options;
+    const { name, description, image, deletedAt } = options;
 
     let findQuery = this.driver.createQueryBuilder('project');
 
@@ -153,6 +155,7 @@ export class ProjectsService {
     if (errorFind) throw new NotFoundException(errorFind);
 
     findItem.name = name;
+    findItem.image = image;
     findItem.description = description;
     findItem.deletedAt = deletedAt;
 

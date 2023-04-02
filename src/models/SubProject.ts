@@ -28,6 +28,9 @@ export class SubProject extends BaseDeleteEntity {
   @Column({ nullable: true })
   color?: string;
 
+  @Column({ nullable: true })
+  image?: string;
+
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;
 
