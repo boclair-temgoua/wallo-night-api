@@ -12,6 +12,7 @@ import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Contributor } from './Contributor';
 import { Organization } from './Organization';
 import { Project } from './Project';
+import { Document } from './Document';
 
 @Entity('sub_project')
 export class SubProject extends BaseDeleteEntity {
@@ -46,8 +47,13 @@ export class SubProject extends BaseDeleteEntity {
   @JoinColumn()
   organization?: User;
 
-  @OneToMany(() => Contributor, (contributor) => contributor.project, {
+  @OneToMany(() => Contributor, (contributor) => contributor.subProject, {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
+
+  @OneToMany(() => Document, (document) => document.subProject, {
+    onDelete: 'CASCADE',
+  })
+  documents?: Document[];
 }

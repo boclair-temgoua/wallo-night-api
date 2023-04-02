@@ -15,6 +15,7 @@ import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.
 import { ContactsModule } from './modules/contacts/contacts.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { SubProjectsModule } from './modules/sub-projects/sub-projects.module';
+import { DocumentsModule } from './modules/documents/documents.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SubProjectsModule } from './modules/sub-projects/sub-projects.module';
     ProfilesModule,
     UsersModule,
     ProjectsModule,
+    DocumentsModule,
     SubProjectsModule,
     UserAddressModule,
     ContributorsModule,

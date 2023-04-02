@@ -12,6 +12,7 @@ import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Contributor } from './Contributor';
 import { UserAddress } from './UserAddress';
 import { Project } from './Project';
+import { Document } from './Document';
 import { SubProject } from './SubProject';
 
 @Entity('organization')
@@ -57,4 +58,9 @@ export class Organization extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   users?: User[];
+
+  @OneToMany(() => Document, (document) => document.organization, {
+    onDelete: 'CASCADE',
+  })
+  documents?: Document[];
 }

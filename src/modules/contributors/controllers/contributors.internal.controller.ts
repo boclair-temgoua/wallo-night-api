@@ -384,12 +384,10 @@ export class ContributorsInternalController {
     const { email, role, firstName, lastName } = body;
 
     const { user } = req;
-    const findOneUserAdmin = await this.usersService.findOneInfoBy({
-      option1: { userId: user?.id },
+
+    const findOneUserAdmin = await this.usersService.canPermission({
+      userId: user?.id,
     });
-    /** This condition check if user is ADMIN */
-    if (!['ADMIN'].includes(findOneUserAdmin?.role?.name))
-      throw new UnauthorizedException('Not authorized! Change permission');
 
     const findOneUser = await this.usersService.findOneBy({
       option2: { email },
