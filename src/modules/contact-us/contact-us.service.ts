@@ -5,35 +5,35 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Contact } from '../../models/Contact';
+import { ContactUs } from '../../models/ContactUs';
 import { Repository, Brackets } from 'typeorm';
 import {
-  CreateContactOptions,
-  GetContactsSelections,
-  GetOneContactSelections,
-  UpdateContactOptions,
-  UpdateContactSelections,
-} from './contacts.type';
+  CreateContactUsOptions,
+  GetContactUsSelections,
+  GetOneContactUsSelections,
+  UpdateContactUsOptions,
+  UpdateContactUsSelections,
+} from './contact-us.type';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 
 @Injectable()
-export class ContactsService {
+export class ContactUsService {
   constructor(
-    @InjectRepository(Contact)
-    private driver: Repository<Contact>,
+    @InjectRepository(ContactUs)
+    private driver: Repository<ContactUs>,
   ) {}
 
-  async findAll(selections: GetContactsSelections): Promise<any> {
+  async findAll(selections: GetContactUsSelections): Promise<any> {
     const { search, pagination, option1 } = selections;
 
     let query = this.driver
-      .createQueryBuilder('contact')
-      .where('contact.deletedAt IS NULL');
+      .createQueryBuilder('contactUs')
+      .where('contactUs.deletedAt IS NULL');
 
     if (option1) {
       const { organizationId } = option1;
-      query = query.andWhere('contact.organizationId = :organizationId', {
+      query = query.andWhere('contactUs.organizationId = :organizationId', {
         organizationId,
       });
     }
@@ -41,16 +41,16 @@ export class ContactsService {
     if (search) {
       query = query.andWhere(
         new Brackets((qb) => {
-          qb.where('contact.email ::text ILIKE :search', {
+          qb.where('contactUs.email ::text ILIKE :search', {
             search: `%${search}%`,
           })
-            .orWhere('contact.fullName ::text ILIKE :search', {
+            .orWhere('contactUs.fullName ::text ILIKE :search', {
               search: `%${search}%`,
             })
-            .orWhere('contact.phone ::text ILIKE :search', {
+            .orWhere('contactUs.phone ::text ILIKE :search', {
               search: `%${search}%`,
             })
-            .orWhere('contact.subject ::text ILIKE :search', {
+            .orWhere('contactUs.subject ::text ILIKE :search', {
               search: `%${search}%`,
             });
         }),
@@ -60,9 +60,9 @@ export class ContactsService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const [error, contacts] = await useCatch(
+    const [error, contactUs] = await useCatch(
       query
-        .orderBy('contact.createdAt', pagination?.sort)
+        .orderBy('contactUs.createdAt', pagination?.sort)
         .take(pagination.take)
         .skip(pagination.skip)
         .getMany(),
@@ -72,30 +72,30 @@ export class ContactsService {
     return withPagination({
       pagination,
       rowCount,
-      value: contacts,
+      value: contactUs,
     });
   }
 
-  async findOneBy(selections: GetOneContactSelections): Promise<Contact> {
+  async findOneBy(selections: GetOneContactUsSelections): Promise<ContactUs> {
     const { option1 } = selections;
     let query = this.driver
-      .createQueryBuilder('contact')
-      .where('contact.deletedAt IS NULL');
+      .createQueryBuilder('contactUs')
+      .where('contactUs.deletedAt IS NULL');
 
     if (option1) {
-      const { contactId } = option1;
-      query = query.andWhere('contact.id = :id', { id: contactId });
+      const { contactUsId } = option1;
+      query = query.andWhere('contactUs.id = :id', { id: contactUsId });
     }
 
     const [error, result] = await useCatch(query.getOne());
     if (error)
-      throw new HttpException('contact not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('contactUs not found', HttpStatus.NOT_FOUND);
 
     return result;
   }
 
-  /** Create one Contact to the database. */
-  async createOne(options: CreateContactOptions): Promise<Contact> {
+  /** Create one ContactUs to the database. */
+  async createOne(options: CreateContactUsOptions): Promise<ContactUs> {
     const {
       ipLocation,
       fullName,
@@ -108,18 +108,18 @@ export class ContactsService {
       organizationId,
     } = options;
 
-    const contact = new Contact();
-    contact.ipLocation = ipLocation;
-    contact.fullName = fullName;
-    contact.phone = phone;
-    contact.subject = subject;
-    contact.countryId = countryId;
-    contact.email = email;
-    contact.description = description;
-    contact.userCreatedId = userCreatedId;
-    contact.organizationId = organizationId;
+    const contactUs = new ContactUs();
+    contactUs.ipLocation = ipLocation;
+    contactUs.fullName = fullName;
+    contactUs.phone = phone;
+    contactUs.subject = subject;
+    contactUs.countryId = countryId;
+    contactUs.email = email;
+    contactUs.description = description;
+    contactUs.userCreatedId = userCreatedId;
+    contactUs.organizationId = organizationId;
 
-    const query = this.driver.save(contact);
+    const query = this.driver.save(contactUs);
 
     const [error, result] = await useCatch(query);
     if (error) throw new NotFoundException(error);
@@ -127,19 +127,19 @@ export class ContactsService {
     return result;
   }
 
-  /** Update one Contact to the database. */
+  /** Update one ContactUs to the database. */
   async updateOne(
-    selections: UpdateContactSelections,
-    options: UpdateContactOptions,
-  ): Promise<Contact> {
+    selections: UpdateContactUsSelections,
+    options: UpdateContactUsOptions,
+  ): Promise<ContactUs> {
     const { option1 } = selections;
     const { isRed, deletedAt } = options;
 
-    let findQuery = this.driver.createQueryBuilder('contact');
+    let findQuery = this.driver.createQueryBuilder('contactUs');
 
     if (option1) {
-      findQuery = findQuery.where('contact.id = :id', {
-        id: option1.contactId,
+      findQuery = findQuery.where('contactUs.id = :id', {
+        id: option1.contactUsId,
       });
     }
 

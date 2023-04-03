@@ -12,7 +12,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 
-export class CreateOrUpdateContactDto {
+export class CreateOrUpdateContactUsDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
@@ -25,22 +25,22 @@ export class CreateOrUpdateContactDto {
   subject: string;
 
   @IsNotEmpty()
-  @IsInt()
-  countryId: number;
-
-  @IsNotEmpty()
   @IsString()
   @IsEmail()
   @MaxLength(100)
   email: string;
 
   @IsNotEmpty()
+  @IsInt()
+  countryId: number;
+
+  @IsNotEmpty()
   @IsString()
   phone: string;
 
   @IsOptional()
-  @IsBoolean()
-  isRed: boolean;
+  @IsString()
+  image: string;
 
   @IsNotEmpty()
   @IsString()

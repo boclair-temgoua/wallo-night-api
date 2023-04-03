@@ -12,7 +12,7 @@ import { ContributorsModule } from './modules/contributors/contributors.module';
 import { UserAddressModule } from './modules/user-address/user-address.module';
 import { AppSeedDataSource } from './app/databases/config/orm-config-seed';
 import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.module';
-import { ContactsModule } from './modules/contacts/contacts.module';
+import { ContactUsModule } from './modules/contact-us/contact-us.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { SubProjectsModule } from './modules/sub-projects/sub-projects.module';
 import { DocumentsModule } from './modules/documents/documents.module';
@@ -34,7 +34,7 @@ import { DocumentsModule } from './modules/documents/documents.module';
     ContributorsModule,
     ApplicationsModule,
     ResetPasswordsModule,
-    ContactsModule,
+    ContactUsModule,
   ],
 })
 export class AppModule {}

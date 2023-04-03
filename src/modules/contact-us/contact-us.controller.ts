@@ -14,9 +14,9 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { ContactsService } from './contacts.service';
+import { ContactUsService } from './contact-us.service';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { CreateOrUpdateContactDto } from './contacts.dto';
+import { CreateOrUpdateContactUsDto } from './contact-us.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
@@ -24,13 +24,13 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 
-@Controller('contacts')
-export class ContactsController {
-  constructor(private readonly contactsService: ContactsService) {}
+@Controller('contact-us')
+export class ContactUsController {
+  constructor(private readonly contactUsService: ContactUsService) {}
 
-  /** Get all contacts */
+  /** Get all ContactUs */
   @Get(`/`)
-  async findAllContacts(
+  async findAllContactUs(
     @Res() res,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
@@ -40,14 +40,14 @@ export class ContactsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const contacts = await this.contactsService.findAll({ search, pagination });
+    const contactUs = await this.contactUsService.findAll({ search, pagination });
 
-    return reply({ res, results: contacts });
+    return reply({ res, results: contactUs });
   }
 
   @Get(`/organizations`)
   @UseGuards(JwtAuthGuard)
-  async findAllContactsByOrganizationId(
+  async findAllContactUssByOrganizationId(
     @Res() res,
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
@@ -59,26 +59,26 @@ export class ContactsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const contacts = await this.contactsService.findAll({
+    const contactUs = await this.contactUsService.findAll({
       search,
       pagination,
       option1: { organizationId: user?.organizationInUtilizationId },
     });
 
-    return reply({ res, results: contacts });
+    return reply({ res, results: contactUs });
   }
 
-  /** Post one contact */
+  /** Post one ContactUs */
   @Post(`/`)
-  async createOneContact(
+  async createOneContactUs(
     @Res() res,
     @Req() req,
-    @Body() createOrUpdateContactDto: CreateOrUpdateContactDto,
+    @Body() createOrUpdateContactUsDto: CreateOrUpdateContactUsDto,
   ) {
     const { subject, fullName, phone, email, description } =
-      createOrUpdateContactDto;
+      createOrUpdateContactUsDto;
 
-    const Contact = await this.contactsService.createOne({
+    const contactUs = await this.contactUsService.createOne({
       subject,
       fullName,
       phone,
@@ -86,35 +86,35 @@ export class ContactsController {
       description,
     });
 
-    return reply({ res, results: Contact });
+    return reply({ res, results: contactUs });
   }
 
-  /** Get one contact */
-  @Get(`/show/:contactId`)
+  /** Get one ContactUs */
+  @Get(`/show/:contactUsId`)
   @UseGuards(JwtAuthGuard)
   async getOneByIdUser(
     @Res() res,
-    @Param('contactId', ParseUUIDPipe) contactId: string,
+    @Param('contactUsId', ParseUUIDPipe) contactUsId: string,
   ) {
-    const user = await this.contactsService.findOneBy({
-      option1: { contactId },
+    const user = await this.contactUsService.findOneBy({
+      option1: { contactUsId },
     });
 
     return reply({ res, results: user });
   }
 
-  /** Delete one contact */
-  @Delete(`/delete/:contactId`)
+  /** Delete one ContactUs */
+  @Delete(`/delete/:contactUsId`)
   @UseGuards(JwtAuthGuard)
-  async deleteOneContact(
+  async deleteOneContactUs(
     @Res() res,
-    @Param('contactId', ParseUUIDPipe) contactId: string,
+    @Param('contactUsId', ParseUUIDPipe) contactUsId: string,
   ) {
-    const contact = await this.contactsService.updateOne(
-      { option1: { contactId } },
+    const contactUs = await this.contactUsService.updateOne(
+      { option1: { contactUsId } },
       { deletedAt: new Date() },
     );
 
-    return reply({ res, results: contact });
+    return reply({ res, results: contactUs });
   }
 }
