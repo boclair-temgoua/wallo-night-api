@@ -41,7 +41,7 @@ export class Project extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  organization?: User;
+  organization?: Organization;
 
   @OneToMany(() => Contributor, (contributor) => contributor.project, {
     onDelete: 'CASCADE',

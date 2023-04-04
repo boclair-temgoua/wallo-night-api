@@ -127,10 +127,14 @@ export class ProjectsController {
   ) {
     const { user } = req;
 
+    const project = await this.projectsService.findOneBy({
+      option1: { projectId },
+    });
+
     const getOneContributor = await this.contributorsService.findOneBy({
       option4: {
         userId: user?.id,
-        projectId,
+        projectId: project?.id,
         organizationId: user?.organizationInUtilizationId,
         type: ContributorType.PROJECT,
       },
@@ -141,10 +145,9 @@ export class ProjectsController {
         HttpStatus.NOT_FOUND,
       );
 
-    const project = await this.projectsService.findOneBy({
-      option1: { projectId },
+    return reply({
+      res,
+      results: { ...project, role: getOneContributor?.role },
     });
-
-    return reply({ res, results: project });
   }
 }

@@ -62,10 +62,15 @@ export class OrganizationsController {
     @Param('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
     const { user } = req;
+
+    const organization = await this.organizationsService.findOneBy({
+      option1: { organizationId },
+    });
+
     const getOneContributor = await this.contributorsService.findOneBy({
       option1: {
         userId: user?.id,
-        organizationId: organizationId,
+        organizationId: organization?.id,
         type: ContributorType.ORGANIZATION,
       },
     });
@@ -75,10 +80,9 @@ export class OrganizationsController {
         HttpStatus.NOT_FOUND,
       );
 
-    const organization = await this.organizationsService.findOneBy({
-      option1: { organizationId },
+    return reply({
+      res,
+      results: { ...organization, role: getOneContributor?.role },
     });
-
-    return reply({ res, results: organization });
   }
 }

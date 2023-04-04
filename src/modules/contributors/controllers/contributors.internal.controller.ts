@@ -60,6 +60,7 @@ export class ContributorsInternalController {
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
+    @Query('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
     const { user } = req;
     /** get contributor filter by organization */
@@ -72,8 +73,8 @@ export class ContributorsInternalController {
       search,
       pagination,
       option1: {
+        organizationId,
         type: ContributorType.ORGANIZATION,
-        organizationId: user?.organizationInUtilizationId,
       },
     });
 
@@ -455,12 +456,12 @@ export class ContributorsInternalController {
     return reply({ res, results: 'Contributor save successfully' });
   }
 
-  @Get(`/show`)
+  @Get(`/show/:contributorId`)
   @UseGuards(JwtAuthGuard)
   async getOneByIDcontributor(
     @Res() res,
     @Req() req,
-    @Query('contributorId', ParseUUIDPipe) contributorId: string,
+    @Param('contributorId', ParseUUIDPipe) contributorId: string,
   ) {
     const { user } = req;
 

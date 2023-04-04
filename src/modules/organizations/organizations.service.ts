@@ -48,6 +48,26 @@ export class OrganizationsService {
       )
       .addSelect(
         /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT prj) AS INT)
+      FROM "project" "prj"
+      WHERE ("prj"."organizationId" = "organization"."id"
+      AND "prj"."deletedAt" IS NULL)
+      GROUP BY "prj"."organizationId", "organization"."id"
+      ) AS "projectTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT doc) AS INT)
+      FROM "document" "doc"
+      WHERE ("doc"."organizationId" = "organization"."id"
+      AND "doc"."deletedAt" IS NULL)
+      GROUP BY "doc"."organizationId", "organization"."id"
+      ) AS "documentTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
            SELECT jsonb_build_object(
            'company', "uad"."company",
            'city', "uad"."city",

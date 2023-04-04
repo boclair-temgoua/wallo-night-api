@@ -3,16 +3,15 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
-  Generated,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { DocumentType } from '../modules/documents/documents.type';
-import { Profile } from './Profile';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Organization } from './Organization';
 import { Project } from './Project';
 import { SubProject } from './SubProject';
+import { Comment } from './Comment';
 
 @Entity('document')
 export class Document extends BaseDeleteEntity {
@@ -58,4 +57,9 @@ export class Document extends BaseDeleteEntity {
   })
   @JoinColumn()
   subProject?: SubProject;
+
+  @OneToMany(() => Comment, (comment) => comment.document, {
+    onDelete: 'CASCADE',
+  })
+  comments?: Comment[];
 }
