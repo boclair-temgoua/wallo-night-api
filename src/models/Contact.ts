@@ -1,17 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column, Generated, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Generated,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Organization } from './Organization';
 import { Project } from './Project';
 import { SubProject } from './SubProject';
+import { Category } from './Category';
 
 @Entity('contact')
 export class Contact extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
-
-  @Column({ nullable: true })
-  subject?: string;
 
   @Column({ nullable: true })
   fistName?: string;
@@ -21,6 +26,9 @@ export class Contact extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   email?: string;
+
+  @Column({ nullable: true })
+  color?: string;
 
   @Column({ nullable: true })
   phone?: string;
@@ -63,4 +71,12 @@ export class Contact extends BaseDeleteEntity {
   })
   @JoinColumn()
   subProject?: SubProject;
+
+  @Column({ type: 'uuid', nullable: true })
+  categoryId?: string;
+  @ManyToOne(() => Category, (category) => category.contacts, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  category?: Category;
 }

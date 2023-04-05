@@ -33,7 +33,7 @@ export const awsS3ServiceAdapter = async (data: {
     },
   };
 
-  const responseAws = await awsClient.upload(params).promise();
+  const responseAws = file ? await awsClient.upload(params).promise() : '';
   const response = { ...responseAws };
   return response;
 };
