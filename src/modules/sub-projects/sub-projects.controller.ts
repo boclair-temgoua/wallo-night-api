@@ -17,7 +17,7 @@ import {
   PaginationType,
   RequestPaginationDto,
 } from '../../app/utils/pagination';
-import { SearchQueryDto } from '../../app/utils/search-query';
+import { FilterQueryType, SearchQueryDto } from '../../app/utils/search-query';
 import { reply } from '../../app/utils/reply';
 import { SubProjectsService } from './sub-projects.service';
 import { JwtAuthGuard } from '../users/middleware';
@@ -26,7 +26,6 @@ import { CreateOrUpdateSubProjectsDto } from './sub-projects.dto';
 import { ContributorsService } from '../contributors/contributors.service';
 import {
   ContributorRole,
-  ContributorType,
 } from '../contributors/contributors.type';
 import { ProjectsService } from '../projects/projects.service';
 
@@ -69,7 +68,7 @@ export class SubProjectsController {
         userId: user?.id,
         projectId: getOneProject?.id,
         organizationId: getOneProject?.organizationId,
-        type: ContributorType.SUBPROJECT,
+        type: FilterQueryType.SUBPROJECT,
       },
       search,
       pagination,
@@ -152,7 +151,7 @@ export class SubProjectsController {
       projectId: getOneProject?.id,
       role: ContributorRole.ADMIN,
       organizationId: user?.organizationInUtilizationId,
-      type: ContributorType.SUBPROJECT,
+      type: FilterQueryType.SUBPROJECT,
     });
 
     return reply({ res, results: subProject });
@@ -178,7 +177,7 @@ export class SubProjectsController {
         projectId: subProject?.projectId,
         subProjectId,
         organizationId: user?.organizationInUtilizationId,
-        type: ContributorType.SUBPROJECT,
+        type: FilterQueryType.SUBPROJECT,
       },
     });
     if (!getOneContributor)

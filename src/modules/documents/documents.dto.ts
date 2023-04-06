@@ -11,29 +11,6 @@ import {
   IsBoolean,
   IsEnum,
 } from 'class-validator';
-import { DocumentType } from './documents.type';
-
-export class FilterDocumentDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsEnum(DocumentType)
-  type: DocumentType;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  projectId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  subProjectId: string;
-}
 
 export class CreateDocumentDto {
   @IsOptional()

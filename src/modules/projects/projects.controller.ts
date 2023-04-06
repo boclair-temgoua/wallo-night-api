@@ -19,7 +19,7 @@ import {
   PaginationType,
   RequestPaginationDto,
 } from '../../app/utils/pagination';
-import { SearchQueryDto } from '../../app/utils/search-query';
+import { FilterQueryType, SearchQueryDto } from '../../app/utils/search-query';
 import { reply } from '../../app/utils/reply';
 import { ProjectsService } from './projects.service';
 import { JwtAuthGuard } from '../users/middleware';
@@ -28,7 +28,6 @@ import { CreateOrUpdateProjectsDto } from './projects.dto';
 import { ContributorsService } from '../contributors/contributors.service';
 import {
   ContributorRole,
-  ContributorType,
 } from '../contributors/contributors.type';
 
 @Controller('projects')
@@ -56,7 +55,7 @@ export class ProjectsController {
     const projects = await this.contributorsService.findAll({
       option1: {
         userId: user?.id,
-        type: ContributorType.PROJECT,
+        type: FilterQueryType.PROJECT,
       },
       search,
       pagination,
@@ -113,7 +112,7 @@ export class ProjectsController {
       userCreatedId: user?.id,
       role: ContributorRole.ADMIN,
       organizationId: user?.organizationInUtilizationId,
-      type: ContributorType.PROJECT,
+      type: FilterQueryType.PROJECT,
     });
 
     return reply({ res, results: project });
@@ -167,7 +166,7 @@ export class ProjectsController {
         userId: user?.id,
         projectId: findOneProject?.id,
         organizationId: findOneProject?.organizationId,
-        type: ContributorType.PROJECT,
+        type: FilterQueryType.PROJECT,
       },
     });
     if (!getOneContributor)
@@ -204,7 +203,7 @@ export class ProjectsController {
     const findAllContributors =
       await this.contributorsService.findAllNotPaginate({
         option3: {
-          type: ContributorType.PROJECT,
+          type: FilterQueryType.PROJECT,
           projectId: findOneProject?.id,
           organizationId: findOneProject?.organizationId,
         },

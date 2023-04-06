@@ -5,7 +5,7 @@ import {
   IsUUID,
   IsEnum,
 } from 'class-validator';
-import { ContributorRole, ContributorType } from './contributors.type';
+import { ContributorRole } from './contributors.type';
 import { MaxLength, IsEmail } from 'class-validator';
 
 export class CreateOneContributorProjectDto {

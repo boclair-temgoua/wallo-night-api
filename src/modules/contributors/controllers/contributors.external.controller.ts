@@ -18,8 +18,9 @@ import {
 import { SearchQueryDto } from '../../../app/utils/search-query';
 import { ContributorsService } from '../contributors.service';
 import { UsersService } from '../../users/users.service';
-import { ContributorRole, ContributorType } from '../contributors.type';
+import { ContributorRole } from '../contributors.type';
 import { UnauthorizedException } from '@nestjs/common';
+import { FilterQueryType } from '../../../app/utils/search-query/search-query.dto';
 
 @Controller('re/contributors')
 export class ContributorsExternalController {
@@ -45,7 +46,7 @@ export class ContributorsExternalController {
     const contributors = await this.contributorsService.findAll({
       option1: {
         userId: user?.application?.userId,
-        type: ContributorType.ORGANIZATION,
+        type: FilterQueryType.ORGANIZATION,
       },
       search,
       pagination,
@@ -72,7 +73,7 @@ export class ContributorsExternalController {
       option1: {
         userId,
         organizationId: user?.application?.organizationId,
-        type: ContributorType.ORGANIZATION,
+        type: FilterQueryType.ORGANIZATION,
       },
     });
     if (findOneContributor)

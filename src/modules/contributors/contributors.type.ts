@@ -8,12 +8,6 @@ export enum ContributorRole {
   GHOST = 'GHOST',
 }
 
-export enum ContributorType {
-  ORGANIZATION = 'ORGANIZATION',
-  PROJECT = 'PROJECT',
-  SUBPROJECT = 'SUBPROJECT',
-}
-
 export type GetContributorsSelections = {
   search?: string;
   pagination?: PaginationType;

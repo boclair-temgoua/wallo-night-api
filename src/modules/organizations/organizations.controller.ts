@@ -15,13 +15,11 @@ import {
   PaginationType,
   RequestPaginationDto,
 } from '../../app/utils/pagination';
-import { SearchQueryDto } from '../../app/utils/search-query';
+import { FilterQueryType, SearchQueryDto } from '../../app/utils/search-query';
 import { reply } from '../../app/utils/reply';
 import { OrganizationsService } from './organizations.service';
 import { JwtAuthGuard } from '../users/middleware';
 import { ContributorsService } from '../contributors/contributors.service';
-import { Organization } from '../../models/Organization';
-import { ContributorType } from '../contributors/contributors.type';
 
 @Controller('organizations')
 export class OrganizationsController {
@@ -46,7 +44,7 @@ export class OrganizationsController {
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const organizations = await this.contributorsService.findAll({
-      option1: { userId: user?.id, type: ContributorType.ORGANIZATION },
+      option1: { userId: user?.id, type: FilterQueryType.ORGANIZATION },
       search,
       pagination,
     });
@@ -71,7 +69,7 @@ export class OrganizationsController {
       option1: {
         userId: user?.id,
         organizationId: organization?.id,
-        type: ContributorType.ORGANIZATION,
+        type: FilterQueryType.ORGANIZATION,
       },
     });
     if (!getOneContributor)

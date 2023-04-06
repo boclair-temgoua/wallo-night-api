@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { FilterQueryType } from '../../app/utils/search-query';
+import { FilterQueryType } from '../app/utils/search-query';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Organization } from './Organization';
 import { Project } from './Project';

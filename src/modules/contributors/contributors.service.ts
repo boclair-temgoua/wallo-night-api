@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Contributor } from '../../models/Contributor';
 import { Brackets, Repository } from 'typeorm';
 import {
-  ContributorType,
   CreateContributorOptions,
   DeleteContributorSelections,
   GetContributorsSelections,
@@ -19,6 +18,7 @@ import {
 } from './contributors.type';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { FilterQueryType } from '../../app/utils/search-query/search-query.dto';
 
 @Injectable()
 export class ContributorsService {
@@ -436,7 +436,7 @@ export class ContributorsService {
         userId: userId,
         projectId: projectId,
         organizationId: organizationId,
-        type: ContributorType.PROJECT,
+        type: FilterQueryType.PROJECT,
       },
     });
 

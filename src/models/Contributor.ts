@@ -12,10 +12,10 @@ import { Organization } from './Organization';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import {
   ContributorRole,
-  ContributorType,
 } from '../modules/contributors/contributors.type';
 import { Project } from './Project';
 import { SubProject } from './SubProject';
+import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 
 @Entity('contributor')
 export class Contributor extends BaseDeleteEntity {
@@ -30,10 +30,10 @@ export class Contributor extends BaseDeleteEntity {
 
   @Column({
     type: 'enum',
-    enum: ContributorType,
-    default: ContributorType.ORGANIZATION,
+    enum: FilterQueryType,
+    default: FilterQueryType.ORGANIZATION,
   })
-  type?: ContributorType;
+  type?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;

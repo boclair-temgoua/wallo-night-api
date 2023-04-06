@@ -12,7 +12,7 @@ import { Organization } from './Organization';
 import { Project } from './Project';
 import { SubProject } from './SubProject';
 import { Category } from './Category';
-import { FilterQueryType } from '../../app/utils/search-query';
+import { FilterQueryType } from '../app/utils/search-query';
 
 @Entity('contact')
 export class Contact extends BaseDeleteEntity {

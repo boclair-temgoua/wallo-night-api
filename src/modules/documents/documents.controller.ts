@@ -21,16 +21,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
 
 import { DocumentsService } from './documents.service';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { FilterQueryType, SearchQueryDto, FilterQueryTypeDto } from '../../app/utils/search-query/search-query.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import { CreateDocumentDto, FilterDocumentDto } from './documents.dto';
+import { CreateDocumentDto } from './documents.dto';
 import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
-import { DocumentType } from './documents.type';
 import { generateLongUUID, generateNumber } from '../../app/utils/commons';
 import { SubProjectsService } from '../sub-projects/sub-projects.service';
 import { mineTypeFile } from '../../app/utils/commons/key-as-string';
@@ -49,7 +48,7 @@ export class DocumentsController {
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Query() query: FilterDocumentDto,
+    @Query() query: FilterQueryTypeDto,
   ) {
     const { user } = req;
     const { type, organizationId, projectId, subProjectId } = query;
@@ -88,7 +87,7 @@ export class DocumentsController {
     const responseAws = await awsS3ServiceAdapter({
       name: bucketKey,
       mimeType: file?.mimetype,
-      folder: DocumentType.ORGANIZATION.toLowerCase(),
+      folder: FilterQueryType.ORGANIZATION.toLowerCase(),
       file: file?.buffer,
     });
 
@@ -97,7 +96,7 @@ export class DocumentsController {
       title: title,
       description: description,
       url: responseAws?.Location,
-      type: DocumentType.ORGANIZATION,
+      type: FilterQueryType.ORGANIZATION,
       organizationId: user?.organizationInUtilizationId,
     });
 
@@ -122,7 +121,7 @@ export class DocumentsController {
     const responseAws = await awsS3ServiceAdapter({
       name: bucketKey,
       mimeType: file?.mimetype,
-      folder: DocumentType.PROJECT.toLowerCase(),
+      folder: FilterQueryType.PROJECT.toLowerCase(),
       file: file?.buffer,
     });
 
@@ -131,7 +130,7 @@ export class DocumentsController {
       title: title,
       description: description,
       url: responseAws?.Location,
-      type: DocumentType.PROJECT,
+      type: FilterQueryType.PROJECT,
       projectId: projectId,
       typeFile: mineTypeFile[file?.mimetype],
       organizationId: user?.organizationInUtilizationId,
@@ -167,7 +166,7 @@ export class DocumentsController {
     const responseAws = await awsS3ServiceAdapter({
       name: bucketKey,
       mimeType: file?.mimetype,
-      folder: DocumentType.SUBPROJECT.toLowerCase(),
+      folder: FilterQueryType.SUBPROJECT.toLowerCase(),
       file: file?.buffer,
     });
 
@@ -176,7 +175,7 @@ export class DocumentsController {
       title: title,
       description: description,
       url: responseAws?.Location,
-      type: DocumentType.SUBPROJECT,
+      type: FilterQueryType.SUBPROJECT,
       projectId: getOneSubProject?.projectId,
       subProjectId: getOneSubProject?.id,
       organizationId: user?.organizationInUtilizationId,

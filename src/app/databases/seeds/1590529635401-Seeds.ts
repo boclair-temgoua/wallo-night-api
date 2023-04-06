@@ -18,9 +18,9 @@ import { User } from '../../../models/User';
 import { Contributor } from '../../../models/Contributor';
 import {
   ContributorRole,
-  ContributorType,
 } from '../../../modules/contributors/contributors.type';
 import { Project } from '../../../models/Project';
+import { FilterQueryType } from '../../utils/search-query/search-query.dto';
 
 export class Seeds1590529635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
@@ -200,7 +200,7 @@ export class Seeds1590529635401 implements MigrationInterface {
           userId: user?.id,
           userCreatedId: user?.id,
           role: ContributorRole.ADMIN,
-          type: ContributorType.PROJECT,
+          type: FilterQueryType.PROJECT,
           organizationId: organization?.id,
           projectId: project?.id,
         })

@@ -25,10 +25,10 @@ import {
   PaginationType,
   RequestPaginationDto,
 } from '../../../app/utils/pagination';
-import { SearchQueryDto } from '../../../app/utils/search-query';
+import { FilterQueryType, SearchQueryDto } from '../../../app/utils/search-query';
 import { ContributorsService } from '../contributors.service';
 import { UsersService } from '../../users/users.service';
-import { ContributorRole, ContributorType } from '../contributors.type';
+import { ContributorRole } from '../contributors.type';
 import {
   CreateOneContributorProjectDto,
   CreateOneContributorSubProjectDto,
@@ -74,7 +74,7 @@ export class ContributorsInternalController {
       pagination,
       option5: {
         organizationId,
-        type: ContributorType.ORGANIZATION,
+        type: FilterQueryType.ORGANIZATION,
       },
     });
 
@@ -122,7 +122,7 @@ export class ContributorsInternalController {
       pagination,
       option3: {
         projectId: getOneProject?.id,
-        type: ContributorType.PROJECT,
+        type: FilterQueryType.PROJECT,
         organizationId: getOneProject?.organizationId,
       },
     });
@@ -169,7 +169,7 @@ export class ContributorsInternalController {
       pagination,
       option4: {
         projectId: getOneProject?.id,
-        type: ContributorType.SUBPROJECT,
+        type: FilterQueryType.SUBPROJECT,
         subProjectId: getOneSubProject?.id,
         organizationId: getOneSubProject?.organizationId,
       },
@@ -202,7 +202,7 @@ export class ContributorsInternalController {
       await this.contributorsService.findOneBy({
         option1: {
           userId,
-          type: ContributorType.ORGANIZATION,
+          type: FilterQueryType.ORGANIZATION,
           organizationId: user?.organizationInUtilizationId,
         },
       });
@@ -268,7 +268,7 @@ export class ContributorsInternalController {
       userCreatedId: user?.id,
       role: ContributorRole.MODERATOR,
       organizationId: getOneProject?.organizationId,
-      type: ContributorType.PROJECT,
+      type: FilterQueryType.PROJECT,
     });
     /** Send notification to Contributor */
 
@@ -312,7 +312,7 @@ export class ContributorsInternalController {
           subProjectId: subProjectId,
           projectId: getOneSubProject?.projectId,
           organizationId: getOneSubProject?.organizationId,
-          type: ContributorType.SUBPROJECT,
+          type: FilterQueryType.SUBPROJECT,
         },
       });
     if (findOneContributorSubProject)
@@ -329,7 +329,7 @@ export class ContributorsInternalController {
       projectId: getOneSubProject?.projectId,
       role: ContributorRole.MODERATOR,
       organizationId: getOneSubProject?.organizationId,
-      type: ContributorType.SUBPROJECT,
+      type: FilterQueryType.SUBPROJECT,
     });
     /** Send notification to Contributor */
 
