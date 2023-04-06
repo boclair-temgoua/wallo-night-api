@@ -26,9 +26,7 @@ import { JwtAuthGuard } from '../users/middleware';
 import { Project } from '../../models/Project';
 import { CreateOrUpdateProjectsDto } from './projects.dto';
 import { ContributorsService } from '../contributors/contributors.service';
-import {
-  ContributorRole,
-} from '../contributors/contributors.type';
+import { ContributorRole } from '../contributors/contributors.type';
 
 @Controller('projects')
 export class ProjectsController {
@@ -53,12 +51,10 @@ export class ProjectsController {
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const projects = await this.contributorsService.findAll({
-      option1: {
-        userId: user?.id,
-        type: FilterQueryType.PROJECT,
-      },
+      userId: user?.id,
       search,
       pagination,
+      type: FilterQueryType.PROJECT,
     });
 
     return reply({ res, results: projects });
@@ -162,12 +158,10 @@ export class ProjectsController {
     });
 
     const getOneContributor = await this.contributorsService.findOneBy({
-      option4: {
-        userId: user?.id,
-        projectId: findOneProject?.id,
-        organizationId: findOneProject?.organizationId,
-        type: FilterQueryType.PROJECT,
-      },
+      userId: user?.id,
+      projectId: findOneProject?.id,
+      organizationId: findOneProject?.organizationId,
+      type: FilterQueryType.PROJECT,
     });
     if (!getOneContributor)
       throw new HttpException(
@@ -202,11 +196,9 @@ export class ProjectsController {
 
     const findAllContributors =
       await this.contributorsService.findAllNotPaginate({
-        option3: {
-          type: FilterQueryType.PROJECT,
-          projectId: findOneProject?.id,
-          organizationId: findOneProject?.organizationId,
-        },
+        type: FilterQueryType.PROJECT,
+        projectId: findOneProject?.id,
+        organizationId: findOneProject?.organizationId,
       });
 
     Promise.all([

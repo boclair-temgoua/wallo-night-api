@@ -24,9 +24,7 @@ import { JwtAuthGuard } from '../users/middleware';
 import { SubProject } from '../../models/SubProject';
 import { CreateOrUpdateSubProjectsDto } from './sub-projects.dto';
 import { ContributorsService } from '../contributors/contributors.service';
-import {
-  ContributorRole,
-} from '../contributors/contributors.type';
+import { ContributorRole } from '../contributors/contributors.type';
 import { ProjectsService } from '../projects/projects.service';
 
 @Controller('sub-projects')
@@ -64,14 +62,12 @@ export class SubProjectsController {
       );
 
     const subProjects = await this.contributorsService.findAll({
-      option2: {
-        userId: user?.id,
-        projectId: getOneProject?.id,
-        organizationId: getOneProject?.organizationId,
-        type: FilterQueryType.SUBPROJECT,
-      },
       search,
       pagination,
+      userId: user?.id,
+      projectId: getOneProject?.id,
+      organizationId: getOneProject?.organizationId,
+      type: FilterQueryType.SUBPROJECT,
     });
 
     return reply({ res, results: subProjects });
@@ -172,13 +168,11 @@ export class SubProjectsController {
     });
 
     const getOneContributor = await this.contributorsService.findOneBy({
-      option5: {
-        userId: user?.id,
-        projectId: subProject?.projectId,
-        subProjectId,
-        organizationId: user?.organizationInUtilizationId,
-        type: FilterQueryType.SUBPROJECT,
-      },
+      userId: user?.id,
+      projectId: subProject?.projectId,
+      subProjectId,
+      organizationId: user?.organizationInUtilizationId,
+      type: FilterQueryType.SUBPROJECT,
     });
     if (!getOneContributor)
       throw new HttpException(

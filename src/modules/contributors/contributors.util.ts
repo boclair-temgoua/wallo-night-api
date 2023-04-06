@@ -22,7 +22,9 @@ export class ContributorsUtil {
       });
 
       const contributor = await this.contributorsService.findOneBy({
-        option1: { organizationId, userId, type: FilterQueryType.ORGANIZATION },
+        organizationId,
+        userId,
+        type: FilterQueryType.ORGANIZATION,
       });
       return { organization, contributor };
     }

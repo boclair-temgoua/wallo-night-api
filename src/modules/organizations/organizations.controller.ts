@@ -44,9 +44,10 @@ export class OrganizationsController {
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const organizations = await this.contributorsService.findAll({
-      option1: { userId: user?.id, type: FilterQueryType.ORGANIZATION },
+      userId: user?.id,
       search,
       pagination,
+      type: FilterQueryType.ORGANIZATION,
     });
 
     return reply({ res, results: organizations });
@@ -66,11 +67,9 @@ export class OrganizationsController {
     });
 
     const getOneContributor = await this.contributorsService.findOneBy({
-      option1: {
-        userId: user?.id,
-        organizationId: organization?.id,
-        type: FilterQueryType.ORGANIZATION,
-      },
+      userId: user?.id,
+      organizationId: organization?.id,
+      type: FilterQueryType.ORGANIZATION,
     });
     if (!getOneContributor)
       throw new HttpException(

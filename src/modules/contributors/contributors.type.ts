@@ -11,57 +11,20 @@ export enum ContributorRole {
 export type GetContributorsSelections = {
   search?: string;
   pagination?: PaginationType;
-  option1?: {
-    type: Contributor['type'];
-    userId: Contributor['userId'];
-  };
-  option2?: {
-    type: Contributor['type'];
-    userId: Contributor['userId'];
-    projectId: Contributor['projectId'];
-    organizationId: Contributor['organizationId'];
-  };
-  option3?: {
-    type: Contributor['type'];
-    projectId: Contributor['projectId'];
-    organizationId: Contributor['organizationId'];
-  };
-  option4?: {
-    type: Contributor['type'];
-    projectId: Contributor['projectId'];
-    subProjectId: Contributor['subProjectId'];
-    organizationId: Contributor['organizationId'];
-  };
-  option5?: {
-    type: Contributor['type'];
-    organizationId: Contributor['organizationId'];
-  };
+  type: Contributor['type'];
+  userId?: Contributor['userId'];
+  organizationId?: Contributor['organizationId'];
+  projectId?: Contributor['projectId'];
+  subProjectId?: Contributor['subProjectId'];
 };
 
 export type GetOneContributorSelections = {
-  option1?: {
-    type: Contributor['type'];
-    userId: Contributor['userId'];
-    organizationId: Contributor['organizationId'];
-  };
-  option2?: { contributorId: Contributor['id'] };
-  option3?: {
-    contributorId: Contributor['id'];
-    organizationId: Contributor['organizationId'];
-  };
-  option4?: {
-    type: Contributor['type'];
-    userId: Contributor['userId'];
-    projectId: Contributor['projectId'];
-    organizationId: Contributor['organizationId'];
-  };
-  option5?: {
-    type: Contributor['type'];
-    userId: Contributor['userId'];
-    projectId: Contributor['projectId'];
-    subProjectId: Contributor['subProjectId'];
-    organizationId: Contributor['organizationId'];
-  };
+  type?: Contributor['type'];
+  userId?: Contributor['userId'];
+  organizationId?: Contributor['organizationId'];
+  projectId?: Contributor['projectId'];
+  subProjectId?: Contributor['subProjectId'];
+  contributorId?: Contributor['id'];
 };
 
 export type UpdateContributorSelections = {

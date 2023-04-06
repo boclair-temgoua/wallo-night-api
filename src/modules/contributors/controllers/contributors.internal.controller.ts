@@ -25,7 +25,11 @@ import {
   PaginationType,
   RequestPaginationDto,
 } from '../../../app/utils/pagination';
-import { FilterQueryType, SearchQueryDto } from '../../../app/utils/search-query';
+import {
+  FilterQueryType,
+  FilterQueryTypeDto,
+  SearchQueryDto,
+} from '../../../app/utils/search-query';
 import { ContributorsService } from '../contributors.service';
 import { UsersService } from '../../users/users.service';
 import { ContributorRole } from '../contributors.type';
@@ -60,22 +64,22 @@ export class ContributorsInternalController {
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
+    @Query() filterQueryType: FilterQueryTypeDto,
     @Query('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
     const { user } = req;
     /** get contributor filter by organization */
     const { search } = searchQuery;
+    const { type } = filterQueryType;
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const contributors = await this.contributorsService.findAll({
+      type,
       search,
       pagination,
-      option5: {
-        organizationId,
-        type: FilterQueryType.ORGANIZATION,
-      },
+      organizationId,
     });
 
     return reply({ res, results: contributors });
@@ -120,11 +124,8 @@ export class ContributorsInternalController {
     const contributors = await this.contributorsService.findAll({
       search,
       pagination,
-      option3: {
-        projectId: getOneProject?.id,
-        type: FilterQueryType.PROJECT,
-        organizationId: getOneProject?.organizationId,
-      },
+      projectId: getOneProject?.id,
+      type: FilterQueryType.PROJECT,
     });
 
     return reply({ res, results: contributors });
@@ -167,12 +168,10 @@ export class ContributorsInternalController {
     const contributors = await this.contributorsService.findAll({
       search,
       pagination,
-      option4: {
-        projectId: getOneProject?.id,
-        type: FilterQueryType.SUBPROJECT,
-        subProjectId: getOneSubProject?.id,
-        organizationId: getOneSubProject?.organizationId,
-      },
+      type: FilterQueryType.SUBPROJECT,
+      projectId: getOneProject?.id,
+      subProjectId: getOneSubProject?.id,
+      organizationId: getOneSubProject?.organizationId,
     });
 
     return reply({ res, results: contributors });
@@ -200,11 +199,9 @@ export class ContributorsInternalController {
 
     const findOneContributorOrganization =
       await this.contributorsService.findOneBy({
-        option1: {
-          userId,
-          type: FilterQueryType.ORGANIZATION,
-          organizationId: user?.organizationInUtilizationId,
-        },
+        userId,
+        type: FilterQueryType.ORGANIZATION,
+        organizationId: user?.organizationInUtilizationId,
       });
     if (findOneContributorOrganization)
       throw new HttpException(
@@ -307,13 +304,11 @@ export class ContributorsInternalController {
 
     const findOneContributorSubProject =
       await this.contributorsService.findOneBy({
-        option5: {
-          userId: userId,
-          subProjectId: subProjectId,
-          projectId: getOneSubProject?.projectId,
-          organizationId: getOneSubProject?.organizationId,
-          type: FilterQueryType.SUBPROJECT,
-        },
+        userId: userId,
+        subProjectId: subProjectId,
+        projectId: getOneSubProject?.projectId,
+        organizationId: getOneSubProject?.organizationId,
+        type: FilterQueryType.SUBPROJECT,
       });
     if (findOneContributorSubProject)
       throw new HttpException(
@@ -427,10 +422,8 @@ export class ContributorsInternalController {
     const { user } = req;
 
     const findOneContributor = await this.contributorsService.findOneBy({
-      option3: {
-        contributorId,
-        organizationId: user?.organizationInUtilizationId,
-      },
+      contributorId,
+      organizationId: user?.organizationInUtilizationId,
     });
 
     if (!findOneContributor)
@@ -452,10 +445,8 @@ export class ContributorsInternalController {
     const { user } = req;
 
     const findOneContributor = await this.contributorsService.findOneBy({
-      option3: {
-        contributorId,
-        organizationId: user?.organizationInUtilizationId,
-      },
+      contributorId,
+      organizationId: user?.organizationInUtilizationId,
     });
     if (!findOneContributor)
       throw new HttpException(
@@ -478,20 +469,13 @@ export class ContributorsInternalController {
     @Body() body: UpdateRoleContributorDto,
   ) {
     const { user } = req;
-    const findOneUser = await this.usersService.findOneInfoBy({
-      option1: { userId: user?.id },
-    });
-    /** This condition check if user is ADMIN */
-    if (!['ADMIN'].includes(findOneUser?.role?.name))
-      throw new UnauthorizedException('Not authorized! Change permission');
-
     const { contributorId, role } = body;
 
+    await this.usersService.canPermission({ userId: user?.id });
+
     const findOneContributor = await this.contributorsService.findOneBy({
-      option3: {
-        contributorId,
-        organizationId: user?.organizationInUtilizationId,
-      },
+      contributorId,
+      organizationId: user?.organizationInUtilizationId,
     });
     if (!findOneContributor)
       throw new HttpException(

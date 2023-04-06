@@ -44,12 +44,10 @@ export class ContributorsExternalController {
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const contributors = await this.contributorsService.findAll({
-      option1: {
-        userId: user?.application?.userId,
-        type: FilterQueryType.ORGANIZATION,
-      },
       search,
       pagination,
+      userId: user?.application?.userId,
+      type: FilterQueryType.ORGANIZATION,
     });
 
     return reply({ res, results: contributors });
@@ -70,11 +68,9 @@ export class ContributorsExternalController {
       throw new UnauthorizedException('Not authorized! Change permission');
 
     const findOneContributor = await this.contributorsService.findOneBy({
-      option1: {
-        userId,
-        organizationId: user?.application?.organizationId,
-        type: FilterQueryType.ORGANIZATION,
-      },
+      userId,
+      organizationId: user?.application?.organizationId,
+      type: FilterQueryType.ORGANIZATION,
     });
     if (findOneContributor)
       throw new HttpException(
@@ -104,10 +100,8 @@ export class ContributorsExternalController {
     const { user } = req;
 
     const findOneContributor = await this.contributorsService.findOneBy({
-      option3: {
-        contributorId,
-        organizationId: user?.application?.organizationId,
-      },
+      contributorId,
+      organizationId: user?.application?.organizationId,
     });
 
     if (!findOneContributor)
