@@ -30,7 +30,7 @@ export class ContributorsService {
   async findAll(
     selections: GetContributorsSelections,
   ): Promise<GetContributorsSelections | any> {
-    const { option1, option2, option3, option4, search, pagination } =
+    const { option1, option2, option3, option4, option5, search, pagination } =
       selections;
 
     let query = this.driver
@@ -89,28 +89,27 @@ export class ContributorsService {
       .where('contributor.deletedAt IS NULL');
 
     if (option1) {
-      const { type, organizationId } = option1;
-      query = query
-        .andWhere('contributor.projectId IS NULL')
-        .andWhere('contributor.subProjectId IS NULL')
-        .andWhere('contributor.type = :type', { type })
-        .andWhere('contributor.organizationId = :organizationId', {
-          organizationId,
-        });
-    }
-
-    if (option2) {
-      const { userId, type } = option2;
+      const { type, userId } = option1;
       query = query
         .andWhere('contributor.type = :type', { type })
         .andWhere('contributor.userId = :userId', { userId });
+    }
+
+    if (option2) {
+      const { type, userId, projectId, organizationId } = option2;
+      query = query
+        .andWhere('contributor.type = :type', { type })
+        .andWhere('contributor.userId = :userId', { userId })
+        .andWhere('contributor.projectId = :projectId', { projectId })
+        .andWhere('contributor.organizationId = :organizationId', {
+          organizationId,
+        });
     }
 
     if (option3) {
       const { type, projectId, organizationId } = option3;
       query = query
         .andWhere('contributor.type = :type', { type })
-        .andWhere('contributor.subProjectId IS NULL')
         .andWhere('contributor.projectId = :projectId', {
           projectId,
         })
@@ -129,6 +128,15 @@ export class ContributorsService {
         .andWhere('contributor.subProjectId = :subProjectId', {
           subProjectId,
         })
+        .andWhere('contributor.organizationId = :organizationId', {
+          organizationId,
+        });
+    }
+
+    if (option5) {
+      const { type, organizationId } = option5;
+      query = query
+        .andWhere('contributor.type = :type', { type })
         .andWhere('contributor.organizationId = :organizationId', {
           organizationId,
         });
@@ -194,17 +202,21 @@ export class ContributorsService {
       .where('contributor.deletedAt IS NULL');
 
     if (option1) {
-      const { type, organizationId } = option1;
+      const { type, userId } = option1;
       query = query
         .andWhere('contributor.type = :type', { type })
-        .andWhere('contributor.organizationId = :organizationId', {
-          organizationId,
-        });
+        .andWhere('contributor.userId = :userId', { userId });
     }
 
     if (option2) {
-      const { userId } = option2;
-      query = query.andWhere('contributor.userId = :userId', { userId });
+      const { type, userId, projectId, organizationId } = option2;
+      query = query
+        .andWhere('contributor.type = :type', { type })
+        .andWhere('contributor.userId = :userId', { userId })
+        .andWhere('contributor.projectId = :projectId', { projectId })
+        .andWhere('contributor.organizationId = :organizationId', {
+          organizationId,
+        });
     }
 
     if (option3) {

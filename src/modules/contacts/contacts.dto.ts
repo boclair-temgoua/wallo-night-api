@@ -1,4 +1,3 @@
-import { User } from '../../models/User';
 import {
   IsString,
   IsNotEmpty,
@@ -10,31 +9,13 @@ import {
   IsInt,
   IsEnum,
 } from 'class-validator';
-import { ContactType } from './contacts.type';
-
-export class FilterContactDto {
+import { FilterQueryType } from '../../app/utils/search-query';
+export class CreateOrUpdateContactsDto {
   @IsNotEmpty()
   @IsString()
-  @IsEnum(ContactType)
-  type: ContactType;
+  @IsEnum(FilterQueryType)
+  type: FilterQueryType;
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  projectId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  subProjectId: string;
-}
-
-export class CreateOrUpdateContactsDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)

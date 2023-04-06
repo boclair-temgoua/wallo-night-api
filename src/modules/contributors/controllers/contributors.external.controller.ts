@@ -44,7 +44,7 @@ export class ContributorsExternalController {
 
     const contributors = await this.contributorsService.findAll({
       option1: {
-        organizationId: user?.application?.organizationId,
+        userId: user?.application?.userId,
         type: ContributorType.ORGANIZATION,
       },
       search,

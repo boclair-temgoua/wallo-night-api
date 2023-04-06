@@ -54,7 +54,7 @@ export class ProjectsController {
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const projects = await this.contributorsService.findAll({
-      option2: {
+      option1: {
         userId: user?.id,
         type: ContributorType.PROJECT,
       },

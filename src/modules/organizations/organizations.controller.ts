@@ -45,13 +45,13 @@ export class OrganizationsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const Organizations = await this.contributorsService.findAll({
-      option2: { userId: user?.id, type: ContributorType.ORGANIZATION },
+    const organizations = await this.contributorsService.findAll({
+      option1: { userId: user?.id, type: ContributorType.ORGANIZATION },
       search,
       pagination,
     });
 
-    return reply({ res, results: Organizations });
+    return reply({ res, results: organizations });
   }
 
   @Get(`/:organizationId`)

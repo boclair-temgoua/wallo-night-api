@@ -72,7 +72,7 @@ export class ContributorsInternalController {
     const contributors = await this.contributorsService.findAll({
       search,
       pagination,
-      option1: {
+      option5: {
         organizationId,
         type: ContributorType.ORGANIZATION,
       },

@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { DocumentType } from '../modules/documents/documents.type';
+import { FilterQueryType } from '../../app/utils/search-query';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Organization } from './Organization';
 import { Project } from './Project';
@@ -32,10 +32,10 @@ export class Document extends BaseDeleteEntity {
 
   @Column({
     type: 'enum',
-    enum: DocumentType,
-    default: DocumentType.ORGANIZATION,
+    enum: FilterQueryType,
+    default: FilterQueryType.ORGANIZATION,
   })
-  type?: DocumentType;
+  type?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;

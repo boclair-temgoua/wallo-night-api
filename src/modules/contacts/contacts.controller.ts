@@ -17,8 +17,11 @@ import {
 import { reply } from '../../app/utils/reply';
 
 import { ContactsService } from './contacts.service';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { CreateOrUpdateContactsDto, FilterContactDto } from './contacts.dto';
+import {
+  FilterQueryTypeDto,
+  SearchQueryDto,
+} from '../../app/utils/search-query/search-query.dto';
+import { CreateOrUpdateContactsDto } from './contacts.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
@@ -41,7 +44,7 @@ export class ContactsController {
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Query() query: FilterContactDto,
+    @Query() query: FilterQueryTypeDto,
   ) {
     const { user } = req;
     const { organizationId, projectId, subProjectId, type } = query;
@@ -81,6 +84,7 @@ export class ContactsController {
       countryId,
       email,
       address,
+      type,
       description,
       projectId,
       subProjectId,
@@ -100,6 +104,7 @@ export class ContactsController {
       phone,
       countryId,
       email,
+      type,
       address,
       description,
       projectId,

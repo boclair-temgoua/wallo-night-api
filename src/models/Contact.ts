@@ -12,7 +12,7 @@ import { Organization } from './Organization';
 import { Project } from './Project';
 import { SubProject } from './SubProject';
 import { Category } from './Category';
-import { ContactType } from '../modules/contacts/contacts.type';
+import { FilterQueryType } from '../../app/utils/search-query';
 
 @Entity('contact')
 export class Contact extends BaseDeleteEntity {
@@ -45,10 +45,10 @@ export class Contact extends BaseDeleteEntity {
 
   @Column({
     type: 'enum',
-    enum: ContactType,
-    default: ContactType.ORGANIZATION,
+    enum: FilterQueryType,
+    default: FilterQueryType.ORGANIZATION,
   })
-  type?: ContactType;
+  type?: FilterQueryType;
 
   @Column({ type: 'text', nullable: true })
   description?: string;

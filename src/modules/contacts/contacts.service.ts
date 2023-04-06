@@ -156,6 +156,7 @@ export class ContactsService {
       projectId,
       subProjectId,
       image,
+      type,
       categoryId,
       organizationId,
     } = options;
@@ -166,6 +167,7 @@ export class ContactsService {
     contact.phone = phone;
     contact.countryId = countryId;
     contact.email = email;
+    contact.type = type;
     contact.address = address;
     contact.description = description;
     contact.projectId = projectId;

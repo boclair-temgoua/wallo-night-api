@@ -242,7 +242,7 @@ export class UsersService {
 
     const user = new User();
     user.token = generateLongUUID(50);
-    user.email = email;
+    user.email = email.toLowerCase();
     user.hashPassword(password);
     user.username = username;
     user.profileId = profileId;

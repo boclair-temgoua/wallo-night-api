@@ -43,6 +43,7 @@ export class SubProjectsController {
   async findAllContributorsBy(
     @Res() res,
     @Req() req,
+    @Query('projectId', ParseUUIDPipe) projectId: string,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
@@ -53,16 +54,28 @@ export class SubProjectsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const SubProjects = await this.contributorsService.findAll({
+    const getOneProject = await this.projectsService.findOneBy({
+      option1: { projectId },
+    });
+
+    if (!getOneProject)
+      throw new HttpException(
+        `Project ${projectId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const subProjects = await this.contributorsService.findAll({
       option2: {
         userId: user?.id,
+        projectId: getOneProject?.id,
+        organizationId: getOneProject?.organizationId,
         type: ContributorType.SUBPROJECT,
       },
       search,
       pagination,
     });
 
-    return reply({ res, results: SubProjects });
+    return reply({ res, results: subProjects });
   }
 
   /** Get SubProjects */
@@ -78,11 +91,24 @@ export class SubProjectsController {
     const { user } = req;
     const { search } = searchQuery;
 
+    const getOneProject = await this.projectsService.findOneBy({
+      option1: { projectId },
+    });
+
+    if (!getOneProject)
+      throw new HttpException(
+        `Project ${projectId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const subProjects = await this.subProjectsService.findAll({
-      option1: { organizationId: user?.organizationInUtilizationId, projectId },
+      option1: {
+        organizationId: getOneProject?.organizationId,
+        projectId: getOneProject?.id,
+      },
       search,
       pagination,
     });
@@ -124,7 +150,7 @@ export class SubProjectsController {
       subProjectId: subProject?.id,
       userCreatedId: user?.id,
       projectId: getOneProject?.id,
-      role: ContributorRole.MODERATOR,
+      role: ContributorRole.ADMIN,
       organizationId: user?.organizationInUtilizationId,
       type: ContributorType.SUBPROJECT,
     });

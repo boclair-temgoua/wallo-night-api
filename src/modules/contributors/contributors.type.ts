@@ -19,9 +19,14 @@ export type GetContributorsSelections = {
   pagination?: PaginationType;
   option1?: {
     type: Contributor['type'];
+    userId: Contributor['userId'];
+  };
+  option2?: {
+    type: Contributor['type'];
+    userId: Contributor['userId'];
+    projectId: Contributor['projectId'];
     organizationId: Contributor['organizationId'];
   };
-  option2?: { type: Contributor['type']; userId: Contributor['userId'] };
   option3?: {
     type: Contributor['type'];
     projectId: Contributor['projectId'];
@@ -31,6 +36,10 @@ export type GetContributorsSelections = {
     type: Contributor['type'];
     projectId: Contributor['projectId'];
     subProjectId: Contributor['subProjectId'];
+    organizationId: Contributor['organizationId'];
+  };
+  option5?: {
+    type: Contributor['type'];
     organizationId: Contributor['organizationId'];
   };
 };

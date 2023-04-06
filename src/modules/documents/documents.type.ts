@@ -1,12 +1,6 @@
 import { Document } from '../../models/Document';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
-export enum DocumentType {
-  ORGANIZATION = 'ORGANIZATION',
-  PROJECT = 'PROJECT',
-  SUBPROJECT = 'SUBPROJECT',
-}
-
 export type GetDocumentsSelections = {
   search?: string;
   type: Document['type'];
