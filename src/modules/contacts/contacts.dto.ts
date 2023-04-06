@@ -4,16 +4,20 @@ import {
   IsNotEmpty,
   MaxLength,
   MinLength,
-  IsIn,
   IsOptional,
   IsUUID,
   IsEmail,
   IsInt,
-  IsBoolean,
   IsEnum,
 } from 'class-validator';
+import { ContactType } from './contacts.type';
 
 export class FilterContactDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(ContactType)
+  type: ContactType;
+
   @IsOptional()
   @IsString()
   @IsUUID()
@@ -34,7 +38,7 @@ export class CreateOrUpdateContactsDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
-  fistName: string;
+  firstName: string;
 
   @IsNotEmpty()
   @IsString()

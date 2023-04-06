@@ -25,6 +25,9 @@ export class Document extends BaseDeleteEntity {
   description?: string;
 
   @Column({ nullable: true })
+  typeFile?: string;
+
+  @Column({ nullable: true })
   url?: string;
 
   @Column({

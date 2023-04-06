@@ -33,6 +33,7 @@ import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter'
 import { DocumentType } from './documents.type';
 import { generateLongUUID, generateNumber } from '../../app/utils/commons';
 import { SubProjectsService } from '../sub-projects/sub-projects.service';
+import { mineTypeFile } from '../../app/utils/commons/key-as-string';
 
 @Controller('documents')
 export class DocumentsController {
@@ -132,6 +133,7 @@ export class DocumentsController {
       url: responseAws?.Location,
       type: DocumentType.PROJECT,
       projectId: projectId,
+      typeFile: mineTypeFile[file?.mimetype],
       organizationId: user?.organizationInUtilizationId,
     });
 

@@ -41,6 +41,7 @@ export class OrganizationsService {
           CAST(COUNT(DISTINCT con) AS INT)
       FROM "contributor" "con"
       WHERE ("con"."organizationId" = "organization"."id"
+      AND "con"."deletedAt" IS NULL
       AND "con"."type" IN ('ORGANIZATION'))
       GROUP BY "con"."organizationId", "con"."type", "organization"."id"
       ) AS "contributorTotal"`,

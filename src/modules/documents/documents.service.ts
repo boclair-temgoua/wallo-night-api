@@ -73,8 +73,8 @@ export class DocumentsService {
     const [error, Documents] = await useCatch(
       query
         .orderBy('document.createdAt', pagination?.sort)
-        .take(pagination.take)
-        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
         .getMany(),
     );
     if (error) throw new NotFoundException(error);
@@ -110,6 +110,7 @@ export class DocumentsService {
       title,
       url,
       type,
+      typeFile,
       description,
       organizationId,
       projectId,
@@ -120,6 +121,7 @@ export class DocumentsService {
     document.title = title;
     document.url = url;
     document.type = type;
+    document.typeFile = typeFile;
     document.description = description;
     document.organizationId = organizationId;
     document.projectId = projectId;

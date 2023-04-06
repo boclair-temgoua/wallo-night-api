@@ -44,13 +44,14 @@ export class ContactsController {
     @Query() query: FilterContactDto,
   ) {
     const { user } = req;
-    const { organizationId, projectId, subProjectId } = query;
+    const { organizationId, projectId, subProjectId, type } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const contacts = await this.contactsService.findAll({
+      type,
       organizationId: organizationId,
       projectId: projectId,
       subProjectId: subProjectId,
@@ -74,7 +75,7 @@ export class ContactsController {
     const { user } = req;
 
     const {
-      fistName,
+      firstName,
       lastName,
       phone,
       countryId,
@@ -94,7 +95,7 @@ export class ContactsController {
     });
 
     const contact = await this.contactsService.createOne({
-      fistName,
+      firstName,
       lastName,
       phone,
       countryId,
@@ -104,6 +105,7 @@ export class ContactsController {
       projectId,
       subProjectId,
       categoryId,
+      userCreatedId: user?.id,
       image: responseAws?.Location,
       organizationId: user?.organizationInUtilizationId,
     });

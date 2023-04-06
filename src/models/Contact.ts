@@ -12,6 +12,7 @@ import { Organization } from './Organization';
 import { Project } from './Project';
 import { SubProject } from './SubProject';
 import { Category } from './Category';
+import { ContactType } from '../modules/contacts/contacts.type';
 
 @Entity('contact')
 export class Contact extends BaseDeleteEntity {
@@ -19,7 +20,7 @@ export class Contact extends BaseDeleteEntity {
   id?: string;
 
   @Column({ nullable: true })
-  fistName?: string;
+  firstName?: string;
 
   @Column({ nullable: true })
   lastName?: string;
@@ -41,6 +42,13 @@ export class Contact extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   countryId?: number;
+
+  @Column({
+    type: 'enum',
+    enum: ContactType,
+    default: ContactType.ORGANIZATION,
+  })
+  type?: ContactType;
 
   @Column({ type: 'text', nullable: true })
   description?: string;

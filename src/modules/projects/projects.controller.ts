@@ -11,6 +11,8 @@ import {
   Body,
   HttpStatus,
   HttpException,
+  Delete,
+  Put,
 } from '@nestjs/common';
 import {
   addPagination,
@@ -109,12 +111,41 @@ export class ProjectsController {
       userId: user?.id,
       projectId: project?.id,
       userCreatedId: user?.id,
-      role: ContributorRole.MODERATOR,
+      role: ContributorRole.ADMIN,
       organizationId: user?.organizationInUtilizationId,
       type: ContributorType.PROJECT,
     });
 
     return reply({ res, results: project });
+  }
+
+  /** Update Project */
+  @Put(`/:projectId`)
+  @UseGuards(JwtAuthGuard)
+  async updateOneProject(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateOrUpdateProjectsDto,
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+  ) {
+    const { user } = req;
+    const { name, description } = body;
+
+    const findOneProject = await this.projectsService.findOneBy({
+      option1: { projectId },
+    });
+    if (!findOneProject)
+      throw new HttpException(
+        `Project ${projectId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.projectsService.updateOne(
+      { option1: { projectId: findOneProject?.id } },
+      { name, description },
+    );
+
+    return reply({ res, results: 'Project updated successfully' });
   }
 
   /** Create Project */
@@ -127,15 +158,15 @@ export class ProjectsController {
   ) {
     const { user } = req;
 
-    const project = await this.projectsService.findOneBy({
+    const findOneProject = await this.projectsService.findOneBy({
       option1: { projectId },
     });
 
     const getOneContributor = await this.contributorsService.findOneBy({
       option4: {
         userId: user?.id,
-        projectId: project?.id,
-        organizationId: user?.organizationInUtilizationId,
+        projectId: findOneProject?.id,
+        organizationId: findOneProject?.organizationId,
         type: ContributorType.PROJECT,
       },
     });
@@ -147,7 +178,52 @@ export class ProjectsController {
 
     return reply({
       res,
-      results: { ...project, role: getOneContributor?.role },
+      results: { ...findOneProject, role: getOneContributor?.role },
     });
+  }
+
+  /** Delete Project */
+  @Delete(`/:projectId`)
+  @UseGuards(JwtAuthGuard)
+  async deleteOneProject(
+    @Res() res,
+    @Req() req,
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+  ) {
+    const { user } = req;
+
+    const findOneProject = await this.projectsService.findOneBy({
+      option1: { projectId },
+    });
+    if (!findOneProject)
+      throw new HttpException(
+        `Project ${projectId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const findAllContributors =
+      await this.contributorsService.findAllNotPaginate({
+        option3: {
+          type: ContributorType.PROJECT,
+          projectId: findOneProject?.id,
+          organizationId: findOneProject?.organizationId,
+        },
+      });
+
+    Promise.all([
+      findAllContributors.map(async (item) => {
+        await this.contributorsService.updateOne(
+          { option1: { contributorId: item?.id } },
+          { deletedAt: new Date() },
+        );
+      }),
+    ]);
+
+    await this.projectsService.updateOne(
+      { option1: { projectId: findOneProject?.id } },
+      { deletedAt: new Date() },
+    );
+
+    return reply({ res, results: 'Project deleted successfully' });
   }
 }

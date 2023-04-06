@@ -59,8 +59,8 @@ export class ProjectsService {
     const [error, projects] = await useCatch(
       query
         .orderBy('project.createdAt', pagination?.sort)
-        .take(pagination.take)
-        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
         .getMany(),
     );
     if (error) throw new NotFoundException(error);
@@ -87,6 +87,7 @@ export class ProjectsService {
           CAST(COUNT(DISTINCT con) AS INT)
       FROM "contributor" "con"
       WHERE ("con"."projectId" = "project"."id"
+      AND "con"."deletedAt" IS NULL
       AND "con"."type" IN ('PROJECT'))
       GROUP BY "con"."projectId", "con"."type", "project"."id"
       ) AS "contributorTotal"`,

@@ -27,13 +27,20 @@ export class ContactsService {
   ) {}
 
   async findAll(selections: GetContactSelections): Promise<any> {
-    const { search, pagination, organizationId, projectId, subProjectId } =
-      selections;
+    const {
+      search,
+      pagination,
+      organizationId,
+      projectId,
+      subProjectId,
+      type,
+    } = selections;
 
     let query = this.driver
       .createQueryBuilder('contact')
-      .select('contact.fistName', 'fistName')
+      .select('contact.firstName', 'firstName')
       .addSelect('contact.id', 'id')
+      .addSelect('contact.createdAt', 'createdAt')
       .addSelect('contact.lastName', 'lastName')
       .addSelect('contact.email', 'email')
       .addSelect('contact.color', 'color')
@@ -56,6 +63,7 @@ export class ContactsService {
           ) AS "category"`,
       )
       .where('contact.deletedAt IS NULL')
+      .andWhere('contact.type = :type', { type })
       .leftJoin('contact.organization', 'organization')
       .leftJoin('contact.category', 'category');
 
@@ -76,13 +84,6 @@ export class ContactsService {
         subProjectId,
       });
     }
-
-    // if (option1) {
-    //   const { organizationId } = option1;
-    //   query = query.andWhere('contact.organizationId = :organizationId', {
-    //     organizationId,
-    //   });
-    // }
 
     if (search) {
       query = query.andWhere(
@@ -106,8 +107,8 @@ export class ContactsService {
     const [error, Contacts] = await useCatch(
       query
         .orderBy('contact.createdAt', pagination?.sort)
-        .take(pagination.take)
-        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
         .getRawMany(),
     );
     if (error) throw new NotFoundException(error);
@@ -144,7 +145,7 @@ export class ContactsService {
   /** Create one Contacts to the database. */
   async createOne(options: CreateContactOptions): Promise<Contact> {
     const {
-      fistName,
+      firstName,
       lastName,
       phone,
       countryId,
@@ -160,7 +161,7 @@ export class ContactsService {
     } = options;
 
     const contact = new Contact();
-    contact.fistName = fistName;
+    contact.firstName = firstName;
     contact.lastName = lastName;
     contact.phone = phone;
     contact.countryId = countryId;
@@ -190,7 +191,7 @@ export class ContactsService {
   ): Promise<Contact> {
     const { option1 } = selections;
     const {
-      fistName,
+      firstName,
       lastName,
       phone,
       countryId,
@@ -221,7 +222,7 @@ export class ContactsService {
     const [errorFind, findItem] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.fistName = fistName;
+    findItem.firstName = firstName;
     findItem.lastName = lastName;
     findItem.phone = phone;
     findItem.countryId = countryId;

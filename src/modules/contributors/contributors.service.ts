@@ -3,11 +3,13 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contributor } from '../../models/Contributor';
 import { Brackets, Repository } from 'typeorm';
 import {
+  ContributorType,
   CreateContributorOptions,
   DeleteContributorSelections,
   GetContributorsSelections,
@@ -365,7 +367,7 @@ export class ContributorsService {
     options: UpdateContributorOptions,
   ): Promise<Contributor> {
     const { option1 } = selections;
-    const { role } = options;
+    const { role, deletedAt } = options;
 
     let findQuery = this.driver.createQueryBuilder('contributor');
 
@@ -380,6 +382,7 @@ export class ContributorsService {
     if (errorFind) throw new NotFoundException(errorFind);
 
     findItem.role = role;
+    findItem.deletedAt = deletedAt;
 
     const query = this.driver.save(findItem);
     const [errorUp, result] = await useCatch(query);
@@ -406,5 +409,25 @@ export class ContributorsService {
     if (errorUp) throw new NotFoundException(errorUp);
 
     return result;
+  }
+
+  /** Permission. */
+  async canCheckPermissionProject(options: {
+    userId: string;
+    projectId: string;
+    organizationId: string;
+  }): Promise<any> {
+    const { userId, projectId, organizationId } = options;
+
+    const findOneContributorProject = await this.findOneBy({
+      option4: {
+        userId: userId,
+        projectId: projectId,
+        organizationId: organizationId,
+        type: ContributorType.PROJECT,
+      },
+    });
+
+    return findOneContributorProject;
   }
 }

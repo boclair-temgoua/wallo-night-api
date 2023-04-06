@@ -1,8 +1,15 @@
 import { Contact } from '../../models/Contact';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
+export enum ContactType {
+  ORGANIZATION = 'ORGANIZATION',
+  PROJECT = 'PROJECT',
+  SUBPROJECT = 'SUBPROJECT',
+}
+
 export type GetContactSelections = {
   search?: string;
+  type: Contact['type'];
   organizationId: Contact['organizationId'];
   projectId: Contact['projectId'];
   subProjectId: Contact['subProjectId'];
