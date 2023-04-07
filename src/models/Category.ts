@@ -21,6 +21,9 @@ export class Category extends BaseDeleteEntity {
   name?: string;
 
   @Column({ nullable: true })
+  slug?: string;
+
+  @Column({ nullable: true })
   color?: string;
 
   @Column({ type: 'text', nullable: true })

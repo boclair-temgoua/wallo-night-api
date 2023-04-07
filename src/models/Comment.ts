@@ -16,6 +16,9 @@ export class Comment extends BaseDeleteEntity {
   @Column({ nullable: true })
   title?: string;
 
+  @Column({ nullable: true })
+  slug?: string;
+
   @Column({ type: 'text', nullable: true })
   description?: string;
 

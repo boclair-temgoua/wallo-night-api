@@ -20,6 +20,9 @@ export class SubProject extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
+  @Column({ nullable: true })
+  slug?: string;
+
   @Column({ type: 'text', nullable: true })
   name?: string;
 

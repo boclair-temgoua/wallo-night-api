@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubProject } from '../../models/SubProject';
 import { getRandomElement } from '../../app/utils/array/get-random-element';
@@ -16,8 +15,9 @@ import {
   UpdateSubProjectOptions,
   UpdateSubProjectSelections,
 } from './sub-projects.type';
+import * as Slug from 'slug';
 import { useCatch } from '../../app/utils/use-catch';
-import { colorsArrays } from '../../app/utils/commons';
+import { colorsArrays, generateNumber } from '../../app/utils/commons';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 
 @Injectable()
@@ -77,11 +77,12 @@ export class SubProjectsService {
   }
 
   async findOneBy(selections: GetOneSubProjectSelections): Promise<SubProject> {
-    const { option1 } = selections;
+    const { projectId, subProjectId } = selections;
     let query = this.driver
       .createQueryBuilder('subProject')
       .select('subProject.name', 'name')
       .addSelect('subProject.id', 'id')
+      .addSelect('subProject.slug', 'slug')
       .addSelect('subProject.color', 'color')
       .addSelect('subProject.image', 'image')
       .addSelect('subProject.projectId', 'projectId')
@@ -107,8 +108,13 @@ export class SubProjectsService {
       .where('subProject.deletedAt IS NULL')
       .leftJoin('subProject.organization', 'organization');
 
-    if (option1) {
-      const { subProjectId } = option1;
+    if (projectId) {
+      query = query.andWhere('subProject.projectId = :projectId', {
+        projectId,
+      });
+    }
+
+    if (subProjectId) {
       query = query.andWhere('subProject.id = :id', { id: subProjectId });
     }
 
@@ -133,6 +139,7 @@ export class SubProjectsService {
     const subProject = new SubProject();
     subProject.name = name;
     subProject.image = image;
+    subProject.slug = `${Slug(name)}-${generateNumber(4)}`;
     subProject.projectId = projectId;
     subProject.userCreatedId = userCreatedId;
     subProject.organizationId = organizationId;

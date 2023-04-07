@@ -62,6 +62,7 @@ export class ContributorsService {
         /*sql*/ `jsonb_build_object(
           'id', "project"."id",
           'name', "project"."name",
+          'slug', "project"."slug",
           'description', "project"."description",
           'color', "project"."color",
           'organizationId', "project"."organizationId"
@@ -71,6 +72,7 @@ export class ContributorsService {
         /*sql*/ `jsonb_build_object(
           'id', "subProject"."id",
           'name', "subProject"."name",
+          'slug', "subProject"."slug",
           'description', "subProject"."description",
           'color', "subProject"."color",
           'projectId', "subProject"."projectId",
@@ -367,7 +369,7 @@ export class ContributorsService {
     return result;
   }
 
-  /** Permission. */
+  /** Permission. project */
   async canCheckPermissionProject(options: {
     userId: string;
     projectId: string;
@@ -384,7 +386,7 @@ export class ContributorsService {
 
     return findOneContributorProject;
   }
-  /** Permission. */
+  /** Permission. sub project */
   async canCheckPermissionSubProject(options: {
     userId: string;
     projectId: string;
@@ -393,14 +395,14 @@ export class ContributorsService {
   }): Promise<any> {
     const { userId, projectId, subProjectId, organizationId } = options;
 
-    const findOneContributorProject = await this.findOneBy({
+    const findOneContributorSubProject = await this.findOneBy({
       userId: userId,
       projectId: projectId,
       subProjectId: subProjectId,
       organizationId: organizationId,
-      type: FilterQueryType.PROJECT,
+      type: FilterQueryType.SUBPROJECT,
     });
 
-    return findOneContributorProject;
+    return findOneContributorSubProject;
   }
 }

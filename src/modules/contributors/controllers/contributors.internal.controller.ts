@@ -145,7 +145,7 @@ export class ContributorsInternalController {
     const { search } = searchQuery;
 
     const getOneSubProject = await this.subProjectsService.findOneBy({
-      option1: { subProjectId },
+      subProjectId,
     });
     if (!getOneSubProject)
       throw new HttpException(
@@ -153,13 +153,16 @@ export class ContributorsInternalController {
         HttpStatus.NOT_FOUND,
       );
 
-    const getOneProject = await this.projectsService.findOneBy({
-      option1: { projectId: getOneSubProject?.projectId },
-    });
-    if (!getOneProject)
-      throw new HttpException(
-        `Project ${getOneSubProject?.projectId} don't exists please change`,
-        HttpStatus.NOT_FOUND,
+    const findOneContributorSubProject =
+      await this.contributorsService.canCheckPermissionSubProject({
+        userId: user?.id,
+        subProjectId: getOneSubProject?.id,
+        projectId: getOneSubProject?.projectId,
+        organizationId: getOneSubProject?.organizationId,
+      });
+    if (!findOneContributorSubProject)
+      throw new UnauthorizedException(
+        `Not authorized in this project ${subProjectId}`,
       );
 
     const { take, page, sort } = requestPaginationDto;
@@ -169,8 +172,8 @@ export class ContributorsInternalController {
       search,
       pagination,
       type: FilterQueryType.SUBPROJECT,
-      projectId: getOneProject?.id,
       subProjectId: getOneSubProject?.id,
+      projectId: getOneSubProject?.projectId,
       organizationId: getOneSubProject?.organizationId,
     });
 
@@ -294,7 +297,7 @@ export class ContributorsInternalController {
         HttpStatus.NOT_FOUND,
       );
     const getOneSubProject = await this.subProjectsService.findOneBy({
-      option1: { subProjectId },
+      subProjectId,
     });
     if (!getOneSubProject)
       throw new HttpException(

@@ -10,9 +10,7 @@ import {
 import { User } from './User';
 import { Organization } from './Organization';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
-import {
-  ContributorRole,
-} from '../modules/contributors/contributors.type';
+import { ContributorRole } from '../modules/contributors/contributors.type';
 import { Project } from './Project';
 import { SubProject } from './SubProject';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
@@ -21,6 +19,9 @@ import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 export class Contributor extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
+
+  @Column({ nullable: true })
+  slug?: string;
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;

@@ -8,6 +8,9 @@ export class Testimonial extends BaseDeleteEntity {
   id?: string;
 
   @Column({ nullable: true })
+  slug?: string;
+
+  @Column({ nullable: true })
   fullName?: string;
 
   @Column({ nullable: true })

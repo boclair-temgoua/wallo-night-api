@@ -20,6 +20,9 @@ export class Contact extends BaseDeleteEntity {
   id?: string;
 
   @Column({ nullable: true })
+  slug?: string;
+
+  @Column({ nullable: true })
   firstName?: string;
 
   @Column({ nullable: true })

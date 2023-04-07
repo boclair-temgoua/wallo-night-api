@@ -154,24 +154,31 @@ export class SubProjectsController {
   }
 
   /** Create SubProject */
-  @Get(`/:subProjectId`)
+  @Get(`/show`)
   @UseGuards(JwtAuthGuard)
   async getOneByUUIDSubProject(
     @Res() res,
     @Req() req,
-    @Param('subProjectId', ParseUUIDPipe) subProjectId: string,
+    @Query('projectId', ParseUUIDPipe) projectId: string,
+    @Query('subProjectId', ParseUUIDPipe) subProjectId: string,
   ) {
     const { user } = req;
 
-    const subProject = await this.subProjectsService.findOneBy({
-      option1: { subProjectId },
+    const getOneSubProject = await this.subProjectsService.findOneBy({
+      subProjectId,
+      projectId,
     });
+    if (!getOneSubProject)
+      throw new HttpException(
+        `Project ${projectId} ${subProjectId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
 
     const getOneContributor = await this.contributorsService.findOneBy({
       userId: user?.id,
-      projectId: subProject?.projectId,
-      subProjectId,
-      organizationId: user?.organizationInUtilizationId,
+      projectId: getOneSubProject?.projectId,
+      subProjectId: getOneSubProject?.id,
+      organizationId: getOneSubProject?.organizationId,
       type: FilterQueryType.SUBPROJECT,
     });
     if (!getOneContributor)
@@ -180,6 +187,9 @@ export class SubProjectsController {
         HttpStatus.NOT_FOUND,
       );
 
-    return reply({ res, results: subProject });
+    return reply({
+      res,
+      results: { ...getOneSubProject, role: getOneContributor?.role },
+    });
   }
 }

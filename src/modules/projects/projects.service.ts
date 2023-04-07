@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from '../../models/Project';
 import { getRandomElement } from '../../app/utils/array/get-random-element';
@@ -16,8 +15,9 @@ import {
   UpdateProjectOptions,
   UpdateProjectSelections,
 } from './projects.type';
+import * as Slug from 'slug';
 import { useCatch } from '../../app/utils/use-catch';
-import { colorsArrays } from '../../app/utils/commons';
+import { colorsArrays, generateNumber } from '../../app/utils/commons';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 
 @Injectable()
@@ -80,6 +80,7 @@ export class ProjectsService {
       .addSelect('project.id', 'id')
       .addSelect('project.image', 'image')
       .addSelect('project.color', 'color')
+      .addSelect('project.slug', 'slug')
       .addSelect('project.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `(
@@ -91,6 +92,38 @@ export class ProjectsService {
       AND "con"."type" IN ('PROJECT'))
       GROUP BY "con"."projectId", "con"."type", "project"."id"
       ) AS "contributorTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT sbprj) AS INT)
+      FROM "sub_project" "sbprj"
+      WHERE ("sbprj"."projectId" = "project"."id"
+      AND "sbprj"."deletedAt" IS NULL)
+      GROUP BY "sbprj"."projectId", "project"."id"
+      ) AS "subProjectTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT co) AS INT)
+      FROM "contact" "co"
+      WHERE ("co"."projectId" = "project"."id"
+      AND "co"."type" IN ('PROJECT')
+      AND "co"."deletedAt" IS NULL)
+      GROUP BY "co"."projectId", "project"."id"
+      ) AS "contactTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT doc) AS INT)
+      FROM "document" "doc"
+      WHERE ("doc"."projectId" = "project"."id"
+      AND "doc"."type" IN ('PROJECT')
+      AND "doc"."deletedAt" IS NULL)
+      GROUP BY "doc"."projectId", "project"."id"
+      ) AS "documentTotal"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -122,6 +155,7 @@ export class ProjectsService {
     const project = new Project();
     project.name = name;
     project.image = image;
+    project.slug = `${Slug(name)}-${generateNumber(4)}`;
     project.userCreatedId = userCreatedId;
     project.organizationId = organizationId;
     project.description = description;

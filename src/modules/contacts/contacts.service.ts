@@ -14,8 +14,9 @@ import {
   UpdateContactOptions,
   UpdateContactSelections,
 } from './contacts.type';
+import * as Slug from 'slug';
 import { getRandomElement } from '../../app/utils/array/get-random-element';
-import { colorsArrays } from '../../app/utils/commons';
+import { colorsArrays, generateNumber } from '../../app/utils/commons';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 
@@ -40,6 +41,7 @@ export class ContactsService {
       .createQueryBuilder('contact')
       .select('contact.firstName', 'firstName')
       .addSelect('contact.id', 'id')
+      .addSelect('contact.slug', 'slug')
       .addSelect('contact.createdAt', 'createdAt')
       .addSelect('contact.lastName', 'lastName')
       .addSelect('contact.email', 'email')
@@ -173,6 +175,7 @@ export class ContactsService {
     contact.projectId = projectId;
     contact.subProjectId = subProjectId;
     contact.image = image;
+    contact.slug = `${Slug(`${firstName}-${lastName}`)}-${generateNumber(4)}`;
     contact.color = getRandomElement(colorsArrays);
     contact.categoryId = categoryId;
     contact.userCreatedId = userCreatedId;

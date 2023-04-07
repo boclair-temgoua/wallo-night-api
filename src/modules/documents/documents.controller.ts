@@ -21,7 +21,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
 
 import { DocumentsService } from './documents.service';
-import { FilterQueryType, SearchQueryDto, FilterQueryTypeDto } from '../../app/utils/search-query/search-query.dto';
+import {
+  FilterQueryType,
+  SearchQueryDto,
+  FilterQueryTypeDto,
+} from '../../app/utils/search-query/search-query.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
@@ -154,7 +158,7 @@ export class DocumentsController {
     const { title, description } = body;
 
     const getOneSubProject = await this.subProjectsService.findOneBy({
-      option1: { subProjectId },
+      subProjectId,
     });
     if (!getOneSubProject)
       throw new HttpException(
