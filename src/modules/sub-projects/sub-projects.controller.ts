@@ -11,13 +11,18 @@ import {
   Body,
   HttpStatus,
   HttpException,
+  Delete,
 } from '@nestjs/common';
 import {
   addPagination,
   PaginationType,
   RequestPaginationDto,
 } from '../../app/utils/pagination';
-import { FilterQueryType, SearchQueryDto } from '../../app/utils/search-query';
+import {
+  FilterQueryType,
+  PasswordBodyDto,
+  SearchQueryDto,
+} from '../../app/utils/search-query';
 import { reply } from '../../app/utils/reply';
 import { SubProjectsService } from './sub-projects.service';
 import { JwtAuthGuard } from '../users/middleware';
@@ -191,5 +196,52 @@ export class SubProjectsController {
       res,
       results: { ...getOneSubProject, role: getOneContributor?.role },
     });
+  }
+
+  /** Delete SubProject */
+  @Delete(`/:subProjectId`)
+  @UseGuards(JwtAuthGuard)
+  async deleteOneSubProject(
+    @Res() res,
+    @Req() req,
+    @Body() body: PasswordBodyDto,
+    @Param('subProjectId', ParseUUIDPipe) subProjectId: string,
+  ) {
+    const { user } = req;
+    if (!user?.checkIfPasswordMatch(body.password))
+      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
+
+    const findOneSubProject = await this.subProjectsService.findOneBy({
+      subProjectId,
+    });
+    if (!findOneSubProject)
+      throw new HttpException(
+        `Project ${subProjectId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const findAllContributorsSUbProjects =
+      await this.contributorsService.findAllNotPaginate({
+        type: FilterQueryType.SUBPROJECT,
+        subProjectId: findOneSubProject?.id,
+        projectId: findOneSubProject?.projectId,
+        organizationId: findOneSubProject?.organizationId,
+      });
+
+    Promise.all([
+      findAllContributorsSUbProjects.map(async (item) => {
+        await this.contributorsService.updateOne(
+          { option1: { contributorId: item?.id } },
+          { deletedAt: new Date() },
+        );
+      }),
+    ]);
+
+    await this.subProjectsService.updateOne(
+      { option1: { subProjectId: findOneSubProject?.id } },
+      { deletedAt: new Date() },
+    );
+
+    return reply({ res, results: 'Project deleted successfully' });
   }
 }

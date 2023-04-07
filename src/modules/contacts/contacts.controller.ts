@@ -13,15 +13,21 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
 import { ContactsService } from './contacts.service';
 import {
   FilterQueryTypeDto,
+  PasswordBodyDto,
   SearchQueryDto,
 } from '../../app/utils/search-query/search-query.dto';
-import { CreateOrUpdateContactsDto } from './contacts.dto';
+import {
+  CreateOrUpdateContactsDto,
+  DeleteMultipleContactsDto,
+} from './contacts.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
@@ -58,6 +64,30 @@ export class ContactsController {
       organizationId: organizationId,
       projectId: projectId,
       subProjectId: subProjectId,
+      search,
+      pagination,
+    });
+
+    return reply({ res, results: contacts });
+  }
+
+  /** Get all Contacts Organization */
+  @Get(`/organization`)
+  @UseGuards(JwtAuthGuard)
+  async findAllContactsByOrganization(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { user } = req;
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const contacts = await this.contactsService.findAll({
+      organizationId: user?.organizationInUtilizationId,
       search,
       pagination,
     });
@@ -129,32 +159,71 @@ export class ContactsController {
     const { user } = req;
 
     const contact = await this.contactsService.findOneBy({
-      option1: { contactId, organizationId: user?.organizationInUtilizationId },
+      contactId,
+      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: contact });
   }
 
   /** Delete one ContactUs */
-  @Delete(`/delete/:contactId`)
+  @Delete(`/:contactId`)
   @UseGuards(JwtAuthGuard)
   async deleteOneContact(
     @Res() res,
     @Req() req,
+    @Body() body: PasswordBodyDto,
     @Param('contactId', ParseUUIDPipe) contactId: string,
   ) {
     const { user } = req;
+    if (!user?.checkIfPasswordMatch(body.password))
+      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
 
-    const contactUs = await this.contactsService.updateOne(
-      {
-        option1: {
-          contactId,
-          organizationId: user?.organizationInUtilizationId,
-        },
-      },
+    const findOneContact = await this.contactsService.findOneBy({
+      contactId,
+    });
+    if (!findOneContact)
+      throw new HttpException(
+        `Contact ${contactId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.contactsService.updateOne(
+      { contactId: findOneContact?.id },
       { deletedAt: new Date() },
     );
 
-    return reply({ res, results: contactUs });
+    return reply({ res, results: 'Contact deleted successfully' });
+  }
+
+  /** Delete one ContactUs */
+  @Delete(`/delete/multiples`)
+  @UseGuards(JwtAuthGuard)
+  async deleteMultipleContact(
+    @Res() res,
+    @Req() req,
+    @Body() body: DeleteMultipleContactsDto & PasswordBodyDto,
+  ) {
+    const { user } = req;
+    const { contacts, password } = body;
+    if (!user?.checkIfPasswordMatch(password))
+      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
+
+    Promise.all([
+      contacts.map(async (contactId) => {
+        const findOneContact = await this.contactsService.findOneBy({
+          contactId,
+        });
+
+        if (findOneContact) {
+          await this.contactsService.updateOne(
+            { contactId: findOneContact?.id },
+            { deletedAt: new Date() },
+          );
+        }
+      }),
+    ]);
+
+    return reply({ res, results: 'Contact deleted successfully' });
   }
 }

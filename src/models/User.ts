@@ -71,10 +71,13 @@ export class User extends BaseDeleteEntity {
   organizationInUtilization?: Organization;
 
   async hashPassword(password: string) {
-    this.password = await bcrypt.hashSync(password || this.password, 8);
+    this.password = await bcrypt.hashSync(
+      String(password) || String(this.password),
+      8,
+    );
   }
 
   checkIfPasswordMatch(password: string) {
-    return bcrypt.compareSync(password, String(this.password));
+    return bcrypt.compareSync(String(password), String(this.password));
   }
 }

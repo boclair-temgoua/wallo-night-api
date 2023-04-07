@@ -65,9 +65,12 @@ export class ContactsService {
           ) AS "category"`,
       )
       .where('contact.deletedAt IS NULL')
-      .andWhere('contact.type = :type', { type })
       .leftJoin('contact.organization', 'organization')
       .leftJoin('contact.category', 'category');
+
+    if (type) {
+      query = query.andWhere('contact.type = :type', { type });
+    }
 
     if (organizationId) {
       query = query.andWhere('contact.organizationId = :organizationId', {
@@ -123,18 +126,19 @@ export class ContactsService {
   }
 
   async findOneBy(selections: GetOneContactSelections): Promise<Contact> {
-    const { option1 } = selections;
+    const { contactId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('contact')
       .where('contact.deletedAt IS NULL');
 
-    if (option1) {
-      const { contactId, organizationId } = option1;
-      query = query
-        .andWhere('contact.id = :id', { id: contactId })
-        .andWhere('contact.organizationId = :organizationId', {
-          organizationId,
-        });
+    if (organizationId) {
+      query = query.andWhere('contact.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
+    if (contactId) {
+      query = query.andWhere('contact.id = :id', { id: contactId });
     }
 
     const [error, result] = await useCatch(query.getOne());
@@ -194,7 +198,7 @@ export class ContactsService {
     selections: UpdateContactSelections,
     options: UpdateContactOptions,
   ): Promise<Contact> {
-    const { option1 } = selections;
+    const { contactId } = selections;
     const {
       firstName,
       lastName,
@@ -214,14 +218,10 @@ export class ContactsService {
 
     let findQuery = this.driver.createQueryBuilder('contact');
 
-    if (option1) {
-      findQuery = findQuery
-        .where('contact.id = :id', {
-          id: option1.contactId,
-        })
-        .andWhere('contact.organizationId = :organizationId', {
-          organizationId,
-        });
+    if (contactId) {
+      findQuery = findQuery.where('contact.id = :id', {
+        id: contactId,
+      });
     }
 
     const [errorFind, findItem] = await useCatch(findQuery.getOne());

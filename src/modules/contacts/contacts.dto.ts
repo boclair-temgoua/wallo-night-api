@@ -8,6 +8,7 @@ import {
   IsEmail,
   IsInt,
   IsEnum,
+  IsArray,
 } from 'class-validator';
 import { FilterQueryType } from '../../app/utils/search-query';
 export class CreateOrUpdateContactsDto {
@@ -67,4 +68,10 @@ export class CreateOrUpdateContactsDto {
   @IsNotEmpty()
   @IsString()
   description: string;
+}
+
+export class DeleteMultipleContactsDto {
+  @IsNotEmpty()
+  @IsArray()
+  contacts: string[];
 }
