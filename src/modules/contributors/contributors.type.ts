@@ -16,6 +16,7 @@ export type GetContributorsSelections = {
   organizationId?: Contributor['organizationId'];
   projectId?: Contributor['projectId'];
   subProjectId?: Contributor['subProjectId'];
+  subSubProjectId?: Contributor['subSubProjectId'];
 };
 
 export type GetOneContributorSelections = {
@@ -24,6 +25,7 @@ export type GetOneContributorSelections = {
   organizationId?: Contributor['organizationId'];
   projectId?: Contributor['projectId'];
   subProjectId?: Contributor['subProjectId'];
+  subSubProjectId?: Contributor['subSubProjectId'];
   contributorId?: Contributor['id'];
 };
 

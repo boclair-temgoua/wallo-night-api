@@ -7,11 +7,11 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class CreateSubProjectsDto {
+export class CreateSubSubProjectsDto {
   @IsNotEmpty()
   @IsString()
   @IsUUID()
-  projectId: string;
+  subProjectId: string;
 
   @IsNotEmpty()
   @IsString()
@@ -23,7 +23,7 @@ export class CreateSubProjectsDto {
   @IsString()
   description: string;
 }
-export class UpdateSubProjectsDto {
+export class UpdateSubSubProjectsDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)

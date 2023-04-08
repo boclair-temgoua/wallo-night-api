@@ -12,6 +12,7 @@ import {
   HttpStatus,
   HttpException,
   Delete,
+  Put,
 } from '@nestjs/common';
 import {
   addPagination,
@@ -27,7 +28,7 @@ import { reply } from '../../app/utils/reply';
 import { SubProjectsService } from './sub-projects.service';
 import { JwtAuthGuard } from '../users/middleware';
 import { SubProject } from '../../models/SubProject';
-import { CreateOrUpdateSubProjectsDto } from './sub-projects.dto';
+import { UpdateSubProjectsDto, CreateSubProjectsDto } from './sub-projects.dto';
 import { ContributorsService } from '../contributors/contributors.service';
 import { ContributorRole } from '../contributors/contributors.type';
 import { ProjectsService } from '../projects/projects.service';
@@ -122,7 +123,7 @@ export class SubProjectsController {
   async createOneSubProject(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateSubProjectsDto,
+    @Body() body: CreateSubProjectsDto,
   ) {
     const { user } = req;
     const { name, description, projectId } = body;
@@ -141,7 +142,7 @@ export class SubProjectsController {
       name,
       description,
       projectId: getOneProject?.id,
-      organizationId: user?.organizationInUtilizationId,
+      organizationId: getOneProject?.organizationId,
       userCreatedId: user?.id,
     });
 
@@ -151,13 +152,41 @@ export class SubProjectsController {
       userCreatedId: user?.id,
       projectId: getOneProject?.id,
       role: ContributorRole.ADMIN,
-      organizationId: user?.organizationInUtilizationId,
+      organizationId: getOneProject?.organizationId,
       type: FilterQueryType.SUBPROJECT,
     });
 
     return reply({ res, results: subProject });
   }
 
+  /** Update Sub SubProject */
+  @Put(`/:subProjectId`)
+  @UseGuards(JwtAuthGuard)
+  async updateOneSubProject(
+    @Res() res,
+    @Req() req,
+    @Body() body: UpdateSubProjectsDto,
+    @Param('subProjectId', ParseUUIDPipe) subProjectId: string,
+  ) {
+    const { user } = req;
+    const { name, description } = body;
+
+    const findOneSubProject = await this.subProjectsService.findOneBy({
+      subProjectId,
+    });
+    if (!findOneSubProject)
+      throw new HttpException(
+        `Project ${subProjectId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const subProject = await this.subProjectsService.updateOne(
+      { option1: { subProjectId: findOneSubProject?.id } },
+      { name, description, userCreatedId: user?.id },
+    );
+
+    return reply({ res, results: subProject });
+  }
   /** Create SubProject */
   @Get(`/show`)
   @UseGuards(JwtAuthGuard)

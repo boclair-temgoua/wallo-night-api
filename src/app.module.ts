@@ -18,6 +18,7 @@ import { SubProjectsModule } from './modules/sub-projects/sub-projects.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ContactsModule } from './modules/contacts/contacts.module';
+import { SubSubProjectsModule } from './modules/sub-sub-projects/sub-sub-projects.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ContactsModule } from './modules/contacts/contacts.module';
     ApplicationsModule,
     ContactsModule,
     CategoriesModule,
+    SubSubProjectsModule,
     ResetPasswordsModule,
     ContactUsModule,
   ],

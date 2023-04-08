@@ -81,6 +81,18 @@ export class ContributorsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
+          'id', "subSubProject"."id",
+          'name', "subSubProject"."name",
+          'slug', "subSubProject"."slug",
+          'description', "subSubProject"."description",
+          'color', "subSubProject"."color",
+          'projectId', "subSubProject"."projectId",
+          'subProjectId', "subSubProject"."subProjectId",
+          'organizationId', "subSubProject"."organizationId"
+      ) AS "subSubProject"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
               'firstName', "profile"."firstName",
               'lastName', "profile"."lastName",
               'image', "profile"."image",
@@ -145,6 +157,7 @@ export class ContributorsService {
     query = query
       .leftJoin('contributor.project', 'project')
       .leftJoin('contributor.subProject', 'subProject')
+      .leftJoin('contributor.subSubProject', 'subSubProject')
       .leftJoin('contributor.organization', 'organization')
       .leftJoin('organization.user', 'userOrganization')
       .leftJoin('contributor.user', 'user')
@@ -172,8 +185,14 @@ export class ContributorsService {
   async findAllNotPaginate(
     selections: GetContributorsSelections,
   ): Promise<GetContributorsSelections | any> {
-    const { type, userId, organizationId, projectId, subProjectId } =
-      selections;
+    const {
+      type,
+      userId,
+      organizationId,
+      projectId,
+      subProjectId,
+      subSubProjectId,
+    } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
@@ -199,6 +218,12 @@ export class ContributorsService {
       });
     }
 
+    if (subSubProjectId) {
+      query = query.andWhere('contributor.subSubProjectId = :subSubProjectId', {
+        subSubProjectId,
+      });
+    }
+
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
     }
@@ -220,6 +245,7 @@ export class ContributorsService {
       organizationId,
       projectId,
       subProjectId,
+      subSubProjectId,
       contributorId,
     } = selections;
 
@@ -231,6 +257,7 @@ export class ContributorsService {
       .addSelect('contributor.projectId', 'projectId')
       .addSelect('contributor.subProjectId', 'subProjectId')
       .addSelect('contributor.organizationId', 'organizationId')
+      .addSelect('contributor.subSubProjectId', 'subSubProjectId')
       .addSelect('contributor.type', 'type')
       .addSelect('contributor.createdAt', 'createdAt')
       .addSelect(
@@ -260,6 +287,12 @@ export class ContributorsService {
     if (organizationId) {
       query = query.andWhere('contributor.organizationId = :organizationId', {
         organizationId,
+      });
+    }
+
+    if (subSubProjectId) {
+      query = query.andWhere('contributor.subSubProjectId = :subSubProjectId', {
+        subSubProjectId,
       });
     }
 
@@ -297,6 +330,7 @@ export class ContributorsService {
       organizationId,
       projectId,
       subProjectId,
+      subSubProjectId,
       userCreatedId,
       role,
       type,
@@ -309,6 +343,7 @@ export class ContributorsService {
     contributor.subProjectId = subProjectId;
     contributor.projectId = projectId;
     contributor.userCreatedId = userCreatedId;
+    contributor.subSubProjectId = subSubProjectId;
     contributor.role = role;
 
     const query = this.driver.save(contributor);

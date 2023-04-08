@@ -11,7 +11,7 @@ export type GetSubProjectsSelections = {
 };
 
 export type GetOneSubProjectSelections = {
-  projectId?: SubProject['id'];
+  projectId?: SubProject['projectId'];
   subProjectId: SubProject['id'];
 };
 

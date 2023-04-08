@@ -13,6 +13,7 @@ import { Project } from './Project';
 import { SubProject } from './SubProject';
 import { Category } from './Category';
 import { FilterQueryType } from '../app/utils/search-query';
+import { SubSubProject } from './SubSubProject';
 
 @Entity('contact')
 export class Contact extends BaseDeleteEntity {
@@ -82,6 +83,14 @@ export class Contact extends BaseDeleteEntity {
   })
   @JoinColumn()
   subProject?: SubProject;
+
+  @Column({ type: 'uuid', nullable: true })
+  subSubProjectId?: string;
+  @ManyToOne(() => SubSubProject, (subSubProject) => subSubProject.contacts, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  subSubProject?: SubSubProject;
 
   @Column({ type: 'uuid', nullable: true })
   categoryId?: string;

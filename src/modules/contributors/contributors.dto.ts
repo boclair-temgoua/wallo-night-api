@@ -30,6 +30,17 @@ export class CreateOneContributorSubProjectDto {
   @IsUUID()
   subProjectId: string;
 }
+export class CreateOneContributorSubSubProjectDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  userId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  subSubProjectId: string;
+}
 
 export class UpdateRoleContributorDto {
   @IsNotEmpty()

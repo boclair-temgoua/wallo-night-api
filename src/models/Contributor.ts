@@ -14,14 +14,12 @@ import { ContributorRole } from '../modules/contributors/contributors.type';
 import { Project } from './Project';
 import { SubProject } from './SubProject';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
+import { SubSubProject } from './SubSubProject';
 
 @Entity('contributor')
 export class Contributor extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
-
-  @Column({ nullable: true })
-  slug?: string;
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
@@ -51,6 +49,18 @@ export class Contributor extends BaseDeleteEntity {
   })
   @JoinColumn()
   project?: Project;
+
+  @Column({ type: 'uuid', nullable: true })
+  subSubProjectId?: string;
+  @ManyToOne(
+    () => SubSubProject,
+    (subSubProject) => subSubProject.contributors,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn()
+  subSubProject?: SubSubProject;
 
   @Column({ type: 'uuid', nullable: true })
   subProjectId?: string;

@@ -7,17 +7,14 @@ import {
   OneToMany,
 } from 'typeorm';
 
-import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Contributor } from './Contributor';
-import { Organization } from './Organization';
-import { Project } from './Project';
 import { Document } from './Document';
 import { Contact } from './Contact';
-import { SubSubProject } from './SubSubProject';
+import { SubProject } from './SubProject';
 
-@Entity('sub_project')
-export class SubProject extends BaseDeleteEntity {
+@Entity('sub_sub_project')
+export class SubSubProject extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -41,36 +38,29 @@ export class SubProject extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   projectId?: string;
-  @ManyToOne(() => Project, (project) => project.subProjects, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  project?: Project;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.subProjects, {
+
+  @Column({ type: 'uuid', nullable: true })
+  subProjectId?: string;
+  @ManyToOne(() => SubProject, (subProject) => subProject.subSubProjects, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  organization?: User;
+  subProject?: SubProject;
 
-  @OneToMany(() => Contributor, (contributor) => contributor.subProject, {
+  @OneToMany(() => Contributor, (contributor) => contributor.subSubProject, {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
 
-  @OneToMany(() => SubSubProject, (subSubProject) => subSubProject.subProject, {
-    onDelete: 'CASCADE',
-  })
-  subSubProjects?: SubSubProject[];
-
-  @OneToMany(() => Document, (document) => document.subProject, {
+  @OneToMany(() => Document, (document) => document.subSubProject, {
     onDelete: 'CASCADE',
   })
   documents?: Document[];
 
-  @OneToMany(() => Contact, (contact) => contact.subProject, {
+  @OneToMany(() => Contact, (contact) => contact.subSubProject, {
     onDelete: 'CASCADE',
   })
   contacts?: Contact[];
