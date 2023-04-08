@@ -183,6 +183,57 @@ export class ContributorsInternalController {
     return reply({ res, results: contributors });
   }
 
+  @Get(`/sub-sub-project`)
+  @UseGuards(JwtAuthGuard)
+  async findAllContributorsBySubSubProjectId(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+    @Query('subSubProjectId', ParseUUIDPipe) subSubProjectId: string,
+  ) {
+    const { user } = req;
+    /** get contributor filter by project */
+    const { search } = searchQuery;
+
+    const getOneSubSubProject = await this.subSubProjectsService.findOneBy({
+      subSubProjectId,
+    });
+    if (!getOneSubSubProject)
+      throw new HttpException(
+        `Project ${subSubProjectId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const findOneContributorSubSubProject =
+      await this.contributorsService.canCheckPermissionSubSubProject({
+        userId: user?.id,
+        subSubProjectId: getOneSubSubProject?.id,
+        subProjectId: getOneSubSubProject?.subProjectId,
+        projectId: getOneSubSubProject?.projectId,
+        organizationId: getOneSubSubProject?.organizationId,
+      });
+    if (!findOneContributorSubSubProject)
+      throw new UnauthorizedException(
+        `Not authorized in this project ${subSubProjectId}`,
+      );
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const contributors = await this.contributorsService.findAll({
+      search,
+      pagination,
+      type: FilterQueryType.SUBSUBPROJECT,
+      subSubProjectId: getOneSubSubProject?.id,
+      subProjectId: getOneSubSubProject?.subProjectId,
+      projectId: getOneSubSubProject?.projectId,
+      organizationId: getOneSubSubProject?.organizationId,
+    });
+
+    return reply({ res, results: contributors });
+  }
+
   @Post(`/organization`)
   @UseGuards(JwtAuthGuard)
   async createOneContributorOrganization(

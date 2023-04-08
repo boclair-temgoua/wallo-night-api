@@ -121,6 +121,39 @@ export class SubSubProjectsService {
       .addSelect('subSubProject.projectId', 'projectId')
       .addSelect('subSubProject.subProjectId', 'subProjectId')
       .addSelect('subSubProject.organizationId', 'organizationId')
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT con) AS INT)
+      FROM "contributor" "con"
+      WHERE ("con"."subSubProjectId" = "subSubProject"."id"
+      AND "con"."deletedAt" IS NULL
+      AND "con"."type" IN ('SUBSUBPROJECT'))
+      GROUP BY "con"."subSubProjectId", "con"."type", "subSubProject"."id"
+      ) AS "contributorTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT co) AS INT)
+      FROM "contact" "co"
+      WHERE ("co"."subSubProjectId" = "subSubProject"."id"
+      AND "co"."type" IN ('SUBSUBPROJECT')
+      AND "co"."deletedAt" IS NULL)
+      GROUP BY "co"."subSubProjectId", "subSubProject"."id"
+      ) AS "contactTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT doc) AS INT)
+      FROM "document" "doc"
+      WHERE ("doc"."subSubProjectId" = "subSubProject"."id"
+      AND "doc"."type" IN ('SUBSUBPROJECT')
+      AND "doc"."deletedAt" IS NULL)
+      GROUP BY "doc"."subSubProjectId", "subSubProject"."id"
+      ) AS "documentTotal"`,
+      )
       .where('subSubProject.deletedAt IS NULL');
 
     if (projectId) {

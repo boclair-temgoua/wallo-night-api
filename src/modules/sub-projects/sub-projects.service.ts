@@ -93,9 +93,42 @@ export class SubProjectsService {
           CAST(COUNT(DISTINCT con) AS INT)
       FROM "contributor" "con"
       WHERE ("con"."subProjectId" = "subProject"."id"
+      AND "con"."deletedAt" IS NULL
       AND "con"."type" IN ('SUBPROJECT'))
       GROUP BY "con"."subProjectId", "con"."type", "subProject"."id"
       ) AS "contributorTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT co) AS INT)
+      FROM "contact" "co"
+      WHERE ("co"."subProjectId" = "subProject"."id"
+      AND "co"."type" IN ('SUBPROJECT')
+      AND "co"."deletedAt" IS NULL)
+      GROUP BY "co"."subProjectId", "subProject"."id"
+      ) AS "contactTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT doc) AS INT)
+      FROM "document" "doc"
+      WHERE ("doc"."subProjectId" = "subProject"."id"
+      AND "doc"."type" IN ('SUBPROJECT')
+      AND "doc"."deletedAt" IS NULL)
+      GROUP BY "doc"."subProjectId", "subProject"."id"
+      ) AS "documentTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT sbbprj) AS INT)
+      FROM "sub_sub_project" "sbbprj"
+      WHERE ("sbbprj"."subProjectId" = "subProject"."id"
+      AND "sbbprj"."deletedAt" IS NULL)
+      GROUP BY "sbbprj"."subProjectId", "subProject"."id"
+      ) AS "subSubProjectTotal"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(

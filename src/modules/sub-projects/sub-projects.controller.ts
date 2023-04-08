@@ -193,18 +193,16 @@ export class SubProjectsController {
   async getOneByUUIDSubProject(
     @Res() res,
     @Req() req,
-    @Query('projectId', ParseUUIDPipe) projectId: string,
     @Query('subProjectId', ParseUUIDPipe) subProjectId: string,
   ) {
     const { user } = req;
 
     const getOneSubProject = await this.subProjectsService.findOneBy({
       subProjectId,
-      projectId,
     });
     if (!getOneSubProject)
       throw new HttpException(
-        `Project ${projectId} ${subProjectId} don't exist please change`,
+        `Project ${subProjectId} don't exist please change`,
         HttpStatus.NOT_FOUND,
       );
 
@@ -217,7 +215,7 @@ export class SubProjectsController {
     });
     if (!getOneContributor)
       throw new HttpException(
-        `Not authorized in this sub project ${subProjectId} please change`,
+        `Not authorized in this project ${subProjectId} please change`,
         HttpStatus.NOT_FOUND,
       );
 

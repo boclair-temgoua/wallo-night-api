@@ -37,6 +37,7 @@ export class ContributorsService {
       organizationId,
       projectId,
       subProjectId,
+      subSubProjectId,
       type,
     } = selections;
 
@@ -49,6 +50,7 @@ export class ContributorsService {
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect('contributor.projectId', 'projectId')
       .addSelect('contributor.subProjectId', 'subProjectId')
+      .addSelect('contributor.subSubProjectId', 'subSubProjectId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "organization"."id",
@@ -125,6 +127,12 @@ export class ContributorsService {
     if (subProjectId) {
       query = query.andWhere('contributor.subProjectId = :subProjectId', {
         subProjectId,
+      });
+    }
+
+    if (subSubProjectId) {
+      query = query.andWhere('contributor.subSubProjectId = :subSubProjectId', {
+        subSubProjectId,
       });
     }
 
@@ -439,5 +447,28 @@ export class ContributorsService {
     });
 
     return findOneContributorSubProject;
+  }
+
+  /** Permission. sub sub project */
+  async canCheckPermissionSubSubProject(options: {
+    userId: string;
+    projectId: string;
+    subSubProjectId: string;
+    subProjectId: string;
+    organizationId: string;
+  }): Promise<any> {
+    const { userId, projectId, subProjectId, subSubProjectId, organizationId } =
+      options;
+
+    const findOneContributorSubSubProject = await this.findOneBy({
+      userId: userId,
+      projectId: projectId,
+      subSubProjectId: subSubProjectId,
+      subProjectId: subProjectId,
+      organizationId: organizationId,
+      type: FilterQueryType.SUBSUBPROJECT,
+    });
+
+    return findOneContributorSubSubProject;
   }
 }
