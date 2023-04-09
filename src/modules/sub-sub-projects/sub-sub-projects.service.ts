@@ -63,19 +63,6 @@ export class SubSubProjectsService {
       query = query.andWhere('subSubProject.id = :id', { id: subSubProjectId });
     }
 
-    // if (option1) {
-    //   const { organizationId, projectId,subProjectId } = option1;
-    //   query = query
-    //     .andWhere('subSubProject.organizationId = :organizationId', {
-    //       organizationId,
-    //     })
-    //     .andWhere('SubSubProject.projectId = :projectId', {
-    //       projectId,
-    //     }).andWhere('SubSubProject.subProjectId = :projectId', {
-    //       projectId,
-    //     });
-    // }
-
     if (search) {
       query = query.andWhere(
         new Brackets((qb) => {

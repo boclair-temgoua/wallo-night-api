@@ -38,6 +38,7 @@ export class ContributorsService {
       projectId,
       subProjectId,
       subSubProjectId,
+      subSubSubProjectId,
       type,
     } = selections;
 
@@ -51,6 +52,7 @@ export class ContributorsService {
       .addSelect('contributor.projectId', 'projectId')
       .addSelect('contributor.subProjectId', 'subProjectId')
       .addSelect('contributor.subSubProjectId', 'subSubProjectId')
+      .addSelect('contributor.subSubSubProjectId', 'subSubSubProjectId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "organization"."id",
@@ -95,6 +97,19 @@ export class ContributorsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
+          'id', "subSubSubProject"."id",
+          'name', "subSubSubProject"."name",
+          'slug', "subSubSubProject"."slug",
+          'description', "subSubSubProject"."description",
+          'color', "subSubSubProject"."color",
+          'projectId', "subSubSubProject"."projectId",
+          'subProjectId', "subSubSubProject"."subProjectId",
+          'subSubProjectId', "subSubSubProject"."subSubProjectId",
+          'organizationId', "subSubSubProject"."organizationId"
+      ) AS "subSubSubProject"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
               'firstName', "profile"."firstName",
               'lastName', "profile"."lastName",
               'image', "profile"."image",
@@ -136,6 +151,15 @@ export class ContributorsService {
       });
     }
 
+    if (subSubSubProjectId) {
+      query = query.andWhere(
+        'contributor.subSubSubProjectId = :subSubSubProjectId',
+        {
+          subSubSubProjectId,
+        },
+      );
+    }
+
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
     }
@@ -166,6 +190,7 @@ export class ContributorsService {
       .leftJoin('contributor.project', 'project')
       .leftJoin('contributor.subProject', 'subProject')
       .leftJoin('contributor.subSubProject', 'subSubProject')
+      .leftJoin('contributor.subSubSubProject', 'subSubSubProject')
       .leftJoin('contributor.organization', 'organization')
       .leftJoin('organization.user', 'userOrganization')
       .leftJoin('contributor.user', 'user')
@@ -200,6 +225,7 @@ export class ContributorsService {
       projectId,
       subProjectId,
       subSubProjectId,
+      subSubSubProjectId,
     } = selections;
 
     let query = this.driver
@@ -232,6 +258,13 @@ export class ContributorsService {
       });
     }
 
+    if (subSubSubProjectId) {
+      query = query.andWhere(
+        'contributor.subSubSubProjectId = :subSubSubProjectId',
+        { subSubSubProjectId },
+      );
+    }
+
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
     }
@@ -252,6 +285,7 @@ export class ContributorsService {
       projectId,
       subProjectId,
       subSubProjectId,
+      subSubSubProjectId,
       contributorId,
     } = selections;
 
@@ -314,6 +348,13 @@ export class ContributorsService {
       });
     }
 
+    if (subSubSubProjectId) {
+      query = query.andWhere(
+        'contributor.subSubSubProjectId = :subSubSubProjectId',
+        { subSubSubProjectId },
+      );
+    }
+
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
     }
@@ -337,6 +378,7 @@ export class ContributorsService {
       projectId,
       subProjectId,
       subSubProjectId,
+      subSubSubProjectId,
       userCreatedId,
       role,
       type,
@@ -350,6 +392,7 @@ export class ContributorsService {
     contributor.projectId = projectId;
     contributor.userCreatedId = userCreatedId;
     contributor.subSubProjectId = subSubProjectId;
+    contributor.subSubSubProjectId = subSubSubProjectId;
     contributor.role = role;
 
     const query = this.driver.save(contributor);
@@ -468,6 +511,37 @@ export class ContributorsService {
     });
 
     return findOneContributorSubSubProject;
+  }
+
+  /** Permission. sub sub sub project */
+  async canCheckPermissionSubSubSubProject(options: {
+    userId: string;
+    projectId: string;
+    subSubProjectId: string;
+    subSubSubProjectId: string;
+    subProjectId: string;
+    organizationId: string;
+  }): Promise<any> {
+    const {
+      userId,
+      projectId,
+      subProjectId,
+      subSubProjectId,
+      subSubSubProjectId,
+      organizationId,
+    } = options;
+
+    const findOneContributorSubSubSubProject = await this.findOneBy({
+      userId: userId,
+      projectId: projectId,
+      subSubProjectId: subSubProjectId,
+      subProjectId: subProjectId,
+      organizationId: organizationId,
+      subSubSubProjectId: subSubSubProjectId,
+      type: FilterQueryType.SUBSUBSUBPROJECT,
+    });
+
+    return findOneContributorSubSubSubProject;
   }
 
   /** Permission. project */

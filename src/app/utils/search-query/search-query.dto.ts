@@ -30,6 +30,7 @@ export enum FilterQueryType {
   PROJECT = 'PROJECT',
   SUBPROJECT = 'SUBPROJECT',
   SUBSUBPROJECT = 'SUBSUBPROJECT',
+  SUBSUBSUBPROJECT = 'SUBSUBSUBPROJECT',
 }
 export class FilterQueryTypeDto {
   @IsNotEmpty()

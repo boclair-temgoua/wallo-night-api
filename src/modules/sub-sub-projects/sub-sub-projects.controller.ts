@@ -69,7 +69,7 @@ export class SubSubProjectsController {
         HttpStatus.NOT_FOUND,
       );
 
-    const SubSubProjects = await this.contributorsService.findAll({
+    const subSubProjects = await this.contributorsService.findAll({
       search,
       pagination,
       userId: user?.id,
@@ -79,7 +79,7 @@ export class SubSubProjectsController {
       type: FilterQueryType.SUBSUBPROJECT,
     });
 
-    return reply({ res, results: SubSubProjects });
+    return reply({ res, results: subSubProjects });
   }
 
   /** Get SubSubProjects */
@@ -140,27 +140,27 @@ export class SubSubProjectsController {
         HttpStatus.NOT_FOUND,
       );
 
-    const SubSubProject = await this.subSubProjectsService.createOne({
+    const subSubProject = await this.subSubProjectsService.createOne({
       name,
       description,
+      userCreatedId: user?.id,
+      organizationId: getOneSubProject?.organizationId,
       projectId: getOneSubProject?.projectId,
       subProjectId: getOneSubProject?.id,
-      organizationId: getOneSubProject?.organizationId,
-      userCreatedId: user?.id,
     });
 
     await this.contributorsService.createOne({
       userId: user?.id,
-      subSubProjectId: SubSubProject?.id,
       userCreatedId: user?.id,
-      projectId: getOneSubProject?.projectId,
-      subProjectId: getOneSubProject?.id,
+      organizationId: subSubProject?.organizationId,
+      projectId: subSubProject?.projectId,
+      subProjectId: subSubProject?.subProjectId,
+      subSubProjectId: subSubProject?.id,
       role: ContributorRole.ADMIN,
-      organizationId: getOneSubProject?.organizationId,
       type: FilterQueryType.SUBSUBPROJECT,
     });
 
-    return reply({ res, results: SubSubProject });
+    return reply({ res, results: subSubProject });
   }
 
   /** Update Sub SubSubProject */

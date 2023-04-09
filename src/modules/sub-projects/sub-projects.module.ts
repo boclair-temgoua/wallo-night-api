@@ -6,7 +6,7 @@ import { SubProjectsController } from './sub-projects.controller';
 import { SubProjectsService } from './sub-projects.service';
 import { Contributor } from '../../models/Contributor';
 import { ProjectsService } from '../projects/projects.service';
-import { Project } from 'src/models/Project';
+import { Project } from '../../models/Project';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SubProject, Contributor, Project])],

@@ -21,6 +21,8 @@ import { SubProjectsService } from '../sub-projects/sub-projects.service';
 import { SubProject } from '../../models/SubProject';
 import { SubSubProjectsService } from '../sub-sub-projects/sub-sub-projects.service';
 import { SubSubProject } from '../../models/SubSubProject';
+import { SubSubSubProject } from '../../models/SubSubSubProject';
+import { SubSubSubProjectsService } from '../sub-sub-sub-projects/sub-sub-sub-projects.service';
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { SubSubProject } from '../../models/SubSubProject';
       Project,
       SubProject,
       SubSubProject,
+      SubSubSubProject,
       Application,
       Profile,
     ]),
@@ -45,6 +48,7 @@ import { SubSubProject } from '../../models/SubSubProject';
     ProfilesService,
     ProjectsService,
     SubSubProjectsService,
+    SubSubSubProjectsService,
     SubProjectsService,
     ApplicationsService,
   ],
