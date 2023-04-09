@@ -37,7 +37,12 @@ export class SubProject extends BaseDeleteEntity {
   image?: string;
 
   @Column({ type: 'uuid', nullable: true })
-  userCreatedId?: string;
+  organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.subProjects, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: User;
 
   @Column({ type: 'uuid', nullable: true })
   projectId?: string;
@@ -48,12 +53,7 @@ export class SubProject extends BaseDeleteEntity {
   project?: Project;
 
   @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.subProjects, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  organization?: User;
+  userCreatedId?: string;
 
   @OneToMany(() => Contributor, (contributor) => contributor.subProject, {
     onDelete: 'CASCADE',

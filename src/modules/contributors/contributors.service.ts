@@ -244,9 +244,7 @@ export class ContributorsService {
     return contributors;
   }
 
-  async findOneBy(
-    selections: GetOneContributorSelections,
-  ): Promise<Contributor> {
+  async findOneBy(selections: GetOneContributorSelections): Promise<any> {
     const {
       type,
       userId,
@@ -470,5 +468,42 @@ export class ContributorsService {
     });
 
     return findOneContributorSubSubProject;
+  }
+
+  /** Permission. project */
+  async canCheckPermissionContributor(options: {
+    userId: string;
+    contributorId: string;
+  }): Promise<any> {
+    const { userId, contributorId } = options;
+
+    const contributor = await this.findOneBy({
+      contributorId,
+    });
+    if (!contributor)
+      throw new HttpException(
+        `This contributor dons't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const findOneContributorProject = await this.findOneBy({
+      userId: userId,
+      projectId: contributor?.projectId,
+      subSubProjectId: contributor?.subSubProjectId,
+      subProjectId: contributor?.subProjectId,
+      organizationId: contributor?.organizationId,
+      type: contributor?.type,
+    });
+
+    if (!findOneContributorProject)
+      throw new HttpException(
+        `This contributor dons't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    /** This condition check if user is ADMIN */
+    if (!['ADMIN', 'MODERATOR'].includes(findOneContributorProject?.role?.name))
+      throw new UnauthorizedException('Not authorized! Change permission');
+
+    return findOneContributorProject;
   }
 }

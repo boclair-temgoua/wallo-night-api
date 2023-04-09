@@ -12,10 +12,10 @@ import { Contributor } from './Contributor';
 import { Document } from './Document';
 import { Contact } from './Contact';
 import { SubProject } from './SubProject';
-import { SubSubSubProject } from './SubSubSubProject';
+import { SubSubProject } from './SubSubProject';
 
-@Entity('sub_sub_project')
-export class SubSubProject extends BaseDeleteEntity {
+@Entity('sub_sub_sub_project')
+export class SubSubSubProject extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -42,35 +42,33 @@ export class SubSubProject extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   subProjectId?: string;
-  @ManyToOne(() => SubProject, (subProject) => subProject.subSubProjects, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  subProject?: SubProject;
 
   @Column({ type: 'uuid', nullable: true })
-  userCreatedId?: string;
-
-  @OneToMany(() => Contributor, (contributor) => contributor.subSubProject, {
-    onDelete: 'CASCADE',
-  })
-  contributors?: Contributor[];
-
-  @OneToMany(() => Document, (document) => document.subSubProject, {
-    onDelete: 'CASCADE',
-  })
-  documents?: Document[];
-
-  @OneToMany(
-    () => SubSubSubProject,
-    (subSubSubProject) => subSubSubProject.subSubProject,
+  subSubProjectId?: string;
+  @ManyToOne(
+    () => SubSubProject,
+    (subSubProject) => subSubProject.subSubSubProjects,
     {
       onDelete: 'CASCADE',
     },
   )
-  subSubSubProjects?: SubSubSubProject[];
+  @JoinColumn()
+  subSubProject?: SubSubProject;
 
-  @OneToMany(() => Contact, (contact) => contact.subSubProject, {
+  @Column({ type: 'uuid', nullable: true })
+  userCreatedId?: string;
+
+  @OneToMany(() => Contributor, (contributor) => contributor.subSubSubProject, {
+    onDelete: 'CASCADE',
+  })
+  contributors?: Contributor[];
+
+  @OneToMany(() => Document, (document) => document.subSubSubProject, {
+    onDelete: 'CASCADE',
+  })
+  documents?: Document[];
+
+  @OneToMany(() => Contact, (contact) => contact.subSubSubProject, {
     onDelete: 'CASCADE',
   })
   contacts?: Contact[];

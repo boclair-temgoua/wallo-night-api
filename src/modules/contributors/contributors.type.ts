@@ -6,6 +6,7 @@ export enum ContributorRole {
   MODERATOR = 'MODERATOR',
   EDITOR = 'EDITOR',
   GHOST = 'GHOST',
+  ANALYST = 'ANALYST',
 }
 
 export type GetContributorsSelections = {

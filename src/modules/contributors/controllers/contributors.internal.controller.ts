@@ -28,6 +28,7 @@ import {
 import {
   FilterQueryType,
   FilterQueryTypeDto,
+  PasswordBodyDto,
   SearchQueryDto,
 } from '../../../app/utils/search-query';
 import { ContributorsService } from '../contributors.service';
@@ -243,7 +244,7 @@ export class ContributorsInternalController {
   ) {
     const { user } = req;
     /** This condition check if user is ADMIN */
-    await this.usersService.canPermission({ userId: user?.id });
+    // await this.usersService.canPermission({ userId: user?.id });
 
     const getOneUser = await this.usersService.findOneBy({
       option1: { userId },
@@ -270,7 +271,7 @@ export class ContributorsInternalController {
     await this.contributorsService.createOne({
       userId: getOneUser?.id,
       userCreatedId: user?.id,
-      role: ContributorRole.MODERATOR,
+      role: ContributorRole.ANALYST,
       organizationId: user?.organizationInUtilizationId,
     });
 
@@ -289,7 +290,7 @@ export class ContributorsInternalController {
   ) {
     const { user } = req;
     /** This condition check if user is ADMIN */
-    await this.usersService.canPermission({ userId: user?.id });
+    // await this.usersService.canPermission({ userId: user?.id });
 
     const { userId, projectId } = query;
 
@@ -320,7 +321,7 @@ export class ContributorsInternalController {
       userId: userId,
       projectId: getOneProject?.id,
       userCreatedId: user?.id,
-      role: ContributorRole.MODERATOR,
+      role: ContributorRole.ANALYST,
       organizationId: getOneProject?.organizationId,
       type: FilterQueryType.PROJECT,
     });
@@ -338,7 +339,7 @@ export class ContributorsInternalController {
   ) {
     const { user } = req;
     /** This condition check if user is ADMIN */
-    await this.usersService.canPermission({ userId: user?.id });
+    // await this.usersService.canPermission({ userId: user?.id });
 
     const { userId, subProjectId } = query;
 
@@ -386,7 +387,7 @@ export class ContributorsInternalController {
         userId: userId,
         projectId: getOneSubProject?.projectId,
         userCreatedId: user?.id,
-        role: ContributorRole.MODERATOR,
+        role: ContributorRole.ANALYST,
         organizationId: getOneSubProject?.organizationId,
         type: FilterQueryType.PROJECT,
       });
@@ -398,7 +399,7 @@ export class ContributorsInternalController {
       subProjectId: getOneSubProject?.id,
       userCreatedId: user?.id,
       projectId: getOneSubProject?.projectId,
-      role: ContributorRole.MODERATOR,
+      role: ContributorRole.ANALYST,
       organizationId: getOneSubProject?.organizationId,
       type: FilterQueryType.SUBPROJECT,
     });
@@ -417,7 +418,7 @@ export class ContributorsInternalController {
   ) {
     const { user } = req;
     /** This condition check if user is ADMIN */
-    await this.usersService.canPermission({ userId: user?.id });
+    // await this.usersService.canPermission({ userId: user?.id });
 
     const { userId, subSubProjectId } = query;
 
@@ -466,7 +467,7 @@ export class ContributorsInternalController {
         userId: userId,
         projectId: getOneSubSubProject?.projectId,
         userCreatedId: user?.id,
-        role: ContributorRole.MODERATOR,
+        role: ContributorRole.ANALYST,
         organizationId: getOneSubSubProject?.organizationId,
         type: FilterQueryType.PROJECT,
       });
@@ -488,7 +489,7 @@ export class ContributorsInternalController {
         projectId: getOneSubSubProject?.projectId,
         subProjectId: getOneSubSubProject?.subProjectId,
         userCreatedId: user?.id,
-        role: ContributorRole.MODERATOR,
+        role: ContributorRole.ANALYST,
         organizationId: getOneSubSubProject?.organizationId,
         type: FilterQueryType.SUBPROJECT,
       });
@@ -501,7 +502,7 @@ export class ContributorsInternalController {
       userCreatedId: user?.id,
       projectId: getOneSubSubProject?.projectId,
       subProjectId: getOneSubSubProject?.subProjectId,
-      role: ContributorRole.MODERATOR,
+      role: ContributorRole.ANALYST,
       organizationId: getOneSubSubProject?.organizationId,
       type: FilterQueryType.SUBSUBPROJECT,
     });
@@ -619,23 +620,22 @@ export class ContributorsInternalController {
   async deleteOneContributor(
     @Res() res,
     @Req() req,
+    @Body() body: PasswordBodyDto,
     @Param('contributorId', ParseUUIDPipe) contributorId: string,
   ) {
     const { user } = req;
+    if (!user?.checkIfPasswordMatch(body.password))
+      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
 
-    const findOneContributor = await this.contributorsService.findOneBy({
+    await this.contributorsService.canCheckPermissionContributor({
+      userId: user?.id,
       contributorId,
-      organizationId: user?.organizationInUtilizationId,
     });
-    if (!findOneContributor)
-      throw new HttpException(
-        `This contributor dons't exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
 
-    await this.contributorsService.deleteOne({
-      option1: { contributorId },
-    });
+    await this.contributorsService.updateOne(
+      { option1: { contributorId } },
+      { deletedAt: new Date() },
+    );
 
     return reply({ res, results: 'Contributor deleted successfully' });
   }
@@ -648,13 +648,16 @@ export class ContributorsInternalController {
     @Body() body: UpdateRoleContributorDto,
   ) {
     const { user } = req;
+
     const { contributorId, role } = body;
 
-    await this.usersService.canPermission({ userId: user?.id });
+    await this.contributorsService.canCheckPermissionContributor({
+      userId: user?.id,
+      contributorId,
+    });
 
     const findOneContributor = await this.contributorsService.findOneBy({
       contributorId,
-      organizationId: user?.organizationInUtilizationId,
     });
     if (!findOneContributor)
       throw new HttpException(

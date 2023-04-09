@@ -47,10 +47,10 @@ export class ApplicationsController {
   async createOneApplication(
     @Res() res,
     @Req() req,
-    @Body() createOrUpdateApplicationDto: CreateOrUpdateApplicationDto,
+    @Body() body: CreateOrUpdateApplicationDto,
   ) {
     const { user } = req;
-    const { name } = createOrUpdateApplicationDto;
+    const { name } = body;
 
     const application = await this.applicationsService.createOne({
       name,

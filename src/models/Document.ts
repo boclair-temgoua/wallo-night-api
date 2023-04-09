@@ -13,6 +13,7 @@ import { Project } from './Project';
 import { SubProject } from './SubProject';
 import { Comment } from './Comment';
 import { SubSubProject } from './SubSubProject';
+import { SubSubSubProject } from './SubSubSubProject';
 
 @Entity('document')
 export class Document extends BaseDeleteEntity {
@@ -69,6 +70,18 @@ export class Document extends BaseDeleteEntity {
   })
   @JoinColumn()
   subSubProject?: SubSubProject;
+
+  @Column({ type: 'uuid', nullable: true })
+  subSubSubProjectId?: string;
+  @ManyToOne(
+    () => SubSubSubProject,
+    (subSubSubProject) => subSubSubProject.documents,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn()
+  subSubSubProject?: SubSubSubProject;
 
   @OneToMany(() => Comment, (comment) => comment.document, {
     onDelete: 'CASCADE',

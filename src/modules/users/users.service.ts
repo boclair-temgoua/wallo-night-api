@@ -35,8 +35,8 @@ export class UsersService {
       .select('user.id', 'id')
       .addSelect('user.email', 'email')
       .addSelect('user.confirmedAt', 'confirmedAt')
-      .addSelect('user.username', 'username')
       .addSelect('user.profileId', 'profileId')
+      .addSelect('user.createdAt', 'createdAt')
       .addSelect(
         'user.organizationInUtilizationId',
         'organizationInUtilizationId',
@@ -55,16 +55,6 @@ export class UsersService {
       ) AS "profile"`,
       )
       .addSelect(
-        /*sql*/ `(
-        SELECT jsonb_build_object(
-        'name', "con"."role"
-        )
-        FROM "contributor" "con"
-        WHERE "user"."id" = "con"."userId"
-        AND "user"."organizationInUtilizationId" = "con"."organizationId"
-        ) AS "role"`,
-      )
-      .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "organization"."id",
           'color', "organization"."color",
@@ -74,6 +64,7 @@ export class UsersService {
       )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile')
+      .leftJoin('profile.currency', 'currency')
       .leftJoin('user.organizationInUtilization', 'organization');
 
     if (search) {
@@ -83,6 +74,9 @@ export class UsersService {
             search: `%${search}%`,
           })
             .orWhere('profile.firstName ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('organization.name ::text ILIKE :search', {
               search: `%${search}%`,
             })
             .orWhere('profile.lastName ::text ILIKE :search', {
@@ -160,6 +154,7 @@ export class UsersService {
     let query = this.driver
       .createQueryBuilder('user')
       .select('user.id', 'id')
+      .addSelect('user.createdAt', 'createdAt')
       .addSelect('user.email', 'email')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')

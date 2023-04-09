@@ -15,6 +15,7 @@ import { Project } from './Project';
 import { SubProject } from './SubProject';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 import { SubSubProject } from './SubSubProject';
+import { SubSubSubProject } from './SubSubSubProject';
 
 @Entity('contributor')
 export class Contributor extends BaseDeleteEntity {
@@ -51,6 +52,14 @@ export class Contributor extends BaseDeleteEntity {
   project?: Project;
 
   @Column({ type: 'uuid', nullable: true })
+  subProjectId?: string;
+  @ManyToOne(() => SubProject, (subProject) => subProject.contributors, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  subProject?: SubProject;
+
+  @Column({ type: 'uuid', nullable: true })
   subSubProjectId?: string;
   @ManyToOne(
     () => SubSubProject,
@@ -63,12 +72,16 @@ export class Contributor extends BaseDeleteEntity {
   subSubProject?: SubSubProject;
 
   @Column({ type: 'uuid', nullable: true })
-  subProjectId?: string;
-  @ManyToOne(() => SubProject, (subProject) => subProject.contributors, {
-    onDelete: 'CASCADE',
-  })
+  subSubSubProjectId?: string;
+  @ManyToOne(
+    () => SubSubSubProject,
+    (subSubSubProject) => subSubSubProject.contributors,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn()
-  subProject?: SubProject;
+  subSubSubProject?: SubSubSubProject;
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;

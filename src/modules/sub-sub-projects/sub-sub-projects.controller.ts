@@ -164,7 +164,7 @@ export class SubSubProjectsController {
   }
 
   /** Update Sub SubSubProject */
-  @Put(`/:SubSubProjectId`)
+  @Put(`/:subSubProjectId`)
   @UseGuards(JwtAuthGuard)
   async updateOneSubSubProject(
     @Res() res,

@@ -14,6 +14,7 @@ import { SubProject } from './SubProject';
 import { Category } from './Category';
 import { FilterQueryType } from '../app/utils/search-query';
 import { SubSubProject } from './SubSubProject';
+import { SubSubSubProject } from './SubSubSubProject';
 
 @Entity('contact')
 export class Contact extends BaseDeleteEntity {
@@ -91,6 +92,18 @@ export class Contact extends BaseDeleteEntity {
   })
   @JoinColumn()
   subSubProject?: SubSubProject;
+
+  @Column({ type: 'uuid', nullable: true })
+  subSubSubProjectId?: string;
+  @ManyToOne(
+    () => SubSubSubProject,
+    (subSubSubProject) => subSubSubProject.contacts,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn()
+  subSubSubProject?: SubSubSubProject;
 
   @Column({ type: 'uuid', nullable: true })
   categoryId?: string;
