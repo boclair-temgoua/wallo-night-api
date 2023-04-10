@@ -53,7 +53,7 @@ export const withPagination = async <T>(options: {
     current_page: pagination?.page,
     next_page: next_page,
     prev_page: prev_page,
-    last_next: n_pages ? n_pages : undefined,
+    last_page: n_pages ? n_pages : undefined,
     skip: pagination?.skip,
     sort: pagination?.sort ?? 'DESC',
     total_page: n_pages,

@@ -16,9 +16,7 @@ import { colorsArrays } from '../../utils/commons/get-colors';
 import { Organization } from '../../../models/Organization';
 import { User } from '../../../models/User';
 import { Contributor } from '../../../models/Contributor';
-import {
-  ContributorRole,
-} from '../../../modules/contributors/contributors.type';
+import { ContributorRole } from '../../../modules/contributors/contributors.type';
 import { Project } from '../../../models/Project';
 import { FilterQueryType } from '../../utils/search-query/search-query.dto';
 
@@ -26,7 +24,7 @@ export class Seeds1590529635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
     const driver = AppSeedDataSource;
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 1000; i++) {
       const firstName = faker.name.firstName();
       const lastName = faker.name.lastName();
 
@@ -100,113 +98,113 @@ export class Seeds1590529635401 implements MigrationInterface {
     }
     console.log('\x1b[32m%s\x1b[0m', '**** User seed finish ****');
 
-    for (let i = 0; i < 200; i++) {
-      const user = await driver
-        .createQueryBuilder(User, 'user')
-        .select('user.id', 'id')
-        .addSelect(
-          'user.organizationInUtilizationId',
-          'organizationInUtilizationId',
-        )
-        .orderBy('RANDOM()')
-        .limit(1)
-        .getRawOne();
+    // for (let i = 0; i < 200; i++) {
+    //   const user = await driver
+    //     .createQueryBuilder(User, 'user')
+    //     .select('user.id', 'id')
+    //     .addSelect(
+    //       'user.organizationInUtilizationId',
+    //       'organizationInUtilizationId',
+    //     )
+    //     .orderBy('RANDOM()')
+    //     .limit(1)
+    //     .getRawOne();
 
-      const organization = await driver
-        .createQueryBuilder(Organization, 'organization')
-        .select('organization.id', 'id')
-        .orderBy('RANDOM()')
-        .limit(1)
-        .getRawOne();
+    //   const organization = await driver
+    //     .createQueryBuilder(Organization, 'organization')
+    //     .select('organization.id', 'id')
+    //     .orderBy('RANDOM()')
+    //     .limit(1)
+    //     .getRawOne();
 
-      await driver
-        .createQueryBuilder()
-        .insert()
-        .into(Project)
-        .values({
-          name: faker.name.firstName(),
-          color: getRandomElement(colorsArrays),
-          userCreatedId: user?.id,
-          organizationId: organization?.id,
-        })
-        .execute();
-    }
-    console.log('\x1b[32m%s\x1b[0m', '**** Project seed finish ****');
+    //   await driver
+    //     .createQueryBuilder()
+    //     .insert()
+    //     .into(Project)
+    //     .values({
+    //       name: faker.name.firstName(),
+    //       color: getRandomElement(colorsArrays),
+    //       userCreatedId: user?.id,
+    //       organizationId: organization?.id,
+    //     })
+    //     .execute();
+    // }
+    // console.log('\x1b[32m%s\x1b[0m', '**** Project seed finish ****');
 
-    for (let i = 0; i < 300; i++) {
-      const user = await driver
-        .createQueryBuilder(User, 'user')
-        .select('user.id', 'id')
-        .addSelect(
-          'user.organizationInUtilizationId',
-          'organizationInUtilizationId',
-        )
-        .orderBy('RANDOM()')
-        .limit(1)
-        .getRawOne();
+    // for (let i = 0; i < 300; i++) {
+    //   const user = await driver
+    //     .createQueryBuilder(User, 'user')
+    //     .select('user.id', 'id')
+    //     .addSelect(
+    //       'user.organizationInUtilizationId',
+    //       'organizationInUtilizationId',
+    //     )
+    //     .orderBy('RANDOM()')
+    //     .limit(1)
+    //     .getRawOne();
 
-      const organization = await driver
-        .createQueryBuilder(Organization, 'organization')
-        .select('organization.id', 'id')
-        .orderBy('RANDOM()')
-        .limit(1)
-        .getRawOne();
+    //   const organization = await driver
+    //     .createQueryBuilder(Organization, 'organization')
+    //     .select('organization.id', 'id')
+    //     .orderBy('RANDOM()')
+    //     .limit(1)
+    //     .getRawOne();
 
-      await driver
-        .createQueryBuilder()
-        .insert()
-        .into(Contributor)
-        .values({
-          userId: user?.id,
-          userCreatedId: user?.id,
-          role: ContributorRole.MODERATOR,
-          organizationId: organization?.id,
-        })
-        .execute();
-    }
-    console.log('\x1b[32m%s\x1b[0m', '**** Contributor seed finish ****');
+    //   await driver
+    //     .createQueryBuilder()
+    //     .insert()
+    //     .into(Contributor)
+    //     .values({
+    //       userId: user?.id,
+    //       userCreatedId: user?.id,
+    //       role: ContributorRole.MODERATOR,
+    //       organizationId: organization?.id,
+    //     })
+    //     .execute();
+    // }
+    // console.log('\x1b[32m%s\x1b[0m', '**** Contributor seed finish ****');
 
-    for (let i = 0; i < 300; i++) {
-      const user = await driver
-        .createQueryBuilder(User, 'user')
-        .select('user.id', 'id')
-        .addSelect(
-          'user.organizationInUtilizationId',
-          'organizationInUtilizationId',
-        )
-        .orderBy('RANDOM()')
-        .limit(1)
-        .getRawOne();
+    // for (let i = 0; i < 300; i++) {
+    //   const user = await driver
+    //     .createQueryBuilder(User, 'user')
+    //     .select('user.id', 'id')
+    //     .addSelect(
+    //       'user.organizationInUtilizationId',
+    //       'organizationInUtilizationId',
+    //     )
+    //     .orderBy('RANDOM()')
+    //     .limit(1)
+    //     .getRawOne();
 
-      const organization = await driver
-        .createQueryBuilder(Organization, 'organization')
-        .select('organization.id', 'id')
-        .orderBy('RANDOM()')
-        .limit(1)
-        .getRawOne();
+    //   const organization = await driver
+    //     .createQueryBuilder(Organization, 'organization')
+    //     .select('organization.id', 'id')
+    //     .orderBy('RANDOM()')
+    //     .limit(1)
+    //     .getRawOne();
 
-      const project = await driver
-        .createQueryBuilder(Project, 'project')
-        .select('project.id', 'id')
-        .orderBy('RANDOM()')
-        .limit(1)
-        .getRawOne();
+    //   const project = await driver
+    //     .createQueryBuilder(Project, 'project')
+    //     .select('project.id', 'id')
+    //     .orderBy('RANDOM()')
+    //     .limit(1)
+    //     .getRawOne();
 
-      await driver
-        .createQueryBuilder()
-        .insert()
-        .into(Contributor)
-        .values({
-          userId: user?.id,
-          userCreatedId: user?.id,
-          role: ContributorRole.ADMIN,
-          type: FilterQueryType.PROJECT,
-          organizationId: organization?.id,
-          projectId: project?.id,
-        })
-        .execute();
-    }
-    console.log('\x1b[32m%s\x1b[0m', '**** Contributor seed finish ****');
+    //   await driver
+    //     .createQueryBuilder()
+    //     .insert()
+    //     .into(Contributor)
+    //     .values({
+    //       userId: user?.id,
+    //       userCreatedId: user?.id,
+    //       role: ContributorRole.ADMIN,
+    //       type: FilterQueryType.PROJECT,
+    //       organizationId: organization?.id,
+    //       projectId: project?.id,
+    //     })
+    //     .execute();
+    // }
+    // console.log('\x1b[32m%s\x1b[0m', '**** Contributor seed finish ****');
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
