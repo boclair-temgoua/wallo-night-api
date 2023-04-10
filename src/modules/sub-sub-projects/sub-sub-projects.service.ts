@@ -107,6 +107,7 @@ export class SubSubProjectsService {
       .addSelect('subSubProject.image', 'image')
       .addSelect('subSubProject.projectId', 'projectId')
       .addSelect('subSubProject.subProjectId', 'subProjectId')
+      .addSelect('subSubProject.description', 'description')
       .addSelect('subSubProject.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `(

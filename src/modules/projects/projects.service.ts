@@ -81,6 +81,7 @@ export class ProjectsService {
       .addSelect('project.image', 'image')
       .addSelect('project.color', 'color')
       .addSelect('project.slug', 'slug')
+      .addSelect('project.description', 'description')
       .addSelect('project.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `(

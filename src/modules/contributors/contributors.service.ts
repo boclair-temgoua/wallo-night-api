@@ -19,6 +19,10 @@ import {
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { FilterQueryType } from '../../app/utils/search-query/search-query.dto';
+import { Project } from '../../models/Project';
+import { SubProject } from '../../models/SubProject';
+import { SubSubProject } from '../../models/SubSubProject';
+import { SubSubSubProject } from '../../models/SubSubSubProject';
 
 @Injectable()
 export class ContributorsService {
@@ -456,15 +460,14 @@ export class ContributorsService {
   /** Permission. project */
   async canCheckPermissionProject(options: {
     userId: string;
-    projectId: string;
-    organizationId: string;
+    project: Project;
   }): Promise<any> {
-    const { userId, projectId, organizationId } = options;
+    const { userId, project } = options;
 
     const findOneContributorProject = await this.findOneBy({
       userId: userId,
-      projectId: projectId,
-      organizationId: organizationId,
+      projectId: project?.id,
+      organizationId: project?.organizationId,
       type: FilterQueryType.PROJECT,
     });
 
@@ -473,17 +476,15 @@ export class ContributorsService {
   /** Permission. sub project */
   async canCheckPermissionSubProject(options: {
     userId: string;
-    projectId: string;
-    subProjectId: string;
-    organizationId: string;
+    subProject: SubProject;
   }): Promise<any> {
-    const { userId, projectId, subProjectId, organizationId } = options;
+    const { userId, subProject } = options;
 
     const findOneContributorSubProject = await this.findOneBy({
       userId: userId,
-      projectId: projectId,
-      subProjectId: subProjectId,
-      organizationId: organizationId,
+      organizationId: subProject?.organizationId,
+      projectId: subProject?.projectId,
+      subProjectId: subProject?.id,
       type: FilterQueryType.SUBPROJECT,
     });
 

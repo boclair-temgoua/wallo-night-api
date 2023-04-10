@@ -16,6 +16,7 @@ import {
   UploadedFiles,
   HttpStatus,
   HttpException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
@@ -37,11 +38,15 @@ import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter'
 import { generateLongUUID, generateNumber } from '../../app/utils/commons';
 import { SubProjectsService } from '../sub-projects/sub-projects.service';
 import { mineTypeFile } from '../../app/utils/commons/key-as-string';
+import { ProjectsService } from '../projects/projects.service';
+import { ContributorsService } from '../contributors/contributors.service';
 
 @Controller('documents')
 export class DocumentsController {
   constructor(
     private readonly documentsService: DocumentsService,
+    private readonly projectsService: ProjectsService,
+    private readonly contributorsService: ContributorsService,
     private readonly subProjectsService: SubProjectsService,
   ) {}
 
@@ -121,6 +126,25 @@ export class DocumentsController {
     const { user } = req;
     const { title, description } = body;
 
+    const getOneProject = await this.projectsService.findOneBy({
+      option1: { projectId },
+    });
+    if (!getOneProject)
+      throw new HttpException(
+        `Project ${projectId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const findOneContributorProject =
+      await this.contributorsService.canCheckPermissionProject({
+        userId: user?.id,
+        project: getOneProject,
+      });
+    if (!findOneContributorProject)
+      throw new UnauthorizedException(
+        `Not authorized in this project ${projectId}`,
+      );
+
     const bucketKey = `${title} ${generateLongUUID(10)}`;
     const responseAws = await awsS3ServiceAdapter({
       name: bucketKey,
@@ -135,9 +159,9 @@ export class DocumentsController {
       description: description,
       url: responseAws?.Location,
       type: FilterQueryType.PROJECT,
-      projectId: projectId,
       typeFile: mineTypeFile[file?.mimetype],
-      organizationId: user?.organizationInUtilizationId,
+      projectId: getOneProject?.id,
+      organizationId: getOneProject?.organizationId,
     });
 
     return reply({ res, results: 'document save successfully' });
@@ -166,11 +190,21 @@ export class DocumentsController {
         HttpStatus.NOT_FOUND,
       );
 
+    const findOneContributorSubProject =
+      await this.contributorsService.canCheckPermissionSubProject({
+        userId: user?.id,
+        subProject: getOneSubProject,
+      });
+    if (!findOneContributorSubProject)
+      throw new UnauthorizedException(
+        `Not authorized in this project ${subProjectId}`,
+      );
+
     const bucketKey = `${title} ${generateLongUUID(10)}`;
     const responseAws = await awsS3ServiceAdapter({
       name: bucketKey,
       mimeType: file?.mimetype,
-      folder: FilterQueryType.SUBPROJECT.toLowerCase(),
+      folder: FilterQueryType.PROJECT.toLowerCase(),
       file: file?.buffer,
     });
 
@@ -182,7 +216,7 @@ export class DocumentsController {
       type: FilterQueryType.SUBPROJECT,
       projectId: getOneSubProject?.projectId,
       subProjectId: getOneSubProject?.id,
-      organizationId: user?.organizationInUtilizationId,
+      organizationId: getOneSubProject?.organizationId,
     });
 
     return reply({ res, results: 'document save successfully' });

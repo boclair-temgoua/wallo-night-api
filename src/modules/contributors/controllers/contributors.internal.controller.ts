@@ -117,8 +117,7 @@ export class ContributorsInternalController {
     const findOneContributorProject =
       await this.contributorsService.canCheckPermissionProject({
         userId: user?.id,
-        projectId: getOneProject?.id,
-        organizationId: getOneProject?.organizationId,
+        project: getOneProject,
       });
     if (!findOneContributorProject)
       throw new UnauthorizedException(
@@ -163,9 +162,7 @@ export class ContributorsInternalController {
     const findOneContributorSubProject =
       await this.contributorsService.canCheckPermissionSubProject({
         userId: user?.id,
-        subProjectId: getOneSubProject?.id,
-        projectId: getOneSubProject?.projectId,
-        organizationId: getOneSubProject?.organizationId,
+        subProject: getOneSubProject,
       });
     if (!findOneContributorSubProject)
       throw new UnauthorizedException(
@@ -363,8 +360,7 @@ export class ContributorsInternalController {
     const findOneContributorProject =
       await this.contributorsService.canCheckPermissionProject({
         userId: userId,
-        projectId: getOneProject?.id,
-        organizationId: getOneProject?.organizationId,
+        project: getOneProject,
       });
 
     if (findOneContributorProject)

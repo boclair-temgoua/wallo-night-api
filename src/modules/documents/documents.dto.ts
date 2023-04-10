@@ -18,7 +18,7 @@ export class CreateDocumentDto {
   @MaxLength(100)
   title: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 }
