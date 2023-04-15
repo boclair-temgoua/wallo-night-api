@@ -65,13 +65,13 @@ export class CategoriesController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const CategoriesUs = await this.categoriesService.findAll({
+    const categories = await this.categoriesService.findAll({
       search,
       pagination,
       option1: { organizationId: user?.organizationInUtilizationId },
     });
 
-    return reply({ res, results: CategoriesUs });
+    return reply({ res, results: categories });
   }
 
   /** Post one Categories */

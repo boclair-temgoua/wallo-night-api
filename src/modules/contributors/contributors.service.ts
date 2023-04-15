@@ -185,6 +185,18 @@ export class ContributorsService {
             })
             .orWhere('user.email ::text ILIKE :search', {
               search: `%${search}%`,
+            })
+            .orWhere('project.name ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('subProject.name ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('subSubProject.name ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('subSubSubProject.name ::text ILIKE :search', {
+              search: `%${search}%`,
             });
         }),
       );
