@@ -119,6 +119,7 @@ export class ContactsController {
       projectId,
       subProjectId,
       categoryId,
+      organizationId,
     } = body;
 
     const responseAws = await awsS3ServiceAdapter({
@@ -142,7 +143,7 @@ export class ContactsController {
       categoryId,
       userCreatedId: user?.id,
       image: responseAws?.Location,
-      organizationId: user?.organizationInUtilizationId,
+      organizationId: organizationId,
     });
 
     return reply({ res, results: contact });

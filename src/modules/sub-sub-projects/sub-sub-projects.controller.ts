@@ -184,6 +184,8 @@ export class SubSubProjectsController {
         HttpStatus.NOT_FOUND,
       );
 
+    console.log('findOneSubSubProject =======>', findOneSubSubProject);
+
     const SubSubProject = await this.subSubProjectsService.updateOne(
       { option1: { subSubProjectId: findOneSubSubProject?.id } },
       { name, description, userCreatedId: user?.id },

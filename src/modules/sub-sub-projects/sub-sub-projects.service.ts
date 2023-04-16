@@ -142,6 +142,16 @@ export class SubSubProjectsService {
       GROUP BY "doc"."subSubProjectId", "subSubProject"."id"
       ) AS "documentTotal"`,
       )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT sbbbprj) AS INT)
+      FROM "sub_sub_sub_project" "sbbbprj"
+      WHERE ("sbbbprj"."subSubProjectId" = "subSubProject"."id"
+      AND "sbbbprj"."deletedAt" IS NULL)
+      GROUP BY "sbbbprj"."subSubProjectId", "subSubProject"."id"
+      ) AS "subSubSubProjectTotal"`,
+      )
       .where('subSubProject.deletedAt IS NULL');
 
     if (projectId) {

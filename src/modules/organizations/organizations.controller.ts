@@ -53,18 +53,23 @@ export class OrganizationsController {
     return reply({ res, results: organizations });
   }
 
-  @Get(`/:organizationId`)
+  @Get(`/show`)
   @UseGuards(JwtAuthGuard)
   async getOneByUUIDOrganization(
     @Res() res,
     @Req() req,
-    @Param('organizationId', ParseUUIDPipe) organizationId: string,
+    @Query('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
     const { user } = req;
 
     const organization = await this.organizationsService.findOneBy({
       option1: { organizationId },
     });
+    if (!organization)
+      throw new HttpException(
+        `Organization ${organizationId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
 
     const getOneContributor = await this.contributorsService.findOneBy({
       userId: user?.id,

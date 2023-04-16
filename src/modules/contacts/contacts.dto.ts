@@ -39,6 +39,11 @@ export class CreateOrUpdateContactsDto {
   @IsUUID()
   categoryId: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  organizationId: string;
+
   @IsOptional()
   @IsInt()
   countryId: number;

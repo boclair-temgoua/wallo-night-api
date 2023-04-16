@@ -295,6 +295,7 @@ export class ContributorsInternalController {
     @Res() res,
     @Req() req,
     @Query('userId', ParseUUIDPipe) userId: string,
+    @Query('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
     const { user } = req;
     /** This condition check if user is ADMIN */
@@ -313,7 +314,7 @@ export class ContributorsInternalController {
       await this.contributorsService.findOneBy({
         userId,
         type: FilterQueryType.ORGANIZATION,
-        organizationId: user?.organizationInUtilizationId,
+        organizationId: organizationId,
       });
     if (findOneContributorOrganization)
       throw new HttpException(
@@ -326,7 +327,7 @@ export class ContributorsInternalController {
       userId: getOneUser?.id,
       userCreatedId: user?.id,
       role: ContributorRole.ANALYST,
-      organizationId: user?.organizationInUtilizationId,
+      organizationId: organizationId,
     });
 
     /** Send notification to Contributor */

@@ -17,7 +17,10 @@ import {
 import { reply } from '../../app/utils/reply';
 
 import { CategoriesService } from './categories.service';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import {
+  PasswordBodyDto,
+  SearchQueryDto,
+} from '../../app/utils/search-query/search-query.dto';
 import { CreateOrUpdateCategoriesUsDto } from './categories.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
@@ -58,6 +61,7 @@ export class CategoriesController {
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
+    @Query('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
     const { user } = req;
     const { search } = searchQuery;
@@ -68,7 +72,7 @@ export class CategoriesController {
     const categories = await this.categoriesService.findAll({
       search,
       pagination,
-      option1: { organizationId: user?.organizationInUtilizationId },
+      option1: { organizationId: organizationId },
     });
 
     return reply({ res, results: categories });
@@ -80,13 +84,13 @@ export class CategoriesController {
   async createOneCategory(
     @Res() res,
     @Req() req,
-    @Body() createOrUpdateCategoriesUsDto: CreateOrUpdateCategoriesUsDto,
+    @Body() body: CreateOrUpdateCategoriesUsDto,
   ) {
     const { user } = req;
-    const { name, description } = createOrUpdateCategoriesUsDto;
+    const { name, description, organizationId } = body;
 
     const findOneCategory = await this.categoriesService.findOneBy({
-      option2: { name, organizationId: user?.organizationInUtilizationId },
+      option2: { name, organizationId },
     });
     if (findOneCategory)
       throw new HttpException(
@@ -98,7 +102,7 @@ export class CategoriesController {
       name,
       description,
       userCreatedId: user?.id,
-      organizationId: user?.organizationInUtilizationId,
+      organizationId: organizationId,
     });
 
     return reply({ res, results: category });
@@ -110,10 +114,19 @@ export class CategoriesController {
   async updateOneCategory(
     @Res() res,
     @Req() req,
-    @Body() createOrUpdateCategoriesUsDto: CreateOrUpdateCategoriesUsDto,
+    @Body() body: CreateOrUpdateCategoriesUsDto,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
-    const { name, description } = createOrUpdateCategoriesUsDto;
+    const { name, description } = body;
+
+    const findOneCategory = await this.categoriesService.findOneBy({
+      option1: { categoryId },
+    });
+    if (!findOneCategory)
+      throw new HttpException(
+        `Category ${categoryId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
 
     const category = await this.categoriesService.updateOne(
       { option1: { categoryId } },
@@ -126,24 +139,36 @@ export class CategoriesController {
   /** Get one Categories */
   @Get(`/show/:categoryId`)
   @UseGuards(JwtAuthGuard)
-  async getOneByIdUser(
+  async getOneCategory(
     @Res() res,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
-    const category = await this.categoriesService.findOneBy({
+    const findOneCategory = await this.categoriesService.findOneBy({
       option1: { categoryId },
     });
+    if (!findOneCategory)
+      throw new HttpException(
+        `Category ${categoryId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
 
-    return reply({ res, results: category });
+    return reply({ res, results: findOneCategory });
   }
 
   /** Delete one CategoriesUs */
   @Delete(`/delete/:categoryId`)
   @UseGuards(JwtAuthGuard)
-  async deleteOneCategoriesUs(
+  async deleteOneCategory(
     @Res() res,
+    @Req() req,
+    @Body() body: PasswordBodyDto,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
+    const { user } = req;
+    const { password } = body;
+    if (!user?.checkIfPasswordMatch(password))
+      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
+
     const category = await this.categoriesService.updateOne(
       { option1: { categoryId } },
       { deletedAt: new Date() },

@@ -33,7 +33,6 @@ import {
 } from './sub-sub-sub-projects.dto';
 import { ContributorsService } from '../contributors/contributors.service';
 import { ContributorRole } from '../contributors/contributors.type';
-import { SubProjectsService } from '../sub-projects/sub-projects.service';
 import { SubSubProjectsService } from '../sub-sub-projects/sub-sub-projects.service';
 
 @Controller('sub-sub-sub-projects')

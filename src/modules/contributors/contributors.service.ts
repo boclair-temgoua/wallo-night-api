@@ -22,7 +22,7 @@ import { FilterQueryType } from '../../app/utils/search-query/search-query.dto';
 import { Project } from '../../models/Project';
 import { SubProject } from '../../models/SubProject';
 import { SubSubProject } from '../../models/SubSubProject';
-import { SubSubSubProject } from '../../models/SubSubSubProject';
+import { Organization } from '../../models/Organization';
 
 @Injectable()
 export class ContributorsService {
@@ -469,6 +469,22 @@ export class ContributorsService {
     return result;
   }
 
+  /** Permission. organization */
+  async canCheckPermissionOrganization(options: {
+    userId: string;
+    organization: Organization;
+  }): Promise<any> {
+    const { userId, organization } = options;
+
+    const findOneContributorOrganization = await this.findOneBy({
+      userId: userId,
+      organizationId: organization?.id,
+      type: FilterQueryType.PROJECT,
+    });
+
+    return findOneContributorOrganization;
+  }
+
   /** Permission. project */
   async canCheckPermissionProject(options: {
     userId: string;
@@ -537,20 +553,20 @@ export class ContributorsService {
   }): Promise<any> {
     const {
       userId,
+      organizationId,
       projectId,
       subProjectId,
       subSubProjectId,
       subSubSubProjectId,
-      organizationId,
     } = options;
 
     const findOneContributorSubSubSubProject = await this.findOneBy({
       userId: userId,
-      projectId: projectId,
+      subSubSubProjectId: subSubSubProjectId,
       subSubProjectId: subSubProjectId,
       subProjectId: subProjectId,
+      projectId: projectId,
       organizationId: organizationId,
-      subSubSubProjectId: subSubSubProjectId,
       type: FilterQueryType.SUBSUBSUBPROJECT,
     });
 

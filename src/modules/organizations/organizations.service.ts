@@ -49,6 +49,16 @@ export class OrganizationsService {
       .addSelect(
         /*sql*/ `(
       SELECT
+          CAST(COUNT(DISTINCT ca) AS INT)
+      FROM "category" "ca"
+      WHERE ("ca"."organizationId" = "organization"."id"
+      AND "ca"."deletedAt" IS NULL)
+      GROUP BY "ca"."organizationId", "organization"."id"
+      ) AS "categoryTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
           CAST(COUNT(DISTINCT prj) AS INT)
       FROM "project" "prj"
       WHERE ("prj"."organizationId" = "organization"."id"
