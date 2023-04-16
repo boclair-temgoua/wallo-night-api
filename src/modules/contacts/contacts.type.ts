@@ -3,10 +3,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetContactSelections = {
   search?: string;
-  type?: Contact['type'];
   organizationId?: Contact['organizationId'];
-  projectId?: Contact['projectId'];
-  subProjectId?: Contact['subProjectId'];
   pagination?: PaginationType;
 };
 

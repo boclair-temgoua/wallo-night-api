@@ -5,16 +5,13 @@ import {
   Generated,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Organization } from './Organization';
-import { Project } from './Project';
-import { SubProject } from './SubProject';
 import { Category } from './Category';
-import { FilterQueryType } from '../app/utils/search-query';
-import { SubSubProject } from './SubSubProject';
-import { SubSubSubProject } from './SubSubSubProject';
+import { ContactProject } from './ContactProject';
 
 @Entity('contact')
 export class Contact extends BaseDeleteEntity {
@@ -51,18 +48,19 @@ export class Contact extends BaseDeleteEntity {
   @Column({ nullable: true })
   countryId?: number;
 
-  @Column({
-    type: 'enum',
-    enum: FilterQueryType,
-    default: FilterQueryType.ORGANIZATION,
-  })
-  type?: FilterQueryType;
-
   @Column({ type: 'text', nullable: true })
   description?: string;
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  categoryId?: string;
+  @ManyToOne(() => Category, (category) => category.contacts, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  category?: Category;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
@@ -72,47 +70,8 @@ export class Contact extends BaseDeleteEntity {
   @JoinColumn()
   organization?: Organization;
 
-  @Column({ type: 'uuid', nullable: true })
-  projectId?: string;
-  @ManyToOne(() => Project, (project) => project.contacts, {
+  @OneToMany(() => ContactProject, (contactProject) => contactProject.contact, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
-  project?: Project;
-
-  @Column({ type: 'uuid', nullable: true })
-  subProjectId?: string;
-  @ManyToOne(() => SubProject, (subProject) => subProject.contacts, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  subProject?: SubProject;
-
-  @Column({ type: 'uuid', nullable: true })
-  subSubProjectId?: string;
-  @ManyToOne(() => SubSubProject, (subSubProject) => subSubProject.contacts, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  subSubProject?: SubSubProject;
-
-  @Column({ type: 'uuid', nullable: true })
-  subSubSubProjectId?: string;
-  @ManyToOne(
-    () => SubSubSubProject,
-    (subSubSubProject) => subSubSubProject.contacts,
-    {
-      onDelete: 'CASCADE',
-    },
-  )
-  @JoinColumn()
-  subSubSubProject?: SubSubSubProject;
-
-  @Column({ type: 'uuid', nullable: true })
-  categoryId?: string;
-  @ManyToOne(() => Category, (category) => category.contacts, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  category?: Category;
+  contactProjects?: ContactProject[];
 }

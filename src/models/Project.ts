@@ -14,6 +14,7 @@ import { Organization } from './Organization';
 import { Document } from './Document';
 import { SubProject } from './SubProject';
 import { Contact } from './Contact';
+import { ContactProject } from './ContactProject';
 
 @Entity('project')
 export class Project extends BaseDeleteEntity {
@@ -61,8 +62,8 @@ export class Project extends BaseDeleteEntity {
   })
   documents?: Document[];
 
-  @OneToMany(() => Contact, (contact) => contact.project, {
+  @OneToMany(() => ContactProject, (contactProject) => contactProject.project, {
     onDelete: 'CASCADE',
   })
-  contacts?: Contact[];
+  contactProjects?: ContactProject[];
 }

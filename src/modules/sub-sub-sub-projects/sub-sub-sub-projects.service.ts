@@ -151,12 +151,13 @@ export class SubSubSubProjectsService {
       .addSelect(
         /*sql*/ `(
       SELECT
-          CAST(COUNT(DISTINCT co) AS INT)
-      FROM "contact" "co"
-      WHERE ("co"."subSubSubProjectId" = "subSubSubProject"."id"
-      AND "co"."type" IN ('SUBSUBSUBPROJECT')
-      AND "co"."deletedAt" IS NULL)
-      GROUP BY "co"."subSubSubProjectId", "subSubSubProject"."id"
+          CAST(COUNT(DISTINCT cop) AS INT)
+      FROM "contact_project" "cop"
+      WHERE ("cop"."subSubSubProjectId" = "subSubSubProject"."id"
+      AND "cop"."organizationId" = "subSubSubProject"."organizationId"
+      AND "cop"."type" IN ('SUBSUBSUBPROJECT')
+      AND "cop"."deletedAt" IS NULL)
+      GROUP BY "cop"."subSubSubProjectId", "subSubSubProject"."id"
       ) AS "contactTotal"`,
       )
       .addSelect(

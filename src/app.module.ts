@@ -20,6 +20,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { ContactsModule } from './modules/contacts/contacts.module';
 import { SubSubProjectsModule } from './modules/sub-sub-projects/sub-sub-projects.module';
 import { SubSubSubProjectsModule } from './modules/sub-sub-sub-projects/sub-sub-sub-projects.module';
+import { ContactProjectsModule } from './modules/contact-projects/contact-projects.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { SubSubSubProjectsModule } from './modules/sub-sub-sub-projects/sub-sub-
     ContactsModule,
     CategoriesModule,
     SubSubProjectsModule,
+    ContactProjectsModule,
     SubSubSubProjectsModule,
     ResetPasswordsModule,
     ContactUsModule,

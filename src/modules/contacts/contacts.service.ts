@@ -28,14 +28,7 @@ export class ContactsService {
   ) {}
 
   async findAll(selections: GetContactSelections): Promise<any> {
-    const {
-      search,
-      pagination,
-      organizationId,
-      projectId,
-      subProjectId,
-      type,
-    } = selections;
+    const { search, pagination, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('contact')
@@ -54,10 +47,7 @@ export class ContactsService {
       .addSelect('contact.description', 'description')
       .addSelect('contact.userCreatedId', 'userCreatedId')
       .addSelect('contact.organizationId', 'organizationId')
-      .addSelect('contact.projectId', 'projectId')
-      .addSelect('contact.subProjectId', 'subProjectId')
       .addSelect('contact.categoryId', 'categoryId')
-      .addSelect('contact.type', 'type')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'id', "category"."id",
@@ -70,25 +60,9 @@ export class ContactsService {
       .leftJoin('contact.organization', 'organization')
       .leftJoin('contact.category', 'category');
 
-    if (type) {
-      query = query.andWhere('contact.type = :type', { type });
-    }
-
     if (organizationId) {
       query = query.andWhere('contact.organizationId = :organizationId', {
         organizationId,
-      });
-    }
-
-    if (projectId) {
-      query = query.andWhere('contact.projectId = :projectId', {
-        projectId,
-      });
-    }
-
-    if (subProjectId) {
-      query = query.andWhere('contact.subProjectId = :subProjectId', {
-        subProjectId,
       });
     }
 
@@ -161,11 +135,8 @@ export class ContactsService {
       address,
       description,
       userCreatedId,
-      projectId,
-      subProjectId,
       image,
       otherPhone,
-      type,
       categoryId,
       organizationId,
     } = options;
@@ -176,12 +147,9 @@ export class ContactsService {
     contact.phone = phone;
     contact.countryId = countryId;
     contact.email = email;
-    contact.type = type;
     contact.otherPhone = otherPhone;
     contact.address = address;
     contact.description = description;
-    contact.projectId = projectId;
-    contact.subProjectId = subProjectId;
     contact.image = image;
     contact.slug = `${Slug(`${firstName}-${lastName}`)}-${generateNumber(4)}`;
     contact.color = getRandomElement(colorsArrays);
@@ -212,8 +180,6 @@ export class ContactsService {
       address,
       description,
       userCreatedId,
-      projectId,
-      subProjectId,
       categoryId,
       otherPhone,
       image,
@@ -241,8 +207,6 @@ export class ContactsService {
     findItem.otherPhone = otherPhone;
     findItem.description = description;
     findItem.userCreatedId = userCreatedId;
-    findItem.projectId = projectId;
-    findItem.subProjectId = subProjectId;
     findItem.categoryId = categoryId;
     findItem.organizationId = organizationId;
     findItem.image = image;

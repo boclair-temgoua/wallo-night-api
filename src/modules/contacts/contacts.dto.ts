@@ -10,13 +10,7 @@ import {
   IsEnum,
   IsArray,
 } from 'class-validator';
-import { FilterQueryType } from '../../app/utils/search-query';
 export class CreateOrUpdateContactsDto {
-  @IsOptional()
-  @IsString()
-  @IsEnum(FilterQueryType)
-  type: FilterQueryType;
-
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
@@ -59,16 +53,6 @@ export class CreateOrUpdateContactsDto {
   @IsOptional()
   @IsString()
   address: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  projectId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  subProjectId: string;
 
   @IsOptional()
   @IsString()

@@ -50,20 +50,16 @@ export class ContactsController {
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Query() query: FilterQueryTypeDto,
+    @Query('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
     const { user } = req;
-    const { organizationId, projectId, subProjectId, type } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const contacts = await this.contactsService.findAll({
-      type: type !== 'ORGANIZATION' && type,
       organizationId: organizationId,
-      projectId: projectId,
-      subProjectId: subProjectId,
       search,
       pagination,
     });
@@ -114,10 +110,7 @@ export class ContactsController {
       countryId,
       email,
       address,
-      type,
       description,
-      projectId,
-      subProjectId,
       categoryId,
       organizationId,
     } = body;
@@ -135,11 +128,8 @@ export class ContactsController {
       phone,
       countryId,
       email,
-      type,
       address,
       description,
-      projectId,
-      subProjectId,
       categoryId,
       userCreatedId: user?.id,
       image: responseAws?.Location,
@@ -164,10 +154,7 @@ export class ContactsController {
       countryId,
       email,
       address,
-      type,
       description,
-      projectId,
-      subProjectId,
       categoryId,
       organizationId,
     } = body;
@@ -190,10 +177,7 @@ export class ContactsController {
         countryId,
         email,
         address,
-        type,
         description,
-        projectId,
-        subProjectId,
         categoryId,
         organizationId,
       },
