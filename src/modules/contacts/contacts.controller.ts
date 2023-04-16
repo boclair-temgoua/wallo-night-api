@@ -60,7 +60,7 @@ export class ContactsController {
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const contacts = await this.contactsService.findAll({
-      type,
+      type: type !== 'ORGANIZATION' && type,
       organizationId: organizationId,
       projectId: projectId,
       subProjectId: subProjectId,
@@ -148,7 +148,59 @@ export class ContactsController {
 
     return reply({ res, results: contact });
   }
+  /** Post one Contact */
+  @Put(`/:contactId`)
+  @UseGuards(JwtAuthGuard)
+  async updateOneContact(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateOrUpdateContactsDto,
+    @Param('categoryId', ParseUUIDPipe) contactId: string,
+  ) {
+    const {
+      firstName,
+      lastName,
+      phone,
+      countryId,
+      email,
+      address,
+      type,
+      description,
+      projectId,
+      subProjectId,
+      categoryId,
+      organizationId,
+    } = body;
 
+    const findOneContact = await this.contactsService.findOneBy({
+      contactId,
+    });
+    if (!findOneContact)
+      throw new HttpException(
+        `Contact ${contactId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const contact = await this.contactsService.updateOne(
+      { contactId },
+      {
+        firstName,
+        lastName,
+        phone,
+        countryId,
+        email,
+        address,
+        type,
+        description,
+        projectId,
+        subProjectId,
+        categoryId,
+        organizationId,
+      },
+    );
+
+    return reply({ res, results: contact });
+  }
   /** Get one Contact */
   @Get(`/show/:contactId`)
   @UseGuards(JwtAuthGuard)

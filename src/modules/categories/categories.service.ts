@@ -28,7 +28,7 @@ export class CategoriesService {
   ) {}
 
   async findAll(selections: GetCategoriesSelections): Promise<any> {
-    const { search, pagination, option1 } = selections;
+    const { search, pagination, is_paginate, option1 } = selections;
 
     let query = this.driver
       .createQueryBuilder('category')
@@ -51,23 +51,32 @@ export class CategoriesService {
       );
     }
 
-    const [errorRowCount, rowCount] = await useCatch(query.getCount());
-    if (errorRowCount) throw new NotFoundException(errorRowCount);
+    if (is_paginate) {
+      const [errorRowCount, rowCount] = await useCatch(query.getCount());
+      if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const [error, categories] = await useCatch(
-      query
-        .orderBy('category.createdAt', pagination?.sort)
-        .take(pagination.take)
-        .skip(pagination.skip)
-        .getMany(),
-    );
-    if (error) throw new NotFoundException(error);
+      const [error, categories] = await useCatch(
+        query
+          .orderBy('category.createdAt', pagination?.sort)
+          .take(pagination.take)
+          .skip(pagination.skip)
+          .getMany(),
+      );
+      if (error) throw new NotFoundException(error);
 
-    return withPagination({
-      pagination,
-      rowCount,
-      value: categories,
-    });
+      return withPagination({
+        pagination,
+        rowCount,
+        value: categories,
+      });
+    } else {
+      const [errors, results] = await useCatch(
+        query.orderBy('category.createdAt', 'DESC').getMany(),
+      );
+      if (errors) throw new NotFoundException(errors);
+
+      return results;
+    }
   }
 
   async findOneBy(selections: GetOneCategoriesSelections): Promise<Category> {

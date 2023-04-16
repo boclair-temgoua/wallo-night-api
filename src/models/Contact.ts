@@ -40,6 +40,9 @@ export class Contact extends BaseDeleteEntity {
   phone?: string;
 
   @Column({ nullable: true })
+  otherPhone?: string;
+
+  @Column({ nullable: true })
   address?: string;
 
   @Column({ nullable: true })

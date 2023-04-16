@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { FilterQueryType } from '../../app/utils/search-query';
 export class CreateOrUpdateContactsDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsEnum(FilterQueryType)
   type: FilterQueryType;
@@ -70,7 +70,7 @@ export class CreateOrUpdateContactsDto {
   @IsUUID()
   subProjectId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 }

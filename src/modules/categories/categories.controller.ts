@@ -40,6 +40,7 @@ export class CategoriesController {
     @Res() res,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
+    @Query() is_paginate: boolean,
   ) {
     const { search } = searchQuery;
 
@@ -49,6 +50,7 @@ export class CategoriesController {
     const categories = await this.categoriesService.findAll({
       search,
       pagination,
+      is_paginate,
     });
 
     return reply({ res, results: categories });
@@ -61,10 +63,12 @@ export class CategoriesController {
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
+    @Query('is_paginate') is_paginate: boolean,
     @Query('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
     const { user } = req;
     const { search } = searchQuery;
+    console.log('is_paginate ========>', is_paginate);
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
@@ -72,6 +76,7 @@ export class CategoriesController {
     const categories = await this.categoriesService.findAll({
       search,
       pagination,
+      is_paginate,
       option1: { organizationId: organizationId },
     });
 

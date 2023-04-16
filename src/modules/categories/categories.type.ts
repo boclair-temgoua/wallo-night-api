@@ -3,6 +3,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetCategoriesSelections = {
   search?: string;
+  is_paginate: boolean;
   option1?: { organizationId: Category['organizationId'] };
   pagination?: PaginationType;
 };

@@ -47,6 +47,7 @@ export class ContactsService {
       .addSelect('contact.email', 'email')
       .addSelect('contact.color', 'color')
       .addSelect('contact.phone', 'phone')
+      .addSelect('contact.otherPhone', 'otherPhone')
       .addSelect('contact.address', 'address')
       .addSelect('contact.image', 'image')
       .addSelect('contact.countryId', 'countryId')
@@ -56,6 +57,7 @@ export class ContactsService {
       .addSelect('contact.projectId', 'projectId')
       .addSelect('contact.subProjectId', 'subProjectId')
       .addSelect('contact.categoryId', 'categoryId')
+      .addSelect('contact.type', 'type')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'id', "category"."id",
@@ -162,6 +164,7 @@ export class ContactsService {
       projectId,
       subProjectId,
       image,
+      otherPhone,
       type,
       categoryId,
       organizationId,
@@ -174,6 +177,7 @@ export class ContactsService {
     contact.countryId = countryId;
     contact.email = email;
     contact.type = type;
+    contact.otherPhone = otherPhone;
     contact.address = address;
     contact.description = description;
     contact.projectId = projectId;
@@ -211,6 +215,7 @@ export class ContactsService {
       projectId,
       subProjectId,
       categoryId,
+      otherPhone,
       image,
       organizationId,
       deletedAt,
@@ -233,6 +238,7 @@ export class ContactsService {
     findItem.countryId = countryId;
     findItem.email = email;
     findItem.address = address;
+    findItem.otherPhone = otherPhone;
     findItem.description = description;
     findItem.userCreatedId = userCreatedId;
     findItem.projectId = projectId;
