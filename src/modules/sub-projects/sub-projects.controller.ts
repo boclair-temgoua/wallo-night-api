@@ -179,6 +179,7 @@ export class SubProjectsController {
         `Project ${subProjectId} don't exist please change`,
         HttpStatus.NOT_FOUND,
       );
+      
 
     const subProject = await this.subProjectsService.updateOne(
       { option1: { subProjectId: findOneSubProject?.id } },
