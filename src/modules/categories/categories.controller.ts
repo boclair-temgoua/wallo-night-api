@@ -68,7 +68,6 @@ export class CategoriesController {
   ) {
     const { user } = req;
     const { search } = searchQuery;
-    console.log('is_paginate ========>', is_paginate);
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
@@ -93,15 +92,6 @@ export class CategoriesController {
   ) {
     const { user } = req;
     const { name, description, organizationId } = body;
-
-    const findOneCategory = await this.categoriesService.findOneBy({
-      option2: { name, organizationId },
-    });
-    if (findOneCategory)
-      throw new HttpException(
-        `Name ${name} already exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
 
     const category = await this.categoriesService.createOne({
       name,

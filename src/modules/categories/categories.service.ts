@@ -90,17 +90,6 @@ export class CategoriesService {
       query = query.andWhere('category.id = :id', { id: categoryId });
     }
 
-    if (option2) {
-      const { organizationId, name } = option2;
-      query = query
-        .andWhere('category.name ::text ILIKE :search', {
-          search: `%${name}%`,
-        })
-        .andWhere('category.organizationId = :organizationId', {
-          organizationId,
-        });
-    }
-
     const [error, result] = await useCatch(query.getOne());
     if (error)
       throw new HttpException('category not found', HttpStatus.NOT_FOUND);

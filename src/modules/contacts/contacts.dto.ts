@@ -57,6 +57,10 @@ export class CreateOrUpdateContactsDto {
   @IsOptional()
   @IsString()
   description: string;
+
+  @IsOptional()
+  @IsString()
+  otherPhone: string;
 }
 
 export class DeleteMultipleContactsDto {

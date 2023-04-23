@@ -4,11 +4,6 @@ import { GetOneVoucherRequest, ivemo } from './ivemo.schemas';
 import axios from 'axios';
 
 class Ivemo {
-  apiKey: string;
-  constructor() {
-    this.apiKey = String(configurations.implementations.ipapi.apiKey);
-  }
-
   private async makeApiCall<T>({
     action,
     body,
@@ -22,6 +17,9 @@ class Ivemo {
     });
 
     try {
+      axios.defaults.headers.common[
+        'Authorization'
+      ] = `Basic ${configurations.implementations.ivemo.token}`;
       const { data } = await axios.request({
         method: ivemo[action].method,
         url: url,
@@ -38,7 +36,7 @@ class Ivemo {
 
     return await this.makeApiCall<GetOneVoucherRequest>({
       action: 'getOneCoupon',
-      urlParams: {code},
+      urlParams: { code },
     });
   }
 

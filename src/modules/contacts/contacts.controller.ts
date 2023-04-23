@@ -112,6 +112,7 @@ export class ContactsController {
       address,
       description,
       categoryId,
+      otherPhone,
       organizationId,
     } = body;
 
@@ -131,6 +132,7 @@ export class ContactsController {
       address,
       description,
       categoryId,
+      otherPhone,
       userCreatedId: user?.id,
       image: responseAws?.Location,
       organizationId: organizationId,
@@ -145,7 +147,7 @@ export class ContactsController {
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateContactsDto,
-    @Param('categoryId', ParseUUIDPipe) contactId: string,
+    @Param('contactId', ParseUUIDPipe) contactId: string,
   ) {
     const {
       firstName,
@@ -156,6 +158,7 @@ export class ContactsController {
       address,
       description,
       categoryId,
+      otherPhone,
       organizationId,
     } = body;
 
@@ -179,6 +182,7 @@ export class ContactsController {
         address,
         description,
         categoryId,
+        otherPhone,
         organizationId,
       },
     );
