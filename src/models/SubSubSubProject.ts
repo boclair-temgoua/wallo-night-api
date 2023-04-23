@@ -14,6 +14,7 @@ import { Contact } from './Contact';
 import { SubProject } from './SubProject';
 import { SubSubProject } from './SubSubProject';
 import { ContactProject } from './ContactProject';
+import { Group } from './Group';
 
 @Entity('sub_sub_sub_project')
 export class SubSubSubProject extends BaseDeleteEntity {
@@ -77,4 +78,9 @@ export class SubSubSubProject extends BaseDeleteEntity {
     },
   )
   contactProjects?: ContactProject[];
+
+  @OneToMany(() => Group, (group) => group.project, {
+    onDelete: 'CASCADE',
+  })
+  groups?: Group[];
 }

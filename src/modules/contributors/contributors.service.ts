@@ -60,7 +60,6 @@ export class ContributorsService {
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "organization"."id",
-          'email', "userOrganization"."email",
           'userId', "organization"."userId",
           'color', "organization"."color",
           'name', "organization"."name"
@@ -174,18 +173,18 @@ export class ContributorsService {
           qb.where('organization.name ::text ILIKE :search', {
             search: `%${search}%`,
           })
-            .orWhere('profile.firstName ::text ILIKE :search', {
-              search: `%${search}%`,
-            })
-            .orWhere('profile.lastName ::text ILIKE :search', {
-              search: `%${search}%`,
-            })
-            .orWhere('user.username ::text ILIKE :search', {
-              search: `%${search}%`,
-            })
-            .orWhere('user.email ::text ILIKE :search', {
-              search: `%${search}%`,
-            })
+            .orWhere(
+              '(profile.firstName ::text ILIKE :search OR profile.lastName ::text ILIKE :search)',
+              {
+                search: `%${search}%`,
+              },
+            )
+            .orWhere(
+              '(user.email ::text ILIKE :search OR user.username ::text ILIKE :search)',
+              {
+                search: `%${search}%`,
+              },
+            )
             .orWhere('project.name ::text ILIKE :search', {
               search: `%${search}%`,
             })
@@ -319,7 +318,6 @@ export class ContributorsService {
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "organization"."id",
-          'email', "userOrganization"."email",
           'userId', "organization"."userId",
           'color', "organization"."color",
           'name', "organization"."name"
