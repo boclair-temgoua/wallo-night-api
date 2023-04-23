@@ -16,6 +16,7 @@ import { SubSubSubProject } from './SubSubSubProject';
 import { SubSubProject } from './SubSubProject';
 import { SubProject } from './SubProject';
 import { Project } from './Project';
+import { Contributor } from './Contributor';
 
 @Entity('group')
 export class Group extends BaseDeleteEntity {
@@ -83,4 +84,9 @@ export class Group extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;
+
+  @OneToMany(() => Contributor, (contributor) => contributor.group, {
+    onDelete: 'CASCADE',
+  })
+  contributors?: Contributor[];
 }

@@ -22,15 +22,23 @@ import { JwtAuthGuard } from '../users/middleware';
 
 import { GroupsService } from './groups.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import {
+  FilterQueryType,
+  SearchQueryDto,
+} from '../../app/utils/search-query/search-query.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { ContributorsService } from '../contributors/contributors.service';
+import { ContributorRole } from '../contributors/contributors.type';
 
 @Controller('groups')
 export class GroupsController {
-  constructor(private readonly groupsService: GroupsService) {}
+  constructor(
+    private readonly groupsService: GroupsService,
+    private readonly contributorsService: ContributorsService,
+  ) {}
 
   /** Get all Groups */
   @Get(`/`)
@@ -73,7 +81,7 @@ export class GroupsController {
     @Res() res,
     @Param('groupId', ParseUUIDPipe) groupId: string,
   ) {
-    const group = await this.groupsService.findOneBy({ option1: { groupId } });
+    const group = await this.groupsService.findOneBy({ groupId });
 
     return reply({ res, results: group });
   }
@@ -108,6 +116,18 @@ export class GroupsController {
       userCreatedId: user?.id,
     });
 
+    /** Create Contributor */
+    await this.contributorsService.createOne({
+      userId: user?.id,
+      userCreatedId: user?.id,
+      role: ContributorRole.ANALYST,
+      projectId: group?.projectId,
+      subProjectId: group?.subProjectId,
+      subSubProjectId: group?.subSubProjectId,
+      subSubSubProjectId: group?.subSubSubProjectId,
+      organizationId: group?.organizationId,
+      type: FilterQueryType.GROUP,
+    });
     return reply({ res, results: group });
   }
 
@@ -123,7 +143,7 @@ export class GroupsController {
     const { name, description } = body;
 
     const findOneGroup = await this.groupsService.findOneBy({
-      option1: { groupId },
+      groupId,
     });
     if (!findOneGroup)
       throw new HttpException(
@@ -148,7 +168,7 @@ export class GroupsController {
     @Param('groupId', ParseUUIDPipe) groupId: string,
   ) {
     const findOneGroup = await this.groupsService.findOneBy({
-      option1: { groupId },
+      groupId,
     });
     if (!findOneGroup)
       throw new HttpException(
@@ -168,7 +188,7 @@ export class GroupsController {
     @Param('groupId', ParseUUIDPipe) groupId: string,
   ) {
     const findOneGroup = await this.groupsService.findOneBy({
-      option1: { groupId },
+      groupId,
     });
     if (!findOneGroup)
       throw new HttpException(

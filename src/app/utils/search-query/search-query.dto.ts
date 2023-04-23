@@ -26,6 +26,7 @@ export class PasswordBodyDto {
 }
 
 export enum FilterQueryType {
+  GROUP = 'GROUP',
   ORGANIZATION = 'ORGANIZATION',
   PROJECT = 'PROJECT',
   SUBPROJECT = 'SUBPROJECT',

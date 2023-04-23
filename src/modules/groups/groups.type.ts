@@ -12,9 +12,12 @@ export type GetGroupsSelections = {
 };
 
 export type GetOneGroupSelections = {
-  option1?: {
-    groupId: Group['id'];
-  };
+  groupId?: Group['id'];
+  subSubSubProjectId?: Group['subSubSubProjectId'];
+  subSubProjectId?: Group['subSubProjectId'];
+  subProjectId?: Group['subProjectId'];
+  projectId?: Group['projectId'];
+  organizationId?: Group['organizationId'];
 };
 
 export type UpdateGroupSelections = {

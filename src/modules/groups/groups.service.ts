@@ -106,7 +106,15 @@ export class GroupsService {
   }
 
   async findOneBy(selections: GetOneGroupSelections): Promise<Group> {
-    const { option1 } = selections;
+    const {
+      groupId,
+      subSubSubProjectId,
+      subSubProjectId,
+      subProjectId,
+      projectId,
+      organizationId,
+    } = selections;
+
     let query = this.driver
       .createQueryBuilder('group')
       .select('group.name', 'name')
@@ -174,12 +182,41 @@ export class GroupsService {
           'organizationId', "subSubSubProject"."organizationId"
       ) AS "subSubSubProject"`,
       )
-      .andWhere('group.deletedAt IS NULL');
+      .where('group.deletedAt IS NULL');
 
-    if (option1) {
-      const { groupId } = option1;
+    if (organizationId) {
+      query = query.andWhere('group.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
+    if (groupId) {
       query = query.andWhere('group.id = :id', {
         id: groupId,
+      });
+    }
+
+    if (projectId) {
+      query = query.andWhere('group.projectId = :projectId', {
+        projectId,
+      });
+    }
+
+    if (subProjectId) {
+      query = query.andWhere('group.subProjectId = :subProjectId', {
+        subProjectId,
+      });
+    }
+
+    if (subSubProjectId) {
+      query = query.andWhere('group.subSubProjectId = :subSubProjectId', {
+        subSubProjectId,
+      });
+    }
+
+    if (subSubSubProjectId) {
+      query = query.andWhere('group.subSubSubProjectId = :subSubSubProjectId', {
+        subSubSubProjectId,
       });
     }
 

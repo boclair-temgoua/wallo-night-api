@@ -37,6 +37,7 @@ export class ContributorsService {
     const {
       userId,
       search,
+      groupId,
       pagination,
       organizationId,
       projectId,
@@ -57,6 +58,19 @@ export class ContributorsService {
       .addSelect('contributor.subProjectId', 'subProjectId')
       .addSelect('contributor.subSubProjectId', 'subSubProjectId')
       .addSelect('contributor.subSubSubProjectId', 'subSubSubProjectId')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'id', "group"."id",
+          'name', "group"."name",
+          'slug', "group"."slug",
+          'description', "group"."description",
+          'color', "group"."color",
+          'projectId', "group"."projectId",
+          'subProjectId', "group"."subProjectId",
+          'subSubProjectId', "group"."subSubProjectId",
+          'organizationId', "group"."organizationId"
+      ) AS "group"`,
+      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "organization"."id",
@@ -130,6 +144,12 @@ export class ContributorsService {
       .where('contributor.deletedAt IS NULL')
       .andWhere('contributor.type = :type', { type });
 
+    if (groupId) {
+      query = query.andWhere('contributor.groupId = :groupId', {
+        groupId,
+      });
+    }
+
     if (organizationId) {
       query = query.andWhere('contributor.organizationId = :organizationId', {
         organizationId,
@@ -202,6 +222,7 @@ export class ContributorsService {
     }
 
     query = query
+      .leftJoin('contributor.group', 'group')
       .leftJoin('contributor.project', 'project')
       .leftJoin('contributor.subProject', 'subProject')
       .leftJoin('contributor.subSubProject', 'subSubProject')
@@ -388,6 +409,7 @@ export class ContributorsService {
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
     const {
       userId,
+      groupId,
       organizationId,
       projectId,
       subProjectId,
@@ -400,6 +422,7 @@ export class ContributorsService {
 
     const contributor = new Contributor();
     contributor.userId = userId;
+    contributor.groupId = groupId;
     contributor.type = type;
     contributor.organizationId = organizationId;
     contributor.subProjectId = subProjectId;

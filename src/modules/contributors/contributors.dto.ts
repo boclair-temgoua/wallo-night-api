@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { ContributorRole } from './contributors.type';
 import { MaxLength, IsEmail } from 'class-validator';
+import { FilterQueryType } from '../../app/utils/search-query';
 
 export class CreateOneContributorProjectDto {
   @IsNotEmpty()
@@ -90,4 +91,16 @@ export class CreateOneNewUserContributorsDto {
   @IsString()
   @IsEnum(ContributorRole)
   role: ContributorRole;
+}
+
+export class GroupsContributorDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  groupId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  userId: string;
 }

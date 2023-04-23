@@ -14,6 +14,7 @@ export type GetContributorsSelections = {
   pagination?: PaginationType;
   type: Contributor['type'];
   userId?: Contributor['userId'];
+  groupId?: Contributor['groupId'];
   organizationId?: Contributor['organizationId'];
   projectId?: Contributor['projectId'];
   subProjectId?: Contributor['subProjectId'];
@@ -24,6 +25,7 @@ export type GetContributorsSelections = {
 export type GetOneContributorSelections = {
   type?: Contributor['type'];
   userId?: Contributor['userId'];
+  groupId?: Contributor['groupId'];
   organizationId?: Contributor['organizationId'];
   projectId?: Contributor['projectId'];
   subProjectId?: Contributor['subProjectId'];

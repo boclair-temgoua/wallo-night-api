@@ -1,4 +1,3 @@
-import { User } from '../../models/User';
 import {
   IsString,
   IsNotEmpty,
@@ -8,8 +7,8 @@ import {
   IsOptional,
   IsIn,
   IsUUID,
+  IsEnum,
 } from 'class-validator';
-
 export class CreateOrUpdateGroupsDto {
   @IsNotEmpty()
   @IsString()

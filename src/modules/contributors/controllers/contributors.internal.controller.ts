@@ -40,6 +40,7 @@ import {
   CreateOneContributorSubSubProjectDto,
   CreateOneContributorSubSubSubProjectDto,
   CreateOneNewUserContributorsDto,
+  GroupsContributorDto,
   UpdateRoleContributorDto,
 } from '../contributors.dto';
 import * as amqplib from 'amqplib';
@@ -50,6 +51,7 @@ import { ProjectsService } from '../../projects/projects.service';
 import { SubProjectsService } from '../../sub-projects/sub-projects.service';
 import { SubSubProjectsService } from '../../sub-sub-projects/sub-sub-projects.service';
 import { SubSubSubProjectsService } from '../../sub-sub-sub-projects/sub-sub-sub-projects.service';
+import { GroupsService } from '../../groups/groups.service';
 
 @Controller('contributors')
 export class ContributorsInternalController {
@@ -61,6 +63,7 @@ export class ContributorsInternalController {
     private readonly subSubProjectsService: SubSubProjectsService,
     private readonly subSubSubProjectsService: SubSubSubProjectsService,
     private readonly checkUserService: CheckUserService,
+    private readonly groupsService: GroupsService,
     private readonly contributorsService: ContributorsService,
   ) {}
 
@@ -687,6 +690,55 @@ export class ContributorsInternalController {
       type: FilterQueryType.SUBSUBSUBPROJECT,
     });
     /** Send notification to Contributor */
+
+    return reply({ res, results: 'Contributor save successfully' });
+  }
+
+  /** Post one Contributors */
+  @Post(`/group`)
+  @UseGuards(JwtAuthGuard)
+  async createOneContributor(
+    @Res() res,
+    @Req() req,
+    @Query() query: GroupsContributorDto,
+  ) {
+    const { user } = req;
+    const { groupId, userId } = query;
+
+    const findOneGroup = await this.groupsService.findOneBy({
+      groupId,
+    });
+    if (!findOneGroup)
+      throw new HttpException(
+        `Group ${groupId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const findOneContributorGroup = await this.contributorsService.findOneBy({
+      userId,
+      type: FilterQueryType.GROUP,
+      groupId: findOneGroup?.id,
+      organizationId: findOneGroup?.organizationId,
+    });
+    if (findOneContributorGroup)
+      throw new HttpException(
+        `This user already exists in this project please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    /** Create Contributor */
+    await this.contributorsService.createOne({
+      userId: userId,
+      userCreatedId: user?.id,
+      role: ContributorRole.ANALYST,
+      groupId: findOneGroup?.id,
+      projectId: findOneGroup?.projectId,
+      subProjectId: findOneGroup?.subProjectId,
+      subSubProjectId: findOneGroup?.subSubProjectId,
+      subSubSubProjectId: findOneGroup?.subSubSubProjectId,
+      organizationId: findOneGroup?.organizationId,
+      type: FilterQueryType.GROUP,
+    });
 
     return reply({ res, results: 'Contributor save successfully' });
   }
