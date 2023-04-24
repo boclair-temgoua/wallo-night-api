@@ -292,6 +292,62 @@ export class ContributorsInternalController {
     return reply({ res, results: contributors });
   }
 
+  /** Post contributor to group */
+  @Get(`/group`)
+  @UseGuards(JwtAuthGuard)
+  async findAllContributorsByGroupId(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+    @Query('groupId', ParseUUIDPipe) groupId: string,
+  ) {
+    const { user } = req;
+    /** get contributor filter by group */
+    const { search } = searchQuery;
+
+    const getOneGroup = await this.groupsService.findOneBy({
+      groupId,
+    });
+    if (!getOneGroup)
+      throw new HttpException(
+        `Project ${groupId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const findOneContributorGroup =
+      await this.contributorsService.canCheckPermissionGroup({
+        userId: user?.id,
+        groupId: getOneGroup?.id,
+        subSubSubProjectId: getOneGroup?.subSubSubProjectId,
+        subSubProjectId: getOneGroup?.subSubProjectId,
+        subProjectId: getOneGroup?.subProjectId,
+        projectId: getOneGroup?.projectId,
+        organizationId: getOneGroup?.organizationId,
+      });
+    if (!findOneContributorGroup)
+      throw new UnauthorizedException(
+        `Not authorized in this group ${groupId}`,
+      );
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const contributors = await this.contributorsService.findAll({
+      search,
+      pagination,
+      type: FilterQueryType.GROUP,
+      groupId: getOneGroup?.id,
+      subSubSubProjectId: getOneGroup?.subSubSubProjectId,
+      subSubProjectId: getOneGroup?.subSubProjectId,
+      subProjectId: getOneGroup?.subProjectId,
+      projectId: getOneGroup?.projectId,
+      organizationId: getOneGroup?.organizationId,
+    });
+
+    return reply({ res, results: contributors });
+  }
+
   @Post(`/organization`)
   @UseGuards(JwtAuthGuard)
   async createOneContributorOrganization(

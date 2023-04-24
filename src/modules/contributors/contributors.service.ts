@@ -594,6 +594,39 @@ export class ContributorsService {
     return findOneContributorSubSubSubProject;
   }
 
+    /** Permission. group */
+    async canCheckPermissionGroup(options: {
+      userId: string;
+      groupId: string;
+      projectId: string;
+      subSubProjectId: string;
+      subSubSubProjectId: string;
+      subProjectId: string;
+      organizationId: string;
+    }): Promise<any> {
+      const {
+        userId,
+        groupId,
+        organizationId,
+        projectId,
+        subProjectId,
+        subSubProjectId,
+        subSubSubProjectId,
+      } = options;
+  
+      const findOneContributorGroup = await this.findOneBy({
+        userId: userId,
+        groupId: groupId,
+        subSubSubProjectId: subSubSubProjectId,
+        subSubProjectId: subSubProjectId,
+        subProjectId: subProjectId,
+        projectId: projectId,
+        organizationId: organizationId,
+        type: FilterQueryType.GROUP,
+      });
+  
+      return findOneContributorGroup;
+    }
   /** Permission. project */
   async canCheckPermissionContributor(options: {
     userId: string;

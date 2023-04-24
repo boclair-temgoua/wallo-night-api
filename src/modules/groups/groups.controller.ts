@@ -74,18 +74,6 @@ export class GroupsController {
     return reply({ res, results: groups });
   }
 
-  /** Get one Group */
-  @Get(`/show/:groupId`)
-  @UseGuards(JwtAuthGuard)
-  async getOneByUUIDGroup(
-    @Res() res,
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-  ) {
-    const group = await this.groupsService.findOneBy({ groupId });
-
-    return reply({ res, results: group });
-  }
-
   /** Create Group */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
@@ -159,24 +147,43 @@ export class GroupsController {
     return reply({ res, results: group });
   }
 
-  /** Get One Group */
-  @Get(`/show/:groupId`)
+  /** Get Group */
+  @Get(`/show`)
   @UseGuards(JwtAuthGuard)
-  async getOneById(
+  async getOneByUUIDGroup(
     @Res() res,
     @Req() req,
-    @Param('groupId', ParseUUIDPipe) groupId: string,
+    @Query('groupId', ParseUUIDPipe) groupId: string,
   ) {
-    const findOneGroup = await this.groupsService.findOneBy({
+    const { user } = req;
+
+    const getOneGroup = await this.groupsService.findOneBy({
       groupId,
     });
-    if (!findOneGroup)
+    if (!getOneGroup)
       throw new HttpException(
-        `This group ${groupId} dons't exist please change`,
+        `Project ${groupId} don't exist please change`,
         HttpStatus.NOT_FOUND,
       );
 
-    return reply({ res, results: findOneGroup });
+    const getOneContributor = await this.contributorsService.findOneBy({
+      userId: user?.id,
+      groupId: getOneGroup?.id,
+      projectId: getOneGroup?.projectId,
+      subProjectId: getOneGroup?.subProjectId,
+      organizationId: getOneGroup?.organizationId,
+      type: FilterQueryType.GROUP,
+    });
+    if (!getOneContributor)
+      throw new HttpException(
+        `Not authorized in this group ${groupId} please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    return reply({
+      res,
+      results: { ...getOneGroup, role: getOneContributor?.role },
+    });
   }
 
   /** Delete Group */
