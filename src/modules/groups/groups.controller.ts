@@ -40,6 +40,31 @@ export class GroupsController {
     private readonly contributorsService: ContributorsService,
   ) {}
 
+  /** Get all Groups Contribute */
+  @Get(`/contributes`)
+  @UseGuards(JwtAuthGuard)
+  async findAllContributorsBy(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { user } = req;
+    /** get contributor filter by Project */
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const groups = await this.contributorsService.findAll({
+      userId: user?.id,
+      search,
+      pagination,
+      type: FilterQueryType.GROUP,
+    });
+
+    return reply({ res, results: groups });
+  }
   /** Get all Groups */
   @Get(`/`)
   async findAllGroups(
@@ -86,7 +111,6 @@ export class GroupsController {
     const {
       name,
       description,
-      organizationId,
       projectId,
       subProjectId,
       subSubProjectId,
@@ -96,12 +120,12 @@ export class GroupsController {
     const group = await this.groupsService.createOne({
       name,
       description,
-      organizationId,
       projectId,
       subProjectId,
       subSubProjectId,
       subSubSubProjectId,
       userCreatedId: user?.id,
+      organizationId: user?.organizationInUtilizationId,
     });
 
     /** Create Contributor */
@@ -109,6 +133,7 @@ export class GroupsController {
       userId: user?.id,
       userCreatedId: user?.id,
       role: ContributorRole.ANALYST,
+      groupId: group?.id,
       projectId: group?.projectId,
       subProjectId: group?.subProjectId,
       subSubProjectId: group?.subSubProjectId,

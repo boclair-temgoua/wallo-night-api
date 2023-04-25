@@ -129,6 +129,27 @@ export class GroupsService {
       .addSelect('group.subSubProjectId', 'subSubProjectId')
       .addSelect('group.subSubSubProjectId', 'subSubSubProjectId')
       .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT con) AS INT)
+      FROM "contributor" "con"
+      WHERE ("con"."groupId" = "group"."id"
+      AND "con"."deletedAt" IS NULL
+      AND "con"."type" IN ('GROUP'))
+      GROUP BY "con"."groupId", "con"."type", "group"."id"
+      ) AS "contributorTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT po) AS INT)
+      FROM "post" "po"
+      WHERE ("po"."groupId" = "group"."id"
+      AND "po"."deletedAt" IS NULL)
+      GROUP BY "po"."groupId", "group"."id"
+      ) AS "postTotal"`,
+      )
+      .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "organization"."id",
           'userId', "organization"."userId",

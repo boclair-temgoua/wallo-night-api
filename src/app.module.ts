@@ -22,6 +22,8 @@ import { SubSubProjectsModule } from './modules/sub-sub-projects/sub-sub-project
 import { SubSubSubProjectsModule } from './modules/sub-sub-sub-projects/sub-sub-sub-projects.module';
 import { ContactProjectsModule } from './modules/contact-projects/contact-projects.module';
 import { GroupsModule } from './modules/groups/groups.module';
+import { CommentsModule } from './modules/comments/comments.module';
+import { PostsModule } from './modules/posts/posts.module';
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { GroupsModule } from './modules/groups/groups.module';
     ApplicationsModule,
     ContactsModule,
     GroupsModule,
+    PostsModule,
+    CommentsModule,
     CategoriesModule,
     SubSubProjectsModule,
     ContactProjectsModule,

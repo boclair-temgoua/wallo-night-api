@@ -17,6 +17,7 @@ import { SubSubProject } from './SubSubProject';
 import { SubProject } from './SubProject';
 import { Project } from './Project';
 import { Contributor } from './Contributor';
+import { Post } from './Post';
 
 @Entity('group')
 export class Group extends BaseDeleteEntity {
@@ -89,4 +90,7 @@ export class Group extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
+
+  @OneToMany(() => Post, (post) => post.group, { onDelete: 'CASCADE' })
+  posts?: Post[];
 }

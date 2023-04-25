@@ -16,11 +16,6 @@ export class CreateOrUpdateGroupsDto {
   @MinLength(3)
   name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
-
   @IsOptional()
   @IsString()
   description: string;

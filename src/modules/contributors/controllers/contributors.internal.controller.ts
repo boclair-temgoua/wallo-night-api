@@ -778,7 +778,7 @@ export class ContributorsInternalController {
     });
     if (findOneContributorGroup)
       throw new HttpException(
-        `This user already exists in this project please change`,
+        `This user already exists in this group please change`,
         HttpStatus.NOT_FOUND,
       );
 

@@ -53,6 +53,7 @@ export class ContributorsService {
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
+      .addSelect('contributor.groupId', 'groupId')
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect('contributor.projectId', 'projectId')
       .addSelect('contributor.subProjectId', 'subProjectId')
@@ -145,9 +146,7 @@ export class ContributorsService {
       .andWhere('contributor.type = :type', { type });
 
     if (groupId) {
-      query = query.andWhere('contributor.groupId = :groupId', {
-        groupId,
-      });
+      query = query.andWhere('contributor.groupId = :groupId', { groupId });
     }
 
     if (organizationId) {
@@ -257,6 +256,7 @@ export class ContributorsService {
     const {
       type,
       userId,
+      groupId,
       organizationId,
       projectId,
       subProjectId,
@@ -269,6 +269,10 @@ export class ContributorsService {
       .addSelect('contributor.createdAt', 'createdAt')
       .where('contributor.deletedAt IS NULL')
       .andWhere('contributor.type = :type', { type });
+
+    if (groupId) {
+      query = query.andWhere('contributor.groupId = :groupId', { groupId });
+    }
 
     if (organizationId) {
       query = query.andWhere('contributor.organizationId = :organizationId', {
@@ -317,6 +321,7 @@ export class ContributorsService {
     const {
       type,
       userId,
+      groupId,
       organizationId,
       projectId,
       subProjectId,
@@ -330,6 +335,7 @@ export class ContributorsService {
       .select('contributor.id', 'id')
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
+      .addSelect('contributor.groupId', 'groupId')
       .addSelect('contributor.projectId', 'projectId')
       .addSelect('contributor.subProjectId', 'subProjectId')
       .addSelect('contributor.organizationId', 'organizationId')
@@ -357,6 +363,10 @@ export class ContributorsService {
 
     if (type) {
       query = query.andWhere('contributor.type = :type', { type });
+    }
+
+    if (groupId) {
+      query = query.andWhere('contributor.groupId = :groupId', { groupId });
     }
 
     if (organizationId) {
@@ -594,39 +604,39 @@ export class ContributorsService {
     return findOneContributorSubSubSubProject;
   }
 
-    /** Permission. group */
-    async canCheckPermissionGroup(options: {
-      userId: string;
-      groupId: string;
-      projectId: string;
-      subSubProjectId: string;
-      subSubSubProjectId: string;
-      subProjectId: string;
-      organizationId: string;
-    }): Promise<any> {
-      const {
-        userId,
-        groupId,
-        organizationId,
-        projectId,
-        subProjectId,
-        subSubProjectId,
-        subSubSubProjectId,
-      } = options;
-  
-      const findOneContributorGroup = await this.findOneBy({
-        userId: userId,
-        groupId: groupId,
-        subSubSubProjectId: subSubSubProjectId,
-        subSubProjectId: subSubProjectId,
-        subProjectId: subProjectId,
-        projectId: projectId,
-        organizationId: organizationId,
-        type: FilterQueryType.GROUP,
-      });
-  
-      return findOneContributorGroup;
-    }
+  /** Permission. group */
+  async canCheckPermissionGroup(options: {
+    userId: string;
+    groupId: string;
+    projectId: string;
+    subSubProjectId: string;
+    subSubSubProjectId: string;
+    subProjectId: string;
+    organizationId: string;
+  }): Promise<any> {
+    const {
+      userId,
+      groupId,
+      organizationId,
+      projectId,
+      subProjectId,
+      subSubProjectId,
+      subSubSubProjectId,
+    } = options;
+
+    const findOneContributorGroup = await this.findOneBy({
+      userId: userId,
+      groupId: groupId,
+      subSubSubProjectId: subSubSubProjectId,
+      subSubProjectId: subSubProjectId,
+      subProjectId: subProjectId,
+      projectId: projectId,
+      organizationId: organizationId,
+      type: FilterQueryType.GROUP,
+    });
+
+    return findOneContributorGroup;
+  }
   /** Permission. project */
   async canCheckPermissionContributor(options: {
     userId: string;
