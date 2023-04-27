@@ -11,12 +11,6 @@ import {
 } from 'class-validator';
 
 export class CreateOrUpdatePostsDto {
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  @MinLength(3)
-  title: string;
-
   @IsNotEmpty()
   @IsString()
   description: string;
@@ -25,6 +19,12 @@ export class CreateOrUpdatePostsDto {
   @IsString()
   @IsUUID()
   groupId: string;
+  
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  @MinLength(3)
+  title: string;
 }
 
 export class PostsDto {

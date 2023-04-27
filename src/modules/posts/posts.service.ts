@@ -178,7 +178,7 @@ export class PostsService {
 
     const post = new Post();
     post.title = title;
-    post.slug = `${Slug(title)}-${generateNumber(4)}`;
+    post.slug = `${Slug(description.substring(4, 15))}-${generateNumber(4)}`;
     post.groupId = groupId;
     post.userId = userId;
     post.description = description;
