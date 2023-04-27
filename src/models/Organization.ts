@@ -27,6 +27,18 @@ export class Organization extends BaseDeleteEntity {
   @Column({ nullable: true })
   name?: string;
 
+  @Column({ nullable: true })
+  phone?: string;
+
+  @Column({ nullable: true })
+  email?: string;
+
+  @Column({ nullable: true })
+  firstAddress?: string;
+
+  @Column({ nullable: true })
+  secondAddress?: string;
+
   @Column({ default: false })
   requiresPayment?: boolean;
 

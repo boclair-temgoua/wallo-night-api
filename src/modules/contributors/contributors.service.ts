@@ -193,7 +193,7 @@ export class ContributorsService {
             search: `%${search}%`,
           })
             .orWhere(
-              '(profile.firstName ::text ILIKE :search OR profile.lastName ::text ILIKE :search)',
+              '(profile.firstName ::text ILIKE :search OR profile.lastName ::text ILIKE :search OR profile.phone ::text ILIKE :search)',
               {
                 search: `%${search}%`,
               },
@@ -204,6 +204,9 @@ export class ContributorsService {
                 search: `%${search}%`,
               },
             )
+            .orWhere('group.name ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
             .orWhere('project.name ::text ILIKE :search', {
               search: `%${search}%`,
             })

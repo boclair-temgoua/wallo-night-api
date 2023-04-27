@@ -3,6 +3,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetPostsSelections = {
   search?: string;
+  userId: Post['userId'];
   groupId: Post['groupId'];
   pagination?: PaginationType;
 };

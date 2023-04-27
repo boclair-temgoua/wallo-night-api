@@ -165,10 +165,14 @@ export class OrganizationsService {
 
   /** Create one Organization to the database. */
   async createOne(options: CreateOrganizationOptions): Promise<Organization> {
-    const { userId, name } = options;
+    const { userId, name, phone, firstAddress, secondAddress, email } = options;
 
     const organization = new Organization();
     organization.userId = userId;
+    organization.phone = phone;
+    organization.email = email;
+    organization.firstAddress = firstAddress;
+    organization.secondAddress = secondAddress;
     organization.name = name;
     organization.color = getRandomElement(colorsArrays);
 
@@ -186,7 +190,17 @@ export class OrganizationsService {
     options: UpdateOrganizationOptions,
   ): Promise<Organization> {
     const { option1 } = selections;
-    const { userId, name, requiresPayment, image, deletedAt } = options;
+    const {
+      userId,
+      name,
+      requiresPayment,
+      image,
+      phone,
+      firstAddress,
+      secondAddress,
+      email,
+      deletedAt,
+    } = options;
 
     let findQuery = this.driver.createQueryBuilder('organization');
 
@@ -203,6 +217,10 @@ export class OrganizationsService {
     findItem.userId = userId;
     findItem.name = name;
     findItem.image = image;
+    findItem.phone = phone;
+    findItem.email = email;
+    findItem.firstAddress = firstAddress;
+    findItem.secondAddress = secondAddress;
     findItem.requiresPayment = requiresPayment;
     findItem.deletedAt = deletedAt;
 

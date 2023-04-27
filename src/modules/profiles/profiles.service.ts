@@ -43,12 +43,27 @@ export class ProfilesService {
 
   /** Create one Profile to the database. */
   async createOne(options: CreateProfileOptions): Promise<Profile> {
-    const { firstName, lastName, currencyId, countryId, url, image } = options;
+    const {
+      firstName,
+      lastName,
+      currencyId,
+      countryId,
+      url,
+      image,
+      phone,
+      firstAddress,
+      secondAddress,
+      birthday,
+    } = options;
 
     const profile = new Profile();
     profile.image = image;
     profile.firstName = firstName;
     profile.lastName = lastName;
+    profile.phone = phone;
+    profile.firstAddress = firstAddress;
+    profile.secondAddress = secondAddress;
+    profile.birthday = birthday;
     profile.color = getRandomElement(colorsArrays);
     profile.currencyId = currencyId;
     profile.countryId = countryId;
@@ -75,6 +90,10 @@ export class ProfilesService {
       countryId,
       image,
       url,
+      phone,
+      firstAddress,
+      secondAddress,
+      birthday,
       deletedAt,
     } = options;
 
@@ -91,6 +110,10 @@ export class ProfilesService {
 
     findItem.image = image;
     findItem.url = url;
+    findItem.phone = phone;
+    findItem.firstAddress = firstAddress;
+    findItem.secondAddress = secondAddress;
+    findItem.birthday = birthday;
     findItem.countryId = countryId;
     findItem.firstName = firstName;
     findItem.lastName = lastName;

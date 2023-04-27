@@ -73,13 +73,13 @@ export class UsersService {
           qb.where('user.email ::text ILIKE :search', {
             search: `%${search}%`,
           })
-            .orWhere('profile.firstName ::text ILIKE :search', {
-              search: `%${search}%`,
-            })
+            .orWhere(
+              '(profile.firstName ::text ILIKE :search OR profile.lastName ::text ILIKE :search OR profile.phone ::text ILIKE :search)',
+              {
+                search: `%${search}%`,
+              },
+            )
             .orWhere('organization.name ::text ILIKE :search', {
-              search: `%${search}%`,
-            })
-            .orWhere('profile.lastName ::text ILIKE :search', {
               search: `%${search}%`,
             });
         }),

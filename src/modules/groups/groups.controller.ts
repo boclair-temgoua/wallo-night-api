@@ -16,7 +16,6 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { useCatch } from '../../app/utils/use-catch';
 import { CreateOrUpdateGroupsDto, GroupsDto } from './groups.dto';
 import { JwtAuthGuard } from '../users/middleware';
 
@@ -41,6 +40,31 @@ export class GroupsController {
   ) {}
 
   /** Get all Groups Contribute */
+  // @Get(`/`)
+  // @UseGuards(JwtAuthGuard)
+  // async findAllGroups(
+  //   @Res() res,
+  //   @Req() req,
+  //   @Query() requestPaginationDto: RequestPaginationDto,
+  //   @Query() searchQuery: SearchQueryDto,
+  // ) {
+  //   const { user } = req;
+  //   /** get contributor filter by Project */
+  //   const { search } = searchQuery;
+
+  //   const { take, page, sort } = requestPaginationDto;
+  //   const pagination: PaginationType = addPagination({ page, take, sort });
+
+  //   const groups = await this.groupsService.findAll({
+  //     userId: user?.id,
+  //     search,
+  //     pagination,
+  //     type: FilterQueryType.GROUP,
+  //   });
+
+  //   return reply({ res, results: groups });
+  // }
+  /** Get all Groups */
   @Get(`/contributes`)
   @UseGuards(JwtAuthGuard)
   async findAllContributorsBy(
@@ -48,31 +72,9 @@ export class GroupsController {
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-  ) {
-    const { user } = req;
-    /** get contributor filter by Project */
-    const { search } = searchQuery;
-
-    const { take, page, sort } = requestPaginationDto;
-    const pagination: PaginationType = addPagination({ page, take, sort });
-
-    const groups = await this.contributorsService.findAll({
-      userId: user?.id,
-      search,
-      pagination,
-      type: FilterQueryType.GROUP,
-    });
-
-    return reply({ res, results: groups });
-  }
-  /** Get all Groups */
-  @Get(`/`)
-  async findAllGroups(
-    @Res() res,
-    @Query() requestPaginationDto: RequestPaginationDto,
-    @Query() searchQuery: SearchQueryDto,
     @Query() query: GroupsDto,
   ) {
+    const { user } = req;
     const {
       organizationId,
       projectId,
@@ -86,7 +88,8 @@ export class GroupsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const groups = await this.groupsService.findAll({
+    const groups = await this.contributorsService.findAll({
+      userId: user?.id,
       organizationId,
       projectId,
       subProjectId,
@@ -94,6 +97,7 @@ export class GroupsController {
       subSubSubProjectId,
       search,
       pagination,
+      type: FilterQueryType.GROUP,
     });
 
     return reply({ res, results: groups });
@@ -132,12 +136,12 @@ export class GroupsController {
     await this.contributorsService.createOne({
       userId: user?.id,
       userCreatedId: user?.id,
-      role: ContributorRole.ANALYST,
+      role: ContributorRole.ADMIN,
       groupId: group?.id,
-      projectId: group?.projectId,
-      subProjectId: group?.subProjectId,
-      subSubProjectId: group?.subSubProjectId,
-      subSubSubProjectId: group?.subSubSubProjectId,
+      projectId: projectId,
+      subProjectId: subProjectId,
+      subSubProjectId: subSubProjectId,
+      subSubSubProjectId: subSubSubProjectId,
       organizationId: group?.organizationId,
       type: FilterQueryType.GROUP,
     });

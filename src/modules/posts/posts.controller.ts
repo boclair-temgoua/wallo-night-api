@@ -38,12 +38,15 @@ export class PostsController {
 
   /** Get all Posts */
   @Get(`/`)
+  @UseGuards(JwtAuthGuard)
   async findAllPosts(
     @Res() res,
+    @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: PostsDto,
   ) {
+    const { user } = req;
     const { groupId } = query;
     const { search } = searchQuery;
 
@@ -65,6 +68,7 @@ export class PostsController {
       search,
       pagination,
       groupId,
+      userId: user?.id,
     });
 
     return reply({ res, results: posts });

@@ -27,7 +27,7 @@ export class PostsService {
   ) {}
 
   async findAll(selections: GetPostsSelections): Promise<any> {
-    const { search, pagination, groupId } = selections;
+    const { search, pagination, groupId, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('post')
@@ -37,6 +37,7 @@ export class PostsService {
       .addSelect('post.createdAt', 'createdAt')
       .addSelect('post.description', 'description')
       .addSelect('post.groupId', 'groupId')
+      .addSelect('post.userId', 'userId')
       .addSelect(
         /*sql*/ `(
     SELECT
@@ -57,7 +58,31 @@ export class PostsService {
           'email', "user"."email"
       ) AS "profile"`,
       )
+      .addSelect(
+        /*sql*/ `(
+    SELECT
+        CAST(COUNT(DISTINCT lk) AS INT)
+    FROM "like" "lk"
+    WHERE ("lk"."type" IN ('POST')
+     AND "lk"."deletedAt" IS NULL
+     AND "lk"."likeableId" = "post"."id")
+     GROUP BY "lk"."likeableId", "post"."id"
+    ) AS "likeTotal"`,
+      )
       .where('post.deletedAt IS NULL');
+
+    if (userId) {
+      query = query.addSelect(/*sql*/ `(
+          SELECT
+              CAST(COUNT(DISTINCT lk) AS INT)
+          FROM "like" "lk"
+          WHERE ("lk"."type" IN ('POST')
+           AND "lk"."deletedAt" IS NULL
+           AND "lk"."likeableId" = "post"."id"
+           AND "lk"."userId" IN ('${userId}'))
+           GROUP BY "lk"."likeableId", "post"."id"
+          ) AS "isLike"`);
+    }
 
     if (groupId) {
       query = query.andWhere('post.groupId = :groupId', { groupId });
@@ -101,6 +126,7 @@ export class PostsService {
       .addSelect('post.id', 'id')
       .addSelect('post.slug', 'slug')
       .addSelect('post.createdAt', 'createdAt')
+      .addSelect('post.userId', 'userId')
       .addSelect('post.description', 'description')
       .addSelect('post.groupId', 'groupId')
       .addSelect(
@@ -173,7 +199,7 @@ export class PostsService {
     const { postId } = selections;
     const { title, description, deletedAt } = options;
 
-    let findQuery = this.driver.createQueryBuilder('Post');
+    let findQuery = this.driver.createQueryBuilder('post');
 
     if (postId) {
       findQuery = findQuery.where('post.id = :id', {

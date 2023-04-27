@@ -42,7 +42,7 @@ export class CreateOrUpdateGroupsDto {
 }
 
 export class GroupsDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsUUID()
   organizationId: string;

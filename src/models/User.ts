@@ -15,6 +15,7 @@ import { Profile } from './Profile';
 import { Organization } from './Organization';
 import { Contributor } from './Contributor';
 import { Post } from './Post';
+import { Like } from './Like';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -64,6 +65,11 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   organizations?: Organization[];
+
+  @OneToMany(() => Like, (like) => like.user, {
+    onDelete: 'CASCADE',
+  })
+  likes?: Like[];
 
   @ManyToOne(() => Organization, (organization) => organization.users, {
     onDelete: 'CASCADE',

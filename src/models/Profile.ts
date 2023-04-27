@@ -22,6 +22,18 @@ export class Profile extends BaseDeleteEntity {
   @Column({ nullable: true })
   lastName?: string;
 
+  @Column({ nullable: true })
+  phone?: string;
+
+  @Column({ nullable: true })
+  firstAddress?: string;
+
+  @Column({ nullable: true })
+  secondAddress?: string;
+
+  @Column({ nullable: true })
+  birthday?: Date;
+
   @Column({ type: 'uuid', nullable: true })
   currencyId?: string;
 
