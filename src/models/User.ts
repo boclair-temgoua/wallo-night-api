@@ -16,6 +16,7 @@ import { Organization } from './Organization';
 import { Contributor } from './Contributor';
 import { Post } from './Post';
 import { Like } from './Like';
+import { Message } from './Message';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -65,6 +66,9 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   organizations?: Organization[];
+
+  @OneToMany(() => Message, (message) => message.user, { onDelete: 'CASCADE' })
+  messages?: Message[];
 
   @OneToMany(() => Like, (like) => like.user, {
     onDelete: 'CASCADE',
