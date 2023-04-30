@@ -17,7 +17,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  // app.use(helmet());
+  app.use(helmet());
   // app.use(useragent.express());
   await app.listen(port, () => {
     console.log(`=============================================`);
