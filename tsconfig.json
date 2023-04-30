@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "moduleResolution": "node",
     "lib": ["dom", "es6", "es2021", "esnext.asynciterable"],
     "declaration": true,
     "removeComments": true,

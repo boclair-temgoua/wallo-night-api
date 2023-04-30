@@ -1,4 +1,3 @@
-import { User } from '../../models/User';
 import {
   IsString,
   IsNotEmpty,
