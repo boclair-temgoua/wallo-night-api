@@ -16,8 +16,8 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  //app.enableCors();
   app.use(helmet());
+  app.enableCors();
   // app.use(useragent.express());
   await app.listen(port, () => {
     console.log(`=============================================`);
