@@ -1,4 +1,4 @@
-import { Category } from '../../models/category';
+import { Category } from '../../models/Category';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetCategoriesSelections = {

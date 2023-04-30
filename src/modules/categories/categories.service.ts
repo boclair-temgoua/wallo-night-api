@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from '../../models/category';
+import { Category } from '../../models/Category';
 import { Repository, Brackets } from 'typeorm';
 import {
   CreateCategoriesOptions,
