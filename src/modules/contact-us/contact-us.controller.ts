@@ -40,7 +40,10 @@ export class ContactUsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const contactUs = await this.contactUsService.findAll({ search, pagination });
+    const contactUs = await this.contactUsService.findAll({
+      search,
+      pagination,
+    });
 
     return reply({ res, results: contactUs });
   }
@@ -62,7 +65,6 @@ export class ContactUsController {
     const contactUs = await this.contactUsService.findAll({
       search,
       pagination,
-      option1: { organizationId: user?.organizationInUtilizationId },
     });
 
     return reply({ res, results: contactUs });
@@ -96,9 +98,7 @@ export class ContactUsController {
     @Res() res,
     @Param('contactUsId', ParseUUIDPipe) contactUsId: string,
   ) {
-    const user = await this.contactUsService.findOneBy({
-      option1: { contactUsId },
-    });
+    const user = await this.contactUsService.findOneBy({ contactUsId });
 
     return reply({ res, results: user });
   }
@@ -111,7 +111,7 @@ export class ContactUsController {
     @Param('contactUsId', ParseUUIDPipe) contactUsId: string,
   ) {
     const contactUs = await this.contactUsService.updateOne(
-      { option1: { contactUsId } },
+      { contactUsId },
       { deletedAt: new Date() },
     );
 

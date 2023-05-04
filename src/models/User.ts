@@ -12,11 +12,6 @@ import {
 
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Profile } from './Profile';
-import { Organization } from './Organization';
-import { Contributor } from './Contributor';
-import { Post } from './Post';
-import { Like } from './Like';
-import { Message } from './Message';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -53,35 +48,6 @@ export class User extends BaseDeleteEntity {
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
   @JoinColumn()
   profile?: Profile;
-
-  @OneToMany(() => Contributor, (contributor) => contributor.userId, {
-    onDelete: 'CASCADE',
-  })
-  contributors?: Contributor[];
-
-  @OneToMany(() => Post, (post) => post.userId, { onDelete: 'CASCADE' })
-  posts?: Post[];
-
-  @OneToMany(() => Organization, (organization) => organization.user, {
-    onDelete: 'CASCADE',
-  })
-  organizations?: Organization[];
-
-  @OneToMany(() => Message, (message) => message.user, { onDelete: 'CASCADE' })
-  messages?: Message[];
-
-  @OneToMany(() => Like, (like) => like.user, {
-    onDelete: 'CASCADE',
-  })
-  likes?: Like[];
-
-  @ManyToOne(() => Organization, (organization) => organization.users, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn([
-    { name: 'organizationInUtilizationId', referencedColumnName: 'id' },
-  ])
-  organizationInUtilization?: Organization;
 
   async hashPassword(password: string) {
     this.password = await bcrypt.hashSync(

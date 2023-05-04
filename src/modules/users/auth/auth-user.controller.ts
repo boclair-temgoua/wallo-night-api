@@ -26,12 +26,8 @@ import {
   UpdateResetPasswordUserDto,
 } from '../users.dto';
 import { ProfilesService } from '../../profiles/profiles.service';
-import { OrganizationsService } from '../../organizations/organizations.service';
 import { JwtPayloadType } from '../users.type';
 import { CheckUserService } from '../middleware/check-user.service';
-import Ipapi from '../../integrations/ipapi/ipapi';
-import { ContributorsService } from '../../contributors/contributors.service';
-import { ContributorRole } from '../../contributors/contributors.type';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
 import { configurations } from '../../../app/configurations/index';
@@ -43,8 +39,6 @@ export class AuthUserController {
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
-    private readonly contributorsService: ContributorsService,
-    private readonly organizationsService: OrganizationsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
 
@@ -58,9 +52,7 @@ export class AuthUserController {
   ) {
     const { email, password, firstName, lastName } = createRegisterUserDto;
 
-    const findOnUser = await this.usersService.findOneBy({
-      option2: { email },
-    });
+    const findOnUser = await this.usersService.findOneBy({ email });
     if (findOnUser)
       throw new HttpException(
         `Email ${email} already exists please change`,
@@ -73,33 +65,13 @@ export class AuthUserController {
       lastName,
     });
 
-    /** Create Organization */
-    const organization = await this.organizationsService.createOne({
-      name: `${firstName} ${lastName}`,
-    });
-
     /** Create User */
     const user = await this.usersService.createOne({
       email,
       password,
       profileId: profile?.id,
       username: `${firstName}.${lastName}`.toLowerCase(),
-      organizationInUtilizationId: organization?.id,
     });
-
-    /** Create Contributor */
-    await this.contributorsService.createOne({
-      userId: user?.id,
-      userCreatedId: user?.id,
-      role: ContributorRole.ADMIN,
-      organizationId: organization?.id,
-    });
-    /** Update Organization */
-    await this.organizationsService.updateOne(
-      { option1: { organizationId: organization?.id } },
-      { userId: user?.id },
-    );
-
     //const queue = 'user-register';
     //const connect = await amqplib.connect(
     //  configurations.implementations.amqp.link,
@@ -121,9 +93,7 @@ export class AuthUserController {
   ) {
     const { email, password } = createLoginUserDto;
 
-    const findOnUser = await this.usersService.findOneBy({
-      option2: { email },
-    });
+    const findOnUser = await this.usersService.findOneBy({ email });
     if (!findOnUser?.checkIfPasswordMatch(password))
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
 
@@ -159,9 +129,7 @@ export class AuthUserController {
   ) {
     const { email } = body;
 
-    const findOnUser = await this.usersService.findOneBy({
-      option2: { email },
-    });
+    const findOnUser = await this.usersService.findOneBy({ email });
     if (!findOnUser)
       throw new HttpException(
         `Email ${email} dons't exists please change`,
@@ -210,26 +178,30 @@ export class AuthUserController {
     const { password } = body;
 
     const findOnResetPassword = await this.resetPasswordsService.findOneBy({
-      option1: { token: params?.token },
+      token: params?.token,
     });
     if (!findOnResetPassword) {
-      throw new UnauthorizedException(
-        'Invalid token or expired please try again',
-      );
+      throw new UnauthorizedException('Invalid user please change');
     }
+
+    const findOnUser = await this.usersService.findOneBy({
+      email: findOnResetPassword?.email,
+    });
+    if (findOnUser)
+      throw new HttpException(
+        `User already exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
 
     /** Check token */
     await this.checkUserService.verifyJWTToken(
       findOnResetPassword?.accessToken,
     );
 
-    await this.usersService.updateOne(
-      { option2: { email: findOnResetPassword?.email } },
-      { password },
-    );
+    await this.usersService.updateOne({ userId: findOnUser?.id }, { password });
 
     await this.resetPasswordsService.updateOne(
-      { option1: { token: findOnResetPassword?.token } },
+      { token: findOnResetPassword?.token },
       { deletedAt: new Date() },
     );
 

@@ -54,18 +54,9 @@ export class UsersService {
           'url', "profile"."url"
       ) AS "profile"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "organization"."id",
-          'color', "organization"."color",
-          'userId', "organization"."userId",
-          'name', "organization"."name"
-      ) AS "organization"`,
-      )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile')
-      .leftJoin('profile.currency', 'currency')
-      .leftJoin('user.organizationInUtilization', 'organization');
+      .leftJoin('profile.currency', 'currency');
 
     if (search) {
       query = query.andWhere(
@@ -106,38 +97,22 @@ export class UsersService {
   }
 
   async findOneBy(selections: GetOneUserSelections): Promise<User> {
-    const { option1, option2, option5, option6 } = selections;
+    const { userId, email, token } = selections;
     let query = this.driver
       .createQueryBuilder('user')
       .where('user.deletedAt IS NULL')
-      .leftJoinAndSelect('user.profile', 'profile')
-      .leftJoinAndSelect(
-        'user.organizationInUtilization',
-        'organizationInUtilization',
-      );
+      .leftJoinAndSelect('user.profile', 'profile');
 
-    if (option1) {
-      const { userId } = option1;
+    if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });
     }
 
-    if (option2) {
-      const { email } = option2;
+    if (email) {
       query = query.andWhere('user.email = :email', { email });
     }
 
-    if (option5) {
-      const { token } = option5;
-      query = query
-        .andWhere('user.token = :token', { token })
-        .andWhere('user.confirmedAt IS NULL');
-    }
-
-    if (option6) {
-      const { userId, email } = option6;
-      query = query
-        .andWhere('user.id = :id', { id: userId })
-        .andWhere('user.email = :email', { email });
+    if (token) {
+      query = query.andWhere('user.token = :token', { token });
     }
 
     const [error, result] = await useCatch(query.getOne());
@@ -150,7 +125,7 @@ export class UsersService {
   async findOneInfoBy(
     selections: GetOneUserSelections,
   ): Promise<GetOnUserPublic> {
-    const { option1, option2 } = selections;
+    const { userId, email } = selections;
     let query = this.driver
       .createQueryBuilder('user')
       .select('user.id', 'id')
@@ -158,10 +133,6 @@ export class UsersService {
       .addSelect('user.email', 'email')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
-      .addSelect(
-        'user.organizationInUtilizationId',
-        'organizationInUtilizationId',
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -175,47 +146,15 @@ export class UsersService {
           'url', "profile"."url"
       ) AS "profile"`,
       )
-      .addSelect(
-        /*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT con) AS INT)
-      FROM "contributor" "con"
-      WHERE ("con"."userId" = "user"."id"
-      AND "con"."type" IN ('ORGANIZATION'))
-      GROUP BY "con"."userId", "con"."type", "user"."id"
-      ) AS "organizationTotal"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-        SELECT jsonb_build_object(
-        'name', "con"."role"
-        )
-        FROM "contributor" "con"
-        WHERE "user"."id" = "con"."userId"
-        AND "user"."organizationInUtilizationId" = "con"."organizationId"
-        AND "con"."type" IN ('ORGANIZATION')
-        ) AS "role"`,
-      )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "organization"."id",
-          'color', "organization"."color",
-          'userId', "organization"."userId",
-          'name', "organization"."name"
-      ) AS "organization"`,
-      )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile')
-      .leftJoin('profile.currency', 'currency')
-      .leftJoin('user.organizationInUtilization', 'organization');
+      .leftJoin('profile.currency', 'currency');
 
-    if (option1) {
-      const { userId } = option1;
+    if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });
     }
 
-    if (option2) {
-      const { email } = option2;
+    if (email) {
       query = query.andWhere('user.email = :email', { email });
     }
 
@@ -256,30 +195,27 @@ export class UsersService {
     selections: UpdateUserSelections,
     options: UpdateUserOptions,
   ): Promise<User> {
-    const { option1, option2 } = selections;
+    const { userId, profileId } = selections;
     const {
       email,
       username,
       password,
       accessToken,
       refreshToken,
-      organizationInUtilizationId,
       deletedAt,
       confirmedAt,
     } = options;
 
     let findQuery = this.driver.createQueryBuilder('user');
 
-    if (option1) {
-      const { userId } = option1;
+    if (userId) {
       findQuery = findQuery.where('user.id = :id', {
         id: userId,
       });
     }
 
-    if (option2) {
-      const { email } = option2;
-      findQuery = findQuery.where('user.email = :email', { email });
+    if (profileId) {
+      findQuery = findQuery.where('user.profileId = :profileId', { profileId });
     }
 
     const [errorFind, findItem] = await useCatch(findQuery.getOne());
@@ -292,7 +228,6 @@ export class UsersService {
     }
     findItem.accessToken = accessToken;
     findItem.refreshToken = refreshToken;
-    findItem.organizationInUtilizationId = organizationInUtilizationId;
     findItem.deletedAt = deletedAt;
     findItem.confirmedAt = confirmedAt;
 
@@ -301,20 +236,5 @@ export class UsersService {
     if (errorUp) throw new NotFoundException(errorUp);
 
     return result;
-  }
-
-  /** Permission. */
-  async canPermission(options: { userId: string }): Promise<any> {
-    const { userId } = options;
-
-    const findOneUser = await this.findOneInfoBy({
-      option1: { userId: userId },
-    });
-
-    /** This condition check if user is ADMIN */
-    if (!['ADMIN'].includes(findOneUser?.role?.name))
-      throw new UnauthorizedException('Not authorized! Change permission');
-
-    return findOneUser;
   }
 }

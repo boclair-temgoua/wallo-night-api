@@ -8,15 +8,11 @@ export type GetFaqsSelections = {
 };
 
 export type GetOneFaqSelections = {
-  option1?: {
-    faqId: Faq['id'];
-  };
+  faqId: Faq['id'];
 };
 
 export type UpdateFaqSelections = {
-  option1?: {
-    faqId: Faq['id'];
-  };
+  faqId: Faq['id'];
 };
 
 export type CreateFaqOptions = Partial<Faq>;

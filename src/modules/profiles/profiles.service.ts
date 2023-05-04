@@ -26,11 +26,10 @@ export class ProfilesService {
   ) {}
 
   async findOneBy(selections: GetOneProfileSelections): Promise<Profile> {
-    const { option1 } = selections;
+    const { profileId } = selections;
     let query = this.driver.createQueryBuilder('profile');
 
-    if (option1) {
-      const { profileId } = { ...option1 };
+    if (profileId) {
       query = query.where('profile.id = :id', { id: profileId });
     }
 
@@ -82,7 +81,7 @@ export class ProfilesService {
     selections: UpdateProfileSelections,
     options: UpdateProfileOptions,
   ): Promise<Profile> {
-    const { option1 } = selections;
+    const { profileId } = selections;
     const {
       firstName,
       lastName,
@@ -99,9 +98,9 @@ export class ProfilesService {
 
     let findQuery = this.driver.createQueryBuilder('profile');
 
-    if (option1) {
+    if (profileId) {
       findQuery = findQuery.where('profile.id = :id', {
-        id: option1.profileId,
+        id: profileId,
       });
     }
 

@@ -12,11 +12,6 @@ export class CreateOrUpdateCategoriesUsDto {
   @MaxLength(100)
   name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
-
   @IsOptional()
   @IsString()
   description: string;

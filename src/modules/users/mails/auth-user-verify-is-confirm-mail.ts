@@ -1,7 +1,7 @@
 import { configurations } from './../../../app/configurations/index';
 
 import { User } from '../../../models/User';
-import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
+// import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
 
 export const authUserVerifyIsConfirmMail = async (options: { user: User }) => {
   const { user } = { ...options };
@@ -145,9 +145,9 @@ export const authUserVerifyIsConfirmMail = async (options: { user: User }) => {
   </body>
   </html>
       `;
-  await NodeMailServiceAdapter({
-    to: [`${user.email}`],
-    subject: `${configurations.datasite.name} - Confirm your account`,
-    html: output,
-  });
+  // await NodeMailServiceAdapter({
+  //   to: [`${user.email}`],
+  //   subject: `${configurations.datasite.name} - Confirm your account`,
+  //   html: output,
+  // });
 };

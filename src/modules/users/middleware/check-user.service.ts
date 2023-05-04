@@ -11,18 +11,18 @@ export class CheckUserService {
 
   async createRefreshToken(payload: JwtPayloadType) {
     const user = await this.usersService.findOneBy({
-      option1: { userId: `${payload?.id}` },
+      userId: `${payload?.id}`,
     });
 
     const refreshToken = await this.createJwtToken('refresh', payload);
     if (!user.refreshToken) {
       await this.usersService.updateOne(
-        { option1: { userId: `${payload?.id}` } },
+        { userId: `${payload?.id}` },
         { refreshToken: [refreshToken] },
       );
     } else {
       await this.usersService.updateOne(
-        { option1: { userId: `${payload?.id}` } },
+        { userId: `${payload?.id}` },
         { refreshToken: [...user.refreshToken, refreshToken] },
       );
     }

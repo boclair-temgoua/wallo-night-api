@@ -56,7 +56,7 @@ export class FaqsController {
     @Res() res,
     @Param('faqId', ParseUUIDPipe) faqId: string,
   ) {
-    const faq = await this.faqsService.findOneBy({ option1: { faqId } });
+    const faq = await this.faqsService.findOneBy({ faqId });
 
     return reply({ res, results: faq });
   }
@@ -69,11 +69,13 @@ export class FaqsController {
     @Req() req,
     @Body() body: CreateOrUpdateFaqsDto,
   ) {
+    const { user } = req;
     const { title, status, description } = body;
 
     const faq = await this.faqsService.createOne({
       title,
       status,
+      userCreatedId: user?.id,
       description,
     });
 
@@ -91,7 +93,7 @@ export class FaqsController {
   ) {
     const { title, status, description } = body;
 
-    const findOneFaq = await this.faqsService.findOneBy({ option1: { faqId } });
+    const findOneFaq = await this.faqsService.findOneBy({ faqId });
     if (!findOneFaq)
       throw new HttpException(
         `This faq ${faqId} dons't exist please change`,
@@ -99,7 +101,7 @@ export class FaqsController {
       );
 
     const faq = await this.faqsService.updateOne(
-      { option1: { faqId: findOneFaq?.id } },
+      { faqId: findOneFaq?.id },
       { title, status, description },
     );
 
@@ -114,7 +116,7 @@ export class FaqsController {
     @Req() req,
     @Param('faqId', ParseUUIDPipe) faqId: string,
   ) {
-    const findOneFaq = await this.faqsService.findOneBy({ option1: { faqId } });
+    const findOneFaq = await this.faqsService.findOneBy({ faqId });
     if (!findOneFaq)
       throw new HttpException(
         `This faq ${faqId} dons't exist please change`,
@@ -122,7 +124,7 @@ export class FaqsController {
       );
 
     const faq = await this.faqsService.updateOne(
-      { option1: { faqId: findOneFaq?.id } },
+      { faqId: findOneFaq?.id },
       { deletedAt: new Date() },
     );
 

@@ -1,7 +1,6 @@
 import { configurations } from '../../../app/configurations/index';
 
 import { User } from '../../../models/User';
-import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
 
 export const authLoginNotificationMail = async (options: { user: User }) => {
   const { user } = { ...options };
@@ -180,9 +179,9 @@ export const authLoginNotificationMail = async (options: { user: User }) => {
   </html>
       `;
   // create reusable transporter object using the default SMTP transport
-  await NodeMailServiceAdapter({
-    to: [`${user.email}`],
-    subject: `${configurations.datasite.name} - Notification access to the Customer Area`,
-    html: output,
-  });
+  // await NodeMailServiceAdapter({
+  //   to: [`${user.email}`],
+  //   subject: `${configurations.datasite.name} - Notification access to the Customer Area`,
+  //   html: output,
+  // });
 };

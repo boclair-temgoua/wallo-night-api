@@ -1,5 +1,4 @@
 import { configurations } from '../../../app/configurations/index';
-import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
 
 export const authNewUserCreateMail = async (options: { resetPassword }) => {
   const { resetPassword } = { ...options };
@@ -135,9 +134,9 @@ export const authNewUserCreateMail = async (options: { resetPassword }) => {
   </html>
       `;
   // create reusable transporter object using the default SMTP transport
-  await NodeMailServiceAdapter({
-    to: [`${resetPassword.email}`],
-    subject: `You have been invited to join ${resetPassword?.organizationInUtilization?.name} on ${configurations.datasite.name}`,
-    html: output,
-  });
+  // await NodeMailServiceAdapter({
+  //   to: [`${resetPassword.email}`],
+  //   subject: `You have been invited to join ${resetPassword?.organizationInUtilization?.name} on ${configurations.datasite.name}`,
+  //   html: output,
+  // });
 };

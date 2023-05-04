@@ -1,5 +1,5 @@
 import { configurations } from '../../../app/configurations/index';
-import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
+// import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
 
 export const authPasswordResetMail = async (options: { resetPassword }) => {
   const { resetPassword } = { ...options };
@@ -135,9 +135,9 @@ export const authPasswordResetMail = async (options: { resetPassword }) => {
   </html>
       `;
   // create reusable transporter object using the default SMTP transport
-  await NodeMailServiceAdapter({
-    to: [`${resetPassword.email}`],
-    subject: `${configurations.datasite.name} - Reset password`,
-    html: output,
-  });
+  // await NodeMailServiceAdapter({
+  //   to: [`${resetPassword.email}`],
+  //   subject: `${configurations.datasite.name} - Reset password`,
+  //   html: output,
+  // });
 };

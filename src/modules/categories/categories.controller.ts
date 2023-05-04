@@ -76,7 +76,6 @@ export class CategoriesController {
       search,
       pagination,
       is_paginate,
-      option1: { organizationId: organizationId },
     });
 
     return reply({ res, results: categories });
@@ -91,13 +90,12 @@ export class CategoriesController {
     @Body() body: CreateOrUpdateCategoriesUsDto,
   ) {
     const { user } = req;
-    const { name, description, organizationId } = body;
+    const { name, description } = body;
 
     const category = await this.categoriesService.createOne({
       name,
       description,
       userCreatedId: user?.id,
-      organizationId: organizationId,
     });
 
     return reply({ res, results: category });
@@ -115,7 +113,7 @@ export class CategoriesController {
     const { name, description } = body;
 
     const findOneCategory = await this.categoriesService.findOneBy({
-      option1: { categoryId },
+      categoryId,
     });
     if (!findOneCategory)
       throw new HttpException(
@@ -124,7 +122,7 @@ export class CategoriesController {
       );
 
     const category = await this.categoriesService.updateOne(
-      { option1: { categoryId } },
+      { categoryId },
       { name, description },
     );
 
@@ -139,7 +137,7 @@ export class CategoriesController {
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
     const findOneCategory = await this.categoriesService.findOneBy({
-      option1: { categoryId },
+      categoryId,
     });
     if (!findOneCategory)
       throw new HttpException(
@@ -165,7 +163,7 @@ export class CategoriesController {
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
 
     const category = await this.categoriesService.updateOne(
-      { option1: { categoryId } },
+      { categoryId },
       { deletedAt: new Date() },
     );
 

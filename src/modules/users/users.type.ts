@@ -1,6 +1,5 @@
 import { User } from '../../models/User';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
-import { ContributorRole } from '../contributors/contributors.type';
 
 export type JwtPayloadType = {
   id: string;
@@ -16,34 +15,14 @@ export type GetUsersSelections = {
 };
 
 export type GetOneUserSelections = {
-  option1?: {
-    userId: User['id'];
-  };
-  option2?: {
-    email: User['email'];
-  };
-  option3?: {
-    profileId: User['profileId'];
-  };
-  option5?: {
-    token: User['token'];
-  };
-  option6?: {
-    userId: User['id'];
-    email: User['email'];
-  };
+  userId?: User['id'];
+  email?: User['email'];
+  token?: User['token'];
 };
 
 export type UpdateUserSelections = {
-  option1?: {
-    userId: User['id'];
-  };
-  option2?: {
-    email: User['email'];
-  };
-  option3?: {
-    profileId: User['profileId'];
-  };
+  userId?: User['id'];
+  profileId?: User['profileId'];
 };
 
 export type CreateUserOptions = Partial<User>;
@@ -67,7 +46,6 @@ export type GetOnUserPublic = {
     firstName: string;
     currencyId: string;
   };
-  role: { name: ContributorRole };
   organization: {
     id: string;
     name: string;

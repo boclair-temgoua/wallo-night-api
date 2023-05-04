@@ -9,8 +9,6 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
-import { Organization } from './Organization';
-import { Contact } from './Contact';
 
 @Entity('category')
 export class Category extends BaseDeleteEntity {
@@ -31,17 +29,4 @@ export class Category extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.categories, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  organization?: Organization;
-
-  @OneToMany(() => Contact, (contact) => contact.category, {
-    onDelete: 'CASCADE',
-  })
-  contacts?: Contact[];
 }

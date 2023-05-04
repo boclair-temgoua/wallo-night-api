@@ -25,18 +25,11 @@ export class ContactUsService {
   ) {}
 
   async findAll(selections: GetContactUsSelections): Promise<any> {
-    const { search, pagination, option1 } = selections;
+    const { search, pagination } = selections;
 
     let query = this.driver
       .createQueryBuilder('contactUs')
       .where('contactUs.deletedAt IS NULL');
-
-    if (option1) {
-      const { organizationId } = option1;
-      query = query.andWhere('contactUs.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
 
     if (search) {
       query = query.andWhere(
@@ -77,13 +70,12 @@ export class ContactUsService {
   }
 
   async findOneBy(selections: GetOneContactUsSelections): Promise<ContactUs> {
-    const { option1 } = selections;
+    const { contactUsId } = selections;
     let query = this.driver
       .createQueryBuilder('contactUs')
       .where('contactUs.deletedAt IS NULL');
 
-    if (option1) {
-      const { contactUsId } = option1;
+    if (contactUsId) {
       query = query.andWhere('contactUs.id = :id', { id: contactUsId });
     }
 
@@ -132,14 +124,14 @@ export class ContactUsService {
     selections: UpdateContactUsSelections,
     options: UpdateContactUsOptions,
   ): Promise<ContactUs> {
-    const { option1 } = selections;
+    const { contactUsId } = selections;
     const { isRed, deletedAt } = options;
 
     let findQuery = this.driver.createQueryBuilder('contactUs');
 
-    if (option1) {
+    if (contactUsId) {
       findQuery = findQuery.where('contactUs.id = :id', {
-        id: option1.contactUsId,
+        id: contactUsId,
       });
     }
 

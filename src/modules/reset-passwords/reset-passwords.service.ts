@@ -26,13 +26,12 @@ export class ResetPasswordsService {
   async findOneBy(
     selections: GetOneResetPasswordSelections,
   ): Promise<ResetPassword> {
-    const { option1 } = selections;
+    const { token } = selections;
     let query = this.driver
       .createQueryBuilder('resetPw')
       .where('resetPw.deletedAt IS NULL');
 
-    if (option1) {
-      const { token } = option1;
+    if (token) {
       query = query.andWhere('resetPw.token = :token', { token });
     }
 
@@ -65,13 +64,12 @@ export class ResetPasswordsService {
     selections: UpdateResetPasswordSelections,
     options: UpdateResetPasswordOptions,
   ): Promise<ResetPassword> {
-    const { option1 } = selections;
+    const { token } = selections;
     const { deletedAt } = options;
 
     let findQuery = this.driver.createQueryBuilder('resetPassword');
 
-    if (option1) {
-      const { token } = option1;
+    if (token) {
       findQuery = findQuery.where('resetPassword.token = :token', { token });
     }
 

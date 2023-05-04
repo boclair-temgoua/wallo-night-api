@@ -28,18 +28,11 @@ export class CategoriesService {
   ) {}
 
   async findAll(selections: GetCategoriesSelections): Promise<any> {
-    const { search, pagination, is_paginate, option1 } = selections;
+    const { search, pagination, is_paginate } = selections;
 
     let query = this.driver
       .createQueryBuilder('category')
       .where('category.deletedAt IS NULL');
-
-    if (option1) {
-      const { organizationId } = option1;
-      query = query.andWhere('category.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
 
     if (search) {
       query = query.andWhere(
@@ -80,13 +73,12 @@ export class CategoriesService {
   }
 
   async findOneBy(selections: GetOneCategoriesSelections): Promise<Category> {
-    const { option1, option2 } = selections;
+    const { categoryId } = selections;
     let query = this.driver
       .createQueryBuilder('category')
       .where('category.deletedAt IS NULL');
 
-    if (option1) {
-      const { categoryId } = option1;
+    if (categoryId) {
       query = query.andWhere('category.id = :id', { id: categoryId });
     }
 
@@ -99,7 +91,7 @@ export class CategoriesService {
 
   /** Create one Categories to the database. */
   async createOne(options: CreateCategoriesOptions): Promise<Category> {
-    const { name, description, userCreatedId, organizationId } = options;
+    const { name, description, userCreatedId } = options;
 
     const category = new Category();
     category.name = name;
@@ -107,7 +99,6 @@ export class CategoriesService {
     category.slug = `${Slug(name)}-${generateNumber(4)}`;
     category.description = description;
     category.userCreatedId = userCreatedId;
-    category.organizationId = organizationId;
 
     const query = this.driver.save(category);
 
@@ -122,15 +113,13 @@ export class CategoriesService {
     selections: UpdateCategoriesSelections,
     options: UpdateCategoriesOptions,
   ): Promise<Category> {
-    const { option1 } = selections;
+    const { categoryId } = selections;
     const { name, description, deletedAt } = options;
 
     let findQuery = this.driver.createQueryBuilder('category');
 
-    if (option1) {
-      findQuery = findQuery.where('category.id = :id', {
-        id: option1.categoryId,
-      });
+    if (categoryId) {
+      findQuery = findQuery.where('category.id = :id', { id: categoryId });
     }
 
     const [errorFind, findItem] = await useCatch(findQuery.getOne());

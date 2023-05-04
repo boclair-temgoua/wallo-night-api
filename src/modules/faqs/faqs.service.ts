@@ -1,4 +1,7 @@
-import { withPagination } from './../../app/utils/pagination/with-pagination';
+import {
+  withPagination,
+  withPaginationResponse,
+} from './../../app/utils/pagination/with-pagination';
 import {
   HttpException,
   HttpStatus,
@@ -26,7 +29,9 @@ export class FaqsService {
     private driver: Repository<Faq>,
   ) {}
 
-  async findAll(selections: GetFaqsSelections): Promise<any> {
+  async findAll(
+    selections: GetFaqsSelections,
+  ): Promise<withPaginationResponse | null> {
     const { search, pagination, option1 } = selections;
 
     let query = this.driver
@@ -71,7 +76,7 @@ export class FaqsService {
   }
 
   async findOneBy(selections: GetOneFaqSelections): Promise<Faq> {
-    const { option1 } = selections;
+    const { faqId } = selections;
     let query = this.driver
       .createQueryBuilder('faq')
       .select('faq.title', 'title')
@@ -82,8 +87,7 @@ export class FaqsService {
       .addSelect('faq.description', 'description')
       .where('faq.deletedAt IS NULL');
 
-    if (option1) {
-      const { faqId } = option1;
+    if (faqId) {
       query = query.andWhere('faq.id = :id', {
         id: faqId,
       });
@@ -119,15 +123,13 @@ export class FaqsService {
     selections: UpdateFaqSelections,
     options: UpdateFaqOptions,
   ): Promise<Faq> {
-    const { option1 } = selections;
+    const { faqId } = selections;
     const { title, description, type, status, deletedAt } = options;
 
     let findQuery = this.driver.createQueryBuilder('faq');
 
-    if (option1) {
-      findQuery = findQuery.where('faq.id = :id', {
-        id: option1.faqId,
-      });
+    if (faqId) {
+      findQuery = findQuery.where('faq.id = :id', { id: faqId });
     }
 
     const [errorFind, findItem] = await useCatch(findQuery.getOne());
