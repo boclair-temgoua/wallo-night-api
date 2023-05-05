@@ -31,4 +31,10 @@ export class RequestPaginationDto {
   @IsIn(['ASC', 'DESC'])
   @Type(() => String)
   sort: SortType;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['true', 'false'])
+  @Type(() => String)
+  is_paginate: string;
 }

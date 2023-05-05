@@ -40,11 +40,10 @@ export class CategoriesController {
     @Res() res,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Query() is_paginate: boolean,
   ) {
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort, is_paginate } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const categories = await this.categoriesService.findAll({
@@ -63,13 +62,10 @@ export class CategoriesController {
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Query('is_paginate') is_paginate: boolean,
-    @Query('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
-    const { user } = req;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort, is_paginate } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const categories = await this.categoriesService.findAll({

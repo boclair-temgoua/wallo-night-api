@@ -3,7 +3,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetCategoriesSelections = {
   search?: string;
-  is_paginate: boolean;
+  is_paginate: string;
   pagination?: PaginationType;
 };
 

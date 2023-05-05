@@ -44,7 +44,7 @@ export class CategoriesService {
       );
     }
 
-    if (is_paginate) {
+    if (is_paginate === 'true') {
       const [errorRowCount, rowCount] = await useCatch(query.getCount());
       if (errorRowCount) throw new NotFoundException(errorRowCount);
 
