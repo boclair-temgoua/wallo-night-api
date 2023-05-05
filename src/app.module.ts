@@ -11,6 +11,7 @@ import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.
 import { ContactUsModule } from './modules/contact-us/contact-us.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
+import { ProjectsModule } from './modules/projects/projects.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
     FaqsModule,
     ProfilesModule,
     UsersModule,
+    ProjectsModule,
     CategoriesModule,
     OrganizationsModule,
     ResetPasswordsModule,
