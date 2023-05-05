@@ -15,7 +15,10 @@ import {
   UpdateContactUsSelections,
 } from './contact-us.type';
 import { useCatch } from '../../app/utils/use-catch';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
+import {
+  WithPaginationResponse,
+  withPagination,
+} from '../../app/utils/pagination/with-pagination';
 
 @Injectable()
 export class ContactUsService {
@@ -24,7 +27,9 @@ export class ContactUsService {
     private driver: Repository<ContactUs>,
   ) {}
 
-  async findAll(selections: GetContactUsSelections): Promise<any> {
+  async findAll(
+    selections: GetContactUsSelections,
+  ): Promise<WithPaginationResponse | null> {
     const { search, pagination } = selections;
 
     let query = this.driver

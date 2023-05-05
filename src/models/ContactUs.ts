@@ -7,9 +7,6 @@ export class ContactUs extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({ nullable: true })
-  slug?: string;
-
   @Column({ default: false })
   isRed?: boolean;
 

@@ -48,28 +48,6 @@ export class ContactUsController {
     return reply({ res, results: contactUs });
   }
 
-  @Get(`/organizations`)
-  @UseGuards(JwtAuthGuard)
-  async findAllContactUssByOrganizationId(
-    @Res() res,
-    @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
-    @Query() searchQuery: SearchQueryDto,
-  ) {
-    const { user } = req;
-    const { search } = searchQuery;
-
-    const { take, page, sort } = requestPaginationDto;
-    const pagination: PaginationType = addPagination({ page, take, sort });
-
-    const contactUs = await this.contactUsService.findAll({
-      search,
-      pagination,
-    });
-
-    return reply({ res, results: contactUs });
-  }
-
   /** Post one ContactUs */
   @Post(`/`)
   async createOneContactUs(

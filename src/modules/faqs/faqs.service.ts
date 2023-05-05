@@ -1,6 +1,6 @@
 import {
   withPagination,
-  withPaginationResponse,
+  WithPaginationResponse,
 } from './../../app/utils/pagination/with-pagination';
 import {
   HttpException,
@@ -31,7 +31,7 @@ export class FaqsService {
 
   async findAll(
     selections: GetFaqsSelections,
-  ): Promise<withPaginationResponse | null> {
+  ): Promise<WithPaginationResponse | null> {
     const { search, pagination, option1 } = selections;
 
     let query = this.driver

@@ -31,10 +31,6 @@ export class CreateOrUpdateContactUsDto {
   email: string;
 
   @IsNotEmpty()
-  @IsInt()
-  countryId: number;
-
-  @IsNotEmpty()
   @IsString()
   phone: string;
 

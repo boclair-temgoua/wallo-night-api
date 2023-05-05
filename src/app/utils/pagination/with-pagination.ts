@@ -1,6 +1,6 @@
 import { SortType } from './request-pagination.dto';
 
-export type withPaginationResponse = {
+export type WithPaginationResponse = {
   pagination?: PaginationType;
   value: any;
   rowCount?: number;
@@ -36,7 +36,7 @@ export const addPagination = (options: PaginationType) => {
   return pagination;
 };
 
-export const withPagination = async (options: withPaginationResponse) => {
+export const withPagination = async (options: WithPaginationResponse) => {
   const { rowCount, value, pagination } = options;
 
   const n_pages = Math.ceil(Number(rowCount) / Number(pagination.take));
