@@ -10,15 +10,20 @@ import { UsersController } from './users.controller';
 import { JwtAuthStrategy } from './middleware';
 import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
 import { ResetPassword } from '../../models/ResetPassword';
+import { Organization } from '../../models/Organization';
+import { OrganizationsService } from '../organizations/organizations.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Profile, ResetPassword])],
+  imports: [
+    TypeOrmModule.forFeature([User, Profile, ResetPassword, Organization]),
+  ],
   controllers: [AuthUserController, UsersController],
   providers: [
     UsersService,
     ProfilesService,
     CheckUserService,
     JwtAuthStrategy,
+    OrganizationsService,
     ResetPasswordsService,
   ],
 })

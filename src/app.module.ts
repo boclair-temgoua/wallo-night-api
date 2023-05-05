@@ -10,6 +10,7 @@ import { AppSeedDataSource } from './app/databases/config/orm-config-seed';
 import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.module';
 import { ContactUsModule } from './modules/contact-us/contact-us.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { OrganizationsModule } from './modules/organizations/organizations.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
     ProfilesModule,
     UsersModule,
     CategoriesModule,
+    OrganizationsModule,
     ResetPasswordsModule,
     ContactUsModule,
   ],

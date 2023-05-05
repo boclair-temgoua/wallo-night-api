@@ -17,7 +17,6 @@ import {
 import { reply } from '../../../app/utils/reply';
 import { useCatch } from '../../../app/utils/use-catch';
 import * as amqplib from 'amqplib';
-
 import { UsersService } from '../users.service';
 import {
   CreateLoginUserDto,
@@ -32,6 +31,7 @@ import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.ser
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
 import { configurations } from '../../../app/configurations/index';
 import { authLoginJob, authPasswordResetJob } from '../users.job';
+import { OrganizationsService } from '../../organizations/organizations.service';
 
 @Controller()
 export class AuthUserController {
@@ -39,6 +39,7 @@ export class AuthUserController {
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
+    private readonly organizationsService: OrganizationsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
 
@@ -65,13 +66,26 @@ export class AuthUserController {
       lastName,
     });
 
+    /** Create Organization */
+    const organization = await this.organizationsService.createOne({
+      name: `${firstName} ${lastName}`,
+      email,
+    });
+
     /** Create User */
     const user = await this.usersService.createOne({
       email,
       password,
       profileId: profile?.id,
       username: `${firstName}.${lastName}`.toLowerCase(),
+      organizationInUtilizationId: organization?.id,
     });
+
+    /** Update Organization */
+    await this.organizationsService.updateOne(
+      { organizationId: organization?.id },
+      { userId: user?.id },
+    );
     //const queue = 'user-register';
     //const connect = await amqplib.connect(
     //  configurations.implementations.amqp.link,
@@ -109,16 +123,7 @@ export class AuthUserController {
       jwtPayload,
     );
 
-    // const queue = 'user-login';
-    // const connect = await amqplib.connect(
-    //   configurations.implementations.amqp.link,
-    // );
-    // const channel = await connect.createChannel();
-    // await channel.assertQueue(queue, { durable: false });
-    // await channel.sendToQueue(queue, Buffer.from(JSON.stringify(findOnUser)));
-    // await authLoginJob({ channel, queue });
-
-    return reply({ res, results: 'Bearer ' + refreshToken });
+    return reply({ res, results: `Bearer ${refreshToken}` });
   }
 
   /** Reset password */
@@ -187,7 +192,7 @@ export class AuthUserController {
     const findOnUser = await this.usersService.findOneBy({
       email: findOnResetPassword?.email,
     });
-    if (findOnUser)
+    if (!findOnUser)
       throw new HttpException(
         `User already exists please change`,
         HttpStatus.NOT_FOUND,

@@ -12,6 +12,7 @@ import {
 
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Profile } from './Profile';
+import { Organization } from './Organization';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -48,6 +49,19 @@ export class User extends BaseDeleteEntity {
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
   @JoinColumn()
   profile?: Profile;
+
+  @OneToMany(() => Organization, (organization) => organization.user, {
+    onDelete: 'CASCADE',
+  })
+  organizations?: Organization[];
+
+  @ManyToOne(() => Organization, (organization) => organization.users, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn([
+    { name: 'organizationInUtilizationId', referencedColumnName: 'id' },
+  ])
+  organizationInUtilization?: Organization;
 
   async hashPassword(password: string) {
     this.password = await bcrypt.hashSync(
