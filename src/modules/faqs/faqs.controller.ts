@@ -16,7 +16,6 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { useCatch } from '../../app/utils/use-catch';
 import { CreateOrUpdateFaqsDto } from './faqs.dto';
 import { JwtAuthGuard } from '../users/middleware';
 
