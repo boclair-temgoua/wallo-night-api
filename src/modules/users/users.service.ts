@@ -1,3 +1,4 @@
+import { Contributor } from './../../models/Contributor';
 import {
   HttpException,
   HttpStatus,
@@ -49,14 +50,12 @@ export class UsersService {
           'lastName', "profile"."lastName",
           'image', "profile"."image",
           'color', "profile"."color",
-          'currencyId', "profile"."currencyId",
           'countryId', "profile"."countryId",
           'url', "profile"."url"
       ) AS "profile"`,
       )
       .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile')
-      .leftJoin('profile.currency', 'currency');
+      .leftJoin('user.profile', 'profile');
 
     if (search) {
       query = query.andWhere(
@@ -141,14 +140,22 @@ export class UsersService {
           'lastName', "profile"."lastName",
           'image', "profile"."image",
           'color', "profile"."color",
-          'currencyId', "profile"."currencyId",
           'countryId', "profile"."countryId",
           'url', "profile"."url"
       ) AS "profile"`,
       )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT con) AS INT)
+      FROM "contributor" "con"
+      WHERE ("con"."userId" = "user"."id"
+      AND "con"."type" IN ('ORGANIZATION'))
+      GROUP BY "con"."userId", "con"."type", "user"."id"
+      ) AS "organizationTotal"`,
+      )
       .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile')
-      .leftJoin('profile.currency', 'currency');
+      .leftJoin('user.profile', 'profile');
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });

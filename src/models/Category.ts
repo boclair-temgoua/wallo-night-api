@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { Product } from './Product';
 
 @Entity('category')
 export class Category extends BaseDeleteEntity {
@@ -29,4 +30,9 @@ export class Category extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;
+
+  @OneToMany(() => Product, (product) => product.category, {
+    onDelete: 'CASCADE',
+  })
+  products?: Product[];
 }

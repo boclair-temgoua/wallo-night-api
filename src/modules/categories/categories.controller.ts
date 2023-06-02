@@ -13,6 +13,7 @@ import {
   Query,
   HttpStatus,
   HttpException,
+  UsePipes,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
@@ -28,6 +29,7 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 @Controller('categories')
 export class CategoriesController {
@@ -79,6 +81,7 @@ export class CategoriesController {
 
   /** Post one Categories */
   @Post(`/`)
+  @UsePipes(ZodValidationPipe)
   @UseGuards(JwtAuthGuard)
   async createOneCategory(
     @Res() res,

@@ -10,6 +10,7 @@ import {
 import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Contributor } from './Contributor';
+import { Product } from './Product';
 
 @Entity('organization')
 export class Organization extends BaseDeleteEntity {
@@ -56,4 +57,9 @@ export class Organization extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
+
+  @OneToMany(() => Product, (product) => product.organization, {
+    onDelete: 'CASCADE',
+  })
+  products?: Product[];
 }
