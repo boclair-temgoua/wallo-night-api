@@ -12,6 +12,7 @@ import { ContactUsModule } from './modules/contact-us/contact-us.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { ProjectsModule } from './modules/projects/projects.module';
+import { ContributorsModule } from './modules/contributors/contributors.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ProjectsModule } from './modules/projects/projects.module';
     ProfilesModule,
     UsersModule,
     ProjectsModule,
+    ContributorsModule,
     CategoriesModule,
     OrganizationsModule,
     ResetPasswordsModule,

@@ -1,3 +1,5 @@
+import { ContributorsService } from './../../contributors/contributors.service';
+import { ContributorRole } from './../../contributors/contributors.type';
 import {
   Controller,
   Post,
@@ -39,6 +41,7 @@ export class AuthUserController {
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
+    private readonly contributorsService: ContributorsService,
     private readonly organizationsService: OrganizationsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
@@ -86,6 +89,20 @@ export class AuthUserController {
       { organizationId: organization?.id },
       { userId: user?.id },
     );
+
+    /** Update User */
+    await this.usersService.updateOne(
+      { userId: user?.id },
+      { organizationInUtilizationId: organization?.id },
+    );
+
+    /** Create Contributor */
+    await this.contributorsService.createOne({
+      userId: user?.id,
+      userCreatedId: user?.id,
+      role: ContributorRole.ADMIN,
+      organizationId: organization?.id,
+    });
     //const queue = 'user-register';
     //const connect = await amqplib.connect(
     //  configurations.implementations.amqp.link,

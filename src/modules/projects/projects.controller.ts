@@ -71,14 +71,14 @@ export class ProjectsController {
     const { user } = req;
     const { title, description } = body;
 
-    const Project = await this.projectsService.createOne({
+    const project = await this.projectsService.createOne({
       title,
       userId: user?.id,
       userCreatedId: user?.id,
       description,
     });
 
-    return reply({ res, results: Project });
+    return reply({ res, results: project });
   }
 
   /** Update Project */

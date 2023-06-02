@@ -204,6 +204,7 @@ export class UsersService {
       refreshToken,
       deletedAt,
       confirmedAt,
+      organizationInUtilizationId,
     } = options;
 
     let findQuery = this.driver.createQueryBuilder('user');
@@ -230,6 +231,7 @@ export class UsersService {
     findItem.refreshToken = refreshToken;
     findItem.deletedAt = deletedAt;
     findItem.confirmedAt = confirmedAt;
+    findItem.organizationInUtilizationId = organizationInUtilizationId;
 
     const query = this.driver.save(findItem);
     const [errorUp, result] = await useCatch(query);

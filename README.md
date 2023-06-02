@@ -26,6 +26,18 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Generate migration
+
+```bash
+$ npm run migration:generate --name="migration"
+```
+
+## Generate run
+
+```bash
+$ npm run migration:run
+```
+
 ## Installation
 
 ```bash

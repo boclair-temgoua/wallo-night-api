@@ -56,7 +56,7 @@ export class OrganizationsService {
 
     const [error, result] = await useCatch(query.getRawOne());
     if (error)
-      throw new HttpException('Organization not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('organization not found', HttpStatus.NOT_FOUND);
 
     return result;
   }

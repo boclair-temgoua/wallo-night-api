@@ -1,3 +1,4 @@
+import { Contributor } from './../../models/Contributor';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../models/User';
@@ -12,10 +13,18 @@ import { ResetPasswordsService } from '../reset-passwords/reset-passwords.servic
 import { ResetPassword } from '../../models/ResetPassword';
 import { Organization } from '../../models/Organization';
 import { OrganizationsService } from '../organizations/organizations.service';
+import { ContributorsUtil } from '../contributors/contributors.util';
+import { ContributorsService } from '../contributors/contributors.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Profile, ResetPassword, Organization]),
+    TypeOrmModule.forFeature([
+      User,
+      Profile,
+      ResetPassword,
+      Organization,
+      Contributor,
+    ]),
   ],
   controllers: [AuthUserController, UsersController],
   providers: [
@@ -23,6 +32,8 @@ import { OrganizationsService } from '../organizations/organizations.service';
     ProfilesService,
     CheckUserService,
     JwtAuthStrategy,
+    ContributorsUtil,
+    ContributorsService,
     OrganizationsService,
     ResetPasswordsService,
   ],
