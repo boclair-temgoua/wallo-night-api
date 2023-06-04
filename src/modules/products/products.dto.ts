@@ -1,10 +1,47 @@
-import { createZodDto } from 'nestjs-zod';
-import { z } from 'nestjs-zod/z';
+import {
+  IsString,
+  IsNotEmpty,
+  MaxLength,
+  IsUUID,
+  IsOptional,
+  IsInt,
+} from 'class-validator';
 
-const CreateProductsSchema = z.object({
-  title: z.string(),
-  subTitle: z.string().optional(),
-});
+export enum StatusProduct {
+  ACTIVE = 'ACTIVE',
+  PENDING = 'PENDING',
+}
+export class CreateOrUpdateProductsDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  title: string;
 
-// class is required for using DTO as a type
-class CreateProductsDto extends createZodDto(CreateProductsSchema) {}
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  categoryId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  discountId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  currencyId: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  price: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  inventory: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  description: string;
+}

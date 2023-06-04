@@ -16,6 +16,16 @@ export class SearchQueryDto {
   @NotEquals('')
   @ValidateIf((object, value) => value !== undefined)
   search?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  organizationId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
 }
 export class PasswordBodyDto {
   @IsNotEmpty()

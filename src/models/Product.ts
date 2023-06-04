@@ -14,7 +14,10 @@ import {
 import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Category } from './Category';
+import { OrderProduct } from './OrderProduct';
 import { Organization } from './Organization';
+import { StatusProduct } from '../modules/products/products.dto';
+import { Discount } from './Discount';
 
 @Entity('product')
 export class Product extends BaseDeleteEntity {
@@ -42,27 +45,24 @@ export class Product extends BaseDeleteEntity {
   @Column({ nullable: true })
   moreDescription: string;
 
-  @Column({ type: 'bigint', unique: true, nullable: true })
-  inventoryProductId: number;
+  @Column({ type: 'bigint', nullable: true })
+  inventory: number;
 
-  // @Column({ default: 'ACTIVE', length: 30 })
-  // status: schemaStatusProduct;
+  @Column({
+    type: 'enum',
+    enum: StatusProduct,
+    default: StatusProduct.ACTIVE,
+  })
+  status?: StatusProduct;
 
   @Column({ type: 'bigint', nullable: true })
   imageUploadId: number;
-
-  @Column({ type: 'bigint', nullable: true })
-  discountId: number;
 
   @Column({ type: 'uuid', nullable: true })
   categoryId: string;
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn()
   category: Relation<Category>;
-
-  // @OneToOne(() => InventoryProduct, (inventoryProduct) => inventoryProduct.product, { onDelete: 'CASCADE' })
-  // @JoinColumn()
-  // inventoryProduct: InventoryProduct;
 
   // @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
   // @JoinColumn()
@@ -72,9 +72,11 @@ export class Product extends BaseDeleteEntity {
   // @JoinColumn()
   // imageUpload: ImageUpload;
 
-  // @ManyToOne(() => Discount, (discount) => discount.products)
-  // @JoinColumn()
-  // discount: Discount;
+  @Column({ type: 'uuid', nullable: true })
+  discountId: string;
+  @ManyToOne(() => Discount, (discount) => discount.products)
+  @JoinColumn()
+  discount: Discount;
 
   @Column({ type: 'uuid', nullable: true })
   currencyId: string;
@@ -91,8 +93,8 @@ export class Product extends BaseDeleteEntity {
   // @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product, { onDelete: 'CASCADE' })
   // orderProducts: OrderProduct[];
 
-  // @OneToMany(() => Favorite, (favorite) => favorite.product)
-  // favorites: Favorite[];
+  @Column({ type: 'uuid', nullable: true })
+  userCreatedId?: string;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
@@ -101,4 +103,7 @@ export class Product extends BaseDeleteEntity {
   })
   @JoinColumn()
   organization?: Relation<Organization>;
+
+  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
+  orderProducts: OrderProduct[];
 }

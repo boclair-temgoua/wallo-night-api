@@ -13,7 +13,6 @@ import {
   Query,
   HttpStatus,
   HttpException,
-  UsePipes,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
@@ -22,14 +21,13 @@ import {
   PasswordBodyDto,
   SearchQueryDto,
 } from '../../app/utils/search-query/search-query.dto';
-import { CreateOrUpdateCategoriesUsDto } from './categories.dto';
+import { CreateOrUpdateCategoriesDto } from './categories.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import { ZodValidationPipe } from 'nestjs-zod';
 
 @Controller('categories')
 export class CategoriesController {
@@ -38,7 +36,7 @@ export class CategoriesController {
   /** Get all CategoriesUs */
   @Get(`/all`)
   @UseGuards(JwtAuthGuard)
-  async findAllCategories(
+  async findAll(
     @Res() res,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
@@ -81,12 +79,11 @@ export class CategoriesController {
 
   /** Post one Categories */
   @Post(`/`)
-  @UsePipes(ZodValidationPipe)
   @UseGuards(JwtAuthGuard)
-  async createOneCategory(
+  async createOne(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateCategoriesUsDto,
+    @Body() body: CreateOrUpdateCategoriesDto,
   ) {
     const { user } = req;
     const { name, description } = body;
@@ -106,7 +103,7 @@ export class CategoriesController {
   async updateOneCategory(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateCategoriesUsDto,
+    @Body() body: CreateOrUpdateCategoriesDto,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
     const { name, description } = body;
@@ -131,7 +128,7 @@ export class CategoriesController {
   /** Get one Categories */
   @Get(`/show/:categoryId`)
   @UseGuards(JwtAuthGuard)
-  async getOneCategory(
+  async getOne(
     @Res() res,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
@@ -150,7 +147,7 @@ export class CategoriesController {
   /** Delete one CategoriesUs */
   @Delete(`/delete/:categoryId`)
   @UseGuards(JwtAuthGuard)
-  async deleteOneCategory(
+  async deleteOne(
     @Res() res,
     @Req() req,
     @Body() body: PasswordBodyDto,

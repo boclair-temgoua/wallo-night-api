@@ -24,12 +24,12 @@ import { JwtAuthGuard } from '../users/middleware';
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
-  @Get(`/show`)
+  @Get(`/show/:organizationId`)
   @UseGuards(JwtAuthGuard)
   async getOneByUUIDOrganization(
     @Res() res,
     @Req() req,
-    @Query('organizationId', ParseUUIDPipe) organizationId: string,
+    @Param('organizationId', ParseUUIDPipe) organizationId: string,
   ) {
     const { user } = req;
 

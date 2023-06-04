@@ -33,7 +33,7 @@ export class FaqsController {
 
   /** Get all faqs */
   @Get(`/`)
-  async findAllFaqs(
+  async findAll(
     @Res() res,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
@@ -51,10 +51,7 @@ export class FaqsController {
   /** Get one faq */
   @Get(`/show/:faqId`)
   @UseGuards(JwtAuthGuard)
-  async getOneByUUIDFaq(
-    @Res() res,
-    @Param('faqId', ParseUUIDPipe) faqId: string,
-  ) {
+  async getOneByUUID(@Res() res, @Param('faqId', ParseUUIDPipe) faqId: string) {
     const faq = await this.faqsService.findOneBy({ faqId });
 
     return reply({ res, results: faq });
@@ -63,11 +60,7 @@ export class FaqsController {
   /** Create Faq */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
-  async createOneFaq(
-    @Res() res,
-    @Req() req,
-    @Body() body: CreateOrUpdateFaqsDto,
-  ) {
+  async createOne(@Res() res, @Req() req, @Body() body: CreateOrUpdateFaqsDto) {
     const { user } = req;
     const { title, status, description } = body;
 
@@ -84,7 +77,7 @@ export class FaqsController {
   /** Update faq */
   @Put(`/:faqId`)
   @UseGuards(JwtAuthGuard)
-  async updateOneFaq(
+  async updateOne(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateFaqsDto,
@@ -110,7 +103,7 @@ export class FaqsController {
   /** Delete faq */
   @Delete(`/:faqId`)
   @UseGuards(JwtAuthGuard)
-  async deleteOneFaq(
+  async deleteOne(
     @Res() res,
     @Req() req,
     @Param('faqId', ParseUUIDPipe) faqId: string,

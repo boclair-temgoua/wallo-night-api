@@ -46,6 +46,27 @@ export class OrganizationsService {
               'image', "profile"."image"
           ) AS "profileOwner"`,
       )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT prod) AS INT)
+      FROM "product" "prod"
+      WHERE ("prod"."organizationId" = "organization"."id"
+      AND "prod"."deletedAt" IS NULL)
+      GROUP BY "prod"."organizationId", "organization"."id"
+      ) AS "productTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT con) AS INT)
+      FROM "contributor" "con"
+      WHERE ("con"."organizationId" = "organization"."id"
+      AND "con"."deletedAt" IS NULL
+      AND "con"."type" IN ('ORGANIZATION'))
+      GROUP BY "con"."organizationId", "con"."type", "organization"."id"
+      ) AS "contributorTotal"`,
+      )
       .where('organization.deletedAt IS NULL')
       .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');

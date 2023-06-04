@@ -11,6 +11,8 @@ import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Contributor } from './Contributor';
 import { Product } from './Product';
+import { Transaction } from './Transaction';
+import { Discount } from './Discount';
 
 @Entity('organization')
 export class Organization extends BaseDeleteEntity {
@@ -62,4 +64,14 @@ export class Organization extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   products?: Product[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.organization, {
+    onDelete: 'CASCADE',
+  })
+  transactions?: Transaction[];
+
+  @OneToMany(() => Discount, (discount) => discount.organization, {
+    onDelete: 'CASCADE',
+  })
+  discounts: Discount[];
 }

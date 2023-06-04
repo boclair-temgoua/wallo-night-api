@@ -13,6 +13,10 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { ContributorsModule } from './modules/contributors/contributors.module';
+import { ProductsModule } from './modules/products/products.module';
+import { CountriesModule } from './modules/countries/countries.module';
+import { CartsModule } from './modules/cats/cats.module';
+import { DiscountsModule } from './modules/discounts/discounts.module';
 
 @Module({
   imports: [
@@ -26,8 +30,12 @@ import { ContributorsModule } from './modules/contributors/contributors.module';
     ProjectsModule,
     ContributorsModule,
     CategoriesModule,
+    CountriesModule,
     OrganizationsModule,
     ResetPasswordsModule,
+    ProductsModule,
+    DiscountsModule,
+    CartsModule,
     ContactUsModule,
   ],
 })

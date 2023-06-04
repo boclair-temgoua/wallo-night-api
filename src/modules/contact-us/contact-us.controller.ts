@@ -30,7 +30,7 @@ export class ContactUsController {
 
   /** Get all ContactUs */
   @Get(`/`)
-  async findAllContactUs(
+  async findAll(
     @Res() res,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
@@ -50,7 +50,7 @@ export class ContactUsController {
 
   /** Post one ContactUs */
   @Post(`/`)
-  async createOneContactUs(
+  async createOne(
     @Res() res,
     @Req() req,
     @Body() createOrUpdateContactUsDto: CreateOrUpdateContactUsDto,
@@ -84,7 +84,7 @@ export class ContactUsController {
   /** Delete one ContactUs */
   @Delete(`/delete/:contactUsId`)
   @UseGuards(JwtAuthGuard)
-  async deleteOneContactUs(
+  async deleteOne(
     @Res() res,
     @Param('contactUsId', ParseUUIDPipe) contactUsId: string,
   ) {

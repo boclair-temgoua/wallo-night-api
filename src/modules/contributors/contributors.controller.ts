@@ -55,7 +55,7 @@ export class ContributorsController {
 
   @Get(`/organization`)
   @UseGuards(JwtAuthGuard)
-  async findAllContributorsByOrganizationId(
+  async findAllByOrganizationId(
     @Res() res,
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
@@ -80,7 +80,7 @@ export class ContributorsController {
 
   @Post(`/organization`)
   @UseGuards(JwtAuthGuard)
-  async createOneContributorOrganization(
+  async createOneByOrganization(
     @Res() res,
     @Req() req,
     @Query() query: CreateOneContributorOrganizationDto,
@@ -126,7 +126,7 @@ export class ContributorsController {
 
   @Post(`/new-user`)
   @UseGuards(JwtAuthGuard)
-  async createOneNewUserContributor(
+  async createOneNewUser(
     @Res() res,
     @Req() req,
     @Body() body: CreateOneNewUserContributorsDto,
@@ -208,7 +208,7 @@ export class ContributorsController {
 
   @Get(`/show/:contributorId`)
   @UseGuards(JwtAuthGuard)
-  async getOneByIDcontributor(
+  async getOneById(
     @Res() res,
     @Req() req,
     @Param('contributorId', ParseUUIDPipe) contributorId: string,
@@ -231,7 +231,7 @@ export class ContributorsController {
 
   @Delete(`/delete/:contributorId`)
   @UseGuards(JwtAuthGuard)
-  async deleteOneContributor(
+  async deleteOne(
     @Res() res,
     @Req() req,
     @Body() body: PasswordBodyDto,
@@ -262,7 +262,7 @@ export class ContributorsController {
 
   @Put(`/role`)
   @UseGuards(JwtAuthGuard)
-  async updateOneRoleContributor(
+  async updateOneRole(
     @Res() res,
     @Req() req,
     @Body() body: UpdateRoleContributorDto,

@@ -14,6 +14,8 @@ import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Profile } from './Profile';
 import { Contributor } from './Contributor';
 import { Organization } from './Organization';
+import { Cart } from './Cart';
+import { Transaction } from './Transaction';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -56,10 +58,20 @@ export class User extends BaseDeleteEntity {
   })
   organizations?: Organization[];
 
+  @OneToMany(() => Transaction, (transaction) => transaction.user, {
+    onDelete: 'CASCADE',
+  })
+  transactions?: Transaction[];
+
   @OneToMany(() => Contributor, (contributor) => contributor.userId, {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
+
+  @OneToMany(() => Cart, (cart) => cart.userId, {
+    onDelete: 'CASCADE',
+  })
+  carts?: Cart[];
 
   @ManyToOne(() => Organization, (organization) => organization.users, {
     onDelete: 'CASCADE',
