@@ -54,8 +54,28 @@ export class UsersService {
           'url', "profile"."url"
       ) AS "profile"`,
       )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'name', "con"."role"
+        )
+        FROM "contributor" "con"
+        WHERE "user"."id" = "con"."userId"
+        AND "user"."organizationInUtilizationId" = "con"."organizationId"
+        AND "con"."type" IN ('ORGANIZATION')
+        ) AS "role"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'id', "organization"."id",
+          'color', "organization"."color",
+          'userId', "organization"."userId",
+          'name', "organization"."name"
+      ) AS "organization"`,
+      )
       .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile');
+      .leftJoin('user.profile', 'profile')
+      .leftJoin('user.organizationInUtilization', 'organization');
 
     if (search) {
       query = query.andWhere(
@@ -64,7 +84,7 @@ export class UsersService {
             search: `%${search}%`,
           })
             .orWhere(
-              '(profile.firstName ::text ILIKE :search OR profile.lastName ::text ILIKE :search OR profile.phone ::text ILIKE :search)',
+              'profile.firstName ::text ILIKE :search OR profile.lastName ::text ILIKE :search OR profile.phone ::text ILIKE :search',
               {
                 search: `%${search}%`,
               },
@@ -155,8 +175,28 @@ export class UsersService {
       GROUP BY "con"."userId", "con"."type", "user"."id"
       ) AS "organizationTotal"`,
       )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'name', "con"."role"
+        )
+        FROM "contributor" "con"
+        WHERE "user"."id" = "con"."userId"
+        AND "user"."organizationInUtilizationId" = "con"."organizationId"
+        AND "con"."type" IN ('ORGANIZATION')
+        ) AS "role"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'id', "organization"."id",
+          'color', "organization"."color",
+          'userId', "organization"."userId",
+          'name', "organization"."name"
+      ) AS "organization"`,
+      )
       .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile');
+      .leftJoin('user.profile', 'profile')
+      .leftJoin('user.organizationInUtilization', 'organization');
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });

@@ -33,6 +33,10 @@ export class OrganizationsService {
       .select('organization.name', 'name')
       .addSelect('organization.id', 'id')
       .addSelect('organization.color', 'color')
+      .addSelect('organization.email', 'email')
+      .addSelect('organization.phone', 'phone')
+      .addSelect('organization.firstAddress', 'firstAddress')
+      .addSelect('organization.secondAddress', 'secondAddress')
       .addSelect('organization.image', 'image')
       .addSelect('organization.userId', 'userId')
       .addSelect(

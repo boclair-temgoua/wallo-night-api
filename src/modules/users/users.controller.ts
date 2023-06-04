@@ -22,14 +22,16 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination';
-import { SearchQueryDto } from '../../app/utils/search-query';
+import { FilterQueryType, SearchQueryDto } from '../../app/utils/search-query';
 import { UpdateOneEmailUserDto, UpdateProfileDto } from './users.dto';
+import { ContributorsService } from '../contributors/contributors.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
+    private readonly contributorsService: ContributorsService,
   ) {}
 
   /** Get all users */
@@ -59,7 +61,21 @@ export class UsersController {
   ) {
     const user = await this.usersService.findOneInfoBy({ userId });
 
-    return reply({ res, results: user });
+    const getOneContributor = await this.contributorsService.findOneBy({
+      userId: user?.id,
+      organizationId: user?.organizationInUtilizationId,
+      type: FilterQueryType.ORGANIZATION,
+    });
+    if (!getOneContributor)
+      throw new HttpException(
+        `Not authorized in this organization ${userId} please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    return reply({
+      res,
+      results: { ...user, role: getOneContributor?.role },
+    });
   }
 
   @Get(`/profile/show/:profileId`)
