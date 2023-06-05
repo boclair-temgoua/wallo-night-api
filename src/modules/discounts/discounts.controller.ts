@@ -13,6 +13,7 @@ import {
   Query,
   HttpStatus,
   HttpException,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
@@ -82,7 +83,7 @@ export class DiscountsController {
   /** Post one Discounts */
   @Put(`/:discountId`)
   @UseGuards(JwtAuthGuard)
-  async updateOneCategory(
+  async updateOne(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateDiscountsDto,
@@ -105,7 +106,7 @@ export class DiscountsController {
   /** Get one Discounts */
   @Get(`/show/:discountId`)
   @UseGuards(JwtAuthGuard)
-  async getOneCategory(
+  async getOne(
     @Res() res,
     @Param('discountId', ParseUUIDPipe) discountId: string,
   ) {
@@ -121,10 +122,35 @@ export class DiscountsController {
     return reply({ res, results: findOneDiscount });
   }
 
+  /** Active one Discounts */
+  @Get(`/status`)
+  @UseGuards(JwtAuthGuard)
+  async changeStatusOne(
+    @Res() res,
+    @Req() req,
+    @Query('discountId', ParseUUIDPipe) discountId: string,
+  ) {
+    const findOneDiscount = await this.discountsService.findOneBy({
+      discountId,
+    });
+    if (!findOneDiscount)
+      throw new HttpException(
+        `Discount ${discountId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.discountsService.updateOne(
+      { discountId },
+      { isActive: !findOneDiscount?.isActive },
+    );
+
+    return reply({ res, results: 'Discount update successfully' });
+  }
+
   /** Delete one Discounts */
   @Delete(`/:discountId`)
   @UseGuards(JwtAuthGuard)
-  async deleteOneCategory(
+  async deleteOne(
     @Res() res,
     @Req() req,
     @Param('discountId', ParseUUIDPipe) discountId: string,

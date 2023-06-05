@@ -42,6 +42,8 @@ export class DiscountsService {
         new Brackets((qb) => {
           qb.where('discount.name ::text ILIKE :search', {
             search: `%${search}%`,
+          }).orWhere('discount.description ::text ILIKE :search', {
+            search: `%${search}%`,
           });
         }),
       );
@@ -93,8 +95,8 @@ export class DiscountsService {
     discount.description = description;
     discount.percent = percent;
     discount.organizationId = organizationId;
-    discount.startedAt = new Date(startedAt).getTime() ? startedAt : null;
-    discount.expiredAt = new Date(expiredAt).getTime() ? expiredAt : null;
+    discount.startedAt = startedAt;
+    discount.expiredAt = expiredAt;
 
     const query = this.driver.save(discount);
 
@@ -110,8 +112,15 @@ export class DiscountsService {
     options: UpdateDiscountsOptions,
   ): Promise<Discount> {
     const { discountId } = selections;
-    const { name, description, percent, expiredAt, startedAt, deletedAt } =
-      options;
+    const {
+      name,
+      description,
+      isActive,
+      percent,
+      expiredAt,
+      startedAt,
+      deletedAt,
+    } = options;
 
     let findQuery = this.driver.createQueryBuilder('discount');
 
@@ -125,8 +134,9 @@ export class DiscountsService {
     findItem.name = name;
     findItem.description = description;
     findItem.percent = percent;
-    findItem.startedAt = new Date(startedAt).getTime() ? startedAt : null;
-    findItem.expiredAt = new Date(expiredAt).getTime() ? expiredAt : null;
+    findItem.isActive = isActive;
+    findItem.startedAt = startedAt;
+    findItem.expiredAt = expiredAt;
     findItem.deletedAt = deletedAt;
 
     const query = this.driver.save(findItem);
