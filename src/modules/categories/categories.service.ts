@@ -27,8 +27,8 @@ export class CategoriesService {
     private driver: Repository<Category>,
   ) {}
 
-  async findAll(selections: GetCategoriesSelections): Promise<any> {
-    const { search, pagination, is_paginate } = selections;
+  async findAllNotPaginate(selections: GetCategoriesSelections): Promise<any> {
+    const { search } = selections;
 
     let query = this.driver
       .createQueryBuilder('category')
@@ -44,32 +44,48 @@ export class CategoriesService {
       );
     }
 
-    if (is_paginate === 'true') {
-      const [errorRowCount, rowCount] = await useCatch(query.getCount());
-      if (errorRowCount) throw new NotFoundException(errorRowCount);
+    const [errors, results] = await useCatch(
+      query.orderBy('category.createdAt', 'DESC').getMany(),
+    );
+    if (errors) throw new NotFoundException(errors);
 
-      const [error, categories] = await useCatch(
-        query
-          .orderBy('category.createdAt', pagination?.sort)
-          .take(pagination.take)
-          .skip(pagination.skip)
-          .getMany(),
+    return results;
+  }
+
+  async findAll(selections: GetCategoriesSelections): Promise<any> {
+    const { search, pagination } = selections;
+
+    let query = this.driver
+      .createQueryBuilder('category')
+      .where('category.deletedAt IS NULL');
+
+    if (search) {
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('category.name ::text ILIKE :search', {
+            search: `%${search}%`,
+          });
+        }),
       );
-      if (error) throw new NotFoundException(error);
-
-      return withPagination({
-        pagination,
-        rowCount,
-        value: categories,
-      });
-    } else {
-      const [errors, results] = await useCatch(
-        query.orderBy('category.createdAt', 'DESC').getMany(),
-      );
-      if (errors) throw new NotFoundException(errors);
-
-      return results;
     }
+
+    const [errorRowCount, rowCount] = await useCatch(query.getCount());
+    if (errorRowCount) throw new NotFoundException(errorRowCount);
+
+    const [error, categories] = await useCatch(
+      query
+        .orderBy('category.createdAt', pagination?.sort)
+        .take(pagination.take)
+        .skip(pagination.skip)
+        .getMany(),
+    );
+    if (error) throw new NotFoundException(error);
+
+    return withPagination({
+      pagination,
+      rowCount,
+      value: categories,
+    });
   }
 
   async findOneBy(selections: GetOneCategoriesSelections): Promise<Category> {

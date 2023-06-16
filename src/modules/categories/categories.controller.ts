@@ -36,20 +36,11 @@ export class CategoriesController {
   /** Get all CategoriesUs */
   @Get(`/all`)
   @UseGuards(JwtAuthGuard)
-  async findAll(
-    @Res() res,
-    @Query() requestPaginationDto: RequestPaginationDto,
-    @Query() searchQuery: SearchQueryDto,
-  ) {
+  async findAll(@Res() res, @Query() searchQuery: SearchQueryDto) {
     const { search } = searchQuery;
 
-    const { take, page, sort, is_paginate } = requestPaginationDto;
-    const pagination: PaginationType = addPagination({ page, take, sort });
-
-    const categories = await this.categoriesService.findAll({
+    const categories = await this.categoriesService.findAllNotPaginate({
       search,
-      pagination,
-      is_paginate,
     });
 
     return reply({ res, results: categories });
@@ -65,13 +56,12 @@ export class CategoriesController {
   ) {
     const { search } = searchQuery;
 
-    const { take, page, sort, is_paginate } = requestPaginationDto;
+    const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const categories = await this.categoriesService.findAll({
       search,
       pagination,
-      is_paginate,
     });
 
     return reply({ res, results: categories });

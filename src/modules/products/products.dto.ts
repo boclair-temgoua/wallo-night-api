@@ -28,11 +28,6 @@ export class CreateOrUpdateProductsDto {
   discountId: string;
 
   @IsNotEmpty()
-  @IsString()
-  @IsUUID()
-  currencyId: string;
-
-  @IsNotEmpty()
   @IsInt()
   price: number;
 
