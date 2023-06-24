@@ -86,7 +86,7 @@
     "mailgun.js": "^9.1.1",
     "mime": "^3.0.0",
     "moment": "^2.29.4",
-    "mysql2": "^3.4.0",
+    "mysql2": "^3.4.1",
     "node-mailjet": "^6.0.2",
     "nodemailer": "^6.9.3",
     "nodemailer-smtp-transport": "^2.7.4",
@@ -108,8 +108,8 @@
     "xml2js": "^0.6.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "17.6.5",
-    "@commitlint/config-conventional": "17.6.5",
+    "@commitlint/cli": "17.6.6",
+    "@commitlint/config-conventional": "17.6.6",
     "@faker-js/faker": "^8.0.2",
     "@nestjs/cli": "^10.0.3",
     "@nestjs/passport": "^10.0.0",
