@@ -17,6 +17,8 @@ import { ProductsModule } from './modules/products/products.module';
 import { CountriesModule } from './modules/countries/countries.module';
 import { CartsModule } from './modules/cats/cats.module';
 import { DiscountsModule } from './modules/discounts/discounts.module';
+import { TransactionsModule } from './modules/transactions/transactions.module';
+import { DonationsModule } from './modules/donations/donations.module';
 
 @Module({
   imports: [
@@ -31,10 +33,12 @@ import { DiscountsModule } from './modules/discounts/discounts.module';
     ContributorsModule,
     CategoriesModule,
     CountriesModule,
+    TransactionsModule,
     OrganizationsModule,
     ResetPasswordsModule,
     ProductsModule,
     DiscountsModule,
+    DonationsModule,
     CartsModule,
     ContactUsModule,
   ],

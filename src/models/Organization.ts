@@ -13,6 +13,7 @@ import { Contributor } from './Contributor';
 import { Product } from './Product';
 import { Transaction } from './Transaction';
 import { Discount } from './Discount';
+import { Donation } from './Donation';
 
 @Entity('organization')
 export class Organization extends BaseDeleteEntity {
@@ -74,4 +75,9 @@ export class Organization extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   discounts: Discount[];
+
+  @OneToMany(() => Donation, (donation) => donation.organization, {
+    onDelete: 'CASCADE',
+  })
+  donations?: Donation[];
 }

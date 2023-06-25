@@ -12,6 +12,7 @@ import {
 
 import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Profile } from './Profile';
+import { Donation } from './Donation';
 import { Contributor } from './Contributor';
 import { Organization } from './Organization';
 import { Cart } from './Cart';
@@ -52,6 +53,9 @@ export class User extends BaseDeleteEntity {
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
   @JoinColumn()
   profile?: Profile;
+
+  @OneToMany(() => Donation, (donation) => donation.organization)
+  donations?: Donation[];
 
   @OneToMany(() => Organization, (organization) => organization.user, {
     onDelete: 'CASCADE',
