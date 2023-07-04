@@ -13,7 +13,6 @@ import {
   GetTransactionsSelections,
 } from './transactions.type';
 import { useCatch } from '../../app/utils/use-catch';
-import { generateLongUUID } from '../../app/utils/commons';
 import {
   WithPaginationResponse,
   withPagination,

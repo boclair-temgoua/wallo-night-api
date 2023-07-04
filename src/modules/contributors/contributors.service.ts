@@ -38,6 +38,7 @@ export class ContributorsService {
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
+      .addSelect('contributor.donationId', 'donationId')
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -159,6 +160,7 @@ export class ContributorsService {
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
+      .addSelect('contributor.donationId', 'donationId')
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -216,12 +218,14 @@ export class ContributorsService {
 
   /** Create one Contributor to the database. */
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
-    const { userId, organizationId, role, userCreatedId, type } = options;
+    const { userId, organizationId, donationId, role, userCreatedId, type } =
+      options;
 
     const contributor = new Contributor();
     contributor.userId = userId;
     contributor.type = type;
     contributor.role = role;
+    contributor.donationId = donationId;
     contributor.organizationId = organizationId;
     contributor.userCreatedId = userCreatedId;
     const query = this.driver.save(contributor);
