@@ -15,7 +15,6 @@ import {
   UpdateDonationOptions,
 } from './donations.type';
 import { useCatch } from '../../app/utils/use-catch';
-import { generateLongUUID } from '../../app/utils/commons';
 import {
   WithPaginationResponse,
   withPagination,
@@ -33,7 +32,46 @@ export class DonationsService {
   ): Promise<WithPaginationResponse | null> {
     const { search, pagination, userId, organizationId } = selections;
 
-    let query = this.driver.createQueryBuilder('donation');
+    let query = this.driver
+      .createQueryBuilder('donation')
+      .select('donation.id', 'id')
+      .addSelect('donation.title', 'title')
+      .addSelect('donation.amount', 'amount')
+      .addSelect('donation.isActive', 'isActive')
+      .addSelect('donation.createdAt', 'createdAt')
+      .addSelect('donation.expiredAt', 'expiredAt')
+      .addSelect('donation.description', 'description')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+        'code', "currency"."code",
+        'symbol', "currency"."symbol"
+    ) AS "currency"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+        'id', "profile"."id",
+        'userId', "user"."id",
+        'firstName', "profile"."firstName",
+        'lastName', "profile"."lastName",
+        'image', "profile"."image",
+        'color', "profile"."color",
+        'countryId', "profile"."countryId",
+        'url', "profile"."url"
+    ) AS "profile"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+        'id', "organization"."id",
+        'color', "organization"."color",
+        'userId', "organization"."userId",
+        'name', "organization"."name"
+    ) AS "organization"`,
+      )
+      .where('user.deletedAt IS NULL')
+      .leftJoin('donation.user', 'user')
+      .leftJoin('user.profile', 'profile')
+      .leftJoin('donation.currency', 'currency')
+      .leftJoin('donation.organization', 'organization');
 
     if (userId) {
       query = query.where('donation.userId = :userId', { userId });
@@ -59,7 +97,7 @@ export class DonationsService {
         .orderBy('donation.createdAt', pagination?.sort)
         .limit(pagination.limit)
         .offset(pagination.offset)
-        .getMany(),
+        .getRawMany(),
     );
     if (error) throw new NotFoundException(error);
 
@@ -75,9 +113,11 @@ export class DonationsService {
     let query = this.driver
       .createQueryBuilder('donation')
       .select('donation.id', 'id')
-      .addSelect('donation.createdAt', 'createdAt')
       .addSelect('donation.title', 'title')
       .addSelect('donation.amount', 'amount')
+      .addSelect('donation.isActive', 'isActive')
+      .addSelect('donation.createdAt', 'createdAt')
+      .addSelect('donation.expiredAt', 'expiredAt')
       .addSelect('donation.description', 'description')
       .addSelect(
         /*sql*/ `jsonb_build_object(

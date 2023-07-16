@@ -14,6 +14,7 @@ import { Product } from './Product';
 import { Transaction } from './Transaction';
 import { Discount } from './Discount';
 import { Donation } from './Donation';
+import { Investment } from './Investment';
 
 @Entity('organization')
 export class Organization extends BaseDeleteEntity {
@@ -80,4 +81,9 @@ export class Organization extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   donations?: Donation[];
+
+  @OneToMany(() => Investment, (investment) => investment.organization, {
+    onDelete: 'CASCADE',
+  })
+  investments?: Investment[];
 }

@@ -17,6 +17,7 @@ import { Contributor } from './Contributor';
 import { Organization } from './Organization';
 import { Cart } from './Cart';
 import { Transaction } from './Transaction';
+import { Investment } from './Investment';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -67,10 +68,15 @@ export class User extends BaseDeleteEntity {
   })
   transactions?: Transaction[];
 
-  @OneToMany(() => Contributor, (contributor) => contributor.userId, {
+  @OneToMany(() => Contributor, (contributor) => contributor.user, {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
+
+  @OneToMany(() => Investment, (investment) => investment.user, {
+    onDelete: 'CASCADE',
+  })
+  investments?: Investment[];
 
   @OneToMany(() => Cart, (cart) => cart.userId, {
     onDelete: 'CASCADE',

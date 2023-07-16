@@ -12,6 +12,7 @@ import { Profile } from './Profile';
 import { User } from './User';
 import { BaseEntity } from '../app/databases/common/BaseEntity';
 import { Donation } from './Donation';
+import { Investment } from './Investment';
 
 @Entity('currency')
 export class Currency extends BaseEntity {
@@ -35,4 +36,7 @@ export class Currency extends BaseEntity {
 
   @OneToMany(() => Donation, (donation) => donation.organization)
   donations?: Donation[];
+
+  @OneToMany(() => Investment, (investment) => investment.currency)
+  investments?: Investment[];
 }
