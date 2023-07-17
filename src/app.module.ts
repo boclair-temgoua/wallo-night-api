@@ -20,6 +20,7 @@ import { DiscountsModule } from './modules/discounts/discounts.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { DonationsModule } from './modules/donations/donations.module';
 import { InvestmentsModule } from './modules/investments/investments.module';
+import { WalletsModule } from './modules/wallets/wallets.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { InvestmentsModule } from './modules/investments/investments.module';
     DiscountsModule,
     DonationsModule,
     CartsModule,
+    WalletsModule,
     InvestmentsModule,
     ContactUsModule,
   ],
