@@ -28,12 +28,19 @@ export class TransactionsService {
   async findAll(
     selections: GetTransactionsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, userId, organizationId } = selections;
+    const { search, pagination, userId, organizationId, donationId } =
+      selections;
 
     let query = this.driver.createQueryBuilder('transaction');
 
     if (userId) {
       query = query.where('transaction.userId = :userId', { userId });
+    }
+
+    if (donationId) {
+      query = query.where('transaction.donationId = :donationId', {
+        donationId,
+      });
     }
 
     if (organizationId) {
@@ -86,11 +93,14 @@ export class TransactionsService {
 
   /** Create one Transaction to the database. */
   async createOne(options: CreateTransactionOptions): Promise<Transaction> {
-    const { amount, donationId, title, description } = options;
+    const { amount, donationId, title, description, userISendId, userISend } =
+      options;
 
     const transaction = new Transaction();
     transaction.title = title;
     transaction.donationId = donationId;
+    transaction.userISendId = userISendId;
+    transaction.userISend = userISend;
     transaction.amount = amount;
     transaction.description = description;
 

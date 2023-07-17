@@ -13,6 +13,7 @@ import { User } from './User';
 import { BaseEntity } from '../app/databases/common/BaseEntity';
 import { Organization } from './Organization';
 import { Donation } from './Donation';
+import { Discount } from './Discount';
 
 @Entity('transaction')
 export class Transaction extends BaseEntity {
@@ -45,6 +46,22 @@ export class Transaction extends BaseEntity {
   donation?: Relation<Donation>;
 
   @Column({ type: 'uuid', nullable: true })
+  userISendId?: string;
+  @ManyToOne(() => User, (user) => user.transactions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({name : 'userISendId', referencedColumnName: 'id'})
+  userISend?: Relation<User>;
+
+  @Column({ type: 'uuid', nullable: true })
+  userReceiveId?: string;
+  @ManyToOne(() => User, (user) => user.transactions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({name : 'userReceiveId', referencedColumnName: 'id'})
+  userReceive?: Relation<User>;
+
+  @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @ManyToOne(() => User, (user) => user.transactions, {
     onDelete: 'CASCADE',
@@ -59,10 +76,4 @@ export class Transaction extends BaseEntity {
   })
   @JoinColumn()
   organization?: Relation<Organization>;
-
-  // @ManyToOne(() => User, (user) => user.transactions, { onDelete: 'CASCADE' })
-  // user: User;
-
-  // @OneToMany(() => Amount, (amount) => amount.transactions, { onDelete: 'CASCADE' })
-  // amounts: Amount[];
 }
