@@ -20,7 +20,7 @@ export class Transaction extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'bigint', nullable: true })
   amount: number;
 
   @Column({ nullable: true })
@@ -50,7 +50,7 @@ export class Transaction extends BaseEntity {
   @ManyToOne(() => User, (user) => user.transactions, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({name : 'userISendId', referencedColumnName: 'id'})
+  @JoinColumn({ name: 'userISendId', referencedColumnName: 'id' })
   userISend?: Relation<User>;
 
   @Column({ type: 'uuid', nullable: true })
@@ -58,7 +58,7 @@ export class Transaction extends BaseEntity {
   @ManyToOne(() => User, (user) => user.transactions, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({name : 'userReceiveId', referencedColumnName: 'id'})
+  @JoinColumn({ name: 'userReceiveId', referencedColumnName: 'id' })
   userReceive?: Relation<User>;
 
   @Column({ type: 'uuid', nullable: true })

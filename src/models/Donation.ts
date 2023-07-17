@@ -32,7 +32,7 @@ export class Donation extends BaseDeleteEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'bigint' })
   amount: number;
 
   @Column({ type: 'uuid', nullable: true })

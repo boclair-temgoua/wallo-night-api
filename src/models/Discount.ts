@@ -23,7 +23,7 @@ export class Discount extends BaseDeleteEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'bigint' })
   percent: number;
 
   @Column({ default: false })

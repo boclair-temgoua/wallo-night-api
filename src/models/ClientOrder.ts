@@ -32,19 +32,19 @@ export class ClientOrder extends BaseEntity {
   @Column({ nullable: true })
   email: string;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   priceSupTotal: number;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   priceTotalBeforeDiscount: number;
 
   @Column({ nullable: true })
   vat: string;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   priceTotal: number;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   price: number;
 
   @Column({ nullable: true })

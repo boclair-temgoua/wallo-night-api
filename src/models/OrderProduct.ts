@@ -26,22 +26,22 @@ export class OrderProduct extends BaseDeleteEntity {
   @Column({ nullable: true })
   currency: string;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   discountProduct: number;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   discountCoupon: number;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   price: number;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   priceDiscount: number;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   discountPercent: number;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   priceTotal: number;
 
   @Column({ type: 'bigint', nullable: true })

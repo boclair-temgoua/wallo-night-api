@@ -19,7 +19,7 @@ export class Investment extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'bigint' })
   amount: number;
 
   @Column({ nullable: true, type: 'timestamptz' })

@@ -36,7 +36,7 @@ export class Product extends BaseDeleteEntity {
   @Column({ nullable: true })
   sku: string;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'bigint', nullable: true })
   price: number;
 
   @Column({ type: 'text', nullable: true })
