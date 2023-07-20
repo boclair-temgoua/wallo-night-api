@@ -28,7 +28,7 @@ export class Currency extends BaseEntity {
   @Column({ nullable: true })
   symbol: string;
 
-  @Column({ type: 'bigint', nullable: true })
+  @Column({ type: 'float', nullable: true })
   amount: number;
 
   @OneToMany(() => Product, (product) => product.currency)

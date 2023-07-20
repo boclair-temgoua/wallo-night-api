@@ -28,46 +28,46 @@
 
 ## Generate migration
 
-```bash
-$ npm run migration:generate --name="migration"
+```typescript
+npm run migration:generate --name="migration"
 ```
 
 ## Generate run
 
-```bash
-$ npm run migration:run
+```typescript
+npm run migration:run
 ```
 
 ## Installation
 
-```bash
-$ npm install
+```typescript
+npm install
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 
 # production mode
-$ npm run start:prod
+npm run start:prod
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
 
 ## Support
