@@ -47,7 +47,7 @@
     "seed:create": "cross-var ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli migration:create ./src/app/databases/seeds/$npm_config_name "
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.373.0",
+    "@aws-sdk/client-s3": "^3.374.0",
     "@aws-sdk/client-ses": "^3.370.0",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/common": "^10.1.0",
@@ -66,7 +66,7 @@
     "@types/mime": "^3.0.1",
     "amqp-connection-manager": "^4.1.13",
     "amqplib": "^0.10.3",
-    "aws-sdk": "^2.1418.0",
+    "aws-sdk": "^2.1419.0",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
@@ -101,8 +101,9 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.1",
     "rxjs": "^7.8.1",
+    "s3": "^4.4.0",
     "slug": "^8.2.3",
-    "stripe": "^12.13.0",
+    "stripe": "^12.14.0",
     "typeorm": "^0.3.17",
     "uuid": "^9.0.0",
     "xlsx": "^0.18.5",
