@@ -10,7 +10,7 @@ import {
 import { User } from './User';
 // import { UserAddress } from './UserAddress';
 import { OrderProduct } from './OrderProduct';
-import { BaseEntity } from '../app/databases/common/BaseEntity';
+import { BaseEntity } from '../app/databases/common';
 
 @Entity('client_order')
 export class ClientOrder extends BaseEntity {

@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { TypeDatabase } from '../databases/config';
+import { TypeDatabase } from '../databases/orm';
 dotenv.config();
 
 export const configurations = {

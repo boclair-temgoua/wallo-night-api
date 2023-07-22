@@ -1,4 +1,4 @@
-import { BaseDeleteEntity } from './../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 import {
   Entity,
   PrimaryGeneratedColumn,

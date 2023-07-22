@@ -6,7 +6,7 @@ import { faker } from '@faker-js/faker';
 import { useCatch } from '../../utils/use-catch';
 import { Currency } from '../../../models/Currency';
 import { Country } from '../../../models/Country';
-import { AppSeedDataSource } from '../config/orm-config-seed';
+import { AppSeedDataSource } from '../orm/orm-config-seed';
 
 import { Faq } from '../../../models/Faq';
 import * as Slug from 'slug';

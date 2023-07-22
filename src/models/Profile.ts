@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import { User } from './User';
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 @Entity('profile')
 export class Profile extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')

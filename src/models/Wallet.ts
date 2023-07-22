@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Generated, ManyToOne, JoinColumn, Relation } from 'typeorm';
-import { BaseEntity } from '../app/databases/common/BaseEntity';
+import { BaseEntity } from '../app/databases/common';
 import { User } from './User';
 
 @Entity('wallet')

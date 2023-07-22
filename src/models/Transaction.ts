@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { OrderProduct } from './OrderProduct';
 import { User } from './User';
-import { BaseEntity } from '../app/databases/common/BaseEntity';
+import { BaseEntity } from '../app/databases/common';
 import { Organization } from './Organization';
 import { Donation } from './Donation';
 import { Discount } from './Discount';

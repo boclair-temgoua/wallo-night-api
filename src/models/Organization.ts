@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { User } from './User';
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 import { Contributor } from './Contributor';
 import { Product } from './Product';
 import { Transaction } from './Transaction';

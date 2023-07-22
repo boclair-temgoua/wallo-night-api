@@ -10,7 +10,7 @@ import {
   Relation,
 } from 'typeorm';
 
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 import { Product } from './Product';
 import { User } from './User';
 import { Organization } from './Organization';

@@ -10,7 +10,7 @@ import {
   Generated,
 } from 'typeorm';
 
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 import { Profile } from './Profile';
 import { Donation } from './Donation';
 import { Contributor } from './Contributor';

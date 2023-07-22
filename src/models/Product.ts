@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 
 import { Currency } from './Currency';
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
 import { Organization } from './Organization';

@@ -10,9 +10,9 @@ import {
   Relation,
 } from 'typeorm';
 
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
 import { Product } from './Product';
 import { User } from './User';
+import { BaseDeleteEntity } from '../app/databases/common';
 
 @Entity('cart')
 export class Cart extends BaseDeleteEntity {

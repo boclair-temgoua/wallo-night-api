@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, Generated } from 'typeorm';
 
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 
 @Entity('contact_us')
 export class ContactUs extends BaseDeleteEntity {

@@ -10,7 +10,7 @@ import {
 import { Product } from './Product';
 import { Profile } from './Profile';
 import { User } from './User';
-import { BaseEntity } from '../app/databases/common/BaseEntity';
+import { BaseEntity } from '../app/databases/common';
 import { Donation } from './Donation';
 import { Investment } from './Investment';
 

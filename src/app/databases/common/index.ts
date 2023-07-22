@@ -8,3 +8,9 @@ export abstract class BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
+export class BaseDeleteEntity extends BaseEntity {
+    @Column({ nullable: true })
+    deletedAt?: Date;
+  }
+  

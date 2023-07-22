@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Generated } from 'typeorm';
-import { BaseEntity } from '../app/databases/common/BaseEntity';
+import { BaseEntity } from '../app/databases/common';
 
 @Entity('country')
 export class Country extends BaseEntity {

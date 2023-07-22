@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Generated } from 'typeorm';
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 
 @Entity('reset_password')
 export class ResetPassword extends BaseDeleteEntity {

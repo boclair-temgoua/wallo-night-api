@@ -8,7 +8,7 @@ import {
   Relation,
 } from 'typeorm';
 
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 import { User } from './User';
 import { Donation } from './Donation';
 import { Organization } from './Organization';

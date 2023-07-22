@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { User } from './User';
-import { BaseDeleteEntity } from '../app/databases/common/BaseDeleteEntity';
+import { BaseDeleteEntity } from '../app/databases/common';
 
 @Entity('project')
 export class Project extends BaseDeleteEntity {
