@@ -19,7 +19,6 @@ import { CartsModule } from './modules/cats/cats.module';
 import { DiscountsModule } from './modules/discounts/discounts.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { DonationsModule } from './modules/donations/donations.module';
-import { InvestmentsModule } from './modules/investments/investments.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
 import { MediaModule } from './modules/media/media.module';
 
@@ -45,7 +44,6 @@ import { MediaModule } from './modules/media/media.module';
     CartsModule,
     WalletsModule,
     MediaModule,
-    InvestmentsModule,
     ContactUsModule,
   ],
 })

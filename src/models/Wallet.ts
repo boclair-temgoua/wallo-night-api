@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, Generated, ManyToOne, JoinColumn, Relation } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  ManyToOne,
+  JoinColumn,
+  Relation,
+} from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
 import { User } from './User';
 
@@ -10,14 +18,12 @@ export class Wallet extends BaseEntity {
   @Column({ default: false, unique: true })
   accountId?: string;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', default: 0 })
   amount: number;
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
-  @ManyToOne(() => User, (user) => user.wallets, {
-    onDelete: 'CASCADE',
-  })
+  @OneToOne(() => User, (user) => user.wallet, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: Relation<User>;
 }

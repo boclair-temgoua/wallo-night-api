@@ -14,6 +14,7 @@ import { BaseEntity } from '../app/databases/common';
 import { Organization } from './Organization';
 import { Donation } from './Donation';
 import { Discount } from './Discount';
+import { Gift } from './Gift';
 
 @Entity('transaction')
 export class Transaction extends BaseEntity {
@@ -44,6 +45,14 @@ export class Transaction extends BaseEntity {
   })
   @JoinColumn()
   donation?: Relation<Donation>;
+
+  @Column({ type: 'uuid', nullable: true })
+  giftId?: string;
+  @ManyToOne(() => Gift, (gift) => gift.transactions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  gift?: Relation<Gift>;
 
   @Column({ type: 'uuid', nullable: true })
   userISendId?: string;

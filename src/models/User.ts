@@ -17,8 +17,8 @@ import { Contributor } from './Contributor';
 import { Organization } from './Organization';
 import { Cart } from './Cart';
 import { Transaction } from './Transaction';
-import { Investment } from './Investment';
 import { Wallet } from './Wallet';
+import { Gift } from './Gift';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -47,14 +47,18 @@ export class User extends BaseDeleteEntity {
   password?: string;
 
   @Column({ type: 'uuid', nullable: true })
-  profileId?: string;
-
-  @Column({ type: 'uuid', nullable: true })
   organizationInUtilizationId?: string;
 
+  @Column({ type: 'uuid', nullable: true })
+  profileId?: string;
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
   @JoinColumn()
   profile?: Profile;
+
+  @OneToOne(() => Wallet, (wallet) => wallet.user, {
+    onDelete: 'CASCADE',
+  })
+  wallet?: Wallet;
 
   @OneToMany(() => Donation, (donation) => donation.organization)
   donations?: Donation[];
@@ -74,15 +78,10 @@ export class User extends BaseDeleteEntity {
   })
   contributors?: Contributor[];
 
-  @OneToMany(() => Wallet, (wallet) => wallet.user, {
+  @OneToMany(() => Gift, (gift) => gift.user, {
     onDelete: 'CASCADE',
   })
-  wallets?: Wallet[];
-
-  @OneToMany(() => Investment, (investment) => investment.user, {
-    onDelete: 'CASCADE',
-  })
-  investments?: Investment[];
+  gifts?: Gift[];
 
   @OneToMany(() => Cart, (cart) => cart.userId, {
     onDelete: 'CASCADE',

@@ -2,17 +2,12 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  Index,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
 } from 'typeorm';
 import { Product } from './Product';
-import { Profile } from './Profile';
-import { User } from './User';
 import { BaseEntity } from '../app/databases/common';
 import { Donation } from './Donation';
-import { Investment } from './Investment';
+import { Gift } from './Gift';
 
 @Entity('currency')
 export class Currency extends BaseEntity {
@@ -37,6 +32,6 @@ export class Currency extends BaseEntity {
   @OneToMany(() => Donation, (donation) => donation.organization)
   donations?: Donation[];
 
-  @OneToMany(() => Investment, (investment) => investment.currency)
-  investments?: Investment[];
+  @OneToMany(() => Gift, (gift) => gift.currency)
+  gifts?: Gift[];
 }

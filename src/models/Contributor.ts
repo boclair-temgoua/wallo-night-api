@@ -13,6 +13,7 @@ import { Organization } from './Organization';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 import { Donation } from './Donation';
+import { Gift } from './Gift';
 
 @Entity('contributor')
 export class Contributor extends BaseDeleteEntity {
@@ -54,6 +55,14 @@ export class Contributor extends BaseDeleteEntity {
   })
   @JoinColumn()
   donation?: Relation<Donation>;
+
+  @Column({ type: 'uuid', nullable: true })
+  giftId?: string;
+  @ManyToOne(() => Gift, (gift) => gift.contributors, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  gift?: Relation<Gift>;
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;

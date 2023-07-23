@@ -1,36 +1,26 @@
 import { Transform, Type } from 'class-transformer';
+import { MatchDate } from '../../app/utils/decorators/date.decorator';
 import {
   IsString,
   IsNotEmpty,
   MaxLength,
-  IsUUID,
+  Min,
+  Max,
   IsOptional,
-  MinLength,
   IsInt,
   IsPositive,
-  Min,
+  MinLength,
+  IsUUID,
   MinDate,
-  IsDateString,
 } from 'class-validator';
 
-export class FilterInvestmentsDto {
-  @IsOptional()
+export class CreateOrUpdateGiftsDto {
+  @IsNotEmpty()
   @IsString()
-  @IsUUID()
-  userId: string;
+  @MaxLength(100)
+  @MinLength(3)
+  title: string;
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  donationId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
-}
-
-export class CreateOrUpdateInvestmentsDto {
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
@@ -38,15 +28,16 @@ export class CreateOrUpdateInvestmentsDto {
   @Type(() => Number)
   amount?: number;
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  donationId: string;
-
   @IsNotEmpty()
   @IsString()
   @IsUUID()
   currencyId: string;
+
+  @IsNotEmpty()
+  @Transform(({ value }) => value && new Date(value))
+  @MinDate(new Date())
+  @Type(() => Date)
+  expiredAt: Date;
 
   @IsNotEmpty()
   @IsString()
