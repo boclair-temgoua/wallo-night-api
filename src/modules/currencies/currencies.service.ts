@@ -53,7 +53,7 @@ export class CurrenciesService {
   }
 
   async findOneBy(selections: GetOneCurrenciesSelections): Promise<Currency> {
-    const { currencyId } = selections;
+    const { currencyId, code } = selections;
     let query = this.driver
       .createQueryBuilder('currency')
       .select('currency.id', 'id')
@@ -64,6 +64,10 @@ export class CurrenciesService {
 
     if (currencyId) {
       query = query.andWhere('currency.id = :id', { id: currencyId });
+    }
+
+    if (code) {
+      query = query.andWhere('currency.code = :code', { code });
     }
 
     const [error, result] = await useCatch(query.getRawOne());

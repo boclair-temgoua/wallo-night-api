@@ -15,16 +15,13 @@ import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 import { Donation } from './Donation';
 import { Gift } from './Gift';
 
-@Entity('contributor')
-export class Contributor extends BaseDeleteEntity {
+@Entity('contribution')
+export class Contribution extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({ type: 'uuid', nullable: true })
-  userId?: string;
-  @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  user?: User;
+  @Column({ type: 'bigint', nullable: true })
+  amount: number;
 
   @Column({
     type: 'enum',
@@ -33,12 +30,11 @@ export class Contributor extends BaseDeleteEntity {
   })
   type?: FilterQueryType;
 
-  @Column({
-    type: 'enum',
-    enum: ContributorRole,
-    default: ContributorRole.ADMIN,
-  })
-  role?: ContributorRole;
+  @Column({ type: 'uuid', nullable: true })
+  userId?: string;
+  @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  user?: User;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
@@ -49,8 +45,18 @@ export class Contributor extends BaseDeleteEntity {
   organization?: Relation<Organization>;
 
   @Column({ type: 'uuid', nullable: true })
-  userCreatedId?: string;
-  @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
-  @JoinColumn([{ name: 'userCreatedId', referencedColumnName: 'id' }])
-  userCreated?: Relation<User>;
+  donationId?: string;
+  @ManyToOne(() => Donation, (donation) => donation.contributions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  donation?: Relation<Donation>;
+
+  @Column({ type: 'uuid', nullable: true })
+  giftId?: string;
+  @ManyToOne(() => Gift, (gift) => gift.contributions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  gift?: Relation<Gift>;
 }

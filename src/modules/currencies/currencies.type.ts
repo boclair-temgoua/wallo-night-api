@@ -5,5 +5,6 @@ export type GetCurrenciesSelections = {
 };
 
 export type GetOneCurrenciesSelections = {
-  currencyId: Currency['id'];
+  currencyId?: Currency['id'];
+  code?: Currency['code'];
 };

@@ -147,7 +147,8 @@ export class DonationsService {
           'name', "organization"."name"
       ) AS "organization"`,
       )
-      .where('user.deletedAt IS NULL')
+      .where('donation.deletedAt IS NULL')
+      .andWhere('donation.expiredAt >= NOW()')
       .leftJoin('donation.user', 'user')
       .leftJoin('user.profile', 'profile')
       .leftJoin('donation.currency', 'currency')

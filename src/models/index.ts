@@ -1,5 +1,6 @@
 export * from './Cart';
 export * from './Category';
+export * from './Contribution';
 export * from './ClientOrder';
 export * from './ContactUs';
 export * from './Contributor';

@@ -23,6 +23,7 @@ import { WalletsModule } from './modules/wallets/wallets.module';
 import { MediaModule } from './modules/media/media.module';
 import { GiftsModule } from './modules/gifts/gifts.module';
 import { CurrenciesModule } from './modules/currencies/currencies.module';
+import { ContributionsModule } from './modules/contributions/contributions.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { CurrenciesModule } from './modules/currencies/currencies.module';
     MediaModule,
     GiftsModule,
     CurrenciesModule,
+    ContributionsModule,
     ContactUsModule,
   ],
 })

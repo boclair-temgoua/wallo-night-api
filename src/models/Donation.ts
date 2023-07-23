@@ -12,7 +12,7 @@ import { Transaction } from './Transaction';
 import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Organization } from './Organization';
-import { Contributor } from './Contributor';
+import { Contribution } from './Contribution';
 
 @Entity('donation')
 export class Donation extends BaseDeleteEntity {
@@ -66,8 +66,8 @@ export class Donation extends BaseDeleteEntity {
   })
   transactions?: Transaction[];
 
-  @OneToMany(() => Contributor, (contributor) => contributor.donation, {
+  @OneToMany(() => Contribution, (contribution) => contribution.donation, {
     onDelete: 'CASCADE',
   })
-  contributors?: Contributor[];
+  contributions?: Contribution[];
 }

@@ -38,8 +38,6 @@ export class ContributorsService {
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
-      .addSelect('contributor.giftId', 'giftId')
-      .addSelect('contributor.donationId', 'donationId')
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -158,11 +156,9 @@ export class ContributorsService {
     let query = this.driver
       .createQueryBuilder('contributor')
       .select('contributor.id', 'id')
-      .addSelect('contributor.giftId', 'giftId')
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
-      .addSelect('contributor.donationId', 'donationId')
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -223,8 +219,6 @@ export class ContributorsService {
     const {
       userId,
       organizationId,
-      donationId,
-      giftId,
       role,
       userCreatedId,
       type,
@@ -234,8 +228,6 @@ export class ContributorsService {
     contributor.userId = userId;
     contributor.type = type;
     contributor.role = role;
-    contributor.giftId = giftId;
-    contributor.donationId = donationId;
     contributor.organizationId = organizationId;
     contributor.userCreatedId = userCreatedId;
     const query = this.driver.save(contributor);

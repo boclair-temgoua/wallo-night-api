@@ -31,7 +31,6 @@ import {
 } from '../../app/utils/pagination/with-pagination';
 import * as amqplib from 'amqplib';
 import { ProfilesService } from '../profiles/profiles.service';
-import { ProjectsService } from '../projects/projects.service';
 import { CheckUserService } from '../users/middleware/check-user.service';
 import { UsersService } from '../users/users.service';
 import { ContributorsService } from './contributors.service';
