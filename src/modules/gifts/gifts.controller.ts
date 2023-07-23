@@ -30,6 +30,7 @@ import {
 } from '../../app/utils/pagination/with-pagination';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { config } from '../../app/config';
+import { validationAmount } from '../../app/utils/decorators/date.decorator';
 
 @Controller('gifts')
 export class GiftsController {
@@ -75,24 +76,18 @@ export class GiftsController {
     const findOneCurrency = await this.currenciesService.findOneBy({
       currencyId: currencyId,
     });
-    const amountConverted = Number(amount) * findOneCurrency?.amount;
-    if (amountConverted < config.datasite.amount.minAmount && amountConverted > config.datasite.amount.maxAmount)
-      throw new HttpException(
-        `The amount must be between`,
-        HttpStatus.NOT_FOUND,
-      );
 
-    console.log('amountConverted ======>', amountConverted);
+    validationAmount({ amount, currency: findOneCurrency });
 
-    // await this.giftsService.createOne({
-    //   title,
-    //   amount,
-    //   currencyId,
-    //   expiredAt,
-    //   description,
-    //   userId: user?.id,
-    //   organizationId: user?.organizationInUtilizationId,
-    // });
+    await this.giftsService.createOne({
+      title,
+      amount,
+      currencyId,
+      expiredAt,
+      description,
+      userId: user?.id,
+      organizationId: user?.organizationInUtilizationId,
+    });
 
     return reply({ res, results: 'Gift created successfully' });
   }
@@ -114,6 +109,12 @@ export class GiftsController {
         `Gift ${giftId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
+
+    const findOneCurrency = await this.currenciesService.findOneBy({
+      currencyId: body?.currencyId,
+    });
+
+    validationAmount({ amount: body?.amount, currency: findOneCurrency });
 
     await this.giftsService.updateOne({ giftId }, { ...body });
 

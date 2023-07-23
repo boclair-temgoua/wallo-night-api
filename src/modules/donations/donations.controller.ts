@@ -21,6 +21,7 @@ import { JwtAuthGuard } from '../users/middleware';
 import { DonationsService } from './donations.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { validationAmount } from '../../app/utils/decorators/date.decorator';
 import {
   addPagination,
   PaginationType,
@@ -29,10 +30,14 @@ import {
   CreateOrUpdateDonationsDto,
   FilterDonationsDto,
 } from './donations.dto';
+import { CurrenciesService } from '../currencies/currencies.service';
 
 @Controller('donations')
 export class DonationsController {
-  constructor(private readonly donationsService: DonationsService) {}
+  constructor(
+    private readonly donationsService: DonationsService,
+    private readonly currenciesService: CurrenciesService,
+  ) {}
 
   /** Get all Donations */
   @Get(`/`)
@@ -87,6 +92,12 @@ export class DonationsController {
   ) {
     const { user } = req;
 
+    const findOneCurrency = await this.currenciesService.findOneBy({
+      currencyId: body?.currencyId,
+    });
+
+    validationAmount({ amount: body?.amount, currency: findOneCurrency });
+
     await this.donationsService.createOne({
       ...body,
       userId: user?.id,
@@ -113,6 +124,12 @@ export class DonationsController {
         `Donation ${donationId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
+
+    const findOneCurrency = await this.currenciesService.findOneBy({
+      currencyId: body?.currencyId,
+    });
+
+    validationAmount({ amount: body?.amount, currency: findOneCurrency });
 
     await this.donationsService.updateOne({ donationId }, { ...body });
 

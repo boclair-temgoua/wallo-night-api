@@ -5,6 +5,9 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+import { Currency } from '../../../models';
+import { config } from '../../../app/config';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export const MatchDate = (
   property: string,
@@ -67,3 +70,29 @@ export class IsAValidateNowConstraint implements ValidatorConstraintInterface {
     return `The ${constraintProperty} date cannot be greater than the ${initialDate.property}`;
   }
 }
+
+/** **************************************************************************************************************** */
+
+export const validationAmount = (options: {
+  amount: number;
+  currency: Currency;
+}) => {
+  const { amount, currency } = options;
+
+  const newAmountConverted = Number(amount) / currency?.amount;
+
+  if (
+    newAmountConverted < config.datasite.amount.minAmount ||
+    newAmountConverted > config.datasite.amount.maxAmount
+  )
+    throw new HttpException(
+      `The amount must be between ${
+        config.datasite.amount.minAmount * currency?.amount
+      } ${currency?.code} and ${
+        config.datasite.amount.maxAmount * currency?.amount
+      } ${currency?.code}`,
+      HttpStatus.NOT_FOUND,
+    );
+
+  return newAmountConverted;
+};
