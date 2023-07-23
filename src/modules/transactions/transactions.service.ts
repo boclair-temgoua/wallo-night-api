@@ -28,23 +28,100 @@ export class TransactionsService {
   async findAll(
     selections: GetTransactionsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, userId, organizationId, donationId } =
-      selections;
+    const {
+      search,
+      pagination,
+      userId,
+      organizationId,
+      donationId,
+      userSendId,
+      userReceiveId,
+    } = selections;
 
-    let query = this.driver.createQueryBuilder('transaction');
+    let query = this.driver
+      .createQueryBuilder('transaction')
+      .select('transaction.id', 'id')
+      .addSelect('transaction.amount', 'amount')
+      .addSelect('transaction.type', 'type')
+      .addSelect('transaction.title', 'title')
+      .addSelect('transaction.description', 'description')
+      .addSelect('transaction.donationId', 'donationId')
+      .addSelect('transaction.contributionId', 'contributionId')
+      .addSelect('transaction.giftId', 'giftId')
+      .addSelect('transaction.userSendId', 'userSendId')
+      .addSelect('transaction.userReceiveId', 'userReceiveId')
+      .addSelect('transaction.userId', 'userId')
+      .addSelect('transaction.organizationId', 'organizationId')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+      'id', "gift"."id",
+      'title', "donation"."title",
+      'amount', "gift"."amount"
+  ) AS "gift"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+      'id', "donation"."id",
+      'title', "donation"."title",
+      'amount', "donation"."amount"
+  ) AS "donation"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+        'id', "profileSend"."id",
+        'userId', "userSend"."id",
+        'firstName', "profileSend"."firstName",
+        'lastName', "profileSend"."lastName",
+        'image', "profileSend"."image",
+        'color', "profileSend"."color",
+        'countryId', "profileSend"."countryId",
+        'url', "profileSend"."url"
+    ) AS "profileSend"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+        'id', "profileReceive"."id",
+        'userId', "userReceive"."id",
+        'firstName', "profileReceive"."firstName",
+        'lastName', "profileReceive"."lastName",
+        'image', "profileReceive"."image",
+        'color', "profileReceive"."color",
+        'countryId', "profileReceive"."countryId",
+        'url', "profileReceive"."url"
+    ) AS "profileReceive"`,
+      )
+      .where('transaction.deletedAt IS NULL')
+      .leftJoin('transaction.userSend', 'userSend')
+      .leftJoin('transaction.userReceive', 'userReceive')
+      .leftJoin('transaction.gift', 'gift')
+      .leftJoin('transaction.donation', 'donation')
+      .leftJoin('userSend.profile', 'profileSend')
+      .leftJoin('userReceive.profile', 'profileReceive');
 
     if (userId) {
-      query = query.where('transaction.userId = :userId', { userId });
+      query = query.andWhere('transaction.userId = :userId', { userId });
+    }
+
+    if (userReceiveId) {
+      query = query.andWhere('transaction.userReceiveId = :userReceiveId', {
+        userReceiveId,
+      });
+    }
+
+    if (userSendId) {
+      query = query.andWhere('transaction.userSendId = :userSendId', {
+        userSendId,
+      });
     }
 
     if (donationId) {
-      query = query.where('transaction.donationId = :donationId', {
+      query = query.andWhere('transaction.donationId = :donationId', {
         donationId,
       });
     }
 
     if (organizationId) {
-      query = query.where('transaction.organizationId = :organizationId', {
+      query = query.andWhere('transaction.organizationId = :organizationId', {
         organizationId,
       });
     }
@@ -63,7 +140,7 @@ export class TransactionsService {
         .orderBy('transaction.createdAt', pagination?.sort)
         .limit(pagination.limit)
         .offset(pagination.offset)
-        .getMany(),
+        .getRawMany(),
     );
     if (error) throw new NotFoundException(error);
 
@@ -102,6 +179,7 @@ export class TransactionsService {
       userSendId,
       userReceiveId,
       userId,
+      type,
       organizationId,
     } = options;
 
@@ -112,6 +190,7 @@ export class TransactionsService {
     transaction.userReceiveId = userReceiveId;
     transaction.amount = amount;
     transaction.userId = userId;
+    transaction.type = type;
     transaction.organizationId = organizationId;
     transaction.contributionId = contributionId;
     transaction.description = description;

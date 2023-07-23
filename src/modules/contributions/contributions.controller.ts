@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  NotFoundException,
   Body,
   Param,
   ParseUUIDPipe,
@@ -14,7 +13,6 @@ import {
   Query,
   HttpStatus,
   HttpException,
-  ParseBoolPipe,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
@@ -26,7 +24,6 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import * as amqplib from 'amqplib';
 import { ContributionsService } from './contributions.service';
 import { JwtAuthGuard } from '../users/middleware';
 import {
@@ -97,6 +94,7 @@ export class ContributionsController {
       type: FilterQueryType.DONATION,
     });
 
+    /** Create transaction */
     await this.transactionsService.createOne({
       contributionId: contribution?.id,
       description: `Contribution donation ${findOneDonation?.title}`,

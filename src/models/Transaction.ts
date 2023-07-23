@@ -9,15 +9,15 @@ import {
 } from 'typeorm';
 import { OrderProduct } from './OrderProduct';
 import { User } from './User';
-import { BaseEntity } from '../app/databases/common';
+import { BaseDeleteEntity } from '../app/databases/common';
 import { Organization } from './Organization';
 import { Donation } from './Donation';
-import { Discount } from './Discount';
 import { Gift } from './Gift';
 import { Contribution } from './Contribution';
+import { TransactionType } from '../modules/transactions/transactions.type';
 
 @Entity('transaction')
-export class Transaction extends BaseEntity {
+export class Transaction extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -53,6 +53,13 @@ export class Transaction extends BaseEntity {
   })
   @JoinColumn()
   contribution?: Relation<Contribution>;
+
+  @Column({
+    type: 'enum',
+    enum: TransactionType,
+    default: TransactionType.CARD,
+  })
+  type?: TransactionType;
 
   @Column({ type: 'uuid', nullable: true })
   giftId?: string;

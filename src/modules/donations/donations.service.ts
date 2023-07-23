@@ -62,17 +62,18 @@ export class DonationsService {
         'url', "profile"."url"
     ) AS "profile"`,
       )
-      .where('user.deletedAt IS NULL')
+      .where('donation.deletedAt IS NULL')
+      .andWhere('donation.expiredAt >= now()')
       .leftJoin('donation.user', 'user')
       .leftJoin('user.profile', 'profile')
       .leftJoin('donation.currency', 'currency');
 
     if (userId) {
-      query = query.where('donation.userId = :userId', { userId });
+      query = query.andWhere('donation.userId = :userId', { userId });
     }
 
     if (organizationId) {
-      query = query.where('donation.organizationId = :organizationId', {
+      query = query.andWhere('donation.organizationId = :organizationId', {
         organizationId,
       });
     }
@@ -135,7 +136,7 @@ export class DonationsService {
       ) AS "profile"`,
       )
       .where('donation.deletedAt IS NULL')
-      .andWhere('donation.expiredAt >= NOW()')
+      .andWhere('donation.expiredAt >= now()')
       .leftJoin('donation.user', 'user')
       .leftJoin('user.profile', 'profile')
       .leftJoin('donation.currency', 'currency');
