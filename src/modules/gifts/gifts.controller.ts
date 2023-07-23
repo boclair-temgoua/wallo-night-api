@@ -30,11 +30,11 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 
-@Controller('Gifts')
+@Controller('gifts')
 export class GiftsController {
   constructor(private readonly giftsService: GiftsService) {}
 
-  @Get(`/gift`)
+  @Get(`/`)
   @UseGuards(JwtAuthGuard)
   async findAllByOrganizationId(
     @Res() res,
@@ -48,13 +48,13 @@ export class GiftsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const Gifts = await this.giftsService.findAll({
+    const gifts = await this.giftsService.findAll({
       search,
       pagination,
       organizationId: user?.organizationInUtilizationId,
     });
 
-    return reply({ res, results: Gifts });
+    return reply({ res, results: gifts });
   }
 
   /** Post one Gifts */

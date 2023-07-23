@@ -38,6 +38,7 @@ export class ContributorsService {
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
+      .addSelect('contributor.giftId', 'giftId')
       .addSelect('contributor.donationId', 'donationId')
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect(
@@ -157,6 +158,7 @@ export class ContributorsService {
     let query = this.driver
       .createQueryBuilder('contributor')
       .select('contributor.id', 'id')
+      .addSelect('contributor.giftId', 'giftId')
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
@@ -218,13 +220,21 @@ export class ContributorsService {
 
   /** Create one Contributor to the database. */
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
-    const { userId, organizationId, donationId, role, userCreatedId, type } =
-      options;
+    const {
+      userId,
+      organizationId,
+      donationId,
+      giftId,
+      role,
+      userCreatedId,
+      type,
+    } = options;
 
     const contributor = new Contributor();
     contributor.userId = userId;
     contributor.type = type;
     contributor.role = role;
+    contributor.giftId = giftId;
     contributor.donationId = donationId;
     contributor.organizationId = organizationId;
     contributor.userCreatedId = userCreatedId;

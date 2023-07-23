@@ -37,6 +37,7 @@ export class DonationsService {
       .select('donation.id', 'id')
       .addSelect('donation.title', 'title')
       .addSelect('donation.amount', 'amount')
+      .addSelect('donation.image', 'image')
       .addSelect('donation.isActive', 'isActive')
       .addSelect('donation.createdAt', 'createdAt')
       .addSelect('donation.expiredAt', 'expiredAt')
@@ -114,6 +115,7 @@ export class DonationsService {
       .createQueryBuilder('donation')
       .select('donation.id', 'id')
       .addSelect('donation.title', 'title')
+      .addSelect('donation.image', 'image')
       .addSelect('donation.amount', 'amount')
       .addSelect('donation.isActive', 'isActive')
       .addSelect('donation.createdAt', 'createdAt')
@@ -171,6 +173,7 @@ export class DonationsService {
       expiredAt,
       description,
       userId,
+      image,
       organizationId,
     } = options;
 
@@ -178,6 +181,7 @@ export class DonationsService {
     donation.title = title;
     donation.amount = amount;
     donation.userId = userId;
+    donation.image = image;
     donation.organizationId = organizationId;
     donation.expiredAt = expiredAt;
     donation.currencyId = currencyId;
@@ -200,6 +204,7 @@ export class DonationsService {
       amount,
       currencyId,
       title,
+      image,
       description,
       isActive,
       expiredAt,
@@ -220,6 +225,7 @@ export class DonationsService {
     findItem.amount = amount;
     findItem.currencyId = currencyId;
     findItem.title = title;
+    findItem.image = image;
     findItem.isActive = isActive;
     findItem.expiredAt = expiredAt;
     findItem.description = description;

@@ -29,6 +29,9 @@ export class Donation extends BaseDeleteEntity {
   title: string;
 
   @Column({ nullable: true })
+  image: string;
+
+  @Column({ nullable: true })
   description: string;
 
   @Column({ type: 'bigint' })

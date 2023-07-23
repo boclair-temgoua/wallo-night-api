@@ -21,6 +21,7 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
 import { DonationsModule } from './modules/donations/donations.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
 import { MediaModule } from './modules/media/media.module';
+import { GiftsModule } from './modules/gifts/gifts.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { MediaModule } from './modules/media/media.module';
     CartsModule,
     WalletsModule,
     MediaModule,
+    GiftsModule,
     ContactUsModule,
   ],
 })

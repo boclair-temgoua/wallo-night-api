@@ -92,6 +92,7 @@ export class GiftsService {
       title,
       isActive,
       amount,
+      image,
       currencyId,
       expiredAt,
       userId,
@@ -102,6 +103,7 @@ export class GiftsService {
     gift.isActive = isActive;
     gift.amount = amount;
     gift.userId = userId;
+    gift.image = image;
     gift.currencyId = currencyId;
     gift.description = description;
     gift.organizationId = organizationId;
@@ -126,6 +128,7 @@ export class GiftsService {
       title,
       isActive,
       amount,
+      image,
       currencyId,
       expiredAt,
       deletedAt,
@@ -143,6 +146,7 @@ export class GiftsService {
     findItem.title = title;
     findItem.amount = amount;
     findItem.isActive = isActive;
+    findItem.image = image;
     findItem.currencyId = currencyId;
     findItem.description = description;
     findItem.expiredAt = expiredAt;
