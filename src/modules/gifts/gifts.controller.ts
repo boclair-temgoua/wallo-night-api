@@ -16,7 +16,6 @@ import {
   ParseBoolPipe,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-
 import { GiftsService } from './gifts.service';
 import {
   PasswordBodyDto,
@@ -29,10 +28,15 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { CurrenciesService } from '../currencies/currencies.service';
+import { config } from '../../app/config';
 
 @Controller('gifts')
 export class GiftsController {
-  constructor(private readonly giftsService: GiftsService) {}
+  constructor(
+    private readonly giftsService: GiftsService,
+    private readonly currenciesService: CurrenciesService,
+  ) {}
 
   @Get(`/`)
   @UseGuards(JwtAuthGuard)
@@ -68,15 +72,27 @@ export class GiftsController {
     const { user } = req;
     const { title, amount, currencyId, expiredAt, description } = body;
 
-    await this.giftsService.createOne({
-      title,
-      amount,
-      currencyId,
-      expiredAt,
-      description,
-      userId: user?.id,
-      organizationId: user?.organizationInUtilizationId,
+    const findOneCurrency = await this.currenciesService.findOneBy({
+      currencyId: currencyId,
     });
+    const amountConverted = Number(amount) * findOneCurrency?.amount;
+    if (amountConverted < config.datasite.amount.minAmount && amountConverted > config.datasite.amount.maxAmount)
+      throw new HttpException(
+        `The amount must be between`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    console.log('amountConverted ======>', amountConverted);
+
+    // await this.giftsService.createOne({
+    //   title,
+    //   amount,
+    //   currencyId,
+    //   expiredAt,
+    //   description,
+    //   userId: user?.id,
+    //   organizationId: user?.organizationInUtilizationId,
+    // });
 
     return reply({ res, results: 'Gift created successfully' });
   }
@@ -106,10 +122,7 @@ export class GiftsController {
 
   /** Get one Gifts */
   @Get(`/show/:giftId`)
-  async getOne(
-    @Res() res,
-    @Param('giftId', ParseUUIDPipe) giftId: string,
-  ) {
+  async getOne(@Res() res, @Param('giftId', ParseUUIDPipe) giftId: string) {
     const findOneGift = await this.giftsService.findOneBy({
       giftId,
     });
@@ -155,11 +168,7 @@ export class GiftsController {
     @Req() req,
     @Param('giftId', ParseUUIDPipe) giftId: string,
   ) {
-
-     await this.giftsService.updateOne(
-      { giftId },
-      { deletedAt: new Date() },
-    );
+    await this.giftsService.updateOne({ giftId }, { deletedAt: new Date() });
 
     return reply({ res, results: 'Gift deleted successfully' });
   }

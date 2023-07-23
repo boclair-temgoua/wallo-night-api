@@ -1,14 +1,14 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { configurations } from './app/configurations';
+import { config } from './app/config';
 import helmet from 'helmet';
 import * as path from 'path';
 
 async function bootstrap() {
   // config.update({});
-  const port = configurations.port;
-  const version = configurations.api.version;
+  const port = config.port;
+  const version = config.api.version;
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix(`/api/${version}`);
   app.enableCors();

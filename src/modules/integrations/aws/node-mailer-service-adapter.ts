@@ -1,6 +1,6 @@
 import { createTransport } from 'nodemailer';
 
-import { configurations } from '../../../app/configurations/index';
+import { config } from '../../../app/config/index';
 
 export type EmailMessage = {
   from: string;
@@ -21,12 +21,12 @@ export const NodeMailServiceAdapter = async (options: {
   const { attachments, to, html, subject, description } = options;
 
   const transporter = createTransport({
-    host: configurations.implementations.mailSMTP.host,
-    port: configurations.implementations.mailSMTP.port,
+    host: config.implementations.mailSMTP.host,
+    port: config.implementations.mailSMTP.port,
     secure: false, // true for 465, false for other ports
     auth: {
-      user: configurations.implementations.mailSMTP.user, // generated ethereal user
-      pass: configurations.implementations.mailSMTP.pass, // generated ethereal password
+      user: config.implementations.mailSMTP.user, // generated ethereal user
+      pass: config.implementations.mailSMTP.pass, // generated ethereal password
     },
     tls: {
       rejectUnauthorized: false,
@@ -34,7 +34,7 @@ export const NodeMailServiceAdapter = async (options: {
   });
 
   const mailOptions: EmailMessage = {
-    from: `${configurations.datasite.name} ${configurations.implementations.mailSMTP.email}`, // sender address
+    from: `${config.datasite.name} ${config.implementations.mailSMTP.email}`, // sender address
     to,
     subject: subject,
     text: description,

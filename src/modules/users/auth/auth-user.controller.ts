@@ -31,7 +31,7 @@ import { JwtPayloadType } from '../users.type';
 import { CheckUserService } from '../middleware/check-user.service';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
-import { configurations } from '../../../app/configurations/index';
+import { config } from '../../../app/config/index';
 import { authLoginJob, authPasswordResetJob } from '../users.job';
 import { OrganizationsService } from '../../organizations/organizations.service';
 
@@ -105,7 +105,7 @@ export class AuthUserController {
     });
     //const queue = 'user-register';
     //const connect = await amqplib.connect(
-    //  configurations.implementations.amqp.link,
+    //  config.implementations.amqp.link,
     //);
     //const channel = await connect.createChannel();
     //await channel.assertQueue(queue, { durable: false });
@@ -179,7 +179,7 @@ export class AuthUserController {
     /** Send information to Job */
     const queue = 'user-password-reset';
     const connect = await amqplib.connect(
-      configurations.implementations.amqp.link,
+      config.implementations.amqp.link,
     );
     const channel = await connect.createChannel();
     await channel.assertQueue(queue, { durable: false });

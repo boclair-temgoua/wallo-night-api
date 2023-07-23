@@ -1,4 +1,4 @@
-import { configurations } from '../../../app/configurations/index';
+import { config } from '../../../app/config/index';
 
 import { User } from '../../../models/User';
 
@@ -57,7 +57,7 @@ export const authLoginNotificationMail = async (options: { user: User }) => {
   <span style="font-size:16px">
   At this time, we are restricting your ability to create 
   new ${
-    configurations.datasite.name
+    config.datasite.name
   } resources by placing your account on hold. 
   Once your outstanding balance is paid, the hold will be removed immediately.
   </span><br/><br/>
@@ -66,7 +66,7 @@ export const authLoginNotificationMail = async (options: { user: User }) => {
     Please make a payment at your earliest convenience. 
     You can do this via PayPal or by adding a valid credit card to your 
     <a style="text-decoration:none" href="${
-      configurations.datasite.urlClient
+      config.datasite.urlClient
     }/account/billing"
           target="_blank">Billing Settings page</a>
   </span><br/><br/>
@@ -129,9 +129,9 @@ export const authLoginNotificationMail = async (options: { user: User }) => {
   <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; line-height: 1.5em; margin-top: 0; text-align: left; font-size: 14px;">
   If you’re having trouble clicking the "Go To Billing" button, copy and paste the URL below into your web browser: <span class="break-all" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; word-break: break-all;">
   <a href="${
-    configurations.datasite.urlClient
+    config.datasite.urlClient
   }/account/billing" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3869d4;">
-  ${configurations.datasite.urlClient}/account/billing
+  ${config.datasite.urlClient}/account/billing
   </a></span></p>
   </td>
   </tr>
@@ -153,17 +153,17 @@ export const authLoginNotificationMail = async (options: { user: User }) => {
     <p style="--text-opacity: 1; color: #263238; color: rgba(38, 50, 56, var(--text-opacity));">
       Use of our service and website is subject to our
       <a href="${
-        configurations.datasite.urlClient
+        config.datasite.urlClient
       }" class="hover-underline" style="--text-opacity: 1; color: #7367f0; color: rgba(115, 103, 240, var(--text-opacity)); text-decoration: none;">Terms of Use</a> and
       <a href="${
-        configurations.datasite.urlClient
+        config.datasite.urlClient
       }" class="hover-underline" style="--text-opacity: 1; color: #7367f0; color: rgba(115, 103, 240, var(--text-opacity)); text-decoration: none;">Privacy Policy</a>.
     </p>
   </td>
   </tr>
   <td class="content-cell" align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; max-width: 100vw; padding: 32px;">
   <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; line-height: 1.5em; margin-top: 0; color: #b0adc5; font-size: 12px; text-align: center;">© 2022 - ${new Date().getFullYear()} ${
-    configurations.datasite.name
+    config.datasite.name
   }. All rights reserved.</p>
   
   </td>
@@ -181,7 +181,7 @@ export const authLoginNotificationMail = async (options: { user: User }) => {
   // create reusable transporter object using the default SMTP transport
   // await NodeMailServiceAdapter({
   //   to: [`${user.email}`],
-  //   subject: `${configurations.datasite.name} - Notification access to the Customer Area`,
+  //   subject: `${config.datasite.name} - Notification access to the Customer Area`,
   //   html: output,
   // });
 };

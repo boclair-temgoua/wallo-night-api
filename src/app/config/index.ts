@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import { TypeDatabase } from '../databases/orm';
 dotenv.config();
 
-export const configurations = {
+export const config = {
   /**
    * Node environment
    */
@@ -11,6 +11,10 @@ export const configurations = {
    * Site
    */
   datasite: {
+    amount: {
+      minAmount: Number(process.env.MIN_AMOUNT) || 2,
+      maxAmount: Number(process.env.MAX_AMOUNT) || 400,
+    },
     name: process.env.NODE_NAME,
     url: process.env.NODE_APP_URL,
     pricingBilling: Number(process.env.PRICING_BILLING_VOUCHER),

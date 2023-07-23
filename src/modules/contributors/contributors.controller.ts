@@ -42,7 +42,7 @@ import {
   CreateOneNewUserContributorsDto,
   UpdateRoleContributorDto,
 } from './contributors.dto';
-import { configurations } from '../../app/configurations/index';
+import { config } from '../../app/config/index';
 
 @Controller('contributors')
 export class ContributorsController {
@@ -188,7 +188,7 @@ export class ContributorsController {
     /** Send notification to Contributor */
     const queue = 'user-contributor-create';
     const connect = await amqplib.connect(
-      configurations.implementations.amqp.link,
+      config.implementations.amqp.link,
     );
     // const channel = await connect.createChannel();
     // await channel.assertQueue(queue, { durable: false });

@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Discount } from '../../models/Discount';
+import { Discount } from '../../models';
 import { Repository, Brackets } from 'typeorm';
 import {
   CreateDiscountsOptions,

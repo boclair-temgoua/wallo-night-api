@@ -1,9 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Product } from './Product';
 import { BaseEntity } from '../app/databases/common';
 import { Donation } from './Donation';
@@ -25,6 +20,9 @@ export class Currency extends BaseEntity {
 
   @Column({ type: 'float', nullable: true })
   amount: number;
+
+  @Column({ default: true, type: 'boolean' })
+  isActive: boolean;
 
   @OneToMany(() => Product, (product) => product.currency)
   products: Product[];

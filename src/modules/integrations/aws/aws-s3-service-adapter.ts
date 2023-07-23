@@ -5,12 +5,12 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { S3 } from 'aws-sdk';
-import { configurations } from '../../../app/configurations';
+import { config } from '../../../app/config';
 
 const awsClient = new S3({
-  region: configurations.implementations.aws.region,
-  accessKeyId: configurations.implementations.aws.accessKey,
-  secretAccessKey: configurations.implementations.aws.secretKey,
+  region: config.implementations.aws.region,
+  accessKeyId: config.implementations.aws.accessKey,
+  secretAccessKey: config.implementations.aws.secretKey,
 });
 
 export const awsS3ServiceAdapter = async (data: {
@@ -22,14 +22,14 @@ export const awsS3ServiceAdapter = async (data: {
   const { file, name, mimeType, folder } = data;
 
   const params = {
-    Bucket: `${configurations.implementations.aws.bucket}/${folder}`,
+    Bucket: `${config.implementations.aws.bucket}/${folder}`,
     Key: name,
     Body: file,
     ACL: 'public-read',
     ContentType: mimeType,
     ContentDisposition: 'inline',
     CreateBucketConfiguration: {
-      LocationConstraint: configurations.implementations.aws.region,
+      LocationConstraint: config.implementations.aws.region,
     },
   };
 
@@ -41,14 +41,14 @@ export const awsS3ServiceAdapter = async (data: {
 export const getFile = async (key: string, folder: string) => {
   const awsClient = new S3Client({
     credentials: {
-      accessKeyId: configurations.implementations.aws.accessKey,
-      secretAccessKey: configurations.implementations.aws.secretKey,
+      accessKeyId: config.implementations.aws.accessKey,
+      secretAccessKey: config.implementations.aws.secretKey,
     },
-    region: configurations.implementations.aws.region,
+    region: config.implementations.aws.region,
   });
 
   const command = new GetObjectCommand({
-    Bucket: configurations.implementations.aws.bucket,
+    Bucket: config.implementations.aws.bucket,
     Key: key,
   });
   const response = await awsClient.send(command);

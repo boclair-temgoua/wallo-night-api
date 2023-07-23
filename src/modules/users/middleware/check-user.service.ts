@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { useCatch } from '../../../app/utils/use-catch';
 import { sign, verify } from 'jsonwebtoken';
-import { configurations } from '../../../app/configurations';
+import { config } from '../../../app/config';
 import { UsersService } from '../users.service';
 import { JwtPayloadType } from '../users.type';
 
@@ -34,18 +34,18 @@ export class CheckUserService {
   async createJwtToken(type: 'access' | 'refresh', payload: JwtPayloadType) {
     const secret =
       type === 'access'
-        ? configurations.jwt.secret
-        : configurations.jwt.refreshSecret;
+        ? config.jwt.secret
+        : config.jwt.refreshSecret;
     const expiresIn =
       type === 'access'
-        ? configurations.jwt.expiration
-        : configurations.jwt.refreshExpiration;
+        ? config.jwt.expiration
+        : config.jwt.refreshExpiration;
 
     return sign(payload, secret, { expiresIn });
   }
 
   async verifyToken(token: string) {
-    const secret = configurations.jwt.secret;
+    const secret = config.jwt.secret;
     return new Promise((resolve, reject) => {
       return verify(token, secret, (error, result) => {
         if (error) {

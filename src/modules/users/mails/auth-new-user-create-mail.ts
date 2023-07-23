@@ -1,4 +1,4 @@
-import { configurations } from '../../../app/configurations/index';
+import { config } from '../../../app/config/index';
 
 export const authNewUserCreateMail = async (options: { resetPassword }) => {
   const { resetPassword } = { ...options };
@@ -49,7 +49,7 @@ export const authNewUserCreateMail = async (options: { resetPassword }) => {
   <td class="content-cell" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; max-width: 100vw; padding: 32px;">
 
   <span style="font-size:16px">
-  You have been invited to register a ${configurations.datasite.name} account
+  You have been invited to register a ${config.datasite.name} account
   </span><br/><br/>
 
   <table class="subcopy" width="100%" cellpadding="0" cellspacing="0" role="presentation">
@@ -67,13 +67,13 @@ export const authNewUserCreateMail = async (options: { resetPassword }) => {
   text-align: center;
   text-decoration: none;
   width:100%" href="${
-    configurations.datasite.urlClient
+    config.datasite.urlClient
   }/registration/confirm?token=${resetPassword.token}">Confirm registration</a>
   </td>
   </tr>
   </table><br/><br/>
   <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">Thanks,<br>The ${
-    configurations.datasite.name
+    config.datasite.name
   } Team</p>
   
   
@@ -82,10 +82,10 @@ export const authNewUserCreateMail = async (options: { resetPassword }) => {
   <td style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
   <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; line-height: 1.5em; margin-top: 0; text-align: left; font-size: 14px;">If you’re having trouble clicking the "Reset Password" button, copy and paste the URL below
   into your web browser is valid for 30 days: <span class="break-all" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; word-break: break-all;">
-  <a href="${configurations.datasite.urlClient}/registration/confirm?token=${
+  <a href="${config.datasite.urlClient}/registration/confirm?token=${
     resetPassword.token
   }" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3869d4;">
-  ${configurations.datasite.urlClient}/registration/confirm?token=${
+  ${config.datasite.urlClient}/registration/confirm?token=${
     resetPassword.token
   }
   </a></span></p>
@@ -108,17 +108,17 @@ export const authNewUserCreateMail = async (options: { resetPassword }) => {
     <p style="--text-opacity: 1; color: #263238; color: rgba(38, 50, 56, var(--text-opacity));">
       Use of our service and website is subject to our
       <a href="${
-        configurations.datasite.urlClient
+        config.datasite.urlClient
       }" class="hover-underline" style="--text-opacity: 1; color: #7367f0; color: rgba(115, 103, 240, var(--text-opacity)); text-decoration: none;">Terms of Use</a> and
       <a href="${
-        configurations.datasite.urlClient
+        config.datasite.urlClient
       }" class="hover-underline" style="--text-opacity: 1; color: #7367f0; color: rgba(115, 103, 240, var(--text-opacity)); text-decoration: none;">Privacy Policy</a>.
     </p>
   </td>
   </tr>
   <td class="content-cell" align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; max-width: 100vw; padding: 32px;">
   <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; line-height: 1.5em; margin-top: 0; color: #b0adc5; font-size: 12px; text-align: center;">© 2022 - ${new Date().getFullYear()} ${
-    configurations.datasite.name
+    config.datasite.name
   }. All rights reserved.</p>
   
   </td>
@@ -136,7 +136,7 @@ export const authNewUserCreateMail = async (options: { resetPassword }) => {
   // create reusable transporter object using the default SMTP transport
   // await NodeMailServiceAdapter({
   //   to: [`${resetPassword.email}`],
-  //   subject: `You have been invited to join ${resetPassword?.organizationInUtilization?.name} on ${configurations.datasite.name}`,
+  //   subject: `You have been invited to join ${resetPassword?.organizationInUtilization?.name} on ${config.datasite.name}`,
   //   html: output,
   // });
 };

@@ -1,19 +1,19 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { configurations } from '../../configurations/index';
+import { config } from '../../config/index';
 
 export type TypeDatabase = 'mysql' | 'postgres';
 
 export const AppDataSource = new DataSource({
-  // url: configurations.database.url,
-  type: configurations.database.postgres.type,
-  host: configurations.database.postgres.host,
-  port: configurations.database.postgres.port,
-  username: configurations.database.postgres.username,
-  password: configurations.database.postgres.password,
-  database: configurations.database.postgres.name,
-  ssl: configurations.database.postgres.ssl === 'true' ? true : false,
+  // url: config.database.url,
+  type: config.database.postgres.type,
+  host: config.database.postgres.host,
+  port: config.database.postgres.port,
+  username: config.database.postgres.username,
+  password: config.database.postgres.password,
+  database: config.database.postgres.name,
+  ssl: config.database.postgres.ssl === 'true' ? true : false,
   extra:
-    configurations.database.postgres.ssl === 'true'
+    config.database.postgres.ssl === 'true'
       ? {
           ssl: {
             rejectUnauthorized: false,
@@ -21,7 +21,7 @@ export const AppDataSource = new DataSource({
         }
       : {},
   synchronize: false,
-  logging: configurations.database.postgres.logging === 'true' ? true : false,
+  logging: config.database.postgres.logging === 'true' ? true : false,
   entities: [`${__dirname}/../../../models/**/*.{ts,js}`],
   migrations: [`${__dirname}/../migrations/**/*.{ts,js}`],
   migrationsRun: false,
