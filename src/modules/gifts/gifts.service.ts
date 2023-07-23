@@ -25,15 +25,36 @@ export class GiftsService {
   ) {}
 
   async findAll(selections: GetGiftsSelections): Promise<any> {
-    const { search, pagination, organizationId } = selections;
+    const { search, pagination, organizationId, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('gift')
-      .where('gift.deletedAt IS NULL');
+      .select('gift.id', 'id')
+      .addSelect('gift.title', 'title')
+      .addSelect('gift.amount', 'amount')
+      .addSelect('gift.image', 'image')
+      .addSelect('gift.isActive', 'isActive')
+      .addSelect('gift.createdAt', 'createdAt')
+      .addSelect('gift.expiredAt', 'expiredAt')
+      .addSelect('gift.description', 'description')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+        'code', "currency"."code",
+        'symbol', "currency"."symbol"
+    ) AS "currency"`,
+      )
+      .where('gift.deletedAt IS NULL')
+      .leftJoin('gift.currency', 'currency');
 
     if (organizationId) {
       query = query.andWhere('gift.organizationId = :organizationId', {
         organizationId,
+      });
+    }
+
+    if (userId) {
+      query = query.andWhere('gift.userId = :userId', {
+        userId,
       });
     }
 
@@ -57,7 +78,7 @@ export class GiftsService {
         .orderBy('gift.createdAt', pagination?.sort)
         .take(pagination.take)
         .skip(pagination.skip)
-        .getMany(),
+        .getRawMany(),
     );
     if (error) throw new NotFoundException(error);
 
