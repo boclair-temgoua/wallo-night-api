@@ -8,13 +8,11 @@ export type GetContributionsSelections = {
   userId?: Contribution['userId'];
   donationId?: Contribution['donationId'];
   giftId?: Contribution['giftId'];
-  organizationId?: Contribution['organizationId'];
 };
 
 export type GetOneContributionSelections = {
   type?: Contribution['type'];
   userId?: Contribution['userId'];
-  organizationId?: Contribution['organizationId'];
   contributionId?: Contribution['id'];
 };
 

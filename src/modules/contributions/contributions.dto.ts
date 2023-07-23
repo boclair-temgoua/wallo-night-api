@@ -24,11 +24,6 @@ export class SearchContributionDto {
   @IsString()
   @IsUUID()
   userId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
 }
 
 export class CreateOneContributionDto {
@@ -37,6 +32,11 @@ export class CreateOneContributionDto {
   @IsUUID()
   donationId: string;
 
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userSendId: string;
+  
   @IsOptional()
   @IsString()
   @IsUUID()

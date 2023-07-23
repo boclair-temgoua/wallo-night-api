@@ -17,7 +17,6 @@ import {
 } from './contributions.type';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { FilterQueryType } from '../../app/utils/search-query/search-query.dto';
 
 @Injectable()
 export class ContributionsService {
@@ -29,7 +28,7 @@ export class ContributionsService {
   async findAll(
     selections: GetContributionsSelections,
   ): Promise<GetContributionsSelections | any> {
-    const { userId, search, giftId, donationId, pagination, organizationId } =
+    const { userId, search, giftId, donationId, pagination } =
       selections;
 
     let query = this.driver
@@ -40,7 +39,6 @@ export class ContributionsService {
       .addSelect('contribution.userId', 'userId')
       .addSelect('contribution.type', 'type')
       .addSelect('contribution.donationId', 'donationId')
-      .addSelect('contribution.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
         'firstName', "profile"."firstName",
@@ -66,17 +64,10 @@ export class ContributionsService {
     ) AS "donation"`,
       )
       .where('contribution.deletedAt IS NULL')
-      .leftJoin('contribution.organization', 'organization')
       .leftJoin('contribution.user', 'user')
       .leftJoin('contribution.gift', 'gift')
       .leftJoin('contribution.donation', 'donation')
       .leftJoin('user.profile', 'profile');
-
-    if (organizationId) {
-      query = query.andWhere('contribution.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
 
     if (giftId) {
       query = query.andWhere('contribution.giftId = :giftId', { giftId });
@@ -128,7 +119,7 @@ export class ContributionsService {
   }
 
   async findOneBy(selections: GetOneContributionSelections): Promise<any> {
-    const { type, userId, organizationId, contributionId } = selections;
+    const { type, userId, contributionId } = selections;
 
     let query = this.driver
       .createQueryBuilder('contribution')
@@ -138,7 +129,6 @@ export class ContributionsService {
       .addSelect('contribution.userId', 'userId')
       .addSelect('contribution.type', 'type')
       .addSelect('contribution.donationId', 'donationId')
-      .addSelect('contribution.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'firstName', "profile"."firstName",
@@ -159,12 +149,6 @@ export class ContributionsService {
       query = query.andWhere('contribution.type = :type', { type });
     }
 
-    if (organizationId) {
-      query = query.andWhere('contribution.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
-
     if (userId) {
       query = query.andWhere('contribution.userId = :userId', { userId });
     }
@@ -182,7 +166,7 @@ export class ContributionsService {
 
   /** Create one Contribution to the database. */
   async createOne(options: CreateContributionOptions): Promise<Contribution> {
-    const { amount, type, userId, organizationId, donationId, giftId } =
+    const { amount, type, userId, donationId, giftId } =
       options;
 
     const contribution = new Contribution();
@@ -191,7 +175,6 @@ export class ContributionsService {
     contribution.userId = userId;
     contribution.giftId = giftId;
     contribution.donationId = donationId;
-    contribution.organizationId = organizationId;
     const query = this.driver.save(contribution);
 
     const [error, result] = await useCatch(query);

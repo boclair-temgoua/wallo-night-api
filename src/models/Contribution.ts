@@ -4,7 +4,7 @@ import {
   Column,
   JoinColumn,
   ManyToOne,
-  Generated,
+  OneToOne,
   Relation,
 } from 'typeorm';
 import { ContributorRole } from '../modules/contributors/contributors.type';
@@ -14,6 +14,7 @@ import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 import { Donation } from './Donation';
 import { Gift } from './Gift';
+import { Transaction } from './Transaction';
 
 @Entity('contribution')
 export class Contribution extends BaseDeleteEntity {
@@ -37,14 +38,6 @@ export class Contribution extends BaseDeleteEntity {
   user?: User;
 
   @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.contributors, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  organization?: Relation<Organization>;
-
-  @Column({ type: 'uuid', nullable: true })
   donationId?: string;
   @ManyToOne(() => Donation, (donation) => donation.contributions, {
     onDelete: 'CASCADE',
@@ -59,4 +52,9 @@ export class Contribution extends BaseDeleteEntity {
   })
   @JoinColumn()
   gift?: Relation<Gift>;
+
+  @OneToOne(() => Transaction, (transaction) => transaction.contribution, {
+    onDelete: 'CASCADE',
+  })
+  transaction?: Transaction;
 }

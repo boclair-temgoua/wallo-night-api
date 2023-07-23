@@ -2,10 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  Index,
+  OneToOne,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   Relation,
 } from 'typeorm';
 import { OrderProduct } from './OrderProduct';
@@ -15,6 +14,7 @@ import { Organization } from './Organization';
 import { Donation } from './Donation';
 import { Discount } from './Discount';
 import { Gift } from './Gift';
+import { Contribution } from './Contribution';
 
 @Entity('transaction')
 export class Transaction extends BaseEntity {
@@ -47,6 +47,14 @@ export class Transaction extends BaseEntity {
   donation?: Relation<Donation>;
 
   @Column({ type: 'uuid', nullable: true })
+  contributionId?: string;
+  @OneToOne(() => Contribution, (contribution) => contribution.transaction, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  contribution?: Relation<Contribution>;
+
+  @Column({ type: 'uuid', nullable: true })
   giftId?: string;
   @ManyToOne(() => Gift, (gift) => gift.transactions, {
     onDelete: 'CASCADE',
@@ -55,12 +63,12 @@ export class Transaction extends BaseEntity {
   gift?: Relation<Gift>;
 
   @Column({ type: 'uuid', nullable: true })
-  userISendId?: string;
+  userSendId?: string;
   @ManyToOne(() => User, (user) => user.transactions, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'userISendId', referencedColumnName: 'id' })
-  userISend?: Relation<User>;
+  @JoinColumn({ name: 'userSendId', referencedColumnName: 'id' })
+  userSend?: Relation<User>;
 
   @Column({ type: 'uuid', nullable: true })
   userReceiveId?: string;

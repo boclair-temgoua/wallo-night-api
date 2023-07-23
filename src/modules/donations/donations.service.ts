@@ -38,9 +38,11 @@ export class DonationsService {
       .addSelect('donation.title', 'title')
       .addSelect('donation.amount', 'amount')
       .addSelect('donation.image', 'image')
+      .addSelect('donation.userId', 'userId')
       .addSelect('donation.isActive', 'isActive')
       .addSelect('donation.createdAt', 'createdAt')
       .addSelect('donation.expiredAt', 'expiredAt')
+      .addSelect('donation.organizationId', 'organizationId')
       .addSelect('donation.description', 'description')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -60,19 +62,10 @@ export class DonationsService {
         'url', "profile"."url"
     ) AS "profile"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-        'id', "organization"."id",
-        'color', "organization"."color",
-        'userId', "organization"."userId",
-        'name', "organization"."name"
-    ) AS "organization"`,
-      )
       .where('user.deletedAt IS NULL')
       .leftJoin('donation.user', 'user')
       .leftJoin('user.profile', 'profile')
-      .leftJoin('donation.currency', 'currency')
-      .leftJoin('donation.organization', 'organization');
+      .leftJoin('donation.currency', 'currency');
 
     if (userId) {
       query = query.where('donation.userId = :userId', { userId });
@@ -117,9 +110,11 @@ export class DonationsService {
       .addSelect('donation.title', 'title')
       .addSelect('donation.image', 'image')
       .addSelect('donation.amount', 'amount')
+      .addSelect('donation.userId', 'userId')
       .addSelect('donation.isActive', 'isActive')
       .addSelect('donation.createdAt', 'createdAt')
       .addSelect('donation.expiredAt', 'expiredAt')
+      .addSelect('donation.organizationId', 'organizationId')
       .addSelect('donation.description', 'description')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -139,20 +134,11 @@ export class DonationsService {
           'url', "profile"."url"
       ) AS "profile"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "organization"."id",
-          'color', "organization"."color",
-          'userId', "organization"."userId",
-          'name', "organization"."name"
-      ) AS "organization"`,
-      )
       .where('donation.deletedAt IS NULL')
       .andWhere('donation.expiredAt >= NOW()')
       .leftJoin('donation.user', 'user')
       .leftJoin('user.profile', 'profile')
-      .leftJoin('donation.currency', 'currency')
-      .leftJoin('donation.organization', 'organization');
+      .leftJoin('donation.currency', 'currency');
 
     if (donationId) {
       query = query.andWhere('donation.id = :id', { id: donationId });

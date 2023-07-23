@@ -93,15 +93,27 @@ export class TransactionsService {
 
   /** Create one Transaction to the database. */
   async createOne(options: CreateTransactionOptions): Promise<Transaction> {
-    const { amount, donationId, title, description, userISendId, userISend } =
-      options;
+    const {
+      amount,
+      donationId,
+      title,
+      description,
+      contributionId,
+      userSendId,
+      userReceiveId,
+      userId,
+      organizationId,
+    } = options;
 
     const transaction = new Transaction();
     transaction.title = title;
     transaction.donationId = donationId;
-    transaction.userISendId = userISendId;
-    transaction.userISend = userISend;
+    transaction.userSendId = userSendId;
+    transaction.userReceiveId = userReceiveId;
     transaction.amount = amount;
+    transaction.userId = userId;
+    transaction.organizationId = organizationId;
+    transaction.contributionId = contributionId;
     transaction.description = description;
 
     const query = this.driver.save(transaction);

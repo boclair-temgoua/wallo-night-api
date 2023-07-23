@@ -36,12 +36,14 @@ import {
 import { config } from '../../app/config/index';
 import { GiftsService } from '../gifts/gifts.service';
 import { DonationsService } from '../donations/donations.service';
+import { TransactionsService } from '../transactions/transactions.service';
 
 @Controller('contributions')
 export class ContributionsController {
   constructor(
     private readonly giftsService: GiftsService,
     private readonly donationsService: DonationsService,
+    private readonly transactionsService: TransactionsService,
     private readonly contributionsService: ContributionsService,
   ) {}
 
@@ -54,7 +56,7 @@ export class ContributionsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: SearchContributionDto,
   ) {
-    const { donationId, giftId, userId, organizationId } = query;
+    const { donationId, giftId, userId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -66,21 +68,18 @@ export class ContributionsController {
       donationId,
       giftId,
       userId,
-      organizationId,
     });
 
     return reply({ res, results: Contributions });
   }
 
   @Post(`/donation`)
-  @UseGuards(JwtAuthGuard)
   async createOneByDonation(
     @Res() res,
     @Req() req,
     @Body() body: CreateOneContributionDto,
   ) {
-    const { user } = req;
-    const { amount, donationId } = body;
+    const { amount, donationId, userSendId } = body;
 
     const findOneDonation = await this.donationsService.findOneBy({
       donationId,
@@ -91,12 +90,62 @@ export class ContributionsController {
         HttpStatus.NOT_FOUND,
       );
 
-    await this.contributionsService.createOne({
+    const contribution = await this.contributionsService.createOne({
       amount: amount * 100,
       donationId,
-      userId: user?.id,
+      userId: userSendId,
       type: FilterQueryType.DONATION,
-      organizationId: user?.organizationInUtilizationId,
+    });
+
+    await this.transactionsService.createOne({
+      contributionId: contribution?.id,
+      description: `Contribution donation ${findOneDonation?.title}`,
+      amount: contribution?.amount,
+      userId: findOneDonation?.userId,
+      userReceiveId: findOneDonation?.userId,
+      userSendId: userSendId ?? null,
+      donationId: findOneDonation?.id,
+      organizationId: findOneDonation?.organizationId,
+    });
+
+    return reply({ res, results: 'contribution save successfully' });
+  }
+
+  @Post(`/gift`)
+  @UseGuards(JwtAuthGuard)
+  async createOneByGift(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateOneContributionDto,
+  ) {
+    const { user } = req;
+    const { amount, giftId, userSendId } = body;
+
+    const findOneGift = await this.giftsService.findOneBy({
+      giftId,
+    });
+    if (!findOneGift)
+      throw new HttpException(
+        `Gift ${giftId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const contribution = await this.contributionsService.createOne({
+      amount: amount * 100,
+      giftId,
+      userId: user?.id,
+      type: FilterQueryType.GIFT,
+    });
+
+    await this.transactionsService.createOne({
+      contributionId: contribution?.id,
+      description: `Contribution gift ${findOneGift?.title}`,
+      amount: contribution?.amount,
+      userId: findOneGift?.userId,
+      userReceiveId: findOneGift?.userId,
+      userSendId: userSendId ?? null,
+      giftId: findOneGift?.id,
+      organizationId: findOneGift?.organizationId,
     });
 
     return reply({ res, results: 'contribution save successfully' });
