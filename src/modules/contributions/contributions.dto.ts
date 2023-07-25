@@ -34,7 +34,7 @@ export class CreateOneContributionDto {
   @IsEnum(CurrencyCode)
   currency: CurrencyCode;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsUUID()
   campaignId: string;
@@ -55,4 +55,16 @@ export class CreateOneContributionDto {
   @Min(1)
   @Type(() => Number)
   amount: number;
+}
+
+export class CreateOneContributionGiftDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  giftId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userSendId: string;
 }

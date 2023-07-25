@@ -28,6 +28,7 @@ import { ContributionsService } from './contributions.service';
 import { JwtAuthGuard } from '../users/middleware';
 import {
   CreateOneContributionDto,
+  CreateOneContributionGiftDto,
   SearchContributionDto,
 } from './contributions.dto';
 import { config } from '../../app/config/index';
@@ -123,14 +124,12 @@ export class ContributionsController {
   }
 
   @Post(`/gift`)
-  @UseGuards(JwtAuthGuard)
   async createOneByGift(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOneContributionDto,
+    @Body() body: CreateOneContributionGiftDto,
   ) {
-    const { user } = req;
-    const { amount, giftId, currency, userSendId } = body;
+    const { giftId, userSendId } = body;
 
     const findOneGift = await this.giftsService.findOneBy({
       giftId,
@@ -140,17 +139,11 @@ export class ContributionsController {
         `Gift ${giftId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
-
-    const findOneCurrency = await this.currenciesService.findOneBy({
-      code: currency,
-    });
-    validationAmount({ amount: amount, currency: findOneCurrency });
-
     const contribution = await this.contributionsService.createOne({
-      amount: amount * 100,
+      amount: Number(findOneGift?.amount),
       giftId,
-      userId: user?.id,
-      currencyId: findOneCurrency?.id,
+      userId: userSendId,
+      currencyId: findOneGift?.currencyId,
       type: FilterQueryType.GIFT,
     });
 

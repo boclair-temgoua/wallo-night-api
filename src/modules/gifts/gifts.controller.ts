@@ -71,10 +71,10 @@ export class GiftsController {
     @Body() body: CreateOrUpdateGiftsDto,
   ) {
     const { user } = req;
-    const { title, amount, currencyId, expiredAt, description } = body;
+    const { title, amount, currency, expiredAt, description } = body;
 
     const findOneCurrency = await this.currenciesService.findOneBy({
-      currencyId: currencyId,
+      code: currency,
     });
 
     validationAmount({ amount, currency: findOneCurrency });
@@ -82,10 +82,11 @@ export class GiftsController {
     await this.giftsService.createOne({
       title,
       amount,
-      currencyId,
+      currencyId: findOneCurrency?.id,
       expiredAt,
       description,
       userId: user?.id,
+      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: 'Gift created successfully' });
@@ -100,6 +101,7 @@ export class GiftsController {
     @Body() body: CreateOrUpdateGiftsDto,
     @Param('giftId', ParseUUIDPipe) giftId: string,
   ) {
+    const { title, amount, currency, expiredAt, description } = body;
     const findOneGift = await this.giftsService.findOneBy({
       giftId,
     });
@@ -110,12 +112,21 @@ export class GiftsController {
       );
 
     const findOneCurrency = await this.currenciesService.findOneBy({
-      currencyId: body?.currencyId,
+      code: currency,
     });
 
     validationAmount({ amount: body?.amount, currency: findOneCurrency });
 
-    await this.giftsService.updateOne({ giftId }, { ...body });
+    await this.giftsService.updateOne(
+      { giftId },
+      {
+        title,
+        amount,
+        currencyId: findOneCurrency?.id,
+        expiredAt,
+        description,
+      },
+    );
 
     return reply({ res, results: 'Gift updated successfully' });
   }

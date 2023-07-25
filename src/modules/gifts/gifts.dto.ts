@@ -11,7 +11,9 @@ import {
   MinLength,
   IsUUID,
   MinDate,
+  IsEnum,
 } from 'class-validator';
+import { CurrencyCode } from '../currencies/currencies.type';
 
 export class CreateOrUpdateGiftsDto {
   @IsNotEmpty()
@@ -29,8 +31,8 @@ export class CreateOrUpdateGiftsDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsUUID()
-  currencyId: string;
+  @IsEnum(CurrencyCode)
+  currency: CurrencyCode;
 
   @IsNotEmpty()
   @Transform(({ value }) => value && new Date(value))

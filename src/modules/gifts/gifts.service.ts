@@ -33,18 +33,30 @@ export class GiftsService {
       .addSelect('gift.title', 'title')
       .addSelect('gift.amount', 'amount')
       .addSelect('gift.image', 'image')
+      .addSelect('gift.currencyId', 'currencyId')
       .addSelect('gift.isActive', 'isActive')
       .addSelect('gift.createdAt', 'createdAt')
       .addSelect('gift.expiredAt', 'expiredAt')
       .addSelect('gift.description', 'description')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-        'code', "currency"."code",
-        'symbol', "currency"."symbol"
-    ) AS "currency"`,
+    'code', "currency"."code",
+    'symbol', "currency"."symbol"
+) AS "currency"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT jsonb_build_object(
+          'amount', CAST((SUM("contr"."amountConvert") * "currency"."amount") / 100 AS BIGINT),
+          'total', CAST(COUNT(DISTINCT contr) AS BIGINT)
+          )
+          FROM "contribution" "contr"
+          WHERE "contr"."giftId" = "gift"."id"
+          AND "contr"."deletedAt" IS NULL
+          GROUP BY "contr"."giftId", "gift"."id"
+          ) AS "contribution"`,
       )
       .where('gift.deletedAt IS NULL')
-      .andWhere('gift.expiredAt >= now()')
       .leftJoin('gift.currency', 'currency');
 
     if (organizationId) {
@@ -98,6 +110,7 @@ export class GiftsService {
       .addSelect('gift.title', 'title')
       .addSelect('gift.amount', 'amount')
       .addSelect('gift.image', 'image')
+      .addSelect('gift.currencyId', 'currencyId')
       .addSelect('gift.isActive', 'isActive')
       .addSelect('gift.createdAt', 'createdAt')
       .addSelect('gift.expiredAt', 'expiredAt')
@@ -115,8 +128,9 @@ export class GiftsService {
           'total', CAST(COUNT(DISTINCT contr) AS BIGINT)
           )
           FROM "contribution" "contr"
-          WHERE "contr"."campaignId" = "campaign"."id"
+          WHERE "contr"."giftId" = "gift"."id"
           AND "contr"."deletedAt" IS NULL
+          GROUP BY "contr"."giftId", "gift"."id"
           ) AS "contribution"`,
       )
       .where('gift.deletedAt IS NULL')
@@ -127,7 +141,7 @@ export class GiftsService {
       query = query.andWhere('gift.id = :id', { id: giftId });
     }
 
-    const [error, result] = await useCatch(query.getOne());
+    const [error, result] = await useCatch(query.getRawOne());
     if (error) throw new HttpException('gift not found', HttpStatus.NOT_FOUND);
 
     return result;

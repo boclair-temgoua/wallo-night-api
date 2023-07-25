@@ -50,7 +50,6 @@ export class CampaignsService {
     ) AS "profile"`,
       )
       .where('Campaign.deletedAt IS NULL')
-      .andWhere('Campaign.expiredAt >= now()')
       .leftJoin('Campaign.user', 'user')
       .leftJoin('user.profile', 'profile');
 
