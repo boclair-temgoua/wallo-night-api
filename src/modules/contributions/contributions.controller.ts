@@ -32,14 +32,17 @@ import {
 } from './contributions.dto';
 import { config } from '../../app/config/index';
 import { GiftsService } from '../gifts/gifts.service';
-import { DonationsService } from '../donations/donations.service';
+import { CampaignsService } from '../campaigns/campaigns.service';
 import { TransactionsService } from '../transactions/transactions.service';
+import { validationAmount } from '../../app/utils/decorators/date.decorator';
+import { CurrenciesService } from '../currencies/currencies.service';
 
 @Controller('contributions')
 export class ContributionsController {
   constructor(
     private readonly giftsService: GiftsService,
-    private readonly donationsService: DonationsService,
+    private readonly campaignsService: CampaignsService,
+    private readonly currenciesService: CurrenciesService,
     private readonly transactionsService: TransactionsService,
     private readonly contributionsService: ContributionsService,
   ) {}
@@ -53,7 +56,7 @@ export class ContributionsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: SearchContributionDto,
   ) {
-    const { donationId, giftId, userId } = query;
+    const { campaignId, giftId, userId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -62,7 +65,7 @@ export class ContributionsController {
     const Contributions = await this.contributionsService.findAll({
       search,
       pagination,
-      donationId,
+      campaignId,
       giftId,
       userId,
     });
@@ -70,40 +73,50 @@ export class ContributionsController {
     return reply({ res, results: Contributions });
   }
 
-  @Post(`/donation`)
-  async createOneByDonation(
+  @Post(`/campaign`)
+  async createOneByCampaign(
     @Res() res,
     @Req() req,
     @Body() body: CreateOneContributionDto,
   ) {
-    const { amount, donationId, userSendId } = body;
+    const { amount, campaignId, currency, userSendId } = body;
 
-    const findOneDonation = await this.donationsService.findOneBy({
-      donationId,
+    const findOneCampaign = await this.campaignsService.findOneBy({
+      campaignId,
     });
-    if (!findOneDonation)
+    if (!findOneCampaign)
       throw new HttpException(
-        `Donation ${donationId} don't exists please change`,
+        `Campaign ${campaignId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
+    const findOneCurrency = await this.currenciesService.findOneBy({
+      code: currency,
+    });
+    const { amountConvert } = validationAmount({
+      amount: amount,
+      currency: findOneCurrency,
+    });
+
     const contribution = await this.contributionsService.createOne({
       amount: amount * 100,
-      donationId,
+      campaignId,
       userId: userSendId,
-      type: FilterQueryType.DONATION,
+      amountConvert: amountConvert * 100,
+      currencyId: findOneCurrency?.id,
+      type: FilterQueryType.CAMPAIGN,
     });
 
     /** Create transaction */
     await this.transactionsService.createOne({
       contributionId: contribution?.id,
-      description: `Contribution donation ${findOneDonation?.title}`,
+      description: `Contribution campaign ${findOneCampaign?.title}`,
       amount: contribution?.amount,
-      userId: findOneDonation?.userId,
-      userReceiveId: findOneDonation?.userId,
+      userId: findOneCampaign?.userId,
+      userReceiveId: findOneCampaign?.userId,
       userSendId: userSendId ?? null,
-      donationId: findOneDonation?.id,
-      organizationId: findOneDonation?.organizationId,
+      campaignId: findOneCampaign?.id,
+      organizationId: findOneCampaign?.organizationId,
     });
 
     return reply({ res, results: 'contribution save successfully' });
@@ -117,7 +130,7 @@ export class ContributionsController {
     @Body() body: CreateOneContributionDto,
   ) {
     const { user } = req;
-    const { amount, giftId, userSendId } = body;
+    const { amount, giftId, currency, userSendId } = body;
 
     const findOneGift = await this.giftsService.findOneBy({
       giftId,
@@ -128,10 +141,16 @@ export class ContributionsController {
         HttpStatus.NOT_FOUND,
       );
 
+    const findOneCurrency = await this.currenciesService.findOneBy({
+      code: currency,
+    });
+    validationAmount({ amount: amount, currency: findOneCurrency });
+
     const contribution = await this.contributionsService.createOne({
       amount: amount * 100,
       giftId,
       userId: user?.id,
+      currencyId: findOneCurrency?.id,
       type: FilterQueryType.GIFT,
     });
 

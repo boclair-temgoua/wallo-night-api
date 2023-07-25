@@ -28,8 +28,7 @@ export class ContributionsService {
   async findAll(
     selections: GetContributionsSelections,
   ): Promise<GetContributionsSelections | any> {
-    const { userId, search, giftId, donationId, pagination } =
-      selections;
+    const { userId, search, giftId, campaignId, pagination } = selections;
 
     let query = this.driver
       .createQueryBuilder('contribution')
@@ -38,7 +37,9 @@ export class ContributionsService {
       .addSelect('contribution.amount', 'amount')
       .addSelect('contribution.userId', 'userId')
       .addSelect('contribution.type', 'type')
-      .addSelect('contribution.donationId', 'donationId')
+      .addSelect('contribution.campaignId', 'campaignId')
+      .addSelect('contribution.currencyId', 'currencyId')
+      .addSelect('contribution.amountConvert', 'amountConvert')
       .addSelect(
         /*sql*/ `jsonb_build_object(
         'firstName', "profile"."firstName",
@@ -52,30 +53,37 @@ export class ContributionsService {
       .addSelect(
         /*sql*/ `jsonb_build_object(
         'id', "gift"."id",
-        'title', "donation"."title",
+        'title', "gift"."title",
         'amount', "gift"."amount"
     ) AS "gift"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-        'id', "donation"."id",
-        'title', "donation"."title",
-        'amount', "donation"."amount"
-    ) AS "donation"`,
+        'id', "campaign"."id",
+        'title', "campaign"."title",
+        'amount', "campaign"."amount"
+    ) AS "campaign"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'code', "currency"."code",
+          'symbol', "currency"."symbol"
+      ) AS "currency"`,
       )
       .where('contribution.deletedAt IS NULL')
       .leftJoin('contribution.user', 'user')
       .leftJoin('contribution.gift', 'gift')
-      .leftJoin('contribution.donation', 'donation')
+      .leftJoin('contribution.campaign', 'campaign')
+      .leftJoin('contribution.currency', 'currency')
       .leftJoin('user.profile', 'profile');
 
     if (giftId) {
       query = query.andWhere('contribution.giftId = :giftId', { giftId });
     }
 
-    if (donationId) {
-      query = query.andWhere('contribution.donationId = :donationId', {
-        donationId,
+    if (campaignId) {
+      query = query.andWhere('contribution.campaignId = :campaignId', {
+        campaignId,
       });
     }
 
@@ -89,7 +97,7 @@ export class ContributionsService {
           qb.where('organization.name ::text ILIKE :search', {
             search: `%${search}%`,
           })
-            .orWhere('donation.title ::text ILIKE :search', {
+            .orWhere('campaign.title ::text ILIKE :search', {
               search: `%${search}%`,
             })
             .orWhere('gift.title ::text ILIKE :search', {
@@ -128,7 +136,9 @@ export class ContributionsService {
       .addSelect('contribution.amount', 'amount')
       .addSelect('contribution.userId', 'userId')
       .addSelect('contribution.type', 'type')
-      .addSelect('contribution.donationId', 'donationId')
+      .addSelect('contribution.campaignId', 'campaignId')
+      .addSelect('contribution.currencyId', 'currencyId')
+      .addSelect('contribution.amountConvert', 'amountConvert')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'firstName', "profile"."firstName",
@@ -139,10 +149,17 @@ export class ContributionsService {
               'email', "user"."email"
           ) AS "profile"`,
       )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'code', "currency"."code",
+          'symbol', "currency"."symbol"
+      ) AS "currency"`,
+      )
       .where('contribution.deletedAt IS NULL')
       .leftJoin('contribution.user', 'user')
       .leftJoin('contribution.gift', 'gift')
-      .leftJoin('contribution.donation', 'donation')
+      .leftJoin('contribution.campaign', 'campaign')
+      .leftJoin('contribution.currency', 'currency')
       .leftJoin('user.profile', 'profile');
 
     if (type) {
@@ -166,15 +183,24 @@ export class ContributionsService {
 
   /** Create one Contribution to the database. */
   async createOne(options: CreateContributionOptions): Promise<Contribution> {
-    const { amount, type, userId, donationId, giftId } =
-      options;
+    const {
+      amount,
+      type,
+      userId,
+      campaignId,
+      currencyId,
+      giftId,
+      amountConvert,
+    } = options;
 
     const contribution = new Contribution();
     contribution.amount = amount;
     contribution.type = type;
     contribution.userId = userId;
     contribution.giftId = giftId;
-    contribution.donationId = donationId;
+    contribution.currencyId = currencyId;
+    contribution.campaignId = campaignId;
+    contribution.amountConvert = amountConvert;
     const query = this.driver.save(contribution);
 
     const [error, result] = await useCatch(query);

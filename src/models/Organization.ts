@@ -13,7 +13,8 @@ import { Contributor } from './Contributor';
 import { Product } from './Product';
 import { Transaction } from './Transaction';
 import { Discount } from './Discount';
-import { Donation } from './Donation';
+import { Campaign } from './Campaign';
+import { Gift } from './Gift';
 
 @Entity('organization')
 export class Organization extends BaseDeleteEntity {
@@ -76,8 +77,13 @@ export class Organization extends BaseDeleteEntity {
   })
   discounts: Discount[];
 
-  @OneToMany(() => Donation, (donation) => donation.organization, {
+  @OneToMany(() => Campaign, (campaign) => campaign.organization, {
     onDelete: 'CASCADE',
   })
-  donations?: Donation[];
+  campaigns?: Campaign[];
+
+  @OneToMany(() => Gift, (gift) => gift.organization, {
+    onDelete: 'CASCADE',
+  })
+  gifts?: Gift[];
 }

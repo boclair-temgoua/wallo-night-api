@@ -9,18 +9,20 @@ import {
 } from 'typeorm';
 import { User } from './User';
 import { Transaction } from './Transaction';
-import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Organization } from './Organization';
 import { Contribution } from './Contribution';
 
-@Entity('donation')
-export class Donation extends BaseDeleteEntity {
+@Entity('campaign')
+export class Campaign extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column({ nullable: true, type: 'timestamptz' })
+  startedAt: Date;
 
   @Column({ nullable: true, type: 'timestamptz' })
   expiredAt: Date;
@@ -34,20 +36,9 @@ export class Donation extends BaseDeleteEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'bigint' })
-  amount: number;
-
-  @Column({ type: 'uuid', nullable: true })
-  currencyId?: string;
-  @ManyToOne(() => Currency, (currency) => currency.donations, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  currency?: Relation<Currency>;
-
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
-  @ManyToOne(() => User, (user) => user.donations, {
+  @ManyToOne(() => User, (user) => user.campaigns, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
@@ -55,18 +46,18 @@ export class Donation extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.donations, {
+  @ManyToOne(() => Organization, (organization) => organization.campaigns, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
   organization?: Relation<Organization>;
 
-  @OneToMany(() => Transaction, (transaction) => transaction.donation, {
+  @OneToMany(() => Transaction, (transaction) => transaction.campaign, {
     onDelete: 'CASCADE',
   })
   transactions?: Transaction[];
 
-  @OneToMany(() => Contribution, (contribution) => contribution.donation, {
+  @OneToMany(() => Contribution, (contribution) => contribution.campaign, {
     onDelete: 'CASCADE',
   })
   contributions?: Contribution[];

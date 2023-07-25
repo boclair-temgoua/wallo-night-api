@@ -55,7 +55,7 @@ import { Contribution } from './Contribution';
   
     @Column({ type: 'uuid', nullable: true })
     organizationId?: string;
-    @ManyToOne(() => Organization, (organization) => organization.donations, {
+    @ManyToOne(() => Organization, (organization) => organization.gifts, {
       onDelete: 'CASCADE',
     })
     @JoinColumn()

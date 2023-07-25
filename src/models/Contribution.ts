@@ -12,17 +12,21 @@ import { User } from './User';
 import { Organization } from './Organization';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
-import { Donation } from './Donation';
+import { Campaign } from './Campaign';
 import { Gift } from './Gift';
 import { Transaction } from './Transaction';
+import { Currency } from './Currency';
 
 @Entity('contribution')
 export class Contribution extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({ type: 'bigint', nullable: true })
+  @Column({ type: 'float', nullable: true })
   amount: number;
+
+  @Column({ type: 'float', nullable: true })
+  amountConvert: number;
 
   @Column({
     type: 'enum',
@@ -32,18 +36,18 @@ export class Contribution extends BaseDeleteEntity {
   type?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
+  currencyId?: string;
+  @ManyToOne(() => Currency, (currency) => currency.contributions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  currency?: Relation<Currency>;
+
+  @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
-
-  @Column({ type: 'uuid', nullable: true })
-  donationId?: string;
-  @ManyToOne(() => Donation, (donation) => donation.contributions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  donation?: Relation<Donation>;
 
   @Column({ type: 'uuid', nullable: true })
   giftId?: string;
@@ -52,6 +56,14 @@ export class Contribution extends BaseDeleteEntity {
   })
   @JoinColumn()
   gift?: Relation<Gift>;
+
+  @Column({ type: 'uuid', nullable: true })
+  campaignId?: string;
+  @ManyToOne(() => Campaign, (campaign) => campaign.contributions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  campaign?: Relation<Campaign>;
 
   @OneToOne(() => Transaction, (transaction) => transaction.contribution, {
     onDelete: 'CASCADE',

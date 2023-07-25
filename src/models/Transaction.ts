@@ -11,10 +11,10 @@ import { OrderProduct } from './OrderProduct';
 import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Organization } from './Organization';
-import { Donation } from './Donation';
 import { Gift } from './Gift';
 import { Contribution } from './Contribution';
 import { TransactionType } from '../modules/transactions/transactions.type';
+import { Campaign } from './Campaign';
 
 @Entity('transaction')
 export class Transaction extends BaseDeleteEntity {
@@ -39,14 +39,6 @@ export class Transaction extends BaseDeleteEntity {
   //   orderProduct?: OrderProduct;
 
   @Column({ type: 'uuid', nullable: true })
-  donationId?: string;
-  @ManyToOne(() => Donation, (donation) => donation.transactions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  donation?: Relation<Donation>;
-
-  @Column({ type: 'uuid', nullable: true })
   contributionId?: string;
   @OneToOne(() => Contribution, (contribution) => contribution.transaction, {
     onDelete: 'CASCADE',
@@ -68,6 +60,14 @@ export class Transaction extends BaseDeleteEntity {
   })
   @JoinColumn()
   gift?: Relation<Gift>;
+
+  @Column({ type: 'uuid', nullable: true })
+  campaignId?: string;
+  @ManyToOne(() => Campaign, (campaign) => campaign.transactions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  campaign?: Relation<Campaign>;
 
   @Column({ type: 'uuid', nullable: true })
   userSendId?: string;

@@ -7,7 +7,7 @@ export * from './Contributor';
 export * from './Country';
 export * from './Currency';
 export * from './Discount';
-export * from './Donation';
+export * from './Campaign';
 export * from './Faq';
 export * from './Gift';
 export * from './OrderProduct';

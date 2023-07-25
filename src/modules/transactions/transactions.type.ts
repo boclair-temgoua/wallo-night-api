@@ -11,7 +11,7 @@ export type GetTransactionsSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: Transaction['userId'];
-  donationId?: Transaction['donationId'];
+  campaignId?: Transaction['campaignId'];
   userSendId?: Transaction['userSendId'];
   userReceiveId?: Transaction['userReceiveId'];
   organizationId?: Transaction['organizationId'];

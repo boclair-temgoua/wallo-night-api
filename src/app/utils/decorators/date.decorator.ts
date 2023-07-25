@@ -79,11 +79,11 @@ export const validationAmount = (options: {
 }) => {
   const { amount, currency } = options;
 
-  const newAmountConverted = Number(amount) / currency?.amount;
+  const amountConvert = Number(amount) / currency?.amount;
 
   if (
-    newAmountConverted < config.datasite.amount.minAmount ||
-    newAmountConverted > config.datasite.amount.maxAmount
+    amountConvert < config.datasite.amount.minAmount ||
+    amountConvert > config.datasite.amount.maxAmount
   )
     throw new HttpException(
       `The amount must be between ${
@@ -94,5 +94,5 @@ export const validationAmount = (options: {
       HttpStatus.NOT_FOUND,
     );
 
-  return newAmountConverted;
+  return { amountConvert };
 };

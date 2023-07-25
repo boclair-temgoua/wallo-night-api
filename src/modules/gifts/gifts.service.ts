@@ -44,6 +44,7 @@ export class GiftsService {
     ) AS "currency"`,
       )
       .where('gift.deletedAt IS NULL')
+      .andWhere('gift.expiredAt >= now()')
       .leftJoin('gift.currency', 'currency');
 
     if (organizationId) {
@@ -93,7 +94,34 @@ export class GiftsService {
     const { giftId } = selections;
     let query = this.driver
       .createQueryBuilder('gift')
-      .where('gift.deletedAt IS NULL');
+      .select('gift.id', 'id')
+      .addSelect('gift.title', 'title')
+      .addSelect('gift.amount', 'amount')
+      .addSelect('gift.image', 'image')
+      .addSelect('gift.isActive', 'isActive')
+      .addSelect('gift.createdAt', 'createdAt')
+      .addSelect('gift.expiredAt', 'expiredAt')
+      .addSelect('gift.description', 'description')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+      'code', "currency"."code",
+      'symbol', "currency"."symbol"
+  ) AS "currency"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT jsonb_build_object(
+          'amount', CAST((SUM("contr"."amountConvert") * "currency"."amount") / 100 AS BIGINT),
+          'total', CAST(COUNT(DISTINCT contr) AS BIGINT)
+          )
+          FROM "contribution" "contr"
+          WHERE "contr"."campaignId" = "campaign"."id"
+          AND "contr"."deletedAt" IS NULL
+          ) AS "contribution"`,
+      )
+      .where('gift.deletedAt IS NULL')
+      .andWhere('gift.expiredAt >= now()')
+      .leftJoin('gift.currency', 'currency');
 
     if (giftId) {
       query = query.andWhere('gift.id = :id', { id: giftId });
@@ -122,7 +150,7 @@ export class GiftsService {
     const gift = new Gift();
     gift.title = title;
     gift.isActive = isActive;
-    gift.amount = amount;
+    gift.amount = amount * 100;
     gift.userId = userId;
     gift.image = image;
     gift.currencyId = currencyId;
@@ -165,7 +193,7 @@ export class GiftsService {
     if (errorFind) throw new NotFoundException(errorFind);
 
     findItem.title = title;
-    findItem.amount = amount;
+    findItem.amount = amount * 100;
     findItem.isActive = isActive;
     findItem.image = image;
     findItem.currencyId = currencyId;

@@ -18,7 +18,7 @@ import { CountriesModule } from './modules/countries/countries.module';
 import { CartsModule } from './modules/cats/cats.module';
 import { DiscountsModule } from './modules/discounts/discounts.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
-import { DonationsModule } from './modules/donations/donations.module';
+import { CampaignsModule } from './modules/campaigns/campaigns.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
 import { MediaModule } from './modules/media/media.module';
 import { GiftsModule } from './modules/gifts/gifts.module';
@@ -43,7 +43,7 @@ import { ContributionsModule } from './modules/contributions/contributions.modul
     ResetPasswordsModule,
     ProductsModule,
     DiscountsModule,
-    DonationsModule,
+    CampaignsModule,
     CartsModule,
     WalletsModule,
     MediaModule,

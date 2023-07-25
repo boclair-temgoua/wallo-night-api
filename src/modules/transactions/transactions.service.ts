@@ -33,7 +33,7 @@ export class TransactionsService {
       pagination,
       userId,
       organizationId,
-      donationId,
+      campaignId,
       userSendId,
       userReceiveId,
     } = selections;
@@ -45,7 +45,7 @@ export class TransactionsService {
       .addSelect('transaction.type', 'type')
       .addSelect('transaction.title', 'title')
       .addSelect('transaction.description', 'description')
-      .addSelect('transaction.donationId', 'donationId')
+      .addSelect('transaction.campaignId', 'campaignId')
       .addSelect('transaction.contributionId', 'contributionId')
       .addSelect('transaction.giftId', 'giftId')
       .addSelect('transaction.userSendId', 'userSendId')
@@ -61,10 +61,10 @@ export class TransactionsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-      'id', "donation"."id",
-      'title', "donation"."title",
-      'amount', "donation"."amount"
-  ) AS "donation"`,
+      'id', "campaign"."id",
+      'title', "campaign"."title",
+      'amount', "campaign"."amount"
+  ) AS "campaign"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -94,7 +94,7 @@ export class TransactionsService {
       .leftJoin('transaction.userSend', 'userSend')
       .leftJoin('transaction.userReceive', 'userReceive')
       .leftJoin('transaction.gift', 'gift')
-      .leftJoin('transaction.donation', 'donation')
+      .leftJoin('transaction.campaign', 'campaign')
       .leftJoin('userSend.profile', 'profileSend')
       .leftJoin('userReceive.profile', 'profileReceive');
 
@@ -114,9 +114,9 @@ export class TransactionsService {
       });
     }
 
-    if (donationId) {
-      query = query.andWhere('transaction.donationId = :donationId', {
-        donationId,
+    if (campaignId) {
+      query = query.andWhere('transaction.campaignId = :campaignId', {
+        campaignId,
       });
     }
 
@@ -172,7 +172,7 @@ export class TransactionsService {
   async createOne(options: CreateTransactionOptions): Promise<Transaction> {
     const {
       amount,
-      donationId,
+      campaignId,
       title,
       description,
       contributionId,
@@ -185,7 +185,7 @@ export class TransactionsService {
 
     const transaction = new Transaction();
     transaction.title = title;
-    transaction.donationId = donationId;
+    transaction.campaignId = campaignId;
     transaction.userSendId = userSendId;
     transaction.userReceiveId = userReceiveId;
     transaction.amount = amount;

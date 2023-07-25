@@ -12,8 +12,6 @@ import { User } from './User';
 import { Organization } from './Organization';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
-import { Donation } from './Donation';
-import { Gift } from './Gift';
 
 @Entity('contributor')
 export class Contributor extends BaseDeleteEntity {

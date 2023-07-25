@@ -7,13 +7,15 @@ import {
   Min,
   IsPositive,
   IsInt,
+  IsEnum,
 } from 'class-validator';
+import { CurrencyCode } from '../currencies/currencies.type';
 
 export class SearchContributionDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  donationId: string;
+  campaignId: string;
 
   @IsOptional()
   @IsString()
@@ -27,16 +29,21 @@ export class SearchContributionDto {
 }
 
 export class CreateOneContributionDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(CurrencyCode)
+  currency: CurrencyCode;
+
   @IsOptional()
   @IsString()
   @IsUUID()
-  donationId: string;
+  campaignId: string;
 
   @IsOptional()
   @IsString()
   @IsUUID()
   userSendId: string;
-  
+
   @IsOptional()
   @IsString()
   @IsUUID()

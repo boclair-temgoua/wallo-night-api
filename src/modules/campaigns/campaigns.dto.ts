@@ -13,7 +13,7 @@ import {
   IsDateString,
 } from 'class-validator';
 
-export class FilterDonationsDto {
+export class FilterCampaignsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
@@ -25,7 +25,7 @@ export class FilterDonationsDto {
   organizationId: string;
 }
 
-export class CreateOrUpdateDonationsDto {
+export class CreateOrUpdateCampaignsDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)

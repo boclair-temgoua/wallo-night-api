@@ -18,7 +18,7 @@ import {
 import { reply } from '../../app/utils/reply';
 import { JwtAuthGuard } from '../users/middleware';
 
-import { DonationsService } from './donations.service';
+import { CampaignsService } from './campaigns.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { validationAmount } from '../../app/utils/decorators/date.decorator';
@@ -27,68 +27,68 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 import {
-  CreateOrUpdateDonationsDto,
-  FilterDonationsDto,
-} from './donations.dto';
+  CreateOrUpdateCampaignsDto,
+  FilterCampaignsDto,
+} from './campaigns.dto';
 import { CurrenciesService } from '../currencies/currencies.service';
 
-@Controller('donations')
-export class DonationsController {
+@Controller('campaigns')
+export class CampaignsController {
   constructor(
-    private readonly donationsService: DonationsService,
+    private readonly campaignsService: CampaignsService,
     private readonly currenciesService: CurrenciesService,
   ) {}
 
-  /** Get all Donations */
+  /** Get all Campaigns */
   @Get(`/`)
   async findAll(
     @Res() res,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Query() filterDonationQuery: FilterDonationsDto,
+    @Query() filterCampaignQuery: FilterCampaignsDto,
   ) {
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
-    const { userId, organizationId } = filterDonationQuery;
+    const { userId, organizationId } = filterCampaignQuery;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const donations = await this.donationsService.findAll({
+    const Campaigns = await this.campaignsService.findAll({
       search,
       pagination,
       userId,
       organizationId,
     });
 
-    return reply({ res, results: donations });
+    return reply({ res, results: Campaigns });
   }
 
-  /** Get one Donations */
-  @Get(`/show/:donationId`)
+  /** Get one Campaigns */
+  @Get(`/show/:campaignId`)
   @UseGuards(JwtAuthGuard)
   async getOneByUUID(
     @Res() res,
-    @Param('donationId', ParseUUIDPipe) donationId: string,
+    @Param('campaignId', ParseUUIDPipe) campaignId: string,
   ) {
-    const findOneDonation = await this.donationsService.findOneBy({
-      donationId,
+    const findOneCampaign = await this.campaignsService.findOneBy({
+      campaignId,
     });
-    if (!findOneDonation)
+    if (!findOneCampaign)
       throw new HttpException(
-        `Donation ${donationId} don't exists please change`,
+        `Campaign ${campaignId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
-    return reply({ res, results: findOneDonation });
+    return reply({ res, results: findOneCampaign });
   }
 
-  /** Create Donation */
+  /** Create Campaign */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateDonationsDto,
+    @Body() body: CreateOrUpdateCampaignsDto,
   ) {
     const { user } = req;
 
@@ -98,30 +98,30 @@ export class DonationsController {
 
     validationAmount({ amount: body?.amount, currency: findOneCurrency });
 
-    await this.donationsService.createOne({
+    await this.campaignsService.createOne({
       ...body,
       userId: user?.id,
       organizationId: user?.organizationInUtilizationId,
     });
 
-    return reply({ res, results: 'Donation created successfully' });
+    return reply({ res, results: 'Campaign created successfully' });
   }
 
-  /** Update Donation  */
-  @Put(`/:donationId`)
+  /** Update Campaign  */
+  @Put(`/:campaignId`)
   @UseGuards(JwtAuthGuard)
   async updateOne(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateDonationsDto,
-    @Param('donationId', ParseUUIDPipe) donationId: string,
+    @Body() body: CreateOrUpdateCampaignsDto,
+    @Param('campaignId', ParseUUIDPipe) campaignId: string,
   ) {
-    const findOneDonation = await this.donationsService.findOneBy({
-      donationId,
+    const findOneCampaign = await this.campaignsService.findOneBy({
+      campaignId,
     });
-    if (!findOneDonation)
+    if (!findOneCampaign)
       throw new HttpException(
-        `Donation ${donationId} don't exists please change`,
+        `Campaign ${campaignId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
@@ -131,8 +131,8 @@ export class DonationsController {
 
     validationAmount({ amount: body?.amount, currency: findOneCurrency });
 
-    await this.donationsService.updateOne({ donationId }, { ...body });
+    await this.campaignsService.updateOne({ campaignId }, { ...body });
 
-    return reply({ res, results: 'Donation updated successfully' });
+    return reply({ res, results: 'Campaign updated successfully' });
   }
 }

@@ -12,13 +12,13 @@ import {
 
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Profile } from './Profile';
-import { Donation } from './Donation';
 import { Contributor } from './Contributor';
 import { Organization } from './Organization';
 import { Cart } from './Cart';
 import { Transaction } from './Transaction';
 import { Wallet } from './Wallet';
 import { Gift } from './Gift';
+import { Campaign } from './Campaign';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -60,8 +60,8 @@ export class User extends BaseDeleteEntity {
   })
   wallet?: Wallet;
 
-  @OneToMany(() => Donation, (donation) => donation.organization)
-  donations?: Donation[];
+  @OneToMany(() => Campaign, (campaign) => campaign.organization)
+  campaigns?: Campaign[];
 
   @OneToMany(() => Organization, (organization) => organization.user, {
     onDelete: 'CASCADE',
