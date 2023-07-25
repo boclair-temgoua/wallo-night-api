@@ -165,6 +165,7 @@ export class ContributionsController {
       type: FilterQueryType.GIFT,
     });
 
+    /** create transaction */
     await this.transactionsService.createOne({
       contributionId: contribution?.id,
       description: `Contribution gift ${findOneGift?.title}`,

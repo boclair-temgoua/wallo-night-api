@@ -15,6 +15,8 @@ import { Transaction } from './Transaction';
 import { Discount } from './Discount';
 import { Campaign } from './Campaign';
 import { Gift } from './Gift';
+import { Withdrawal } from './Withdrawal';
+import { WithdrawalUser } from './WithdrawalUser';
 
 @Entity('organization')
 export class Organization extends BaseDeleteEntity {
@@ -86,4 +88,18 @@ export class Organization extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   gifts?: Gift[];
+
+  @OneToMany(() => Withdrawal, (withdrawal) => withdrawal.organization, {
+    onDelete: 'CASCADE',
+  })
+  withdrawals?: Withdrawal[];
+
+  @OneToMany(
+    () => WithdrawalUser,
+    (withdrawalUser) => withdrawalUser.organization,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  withdrawalUsers?: WithdrawalUser[];
 }

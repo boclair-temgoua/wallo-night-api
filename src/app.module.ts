@@ -24,6 +24,8 @@ import { MediaModule } from './modules/media/media.module';
 import { GiftsModule } from './modules/gifts/gifts.module';
 import { CurrenciesModule } from './modules/currencies/currencies.module';
 import { ContributionsModule } from './modules/contributions/contributions.module';
+import { WithdrawalsModule } from './modules/withdrawals/withdrawals.module';
+import { WithdrawalUsersModule } from './modules/withdrawal-users/withdrawal-users.module';
 
 @Module({
   imports: [
@@ -49,6 +51,8 @@ import { ContributionsModule } from './modules/contributions/contributions.modul
     MediaModule,
     GiftsModule,
     CurrenciesModule,
+    WithdrawalsModule,
+    WithdrawalUsersModule,
     ContributionsModule,
     ContactUsModule,
   ],

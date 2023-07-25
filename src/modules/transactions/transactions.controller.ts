@@ -1,19 +1,11 @@
 import {
   Controller,
-  Post,
-  NotFoundException,
-  Body,
   Param,
   ParseUUIDPipe,
-  Delete,
   UseGuards,
-  Put,
   Res,
-  Req,
   Get,
   Query,
-  HttpStatus,
-  HttpException,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { JwtAuthGuard } from '../users/middleware';
@@ -33,6 +25,7 @@ export class TransactionsController {
 
   /** Get all Transactions */
   @Get(`/`)
+  @UseGuards(JwtAuthGuard)
   async findAll(
     @Res() res,
     @Query() requestPaginationDto: RequestPaginationDto,

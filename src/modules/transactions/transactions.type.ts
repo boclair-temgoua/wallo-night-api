@@ -5,6 +5,7 @@ export enum TransactionType {
   PAYPAL = 'PAYPAL',
   CARD = 'CARD',
   COUPON = 'COUPON',
+  PHONE = 'PHONE',
 }
 
 export type GetTransactionsSelections = {

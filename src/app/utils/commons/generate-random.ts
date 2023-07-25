@@ -40,3 +40,6 @@ export const generateNumber = (length: number) => {
   }
   return result;
 };
+
+export const isNotUndefined = (input: string): boolean =>
+    String(input) !== String(undefined);
