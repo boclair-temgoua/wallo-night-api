@@ -95,7 +95,7 @@ export class WalletsService {
     return result;
   }
 
-  /** Update one Wallet to the database. */
+  /** IncrementOne one Wallet to the database. */
   async incrementOne(options: {
     userId: string;
     amount: number;
