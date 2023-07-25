@@ -17,13 +17,7 @@ export class CreateWithdrawalUsersDto {
   @IsString()
   @IsEnum(TransactionType)
   type: TransactionType;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  @MinLength(3)
-  title: string;
-
+  
   @IsOptional()
   @IsString()
   @MaxLength(100)
@@ -42,7 +36,7 @@ export class CreateWithdrawalUsersDto {
   @MinLength(3)
   phone: string;ß
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 }

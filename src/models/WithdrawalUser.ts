@@ -19,9 +19,6 @@ export class WithdrawalUser extends BaseDeleteEntity {
   id?: string;
 
   @Column({ nullable: true })
-  title: string;
-
-  @Column({ nullable: true })
   email: string;
 
   @Column({ nullable: true })

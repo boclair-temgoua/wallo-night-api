@@ -11,6 +11,7 @@ import {
   Body,
   HttpStatus,
   HttpException,
+  Delete,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { JwtAuthGuard } from '../users/middleware';
@@ -25,7 +26,7 @@ import {
 import { CreateWithdrawalUsersDto } from './withdrawal-users.dto';
 import { WalletsService } from '../wallets/wallets.service';
 
-@Controller('WithdrawalUsers')
+@Controller('withdrawal-users')
 export class WithdrawalUsersController {
   constructor(
     private readonly withdrawalUsersService: WithdrawalUsersService,
@@ -59,7 +60,11 @@ export class WithdrawalUsersController {
   /** Post one Gifts */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
-  async createOne(@Res() res, @Req() req, @Body() body: CreateWithdrawalUsersDto) {
+  async createOne(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateWithdrawalUsersDto,
+  ) {
     const { user } = req;
 
     const findOneWallet = await this.walletsService.findOneBy({
@@ -93,5 +98,30 @@ export class WithdrawalUsersController {
     });
 
     return reply({ res, results: withdrawalUser });
+  }
+
+  /** Delete WithdrawalUser */
+  @Delete(`/:withdrawalUserId`)
+  @UseGuards(JwtAuthGuard)
+  async deleteOneProject(
+    @Res() res,
+    @Req() req,
+    @Param('withdrawalUserId', ParseUUIDPipe) withdrawalUserId: string,
+  ) {
+    const findOneWithdrawalUser = await this.withdrawalUsersService.findOneBy({
+      withdrawalUserId,
+    });
+    if (!findOneWithdrawalUser)
+      throw new HttpException(
+        `This withdrawal user ${withdrawalUserId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.withdrawalUsersService.updateOne(
+      { withdrawalUserId: findOneWithdrawalUser?.id },
+      { deletedAt: new Date() },
+    );
+
+    return reply({ res, results: 'withdrawal user deleted successfully' });
   }
 }

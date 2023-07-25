@@ -42,9 +42,12 @@ export class WithdrawalUsersService {
     }
 
     if (organizationId && isNotUndefined(String(organizationId))) {
-      query = query.andWhere('withdrawalUser.organizationId = :organizationId', {
-        organizationId,
-      });
+      query = query.andWhere(
+        'withdrawalUser.organizationId = :organizationId',
+        {
+          organizationId,
+        },
+      );
     }
 
     if (search && isNotUndefined(String(search))) {
@@ -52,11 +55,13 @@ export class WithdrawalUsersService {
         new Brackets((qb) => {
           qb.where('withdrawalUser.description ::text ILIKE :search', {
             search: `%${search}%`,
-          }).orWhere('withdrawalUser.title ::text ILIKE :search', {
-            search: `%${search}%`,
-          }).orWhere('withdrawalUser.email ::text ILIKE :search', {
-            search: `%${search}%`,
-          });
+          })
+            .orWhere('withdrawalUser.title ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('withdrawalUser.email ::text ILIKE :search', {
+              search: `%${search}%`,
+            });
         }),
       );
     }
@@ -80,14 +85,22 @@ export class WithdrawalUsersService {
     });
   }
 
-  async findOneBy(selections: GetOneWithdrawalUserSelections): Promise<WithdrawalUser> {
-    const { withdrawalUserId } = selections;
+  async findOneBy(
+    selections: GetOneWithdrawalUserSelections,
+  ): Promise<WithdrawalUser> {
+    const { withdrawalUserId, userId } = selections;
     let query = this.driver
       .createQueryBuilder('withdrawalUser')
       .where('withdrawalUser.deletedAt IS NULL');
 
     if (withdrawalUserId) {
-      query = query.andWhere('withdrawalUser.id = :id', { id: withdrawalUserId });
+      query = query.andWhere('withdrawalUser.id = :id', {
+        id: withdrawalUserId,
+      });
+    }
+
+    if (userId) {
+      query = query.andWhere('withdrawalUser.userId = :userId', { userId });
     }
 
     const [error, result] = await useCatch(query.getOne());
@@ -98,20 +111,13 @@ export class WithdrawalUsersService {
   }
 
   /** Create one WithdrawalUser to the database. */
-  async createOne(options: CreateWithdrawalUserOptions): Promise<WithdrawalUser> {
-    const {
-      title,
-      email,
-      iban,
-      phone,
-      description,
-      type,
-      userId,
-      organizationId,
-    } = options;
+  async createOne(
+    options: CreateWithdrawalUserOptions,
+  ): Promise<WithdrawalUser> {
+    const { email, iban, phone, description, type, userId, organizationId } =
+      options;
 
     const withdrawalUser = new WithdrawalUser();
-    withdrawalUser.title = title;
     withdrawalUser.email = email;
     withdrawalUser.iban = iban;
     withdrawalUser.phone = phone;

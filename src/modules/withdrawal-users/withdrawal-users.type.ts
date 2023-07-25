@@ -1,7 +1,6 @@
 import { WithdrawalUser } from '../../models/WithdrawalUser';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
-
 export type GetWithdrawalUsersSelections = {
   search?: string;
   pagination?: PaginationType;
@@ -10,7 +9,8 @@ export type GetWithdrawalUsersSelections = {
 };
 
 export type GetOneWithdrawalUserSelections = {
-  withdrawalUserId: WithdrawalUser['id'];
+  withdrawalUserId?: WithdrawalUser['id'];
+  userId?: WithdrawalUser['userId'];
 };
 
 export type UpdateWithdrawalUserSelections = {

@@ -56,12 +56,12 @@ export class WithdrawalsController {
     return reply({ res, results: withdrawals });
   }
 
-  /** Post one Gifts */
+  /** Post one Withdrawal */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
   async createOne(@Res() res, @Req() req, @Body() body: CreateWithdrawalsDto) {
     const { user } = req;
-    const { title, amount, description,withdrawalUserId } = body;
+    const { title, amount, description, withdrawalUserId } = body;
 
     const findOneWallet = await this.walletsService.findOneBy({
       userId: user?.id,
