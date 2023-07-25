@@ -27,6 +27,7 @@ import {
 import { ContributionsService } from './contributions.service';
 import { JwtAuthGuard } from '../users/middleware';
 import {
+  CreateOneContributionDonationDto,
   CreateOneContributionDto,
   CreateOneContributionGiftDto,
   SearchContributionDto,
@@ -37,11 +38,15 @@ import { CampaignsService } from '../campaigns/campaigns.service';
 import { TransactionsService } from '../transactions/transactions.service';
 import { validationAmount } from '../../app/utils/decorators/date.decorator';
 import { CurrenciesService } from '../currencies/currencies.service';
+import { UsersService } from '../users/users.service';
+import { WalletsService } from '../wallets/wallets.service';
 
 @Controller('contributions')
 export class ContributionsController {
   constructor(
     private readonly giftsService: GiftsService,
+    private readonly usersService: UsersService,
+    private readonly walletsService: WalletsService,
     private readonly campaignsService: CampaignsService,
     private readonly currenciesService: CurrenciesService,
     private readonly transactionsService: TransactionsService,
@@ -74,6 +79,7 @@ export class ContributionsController {
     return reply({ res, results: Contributions });
   }
 
+  /** Create campaign */
   @Post(`/campaign`)
   async createOneByCampaign(
     @Res() res,
@@ -102,7 +108,6 @@ export class ContributionsController {
     const contribution = await this.contributionsService.createOne({
       amount: amount * 100,
       campaignId,
-      userId: userSendId,
       amountConvert: amountConvert * 100,
       currencyId: findOneCurrency?.id,
       type: FilterQueryType.CAMPAIGN,
@@ -115,14 +120,21 @@ export class ContributionsController {
       amount: contribution?.amount,
       userId: findOneCampaign?.userId,
       userReceiveId: findOneCampaign?.userId,
-      userSendId: userSendId ?? null,
+      userSendId: userSendId,
       campaignId: findOneCampaign?.id,
       organizationId: findOneCampaign?.organizationId,
+    });
+
+    /** Update wallet */
+    await this.walletsService.incrementOne({
+      userId: findOneCampaign?.userId,
+      amount: contribution?.amountConvert,
     });
 
     return reply({ res, results: 'contribution save successfully' });
   }
 
+  /** Create gift */
   @Post(`/gift`)
   async createOneByGift(
     @Res() res,
@@ -139,11 +151,17 @@ export class ContributionsController {
         `Gift ${giftId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
+
+    const { amountConvert } = validationAmount({
+      amount: findOneGift?.amount / 100,
+      currency: findOneGift?.currency,
+    });
+
     const contribution = await this.contributionsService.createOne({
       amount: Number(findOneGift?.amount),
-      giftId,
-      userId: userSendId,
+      giftId: findOneGift?.id,
       currencyId: findOneGift?.currencyId,
+      amountConvert: amountConvert * 100,
       type: FilterQueryType.GIFT,
     });
 
@@ -153,9 +171,70 @@ export class ContributionsController {
       amount: contribution?.amount,
       userId: findOneGift?.userId,
       userReceiveId: findOneGift?.userId,
-      userSendId: userSendId ?? null,
+      userSendId: userSendId,
       giftId: findOneGift?.id,
       organizationId: findOneGift?.organizationId,
+    });
+
+    /** Update wallet */
+    await this.walletsService.incrementOne({
+      userId: findOneGift?.userId,
+      amount: contribution?.amountConvert,
+    });
+
+    return reply({ res, results: 'contribution save successfully' });
+  }
+
+  /** Create donation */
+  @Post(`/donation`)
+  async createOneByDonation(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateOneContributionDonationDto,
+  ) {
+    const { userId, amount, currency, userSendId } = body;
+
+    const findOneUser = await this.usersService.findOneBy({
+      userId,
+    });
+    if (!findOneUser)
+      throw new HttpException(
+        `User ${userId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const findOneCurrency = await this.currenciesService.findOneBy({
+      code: currency,
+    });
+    const { amountConvert } = validationAmount({
+      amount: amount,
+      currency: findOneCurrency,
+    });
+
+    /** Create contribution */
+    const contribution = await this.contributionsService.createOne({
+      amount: amount * 100,
+      userId: findOneUser?.id,
+      amountConvert: amountConvert * 100,
+      currencyId: findOneCurrency?.id,
+      type: FilterQueryType.DONATION,
+    });
+
+    /** Create transaction */
+    await this.transactionsService.createOne({
+      contributionId: contribution?.id,
+      description: `Donation ${amount} ${currency}`,
+      amount: contribution?.amount,
+      userId: userId,
+      userReceiveId: findOneUser?.id,
+      userSendId: userSendId ?? null,
+      organizationId: findOneUser?.organizationInUtilizationId,
+    });
+
+    /** Update wallet */
+    await this.walletsService.incrementOne({
+      userId: userId,
+      amount: contribution?.amountConvert,
     });
 
     return reply({ res, results: 'contribution save successfully' });

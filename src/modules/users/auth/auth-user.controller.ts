@@ -34,11 +34,13 @@ import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-pass
 import { config } from '../../../app/config/index';
 import { authLoginJob, authPasswordResetJob } from '../users.job';
 import { OrganizationsService } from '../../organizations/organizations.service';
+import { WalletsService } from '../../wallets/wallets.service';
 
 @Controller()
 export class AuthUserController {
   constructor(
     private readonly usersService: UsersService,
+    private readonly walletsService: WalletsService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
     private readonly contributorsService: ContributorsService,
@@ -102,6 +104,11 @@ export class AuthUserController {
       userCreatedId: user?.id,
       role: ContributorRole.ADMIN,
       organizationId: organization?.id,
+    });
+
+    /** Create Wallet */
+    await this.walletsService.createOne({
+      userId: user?.id,
     });
     //const queue = 'user-register';
     //const connect = await amqplib.connect(
@@ -178,9 +185,7 @@ export class AuthUserController {
 
     /** Send information to Job */
     const queue = 'user-password-reset';
-    const connect = await amqplib.connect(
-      config.implementations.amqp.link,
-    );
+    const connect = await amqplib.connect(config.implementations.amqp.link);
     const channel = await connect.createChannel();
     await channel.assertQueue(queue, { durable: false });
     await channel.sendToQueue(queue, Buffer.from(JSON.stringify(result)));

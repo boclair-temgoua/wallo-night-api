@@ -37,7 +37,9 @@ export class GiftsService {
       .addSelect('gift.isActive', 'isActive')
       .addSelect('gift.createdAt', 'createdAt')
       .addSelect('gift.expiredAt', 'expiredAt')
+      .addSelect('gift.userId', 'userId')
       .addSelect('gift.description', 'description')
+      .addSelect('gift.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
     'code', "currency"."code",
@@ -114,10 +116,13 @@ export class GiftsService {
       .addSelect('gift.isActive', 'isActive')
       .addSelect('gift.createdAt', 'createdAt')
       .addSelect('gift.expiredAt', 'expiredAt')
+      .addSelect('gift.userId', 'userId')
       .addSelect('gift.description', 'description')
+      .addSelect('gift.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
       'code', "currency"."code",
+      'amount', "currency"."amount",
       'symbol', "currency"."symbol"
   ) AS "currency"`,
       )

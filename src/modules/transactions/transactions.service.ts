@@ -180,6 +180,7 @@ export class TransactionsService {
       userReceiveId,
       userId,
       type,
+      giftId,
       organizationId,
     } = options;
 
@@ -191,6 +192,7 @@ export class TransactionsService {
     transaction.amount = amount;
     transaction.userId = userId;
     transaction.type = type;
+    transaction.giftId = giftId;
     transaction.organizationId = organizationId;
     transaction.contributionId = contributionId;
     transaction.description = description;

@@ -68,3 +68,27 @@ export class CreateOneContributionGiftDto {
   @IsUUID()
   userSendId: string;
 }
+
+export class CreateOneContributionDonationDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  userId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(CurrencyCode)
+  currency: CurrencyCode;
+  
+  @IsNotEmpty()
+  @IsInt()
+  @IsPositive()
+  @Min(1)
+  @Type(() => Number)
+  amount: number;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userSendId: string;
+}

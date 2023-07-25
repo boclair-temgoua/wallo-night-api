@@ -38,6 +38,7 @@ export class PasswordBodyDto {
 export enum FilterQueryType {
   ORGANIZATION = 'ORGANIZATION',
   CAMPAIGN = 'CAMPAIGN',
+  DONATION = 'DONATION',
   GIFT = 'GIFT',
   HELP = 'HELP',
 }

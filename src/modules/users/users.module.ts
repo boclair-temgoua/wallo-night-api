@@ -6,6 +6,7 @@ import {
   ResetPassword,
   Organization,
   Contributor,
+  Wallet,
 } from '../../models';
 import { ProfilesService } from '../profiles/profiles.service';
 import { AuthUserController } from './auth/auth-user.controller';
@@ -17,11 +18,13 @@ import { ResetPasswordsService } from '../reset-passwords/reset-passwords.servic
 import { OrganizationsService } from '../organizations/organizations.service';
 import { ContributorsUtil } from '../contributors/contributors.util';
 import { ContributorsService } from '../contributors/contributors.service';
+import { WalletsService } from '../wallets/wallets.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       User,
+      Wallet,
       Profile,
       ResetPassword,
       Organization,
@@ -31,6 +34,7 @@ import { ContributorsService } from '../contributors/contributors.service';
   controllers: [AuthUserController, UsersController],
   providers: [
     UsersService,
+    WalletsService,
     ProfilesService,
     CheckUserService,
     JwtAuthStrategy,

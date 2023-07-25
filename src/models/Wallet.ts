@@ -18,7 +18,7 @@ export class Wallet extends BaseEntity {
   @Column({ default: false, unique: true })
   accountId?: string;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ type: 'float', default: 0 })
   amount: number;
 
   @Column({ type: 'uuid', nullable: true })

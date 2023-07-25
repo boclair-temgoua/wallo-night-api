@@ -48,6 +48,7 @@ export class Contribution extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+  
 
   @Column({ type: 'uuid', nullable: true })
   giftId?: string;

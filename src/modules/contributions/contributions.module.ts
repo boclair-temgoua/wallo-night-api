@@ -5,7 +5,9 @@ import {
   Currency,
   Campaign,
   Gift,
+  User,
   Transaction,
+  Wallet,
 } from '../../models';
 import { ContributionsService } from './contributions.service';
 import { CampaignsService } from '../campaigns/campaigns.service';
@@ -13,6 +15,8 @@ import { ContributionsController } from './contributions.controller';
 import { GiftsService } from '../gifts/gifts.service';
 import { TransactionsService } from '../transactions/transactions.service';
 import { CurrenciesService } from '../currencies/currencies.service';
+import { UsersService } from '../users/users.service';
+import { WalletsService } from '../wallets/wallets.service';
 
 @Module({
   imports: [
@@ -20,6 +24,8 @@ import { CurrenciesService } from '../currencies/currencies.service';
       Contribution,
       Campaign,
       Gift,
+      User,
+      Wallet,
       Transaction,
       Currency,
     ]),
@@ -29,6 +35,8 @@ import { CurrenciesService } from '../currencies/currencies.service';
     ContributionsService,
     CampaignsService,
     GiftsService,
+    UsersService,
+    WalletsService,
     CurrenciesService,
     TransactionsService,
   ],

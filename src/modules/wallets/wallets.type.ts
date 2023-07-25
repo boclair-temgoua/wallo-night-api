@@ -1,16 +1,17 @@
 import { Wallet } from '../../models/Wallet';
 
-
 export type GetWalletsSelections = {
   search?: string;
 };
 
 export type GetOneWalletSelections = {
-  walletId: Wallet['id'];
+  userId?: Wallet['userId'];
+  walletId?: Wallet['id'];
 };
 
 export type UpdateWalletSelections = {
-  walletId: Wallet['id'];
+  walletId?: Wallet['id'];
+  userId?: Wallet['userId'];
 };
 
 export type CreateWalletOptions = Partial<Wallet>;
