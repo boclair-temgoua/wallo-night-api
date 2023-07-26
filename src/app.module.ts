@@ -26,6 +26,7 @@ import { CurrenciesModule } from './modules/currencies/currencies.module';
 import { ContributionsModule } from './modules/contributions/contributions.module';
 import { WithdrawalsModule } from './modules/withdrawals/withdrawals.module';
 import { WithdrawalUsersModule } from './modules/withdrawal-users/withdrawal-users.module';
+import { ArticlesModule } from './modules/articles/articles.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { WithdrawalUsersModule } from './modules/withdrawal-users/withdrawal-use
     WalletsModule,
     MediaModule,
     GiftsModule,
+    ArticlesModule,
     CurrenciesModule,
     WithdrawalsModule,
     WithdrawalUsersModule,
