@@ -1,13 +1,13 @@
 import { Contribution } from '../../models';
 import { PaginationType } from '../../app/utils/pagination';
 
-
 export type GetContributionsSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: Contribution['userId'];
   campaignId?: Contribution['campaignId'];
   giftId?: Contribution['giftId'];
+  currencyId?: Contribution['currencyId'];
 };
 
 export type GetOneContributionSelections = {
@@ -19,7 +19,6 @@ export type GetOneContributionSelections = {
 export type UpdateContributionSelections = {
   contributionId: Contribution['id'];
 };
-
 
 export type CreateContributionOptions = Partial<Contribution>;
 

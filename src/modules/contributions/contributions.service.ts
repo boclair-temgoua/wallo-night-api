@@ -28,7 +28,7 @@ export class ContributionsService {
   async findAll(
     selections: GetContributionsSelections,
   ): Promise<GetContributionsSelections | any> {
-    const { userId, search, giftId, campaignId, pagination } = selections;
+    const { userId, search, giftId, campaignId,currencyId, pagination } = selections;
 
     let query = this.driver
       .createQueryBuilder('contribution')
@@ -60,8 +60,7 @@ export class ContributionsService {
       .addSelect(
         /*sql*/ `jsonb_build_object(
         'id', "campaign"."id",
-        'title', "campaign"."title",
-        'amount', "campaign"."amount"
+        'title', "campaign"."title"
     ) AS "campaign"`,
       )
       .addSelect(
@@ -89,6 +88,10 @@ export class ContributionsService {
 
     if (userId) {
       query = query.andWhere('contribution.userId = :userId', { userId });
+    }
+
+    if (currencyId) {
+      query = query.andWhere('contribution.currencyId = :currencyId', { currencyId });
     }
 
     if (search) {

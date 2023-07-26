@@ -10,6 +10,7 @@ import {
   IsEnum,
 } from 'class-validator';
 import { CurrencyCode } from '../currencies/currencies.type';
+import { TransactionType } from '../transactions/transactions.type';
 
 export class SearchContributionDto {
   @IsOptional()
@@ -33,6 +34,14 @@ export class CreateOneContributionDto {
   @IsString()
   @IsEnum(CurrencyCode)
   currency: CurrencyCode;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(TransactionType)
+  transactionType: TransactionType;
+
+  @IsNotEmpty()
+  infoPaymentMethod: any;
 
   @IsNotEmpty()
   @IsString()
@@ -67,6 +76,14 @@ export class CreateOneContributionGiftDto {
   @IsString()
   @IsUUID()
   userSendId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(TransactionType)
+  transactionType: TransactionType;
+
+  @IsNotEmpty()
+  infoPaymentMethod: any;
 }
 
 export class CreateOneContributionDonationDto {
@@ -79,7 +96,15 @@ export class CreateOneContributionDonationDto {
   @IsString()
   @IsEnum(CurrencyCode)
   currency: CurrencyCode;
-  
+
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(TransactionType)
+  transactionType: TransactionType;
+
+  @IsNotEmpty()
+  infoPaymentMethod: any;
+
   @IsNotEmpty()
   @IsInt()
   @IsPositive()

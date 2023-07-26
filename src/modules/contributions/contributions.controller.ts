@@ -40,12 +40,14 @@ import { validationAmount } from '../../app/utils/decorators/date.decorator';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { UsersService } from '../users/users.service';
 import { WalletsService } from '../wallets/wallets.service';
+import { BullingService } from '../bulling/bulling.service';
 
 @Controller('contributions')
 export class ContributionsController {
   constructor(
     private readonly giftsService: GiftsService,
     private readonly usersService: UsersService,
+    private readonly bullingService: BullingService,
     private readonly walletsService: WalletsService,
     private readonly campaignsService: CampaignsService,
     private readonly currenciesService: CurrenciesService,
@@ -86,7 +88,14 @@ export class ContributionsController {
     @Req() req,
     @Body() body: CreateOneContributionDto,
   ) {
-    const { amount, campaignId, currency, userSendId } = body;
+    const {
+      amount,
+      campaignId,
+      currency,
+      userSendId,
+      transactionType,
+      infoPaymentMethod,
+    } = body;
 
     const findOneCampaign = await this.campaignsService.findOneBy({
       campaignId,
@@ -105,6 +114,19 @@ export class ContributionsController {
       currency: findOneCurrency,
     });
 
+    /** Create payment stripe */
+    transactionType === 'CARD' && infoPaymentMethod?.id
+      ? await this.bullingService.stripeMethod({
+          amount: amountConvert * 100,
+          currency: 'EUR',
+          fullName: 'Inconnu',
+          email: 'email@inconnu.com',
+          description: `Contribution campaign ${findOneCampaign?.title}`,
+          infoPaymentMethod: infoPaymentMethod,
+        })
+      : null;
+
+    /** create contribution */
     const contribution = await this.contributionsService.createOne({
       amount: amount * 100,
       campaignId,
@@ -141,7 +163,7 @@ export class ContributionsController {
     @Req() req,
     @Body() body: CreateOneContributionGiftDto,
   ) {
-    const { giftId, userSendId } = body;
+    const { giftId, userSendId, transactionType, infoPaymentMethod } = body;
 
     const findOneGift = await this.giftsService.findOneBy({
       giftId,
@@ -157,6 +179,19 @@ export class ContributionsController {
       currency: findOneGift?.currency,
     });
 
+    /** Create payment stripe */
+    transactionType === 'CARD' && infoPaymentMethod?.id
+      ? await this.bullingService.stripeMethod({
+          amount: amountConvert * 100,
+          currency: 'EUR',
+          fullName: 'Inconnu',
+          email: 'email@inconnu.com',
+          description: `Contribution gift ${findOneGift?.title}`,
+          infoPaymentMethod: infoPaymentMethod,
+        })
+      : null;
+
+    /** create contribution */
     const contribution = await this.contributionsService.createOne({
       amount: Number(findOneGift?.amount),
       giftId: findOneGift?.id,
@@ -174,6 +209,7 @@ export class ContributionsController {
       userReceiveId: findOneGift?.userId,
       userSendId: userSendId,
       giftId: findOneGift?.id,
+      type: transactionType,
       organizationId: findOneGift?.organizationId,
     });
 
@@ -193,7 +229,14 @@ export class ContributionsController {
     @Req() req,
     @Body() body: CreateOneContributionDonationDto,
   ) {
-    const { userId, amount, currency, userSendId } = body;
+    const {
+      userId,
+      amount,
+      currency,
+      userSendId,
+      transactionType,
+      infoPaymentMethod,
+    } = body;
 
     const findOneUser = await this.usersService.findOneBy({
       userId,
@@ -212,6 +255,18 @@ export class ContributionsController {
       currency: findOneCurrency,
     });
 
+    /** Create payment stripe */
+    transactionType === 'CARD' && infoPaymentMethod?.id
+      ? await this.bullingService.stripeMethod({
+          amount: amountConvert * 100,
+          currency: 'EUR',
+          fullName: 'Inconnu',
+          email: 'email@inconnu.com',
+          description: `Donation ${amount} ${currency}`,
+          infoPaymentMethod: infoPaymentMethod,
+        })
+      : null;
+
     /** Create contribution */
     const contribution = await this.contributionsService.createOne({
       amount: amount * 100,
@@ -229,6 +284,7 @@ export class ContributionsController {
       userId: userId,
       userReceiveId: findOneUser?.id,
       userSendId: userSendId ?? null,
+      type: transactionType,
       organizationId: findOneUser?.organizationInUtilizationId,
     });
 

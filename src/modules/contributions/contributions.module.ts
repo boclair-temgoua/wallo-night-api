@@ -17,6 +17,7 @@ import { TransactionsService } from '../transactions/transactions.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { UsersService } from '../users/users.service';
 import { WalletsService } from '../wallets/wallets.service';
+import { BullingService } from '../bulling/bulling.service';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { WalletsService } from '../wallets/wallets.service';
     GiftsService,
     UsersService,
     WalletsService,
+    BullingService,
     CurrenciesService,
     TransactionsService,
   ],

@@ -112,7 +112,7 @@ export class WalletsService {
       { userId: findOneWallet?.userId },
       { amount: findOneWallet?.amount + amount },
     );
-
+    
     return wallet;
   }
 }
