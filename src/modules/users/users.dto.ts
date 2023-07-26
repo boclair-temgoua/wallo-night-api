@@ -131,6 +131,10 @@ export class CreateRegisterUserDto {
   @IsString()
   userAgent: string;
 
+  @IsOptional()
+  @IsString()
+  username: string;
+
   @IsNotEmpty()
   @MinLength(8)
   @IsString()

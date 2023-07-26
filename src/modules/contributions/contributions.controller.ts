@@ -93,7 +93,7 @@ export class ContributionsController {
       campaignId,
       currency,
       userSendId,
-      transactionType,
+      meanOfPayment,
       infoPaymentMethod,
     } = body;
 
@@ -115,7 +115,7 @@ export class ContributionsController {
     });
 
     /** Create payment stripe */
-    transactionType === 'CARD' && infoPaymentMethod?.id
+    meanOfPayment === 'CARD' && infoPaymentMethod?.id
       ? await this.bullingService.stripeMethod({
           amount: amountConvert * 100,
           currency: 'EUR',
@@ -163,7 +163,7 @@ export class ContributionsController {
     @Req() req,
     @Body() body: CreateOneContributionGiftDto,
   ) {
-    const { giftId, userSendId, transactionType, infoPaymentMethod } = body;
+    const { giftId, userSendId, meanOfPayment, infoPaymentMethod } = body;
 
     const findOneGift = await this.giftsService.findOneBy({
       giftId,
@@ -180,7 +180,7 @@ export class ContributionsController {
     });
 
     /** Create payment stripe */
-    transactionType === 'CARD' && infoPaymentMethod?.id
+    meanOfPayment === 'CARD' && infoPaymentMethod?.id
       ? await this.bullingService.stripeMethod({
           amount: amountConvert * 100,
           currency: 'EUR',
@@ -209,7 +209,7 @@ export class ContributionsController {
       userReceiveId: findOneGift?.userId,
       userSendId: userSendId,
       giftId: findOneGift?.id,
-      type: transactionType,
+      type: meanOfPayment,
       organizationId: findOneGift?.organizationId,
     });
 
@@ -234,7 +234,7 @@ export class ContributionsController {
       amount,
       currency,
       userSendId,
-      transactionType,
+      meanOfPayment,
       infoPaymentMethod,
     } = body;
 
@@ -256,7 +256,7 @@ export class ContributionsController {
     });
 
     /** Create payment stripe */
-    transactionType === 'CARD' && infoPaymentMethod?.id
+    meanOfPayment === 'CARD' && infoPaymentMethod?.id
       ? await this.bullingService.stripeMethod({
           amount: amountConvert * 100,
           currency: 'EUR',
@@ -284,7 +284,7 @@ export class ContributionsController {
       userId: userId,
       userReceiveId: findOneUser?.id,
       userSendId: userSendId ?? null,
-      type: transactionType,
+      type: meanOfPayment,
       organizationId: findOneUser?.organizationInUtilizationId,
     });
 

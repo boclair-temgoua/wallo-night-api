@@ -18,6 +18,7 @@ export type GetOneUserSelections = {
   userId?: User['id'];
   email?: User['email'];
   token?: User['token'];
+  username?: User['username'];
 };
 
 export type UpdateUserSelections = {

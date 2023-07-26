@@ -35,6 +35,7 @@ import { config } from '../../../app/config/index';
 import { authLoginJob, authPasswordResetJob } from '../users.job';
 import { OrganizationsService } from '../../organizations/organizations.service';
 import { WalletsService } from '../../wallets/wallets.service';
+import { generateNumber } from 'src/app/utils/commons';
 
 @Controller()
 export class AuthUserController {
@@ -53,12 +54,15 @@ export class AuthUserController {
   async createOneRegister(
     @Res() res,
     @Req() req,
-    @Body() createRegisterUserDto: CreateRegisterUserDto,
+    @Body() body: CreateRegisterUserDto,
     @Headers('User-Agent') userAgent: string,
   ) {
-    const { email, password, firstName, lastName } = createRegisterUserDto;
+    const { email, password, firstName, lastName, username } = body;
 
     const findOnUser = await this.usersService.findOneBy({ email });
+    const findOnUserByUsername = await this.usersService.findOneBy({
+      username,
+    });
     if (findOnUser)
       throw new HttpException(
         `Email ${email} already exists please change`,
@@ -78,11 +82,18 @@ export class AuthUserController {
     });
 
     /** Create User */
+    const usernameGenerate = `${firstName}-${lastName}-${generateNumber(
+      4,
+    )}`.toLowerCase();
     const user = await this.usersService.createOne({
       email,
       password,
       profileId: profile?.id,
-      username: `${firstName}.${lastName}`.toLowerCase(),
+      username: username
+        ? findOnUserByUsername
+          ? usernameGenerate
+          : username
+        : usernameGenerate,
       organizationInUtilizationId: organization?.id,
     });
 

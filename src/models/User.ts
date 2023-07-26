@@ -39,7 +39,7 @@ export class User extends BaseDeleteEntity {
   @Column('simple-array', { nullable: true })
   refreshToken?: string[];
 
-  @Column({ nullable: true })
+  @Column({ unique: true, nullable: true })
   username?: string;
 
   @Column({ nullable: true })

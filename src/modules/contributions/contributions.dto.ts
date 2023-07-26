@@ -38,9 +38,9 @@ export class CreateOneContributionDto {
   @IsNotEmpty()
   @IsString()
   @IsEnum(TransactionType)
-  transactionType: TransactionType;
+  meanOfPayment: TransactionType;
 
-  @IsNotEmpty()
+  @IsOptional()
   infoPaymentMethod: any;
 
   @IsNotEmpty()
@@ -80,9 +80,9 @@ export class CreateOneContributionGiftDto {
   @IsNotEmpty()
   @IsString()
   @IsEnum(TransactionType)
-  transactionType: TransactionType;
+  meanOfPayment: TransactionType;
 
-  @IsNotEmpty()
+  @IsOptional()
   infoPaymentMethod: any;
 }
 
@@ -100,9 +100,9 @@ export class CreateOneContributionDonationDto {
   @IsNotEmpty()
   @IsString()
   @IsEnum(TransactionType)
-  transactionType: TransactionType;
+  meanOfPayment: TransactionType;
 
-  @IsNotEmpty()
+  @IsOptional()
   infoPaymentMethod: any;
 
   @IsNotEmpty()
