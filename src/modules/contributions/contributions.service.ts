@@ -42,8 +42,7 @@ export class ContributionsService {
       .addSelect('contribution.amountConvert', 'amountConvert')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-        'firstName', "profile"."firstName",
-        'lastName', "profile"."lastName",
+        'fullName', "profile"."fullName",
         'image', "profile"."image",
         'color', "profile"."color",
         'userId', "user"."id",
@@ -144,8 +143,7 @@ export class ContributionsService {
       .addSelect('contribution.amountConvert', 'amountConvert')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-              'firstName', "profile"."firstName",
-              'lastName', "profile"."lastName",
+              'fullName', "profile"."fullName",
               'image', "profile"."image",
               'color', "profile"."color",
               'userId', "user"."id",

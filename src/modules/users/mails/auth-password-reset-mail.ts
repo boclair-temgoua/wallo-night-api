@@ -68,7 +68,7 @@ export const authPasswordResetMail = async (options: { resetPassword }) => {
   line-height: 45px;
   text-align: center;
   text-decoration: none;
-  width:100%" href="${config.datasite.urlClient}/reset/password/${
+  width:100%" href="${config.datasite.urlClient}/reset-password/${
     resetPassword.token
   }">Reset Password</a>
   </td>
@@ -86,10 +86,10 @@ export const authPasswordResetMail = async (options: { resetPassword }) => {
   <td style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
   <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; line-height: 1.5em; margin-top: 0; text-align: left; font-size: 14px;">If you’re having trouble clicking the "Reset Password" button, copy and paste the URL below
   into your web browser is valid for 30 minutes: <span class="break-all" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; word-break: break-all;">
-  <a href="${config.datasite.urlClient}/reset/password/${
+  <a href="${config.datasite.urlClient}/reset-password/${
     resetPassword.token
   }" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3869d4;">
-  ${config.datasite.urlClient}/reset/password/${resetPassword.token}
+  ${config.datasite.urlClient}/reset-password/${resetPassword.token}
   </a></span></p>
   
   </td>

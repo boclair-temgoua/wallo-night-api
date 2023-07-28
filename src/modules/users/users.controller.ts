@@ -96,11 +96,11 @@ export class UsersController {
   async updateProfile(@Res() res, @Req() req, @Body() body: UpdateProfileDto) {
     const { user } = req;
 
-    const { firstName, lastName, countryId, image, color, url } = body;
+    const { fullName, countryId, image, color, url } = body;
 
     await this.profilesService.updateOne(
       { profileId: user?.profileId },
-      { firstName, lastName, countryId, image, color, url },
+      { fullName, countryId, image, color, url },
     );
 
     return reply({ res, results: 'Profile updated successfully' });

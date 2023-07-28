@@ -38,6 +38,7 @@ export class UsersService {
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
       .addSelect('user.createdAt', 'createdAt')
+      .addSelect('user.stepRegister', 'stepRegister')
       .addSelect(
         'user.organizationInUtilizationId',
         'organizationInUtilizationId',
@@ -46,8 +47,7 @@ export class UsersService {
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
           'userId', "user"."id",
-          'firstName', "profile"."firstName",
-          'lastName', "profile"."lastName",
+          'fullName', "profile"."fullName",
           'image', "profile"."image",
           'color', "profile"."color",
           'countryId', "profile"."countryId",
@@ -84,7 +84,7 @@ export class UsersService {
             search: `%${search}%`,
           })
             .orWhere(
-              'profile.firstName ::text ILIKE :search OR profile.lastName ::text ILIKE :search OR profile.phone ::text ILIKE :search',
+              'profile.fullName ::text ILIKE :search OR profile.fullName ::text ILIKE :search OR profile.phone ::text ILIKE :search',
               {
                 search: `%${search}%`,
               },
@@ -156,12 +156,12 @@ export class UsersService {
       .addSelect('user.email', 'email')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
+      .addSelect('user.stepRegister', 'stepRegister')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
           'userId', "user"."id",
-          'firstName', "profile"."firstName",
-          'lastName', "profile"."lastName",
+          'fullName', "profile"."fullName",
           'image', "profile"."image",
           'color', "profile"."color",
           'countryId', "profile"."countryId",
@@ -223,6 +223,7 @@ export class UsersService {
       username,
       password,
       profileId,
+      stepRegister,
       organizationInUtilizationId,
     } = options;
 
@@ -232,6 +233,7 @@ export class UsersService {
     user.hashPassword(password);
     user.username = username;
     user.profileId = profileId;
+    user.stepRegister = stepRegister;
     user.organizationInUtilizationId = organizationInUtilizationId;
 
     const query = this.driver.save(user);
@@ -255,6 +257,7 @@ export class UsersService {
       accessToken,
       refreshToken,
       deletedAt,
+      stepRegister,
       confirmedAt,
       organizationInUtilizationId,
     } = options;
@@ -280,6 +283,7 @@ export class UsersService {
       findItem.hashPassword(password);
     }
     findItem.accessToken = accessToken;
+    findItem.stepRegister = stepRegister;
     findItem.refreshToken = refreshToken;
     findItem.deletedAt = deletedAt;
     findItem.confirmedAt = confirmedAt;

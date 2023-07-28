@@ -70,8 +70,7 @@ export class TransactionsService {
         /*sql*/ `jsonb_build_object(
         'id', "profileSend"."id",
         'userId', "userSend"."id",
-        'firstName', "profileSend"."firstName",
-        'lastName', "profileSend"."lastName",
+        'fullName', "profileSend"."fullName",
         'image', "profileSend"."image",
         'color', "profileSend"."color",
         'countryId', "profileSend"."countryId",
@@ -82,8 +81,7 @@ export class TransactionsService {
         /*sql*/ `jsonb_build_object(
         'id', "profileReceive"."id",
         'userId', "userReceive"."id",
-        'firstName', "profileReceive"."firstName",
-        'lastName', "profileReceive"."lastName",
+        'fullName', "profileReceive"."fullName",
         'image', "profileReceive"."image",
         'color', "profileReceive"."color",
         'countryId', "profileReceive"."countryId",

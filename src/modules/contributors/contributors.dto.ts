@@ -37,12 +37,7 @@ export class CreateOneNewUserContributorsDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
-  firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(50)
-  lastName: string;
+  fullName: string;
 
   @IsOptional()
   @IsString()

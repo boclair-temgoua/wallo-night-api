@@ -1,11 +1,16 @@
 import { User } from '../../models/User';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
+export enum StepRegister {
+  EMAIL_CREATE = 'EMAIL_CREATE',
+  USERNAME_CREATE = 'USERNAME_CREATE',
+  CONFIRM_EMAIL = 'CONFIRM_EMAIL',
+}
+
 export type JwtPayloadType = {
   id: string;
   profileId: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   organizationInUtilizationId: string;
 };
 
@@ -42,9 +47,8 @@ export type GetOnUserPublic = {
     color: string;
     image: string;
     userId: string;
-    lastName: string;
     countryId: string;
-    firstName: string;
+    fullName: string;
     currencyId: string;
   };
   organization: {

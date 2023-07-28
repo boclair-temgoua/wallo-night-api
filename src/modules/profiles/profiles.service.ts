@@ -43,8 +43,7 @@ export class ProfilesService {
   /** Create one Profile to the database. */
   async createOne(options: CreateProfileOptions): Promise<Profile> {
     const {
-      firstName,
-      lastName,
+      fullName,
       currencyId,
       countryId,
       url,
@@ -57,8 +56,7 @@ export class ProfilesService {
 
     const profile = new Profile();
     profile.image = image;
-    profile.firstName = firstName;
-    profile.lastName = lastName;
+    profile.fullName = fullName;
     profile.phone = phone;
     profile.firstAddress = firstAddress;
     profile.secondAddress = secondAddress;
@@ -83,8 +81,7 @@ export class ProfilesService {
   ): Promise<Profile> {
     const { profileId } = selections;
     const {
-      firstName,
-      lastName,
+      fullName,
       currencyId,
       countryId,
       image,
@@ -114,8 +111,7 @@ export class ProfilesService {
     findItem.secondAddress = secondAddress;
     findItem.birthday = birthday;
     findItem.countryId = countryId;
-    findItem.firstName = firstName;
-    findItem.lastName = lastName;
+    findItem.fullName = fullName;
     findItem.currencyId = currencyId;
     findItem.deletedAt = deletedAt;
 

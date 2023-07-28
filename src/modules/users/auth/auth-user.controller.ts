@@ -57,7 +57,7 @@ export class AuthUserController {
     @Body() body: CreateRegisterUserDto,
     @Headers('User-Agent') userAgent: string,
   ) {
-    const { email, password, firstName, lastName, username } = body;
+    const { email, password, fullName, username } = body;
 
     const findOnUser = await this.usersService.findOneBy({ email });
     const findOnUserByUsername = await this.usersService.findOneBy({
@@ -71,18 +71,17 @@ export class AuthUserController {
 
     /** Create Profile */
     const profile = await this.profilesService.createOne({
-      firstName,
-      lastName,
+      fullName,
     });
 
     /** Create Organization */
     const organization = await this.organizationsService.createOne({
-      name: `${firstName} ${lastName}`,
+      name: `${fullName}`,
       email,
     });
 
     /** Create User */
-    const usernameGenerate = `${firstName}-${lastName}-${generateNumber(
+    const usernameGenerate = `${fullName}-${generateNumber(
       4,
     )}`.toLowerCase();
     const user = await this.usersService.createOne({
@@ -149,8 +148,7 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       profileId: findOnUser.profileId,
-      firstName: findOnUser?.profile?.firstName,
-      lastName: findOnUser?.profile?.lastName,
+      fullName: findOnUser?.profile?.fullName,
       organizationInUtilizationId: findOnUser.organizationInUtilizationId,
     };
 
@@ -179,8 +177,7 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       profileId: findOnUser.profileId,
-      firstName: findOnUser?.profile?.firstName,
-      lastName: findOnUser?.profile?.lastName,
+      fullName: findOnUser?.profile?.fullName,
       organizationInUtilizationId: findOnUser.organizationInUtilizationId,
     };
 

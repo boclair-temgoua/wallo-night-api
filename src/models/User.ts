@@ -21,6 +21,7 @@ import { Gift } from './Gift';
 import { Campaign } from './Campaign';
 import { Withdrawal } from './Withdrawal';
 import { WithdrawalUser } from './WithdrawalUser';
+import { StepRegister } from '../modules/users/users.type';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -47,6 +48,13 @@ export class User extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   password?: string;
+
+  @Column({
+    type: 'enum',
+    enum: StepRegister,
+    default: StepRegister.EMAIL_CREATE,
+  })
+  stepRegister?: StepRegister;
 
   @Column({ type: 'uuid', nullable: true })
   organizationInUtilizationId?: string;

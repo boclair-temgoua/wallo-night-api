@@ -44,8 +44,7 @@ export class OrganizationsService {
               'userId', "user"."id",
               'email', "user"."email",
               'profileId', "user"."profileId",
-              'firstName', "profile"."firstName",
-              'lastName', "profile"."lastName",
+              'fullName', "profile"."fullName",
               'color', "profile"."color",
               'image', "profile"."image"
           ) AS "profileOwner"`,

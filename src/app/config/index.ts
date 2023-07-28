@@ -28,7 +28,7 @@ export const config = {
    * Organization
    */
   organizationAddress: {
-    name: 'Birevo',
+    name: 'UnPot',
     company: 'Birevo',
     street1: 'Via della costa 13',
     street2: '',

@@ -26,7 +26,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "dev": "nest start --watch",
     "start:listener": "nest start --watch --config listener.json",
     "docker:dev:start": "docker-compose --file docker-compose.yml --compatibility up --no-recreate",
     "docker:dev:rebuild": "docker-compose --file docker-compose.yml --compatibility up --build",

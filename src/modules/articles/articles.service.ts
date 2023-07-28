@@ -40,6 +40,8 @@ export class ArticlesService {
       .addSelect('article.status', 'status')
       .addSelect('article.id', 'id')
       .addSelect('article.slug', 'slug')
+      .addSelect('article.image', 'image')
+      .addSelect('article.createdAt', 'createdAt')
       .addSelect('article.description', 'description')
       .where('article.deletedAt IS NULL');
 
@@ -82,6 +84,8 @@ export class ArticlesService {
       .addSelect('article.status', 'status')
       .addSelect('article.id', 'id')
       .addSelect('article.slug', 'slug')
+      .addSelect('article.image', 'image')
+      .addSelect('article.createdAt', 'createdAt')
       .addSelect('article.description', 'description')
       .where('article.deletedAt IS NULL');
 

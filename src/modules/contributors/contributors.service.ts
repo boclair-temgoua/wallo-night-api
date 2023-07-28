@@ -49,8 +49,7 @@ export class ContributorsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-              'firstName', "profile"."firstName",
-              'lastName', "profile"."lastName",
+              'fullName', "profile"."fullName",
               'image', "profile"."image",
               'color', "profile"."color",
               'userId', "user"."id",
@@ -82,7 +81,7 @@ export class ContributorsService {
             search: `%${search}%`,
           })
             .orWhere(
-              '(profile.firstName ::text ILIKE :search OR profile.lastName ::text ILIKE :search OR profile.phone ::text ILIKE :search)',
+              '(profile.fullName ::text ILIKE :search OR profile.phone ::text ILIKE :search)',
               {
                 search: `%${search}%`,
               },
@@ -170,8 +169,7 @@ export class ContributorsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-              'firstName', "profile"."firstName",
-              'lastName', "profile"."lastName",
+              'fullName', "profile"."fullName",
               'image', "profile"."image",
               'color', "profile"."color",
               'userId', "user"."id",

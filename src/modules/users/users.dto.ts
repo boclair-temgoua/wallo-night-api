@@ -106,12 +106,7 @@ export class CreateRegisterUserDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
-  firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(50)
-  lastName: string;
+  fullName: string;
 
   @IsOptional()
   @IsString()
@@ -150,12 +145,7 @@ export class ConfirmOneRegisterCreateUserDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
-  firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  lastName: string;
+  fullName: string;
 
   @IsNotEmpty()
   @IsString()
@@ -189,13 +179,8 @@ export class UpdateProfileDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
-  firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(50)
-  lastName: string;
-
+  fullName: string;
+  
   @IsOptional()
   @IsString()
   @IsUUID()

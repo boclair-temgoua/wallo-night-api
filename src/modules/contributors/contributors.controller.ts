@@ -130,7 +130,7 @@ export class ContributorsController {
     @Req() req,
     @Body() body: CreateOneNewUserContributorsDto,
   ) {
-    const { email, role, firstName, lastName } = body;
+    const { email, role, fullName } = body;
 
     const { user } = req;
 
@@ -150,8 +150,7 @@ export class ContributorsController {
 
     /** Create Profile */
     const profile = await this.profilesService.createOne({
-      firstName,
-      lastName,
+      fullName,
     });
 
     /** Create User */
@@ -160,7 +159,7 @@ export class ContributorsController {
       profileId: profile?.id,
       password: generateLongUUID(8),
       token: generateLongUUID(30),
-      username: `${firstName}.${lastName}`.toLowerCase(),
+      username: `${fullName}`.toLowerCase(),
       organizationInUtilizationId: user?.organizationInUtilizationId,
     });
 
@@ -176,8 +175,7 @@ export class ContributorsController {
     const jwtPayload: JwtPayloadType = {
       id: userSave?.id,
       profileId: profile?.id,
-      firstName: profile?.firstName,
-      lastName: profile?.lastName,
+      fullName: profile?.fullName,
       organizationInUtilizationId: user.organizationInUtilizationId,
     };
     await this.usersService.updateOne(
