@@ -54,7 +54,6 @@ export class UsersController {
 
   /** Get one user */
   @Get(`/show/:userId`)
-  @UseGuards(JwtAuthGuard)
   async getOneByIdUser(
     @Res() res,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -91,16 +90,19 @@ export class UsersController {
     return reply({ res, results: profile });
   }
 
-  @Put(`/update/profile`)
+  @Put(`/update/profile/:profileId`)
   @UseGuards(JwtAuthGuard)
-  async updateProfile(@Res() res, @Req() req, @Body() body: UpdateProfileDto) {
-    const { user } = req;
-
-    const { fullName, countryId, image, color, url } = body;
+  async updateProfile(
+    @Res() res,
+    @Req() req,
+    @Body() body: UpdateProfileDto,
+    @Param('profileId', ParseUUIDPipe) profileId: string,
+  ) {
+    const { fullName, countryId,currencyId, image, color, url } = body;
 
     await this.profilesService.updateOne(
-      { profileId: user?.profileId },
-      { fullName, countryId, image, color, url },
+      { profileId: profileId },
+      { fullName, countryId,currencyId, image, color, url },
     );
 
     return reply({ res, results: 'Profile updated successfully' });

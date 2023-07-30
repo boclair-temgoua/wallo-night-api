@@ -27,7 +27,7 @@ export class Project extends BaseDeleteEntity {
   @Column({ default: true })
   isActive?: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   description?: string;
 
   @Column({ type: 'uuid', nullable: true })

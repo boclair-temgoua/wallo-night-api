@@ -88,6 +88,7 @@ export class ProfilesService {
       url,
       phone,
       firstAddress,
+      description,
       secondAddress,
       birthday,
       deletedAt,
@@ -107,6 +108,7 @@ export class ProfilesService {
     findItem.image = image;
     findItem.url = url;
     findItem.phone = phone;
+    findItem.description = description;
     findItem.firstAddress = firstAddress;
     findItem.secondAddress = secondAddress;
     findItem.birthday = birthday;

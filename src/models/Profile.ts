@@ -18,6 +18,9 @@ export class Profile extends BaseDeleteEntity {
   @Column({ nullable: true })
   fullName?: string;
 
+  @Column({ type: 'text', nullable: true })
+  description?: string;
+
   @Column({ nullable: true })
   phone?: string;
 

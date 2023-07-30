@@ -7,8 +7,11 @@ import {
   IsInt,
   IsOptional,
   IsUUID,
+  IsEnum,
+  IsDate,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
+import { NextStep } from './users.type';
 export class UpdateInfoUserDto {
   @IsNotEmpty()
   @IsString()
@@ -105,6 +108,11 @@ export class CreateLoginUserDto {
 export class CreateRegisterUserDto {
   @IsNotEmpty()
   @IsString()
+  @IsEnum(NextStep)
+  nextStep: NextStep;
+
+  @IsNotEmpty()
+  @IsString()
   @MaxLength(50)
   fullName: string;
 
@@ -135,10 +143,10 @@ export class CreateRegisterUserDto {
   @IsString()
   password: string;
 
-  @IsString()
-  @MinLength(8)
-  @Match('password')
-  passwordConfirm: string;
+  // @IsString()
+  // @MinLength(8)
+  // @Match('password')
+  // passwordConfirm: string;
 }
 
 export class ConfirmOneRegisterCreateUserDto {
@@ -176,15 +184,33 @@ export class UpdateOneEmailUserDto {
 }
 
 export class UpdateProfileDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(50)
   fullName: string;
-  
+
   @IsOptional()
   @IsString()
   @IsUUID()
   countryId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  currencyId: string;
+
+  @IsOptional()
+  @IsString()
+  birthday: Date;
+
+  @IsOptional()
+  @IsString()
+  description: string;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(NextStep)
+  nextStep: NextStep;
 
   @IsOptional()
   @IsString()

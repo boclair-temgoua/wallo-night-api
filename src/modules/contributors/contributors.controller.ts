@@ -175,7 +175,6 @@ export class ContributorsController {
     const jwtPayload: JwtPayloadType = {
       id: userSave?.id,
       profileId: profile?.id,
-      fullName: profile?.fullName,
       organizationInUtilizationId: user.organizationInUtilizationId,
     };
     await this.usersService.updateOne(

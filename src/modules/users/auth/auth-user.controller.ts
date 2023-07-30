@@ -15,6 +15,7 @@ import {
   HttpException,
   HttpStatus,
   UnauthorizedException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { reply } from '../../../app/utils/reply';
 import { useCatch } from '../../../app/utils/use-catch';
@@ -24,6 +25,7 @@ import {
   CreateLoginUserDto,
   CreateRegisterUserDto,
   TokenUserDto,
+  UpdateProfileDto,
   UpdateResetPasswordUserDto,
 } from '../users.dto';
 import { ProfilesService } from '../../profiles/profiles.service';
@@ -81,9 +83,7 @@ export class AuthUserController {
     });
 
     /** Create User */
-    const usernameGenerate = `${fullName}-${generateNumber(
-      4,
-    )}`.toLowerCase();
+    const usernameGenerate = `${fullName}-${generateNumber(4)}`.toLowerCase();
     const user = await this.usersService.createOne({
       email,
       password,
@@ -129,7 +129,20 @@ export class AuthUserController {
     //await channel.sendToQueue(queue, Buffer.from(JSON.stringify(results)));
     //await authRegisterJob({ channel, queue });
 
-    return reply({ res, results: user });
+    const jwtPayload: JwtPayloadType = {
+      id: user.id,
+      profileId: user.profileId,
+      organizationInUtilizationId: user.organizationInUtilizationId,
+    };
+
+    const refreshToken = await this.checkUserService.createJwtTokens(
+      jwtPayload,
+    );
+
+    return reply({
+      res,
+      results: { accessToken: `Bearer ${refreshToken}`, id: user.id },
+    });
   }
 
   /** Login user */
@@ -148,7 +161,6 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       profileId: findOnUser.profileId,
-      fullName: findOnUser?.profile?.fullName,
       organizationInUtilizationId: findOnUser.organizationInUtilizationId,
     };
 
@@ -156,7 +168,10 @@ export class AuthUserController {
       jwtPayload,
     );
 
-    return reply({ res, results: `Bearer ${refreshToken}` });
+    return reply({
+      res,
+      results: { accessToken: `Bearer ${refreshToken}`, id: findOnUser.id },
+    });
   }
 
   /** Reset password */
@@ -177,7 +192,6 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       profileId: findOnUser.profileId,
-      fullName: findOnUser?.profile?.fullName,
       organizationInUtilizationId: findOnUser.organizationInUtilizationId,
     };
 
@@ -241,5 +255,49 @@ export class AuthUserController {
     );
 
     return reply({ res, results: 'Password updated successfully' });
+  }
+
+  /** Update password */
+  @Put(`/profile/update/:userId`)
+  async updateOneProfile(
+    @Res() res,
+    @Body() body: UpdateProfileDto,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    const {
+      fullName,
+      description,
+      birthday,
+      countryId,
+      image,
+      color,
+      url,
+      currencyId,
+      nextStep,
+    } = body;
+
+    const findOnUser = await this.usersService.findOneBy({ userId });
+    if (!findOnUser)
+      throw new HttpException(
+        `User ${userId} dons't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    await this.profilesService.updateOne(
+      { profileId: findOnUser?.profileId },
+      {
+        fullName,
+        description,
+        countryId,
+        birthday,
+        currencyId,
+        image,
+        color,
+        url,
+      },
+    );
+
+    await this.usersService.updateOne({ userId }, { nextStep });
+
+    return reply({ res, results: 'Profile updated successfully' });
   }
 }

@@ -3,12 +3,6 @@ import { reply } from '../../app/utils/reply';
 
 import { CurrenciesService } from './currencies.service';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { JwtAuthGuard } from '../users/middleware';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import {
-  addPagination,
-  PaginationType,
-} from '../../app/utils/pagination/with-pagination';
 
 @Controller('currencies')
 export class CurrenciesController {
