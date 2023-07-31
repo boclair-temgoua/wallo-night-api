@@ -12,7 +12,10 @@ async function bootstrap() {
   const version = config.api.version;
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix(`/api/${version}`);
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
   app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({

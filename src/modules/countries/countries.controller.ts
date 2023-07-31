@@ -1,14 +1,8 @@
-import { Controller, UseGuards, Res, Get, Query } from '@nestjs/common';
+import { Controller, Res, Get, Query } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
 import { CountriesService } from './countries.service';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { JwtAuthGuard } from '../users/middleware';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import {
-  addPagination,
-  PaginationType,
-} from '../../app/utils/pagination/with-pagination';
 
 @Controller('countries')
 export class CountriesController {

@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { useCatch } from '../../../app/utils/use-catch';
-import { sign, verify } from 'jsonwebtoken';
+import { sign, verify, JwtPayload } from 'jsonwebtoken';
 import { config } from '../../../app/config';
 import { UsersService } from '../users.service';
 import { JwtPayloadType } from '../users.type';
@@ -33,13 +38,9 @@ export class CheckUserService {
   /** Create one createJwtToken for use and save to the database. */
   async createJwtToken(type: 'access' | 'refresh', payload: JwtPayloadType) {
     const secret =
-      type === 'access'
-        ? config.jwt.secret
-        : config.jwt.refreshSecret;
+      type === 'access' ? config.jwt.secret : config.jwt.refreshSecret;
     const expiresIn =
-      type === 'access'
-        ? config.jwt.expiration
-        : config.jwt.refreshExpiration;
+      type === 'access' ? config.jwt.expiration : config.jwt.refreshExpiration;
 
     return sign(payload, secret, { expiresIn });
   }
@@ -66,5 +67,16 @@ export class CheckUserService {
     const token = this.createJwtToken('access', payload);
     await this.createRefreshToken(payload);
     return token;
+  }
+
+  async createToken(data: JwtPayload, secret: string, expiry: string) {
+    return sign(data, secret, { expiresIn: expiry });
+  }
+
+  async verifyTokenCookie(token: string) {
+    const payload = verify(token, config.cookieKey);
+    if (typeof payload == 'string')
+      throw new HttpException(`Token not verified`, HttpStatus.NOT_FOUND);
+    return payload;
   }
 }

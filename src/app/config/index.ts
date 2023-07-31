@@ -8,6 +8,19 @@ export const config = {
    */
   environment: process.env.NODE_ENV || 'development',
   /**
+   * Cookie configuration
+   */
+  cookieKey: process.env.COOKIE_KEY || '@3%NE8IksyHK4yC5POFurDCAVW@FqxBe',
+  cookie_access: {
+    user: {
+      accessExpire: process.env.USER_ACCESS_EXPIRE || '1200000',
+      refreshExpire: process.env.USER_REFRESH_EXPIRE || '86400000',
+      firstStepExpire: process.env.USER_FIRST_STEP_EXPIRE || '300000',
+      verificationExpire: process.env.VERIFICATION_EXPIRE || '300000',
+      validationTokenExpire: process.env.USER_VALIDATION_TOKEN_EXPIRE,
+    },
+  },
+  /**
    * Site
    */
   datasite: {

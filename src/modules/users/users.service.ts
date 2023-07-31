@@ -154,6 +154,7 @@ export class UsersService {
       .select('user.id', 'id')
       .addSelect('user.createdAt', 'createdAt')
       .addSelect('user.email', 'email')
+      .addSelect('user.username', 'username')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
       .addSelect('user.nextStep', 'nextStep')

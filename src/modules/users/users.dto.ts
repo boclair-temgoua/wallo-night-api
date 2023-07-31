@@ -189,6 +189,11 @@ export class UpdateProfileDto {
   @MaxLength(50)
   fullName: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50)
+  username: string;
+
   @IsOptional()
   @IsString()
   @IsUUID()

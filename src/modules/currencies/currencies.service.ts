@@ -32,7 +32,7 @@ export class CurrenciesService {
       .where('currency.isActive IS TRUE');
 
     if (search) {
-      query = query.where(
+      query = query.andWhere(
         new Brackets((qb) => {
           qb.where(
             'currency.name ::text ILIKE :search OR country.code ::text ILIKE :search',

@@ -16,6 +16,7 @@ import {
   HttpStatus,
   UnauthorizedException,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../../app/utils/reply';
 import { useCatch } from '../../../app/utils/use-catch';
@@ -29,15 +30,28 @@ import {
   UpdateResetPasswordUserDto,
 } from '../users.dto';
 import { ProfilesService } from '../../profiles/profiles.service';
-import { JwtPayloadType } from '../users.type';
+import { JwtPayloadType, NextStep } from '../users.type';
 import { CheckUserService } from '../middleware/check-user.service';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
 import { config } from '../../../app/config/index';
-import { authLoginJob, authPasswordResetJob } from '../users.job';
+import {
+  authCodeConfirmationJob,
+  authLoginJob,
+  authPasswordResetJob,
+} from '../users.job';
 import { OrganizationsService } from '../../organizations/organizations.service';
 import { WalletsService } from '../../wallets/wallets.service';
-import { generateNumber } from 'src/app/utils/commons';
+import {
+  dateTimeNowUtc,
+  generateLongUUID,
+  generateNumber,
+} from '../../../app/utils/commons';
+import { JwtAuthGuard } from '../middleware';
+import {
+  expire_cookie_setting,
+  validation_code_verification_cookie_setting,
+} from '../../../app/utils/cookies';
 
 @Controller()
 export class AuthUserController {
@@ -83,7 +97,7 @@ export class AuthUserController {
     });
 
     /** Create User */
-    const usernameGenerate = `${fullName}-${generateNumber(4)}`.toLowerCase();
+    const usernameGenerate = `${generateLongUUID(8)}`.toLowerCase();
     const user = await this.usersService.createOne({
       email,
       password,
@@ -259,12 +273,14 @@ export class AuthUserController {
 
   /** Update password */
   @Put(`/profile/update/:userId`)
+  @UseGuards(JwtAuthGuard)
   async updateOneProfile(
     @Res() res,
     @Body() body: UpdateProfileDto,
     @Param('userId', ParseUUIDPipe) userId: string,
   ) {
     const {
+      username,
       fullName,
       description,
       birthday,
@@ -282,6 +298,18 @@ export class AuthUserController {
         `User ${userId} dons't exists please change`,
         HttpStatus.NOT_FOUND,
       );
+
+    const findOnUserUsername = await this.usersService.findOneBy({ username });
+
+    if (
+      findOnUserUsername &&
+      findOnUserUsername?.username !== findOnUser?.username
+    )
+      throw new HttpException(
+        `${username} already exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
     await this.profilesService.updateOne(
       { profileId: findOnUser?.profileId },
       {
@@ -296,8 +324,85 @@ export class AuthUserController {
       },
     );
 
-    await this.usersService.updateOne({ userId }, { nextStep });
+    await this.usersService.updateOne({ userId }, { nextStep, username });
 
     return reply({ res, results: 'Profile updated successfully' });
+  }
+
+  /** Resend code user */
+  @Get(`/resend/code/:userId`)
+  async resendCode(
+    @Res() res,
+    @Req() req,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    const findOnUser = await this.usersService.findOneBy({ userId });
+    if (!findOnUser)
+      throw new HttpException(
+        `User ${userId} dons't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const codeGenerate = generateNumber(4);
+    const { cookieKey } = config;
+    const expiresIn = config.cookie_access.user.firstStepExpire;
+    const token = await this.checkUserService.createToken(
+      { userId: userId, code: codeGenerate, isLogin: true },
+      cookieKey,
+      expiresIn,
+    );
+    res.cookie(
+      'x-code-verification',
+      token,
+      validation_code_verification_cookie_setting,
+    );
+
+    /** Send information to Job */
+    const result = { ...findOnUser, code: codeGenerate };
+    const queue = 'user-send-code';
+    const connect = await amqplib.connect(config.implementations.amqp.link);
+    const channel = await connect.createChannel();
+    await channel.assertQueue(queue, { durable: false });
+    await channel.sendToQueue(queue, Buffer.from(JSON.stringify(result)));
+    await authCodeConfirmationJob({ channel, queue });
+    /** End send information to Job */
+
+    return reply({ res, results: 'Email send successfully' });
+  }
+
+  /** Resend code user */
+  @Post(`/valid/code`)
+  @UseGuards(JwtAuthGuard)
+  async validCode(
+    @Res() res,
+    @Req() req,
+    @Body('code') code: string,
+    @Body('nextStep') nextStep: NextStep,
+  ) {
+    if (!req.cookies['x-code-verification'])
+      throw new HttpException(
+        `Code ${code} not valid or expired`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const payload = await this.checkUserService.verifyTokenCookie(
+      req.cookies['x-code-verification'],
+    );
+
+    if (Number(payload?.code) !== Number(code)) {
+      throw new HttpException(
+        `Code ${code} not valid or expired`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.usersService.updateOne(
+      { userId: payload?.userId },
+      { nextStep, confirmedAt: dateTimeNowUtc() },
+    );
+
+    res.clearCookie('x-code-verification', expire_cookie_setting);
+
+    return reply({ res, results: 'Email confirmed successfully' });
   }
 }
