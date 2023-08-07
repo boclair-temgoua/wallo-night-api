@@ -39,6 +39,7 @@ export enum FilterQueryType {
   ORGANIZATION = 'ORGANIZATION',
   CAMPAIGN = 'CAMPAIGN',
   DONATION = 'DONATION',
+  MEMBERSHIP = 'MEMBERSHIP',
   GIFT = 'GIFT',
   HELP = 'HELP',
 }

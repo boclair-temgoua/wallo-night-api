@@ -27,6 +27,7 @@ import { ContributionsModule } from './modules/contributions/contributions.modul
 import { WithdrawalsModule } from './modules/withdrawals/withdrawals.module';
 import { WithdrawalUsersModule } from './modules/withdrawal-users/withdrawal-users.module';
 import { ArticlesModule } from './modules/articles/articles.module';
+import { MembershipsModule } from './modules/memberships/memberships.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ArticlesModule } from './modules/articles/articles.module';
     ArticlesModule,
     CurrenciesModule,
     WithdrawalsModule,
+    MembershipsModule,
     WithdrawalUsersModule,
     ContributionsModule,
     ContactUsModule,

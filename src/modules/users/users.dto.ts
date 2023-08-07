@@ -189,7 +189,7 @@ export class UpdateProfileDto {
   @MaxLength(50)
   fullName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(50)
   username: string;
@@ -210,7 +210,19 @@ export class UpdateProfileDto {
 
   @IsOptional()
   @IsString()
+  phone: string;
+
+  @IsOptional()
+  @IsString()
   description: string;
+
+  @IsOptional()
+  @IsString()
+  firstAddress: string;
+
+  @IsOptional()
+  @IsString()
+  secondAddress: string;
 
   @IsOptional()
   @IsString()

@@ -20,6 +20,7 @@ import { Wallet } from './Wallet';
 import { Gift } from './Gift';
 import { Campaign } from './Campaign';
 import { Withdrawal } from './Withdrawal';
+import { Membership } from './Membership';
 import { WithdrawalUser } from './WithdrawalUser';
 import { NextStep } from '../modules/users/users.type';
 
@@ -107,6 +108,11 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   carts?: Cart[];
+
+  @OneToMany(() => Membership, (membership) => membership.user, {
+    onDelete: 'CASCADE',
+  })
+  memberships?: Membership[];
 
   @ManyToOne(() => Organization, (organization) => organization.users, {
     onDelete: 'CASCADE',

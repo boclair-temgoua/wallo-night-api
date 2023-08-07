@@ -16,6 +16,7 @@ import { Contribution } from './Contribution';
 import { TransactionType } from '../modules/transactions/transactions.type';
 import { Campaign } from './Campaign';
 import { Withdrawal } from './Withdrawal';
+import { Membership } from './Membership';
 
 @Entity('transaction')
 export class Transaction extends BaseDeleteEntity {
@@ -109,4 +110,12 @@ export class Transaction extends BaseDeleteEntity {
   })
   @JoinColumn()
   organization?: Relation<Organization>;
+
+  @Column({ type: 'uuid', nullable: true })
+  membershipId?: string;
+  @ManyToOne(() => Membership, (membership) => membership.transactions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  membership?: Relation<Membership>;
 }

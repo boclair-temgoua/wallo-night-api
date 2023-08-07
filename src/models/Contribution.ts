@@ -16,6 +16,7 @@ import { Campaign } from './Campaign';
 import { Gift } from './Gift';
 import { Transaction } from './Transaction';
 import { Currency } from './Currency';
+import { Membership } from './Membership';
 
 @Entity('contribution')
 export class Contribution extends BaseDeleteEntity {
@@ -28,11 +29,7 @@ export class Contribution extends BaseDeleteEntity {
   @Column({ type: 'float', nullable: true })
   amountConvert: number;
 
-  @Column({
-    type: 'enum',
-    enum: FilterQueryType,
-    default: FilterQueryType.ORGANIZATION,
-  })
+  @Column({ default: 'ORGANIZATION', length: 30 })
   type?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
@@ -48,7 +45,6 @@ export class Contribution extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
-  
 
   @Column({ type: 'uuid', nullable: true })
   giftId?: string;
@@ -65,6 +61,14 @@ export class Contribution extends BaseDeleteEntity {
   })
   @JoinColumn()
   campaign?: Relation<Campaign>;
+
+  @Column({ type: 'uuid', nullable: true })
+  membershipId?: string;
+  @ManyToOne(() => Membership, (membership) => membership.contributions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  membership?: Relation<Membership>;
 
   @OneToOne(() => Transaction, (transaction) => transaction.contribution, {
     onDelete: 'CASCADE',

@@ -98,11 +98,33 @@ export class UsersController {
     @Body() body: UpdateProfileDto,
     @Param('profileId', ParseUUIDPipe) profileId: string,
   ) {
-    const { fullName, countryId,currencyId, image, color, url } = body;
+    const {
+      fullName,
+      countryId,
+      currencyId,
+      image,
+      color,
+      url,
+      birthday,
+      phone,
+      firstAddress,
+      secondAddress,
+    } = body;
 
     await this.profilesService.updateOne(
       { profileId: profileId },
-      { fullName, countryId,currencyId, image, color, url },
+      {
+        fullName,
+        countryId,
+        currencyId,
+        image,
+        color,
+        url,
+        birthday,
+        phone,
+        firstAddress,
+        secondAddress,
+      },
     );
 
     return reply({ res, results: 'Profile updated successfully' });

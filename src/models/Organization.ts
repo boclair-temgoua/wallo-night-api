@@ -17,6 +17,7 @@ import { Campaign } from './Campaign';
 import { Gift } from './Gift';
 import { Withdrawal } from './Withdrawal';
 import { WithdrawalUser } from './WithdrawalUser';
+import { Membership } from './Membership';
 
 @Entity('organization')
 export class Organization extends BaseDeleteEntity {
@@ -102,4 +103,9 @@ export class Organization extends BaseDeleteEntity {
     },
   )
   withdrawalUsers?: WithdrawalUser[];
+
+  @OneToMany(() => Membership, (membership) => membership.organization, {
+    onDelete: 'CASCADE',
+  })
+  memberships?: Membership[];
 }

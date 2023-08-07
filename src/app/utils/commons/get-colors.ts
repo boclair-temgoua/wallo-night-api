@@ -1,2 +1,2 @@
-export const colorsArrays = ['primary', 'info', 'warning', 'danger', 'success'];
-export type Color = 'primary' | 'info' | 'warning' | 'danger' | 'success';
+export const colorsArrays = ['gray', 'green', 'indigo', 'red'];
+export type Color = 'gray' | 'green' | 'indigo' | 'red';
