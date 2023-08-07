@@ -102,8 +102,14 @@ export class MembershipsController {
     @Body() body: CreateOrUpdateMembershipsDto,
     @Param('membershipId', ParseUUIDPipe) membershipId: string,
   ) {
-    const { title, pricePerMonthly, pricePerYearly, currency, description } =
-      body;
+    const {
+      title,
+      currency,
+      description,
+      pricePerYearly,
+      messageWelcome,
+      pricePerMonthly,
+    } = body;
     const findOneMembership = await this.membershipsService.findOneBy({
       membershipId,
     });
@@ -123,10 +129,11 @@ export class MembershipsController {
       { membershipId },
       {
         title,
+        description,
+        pricePerYearly,
+        messageWelcome,
         pricePerMonthly,
         currencyId: findOneCurrency?.id,
-        pricePerYearly,
-        description,
       },
     );
 
@@ -168,10 +175,10 @@ export class MembershipsController {
         HttpStatus.NOT_FOUND,
       );
 
-    // await this.membershipsService.updateOne(
-    //   { membershipId },
-    //   { isActive: !findOneMembership?.isActive },
-    // );
+    await this.membershipsService.updateOne(
+      { membershipId },
+      { isActive: !findOneMembership?.isActive },
+    );
 
     return reply({ res, results: 'membership update successfully' });
   }
