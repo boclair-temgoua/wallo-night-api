@@ -34,14 +34,13 @@ export class MembershipsController {
   ) {}
 
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
   async findAllByOrganizationId(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
+    @Query('userId', ParseUUIDPipe) userId: string,
+    @Query() requestPaginationDto: RequestPaginationDto,
   ) {
-    const { user } = req;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -49,8 +48,8 @@ export class MembershipsController {
 
     const memberships = await this.membershipsService.findAll({
       search,
+      userId,
       pagination,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: memberships });
@@ -67,11 +66,11 @@ export class MembershipsController {
     const { user } = req;
     const {
       title,
-      pricePerMonthly,
-      pricePerYearly,
-      messageWelcome,
       currency,
       description,
+      pricePerYearly,
+      messageWelcome,
+      pricePerMonthly,
     } = body;
 
     const findOneCurrency = await this.currenciesService.findOneBy({
@@ -82,12 +81,12 @@ export class MembershipsController {
 
     await this.membershipsService.createOne({
       title,
-      currencyId: findOneCurrency?.id,
       description,
-      userId: user?.id,
       pricePerYearly,
-      pricePerMonthly,
       messageWelcome,
+      pricePerMonthly,
+      userId: user?.id,
+      currencyId: findOneCurrency?.id,
       organizationId: user?.organizationInUtilizationId,
     });
 
@@ -110,7 +109,7 @@ export class MembershipsController {
     });
     if (!findOneMembership)
       throw new HttpException(
-        `Membership ${membershipId} don't exists please change`,
+        `membership ${membershipId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 

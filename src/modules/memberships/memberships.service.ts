@@ -41,9 +41,9 @@ export class MembershipsService {
       .addSelect('membership.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-    'code', "currency"."code",
-    'symbol', "currency"."symbol"
-) AS "currency"`,
+          'code', "currency"."code",
+          'symbol', "currency"."symbol"
+        ) AS "currency"`,
       )
       .addSelect(
         /*sql*/ `(
@@ -122,9 +122,9 @@ export class MembershipsService {
       .addSelect('membership.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-  'code', "currency"."code",
-  'symbol', "currency"."symbol"
-) AS "currency"`,
+          'code', "currency"."code",
+          'symbol', "currency"."symbol"
+        ) AS "currency"`,
       )
       .addSelect(
         /*sql*/ `(
