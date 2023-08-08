@@ -13,7 +13,7 @@ export * from './Campaign';
 export * from './Faq';
 export * from './Gift';
 export * from './OrderProduct';
-export * from './Organization';
+export * from './Gallery';
 export * from './Product';
 export * from './Profile';
 export * from './Project';

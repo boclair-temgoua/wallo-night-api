@@ -4,7 +4,6 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 export type GetDiscountsSelections = {
   search?: string;
   pagination?: PaginationType;
-  organizationId?: Discount['organizationId'];
 };
 
 export type GetOneDiscountsSelections = {

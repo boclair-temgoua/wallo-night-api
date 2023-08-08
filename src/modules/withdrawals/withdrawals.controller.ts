@@ -78,7 +78,6 @@ export class WithdrawalsController {
       description,
       userId: user?.id,
       withdrawalUserId,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: 'withdrawals created successfully' });

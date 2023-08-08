@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { ContributorRole } from '../modules/contributors/contributors.type';
 import { User } from './User';
-import { Organization } from './Organization';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 import { Campaign } from './Campaign';

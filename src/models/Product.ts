@@ -15,7 +15,6 @@ import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
-import { Organization } from './Organization';
 import { StatusProduct } from '../modules/products/products.dto';
 import { Discount } from './Discount';
 
@@ -95,14 +94,6 @@ export class Product extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.products, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  organization?: Relation<Organization>;
 
   @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
   orderProducts: OrderProduct[];

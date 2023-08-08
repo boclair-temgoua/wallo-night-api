@@ -12,8 +12,6 @@ import {
 
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Product } from './Product';
-import { User } from './User';
-import { Organization } from './Organization';
 
 @Entity('order_product')
 export class OrderProduct extends BaseDeleteEntity {
@@ -80,12 +78,4 @@ export class OrderProduct extends BaseDeleteEntity {
   @ManyToOne(() => Product, (product) => product.orderProducts)
   @JoinColumn()
   product?: Relation<Product>;
-
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.transactions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  organization?: Relation<Organization>;
 }

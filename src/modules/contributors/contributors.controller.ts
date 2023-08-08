@@ -52,77 +52,6 @@ export class ContributorsController {
     private readonly contributorsService: ContributorsService,
   ) {}
 
-  @Get(`/organization`)
-  @UseGuards(JwtAuthGuard)
-  async findAllByOrganizationId(
-    @Res() res,
-    @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
-    @Query() searchQuery: SearchQueryDto,
-    @Query('organizationId', ParseUUIDPipe) organizationId: string,
-  ) {
-    const { user } = req;
-    /** get contributor filter by organization */
-    const { search } = searchQuery;
-
-    const { take, page, sort } = requestPaginationDto;
-    const pagination: PaginationType = addPagination({ page, take, sort });
-
-    const contributors = await this.contributorsService.findAll({
-      search,
-      pagination,
-      organizationId,
-    });
-
-    return reply({ res, results: contributors });
-  }
-
-  @Post(`/organization`)
-  @UseGuards(JwtAuthGuard)
-  async createOneByOrganization(
-    @Res() res,
-    @Req() req,
-    @Query() query: CreateOneContributorOrganizationDto,
-  ) {
-    const { user } = req;
-    const { userId, organizationId } = query;
-    /** This condition check if user is ADMIN */
-    // await this.usersService.canPermission({ userId: user?.id });
-
-    const getOneUser = await this.usersService.findOneBy({
-      userId,
-    });
-    if (!getOneUser)
-      throw new HttpException(
-        `User ${userId} don't exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
-
-    const findOneContributorOrganization =
-      await this.contributorsService.findOneBy({
-        userId: getOneUser?.id,
-        type: FilterQueryType.ORGANIZATION,
-        organizationId: organizationId,
-      });
-    if (findOneContributorOrganization)
-      throw new HttpException(
-        `This contributor already exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
-
-    /** Create Contributor */
-    await this.contributorsService.createOne({
-      userId: getOneUser?.id,
-      userCreatedId: user?.id,
-      role: ContributorRole.ANALYST,
-      organizationId: organizationId,
-    });
-
-    /** Send notification to Contributor */
-
-    return reply({ res, results: 'Contributor save successfully' });
-  }
-
   @Post(`/new-user`)
   @UseGuards(JwtAuthGuard)
   async createOneNewUser(
@@ -136,7 +65,6 @@ export class ContributorsController {
 
     await this.contributorsService.canCheckPermissionContributor({
       userId: user?.id,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     const findOneUser = await this.usersService.findOneBy({
@@ -160,7 +88,6 @@ export class ContributorsController {
       password: generateLongUUID(8),
       token: generateLongUUID(30),
       username: `${fullName}`.toLowerCase(),
-      organizationInUtilizationId: user?.organizationInUtilizationId,
     });
 
     /** Create Contributor */
@@ -168,14 +95,12 @@ export class ContributorsController {
       userId: userSave?.id,
       userCreatedId: user?.id,
       role: role as ContributorRole,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     /** Update User */
     const jwtPayload: JwtPayloadType = {
       id: userSave?.id,
       profileId: profile?.id,
-      organizationInUtilizationId: user.organizationInUtilizationId,
     };
     await this.usersService.updateOne(
       { userId: userSave?.id },
@@ -183,9 +108,7 @@ export class ContributorsController {
     );
     /** Send notification to Contributor */
     const queue = 'user-contributor-create';
-    const connect = await amqplib.connect(
-      config.implementations.amqp.link,
-    );
+    const connect = await amqplib.connect(config.implementations.amqp.link);
     // const channel = await connect.createChannel();
     // await channel.assertQueue(queue, { durable: false });
     // await channel.sendToQueue(
@@ -213,7 +136,6 @@ export class ContributorsController {
 
     const findOneContributor = await this.contributorsService.findOneBy({
       contributorId,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     if (!findOneContributor)
@@ -239,7 +161,6 @@ export class ContributorsController {
 
     const findOneContributor = await this.contributorsService.findOneBy({
       contributorId,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     if (!findOneContributor)
@@ -269,7 +190,6 @@ export class ContributorsController {
 
     await this.contributorsService.canCheckPermissionContributor({
       userId: user?.id,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     const findOneContributor = await this.contributorsService.findOneBy({

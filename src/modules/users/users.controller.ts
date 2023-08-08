@@ -62,7 +62,6 @@ export class UsersController {
 
     const getOneContributor = await this.contributorsService.findOneBy({
       userId: user?.id,
-      organizationId: user?.organizationInUtilizationId,
       type: FilterQueryType.ORGANIZATION,
     });
     if (!getOneContributor)
@@ -153,22 +152,5 @@ export class UsersController {
     await this.usersService.updateOne({ userId: user?.id }, { email: email });
 
     return reply({ res, results: 'User updated successfully' });
-  }
-
-  @Get(`/change-organization/:organizationId`)
-  @UseGuards(JwtAuthGuard)
-  async updateUserOrganization(
-    @Res() res,
-    @Req() req,
-    @Param('organizationId', ParseUUIDPipe) organizationId: string,
-  ) {
-    const { user } = req;
-
-    await this.usersService.updateOne(
-      { userId: user?.id },
-      { organizationInUtilizationId: organizationId },
-    );
-
-    return reply({ res, results: 'User organization updated successfully' });
   }
 }

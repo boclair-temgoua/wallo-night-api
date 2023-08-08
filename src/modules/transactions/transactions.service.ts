@@ -32,7 +32,6 @@ export class TransactionsService {
       search,
       pagination,
       userId,
-      organizationId,
       campaignId,
       userSendId,
       userReceiveId,
@@ -51,7 +50,6 @@ export class TransactionsService {
       .addSelect('transaction.userSendId', 'userSendId')
       .addSelect('transaction.userReceiveId', 'userReceiveId')
       .addSelect('transaction.userId', 'userId')
-      .addSelect('transaction.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
       'id', "gift"."id",
@@ -118,12 +116,6 @@ export class TransactionsService {
       });
     }
 
-    if (organizationId) {
-      query = query.andWhere('transaction.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
-
     if (search) {
       query = query.andWhere('transaction.title ::text ILIKE :search', {
         search: `%${search}%`,
@@ -179,7 +171,6 @@ export class TransactionsService {
       userId,
       type,
       giftId,
-      organizationId,
     } = options;
 
     const transaction = new Transaction();
@@ -191,7 +182,6 @@ export class TransactionsService {
     transaction.userId = userId;
     transaction.type = type;
     transaction.giftId = giftId;
-    transaction.organizationId = organizationId;
     transaction.contributionId = contributionId;
     transaction.description = description;
 

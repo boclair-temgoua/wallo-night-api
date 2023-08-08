@@ -43,3 +43,9 @@ export enum FilterQueryType {
   GIFT = 'GIFT',
   HELP = 'HELP',
 }
+
+export enum WhoCanSeeType {
+  PUBLIC = 'PUBLIC',
+  MEMBERSHIP = 'MEMBERSHIP',
+  SUPPORTER = 'SUPPORTER',
+}

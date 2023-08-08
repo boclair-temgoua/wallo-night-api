@@ -80,7 +80,6 @@ export class WithdrawalUsersController {
     await this.withdrawalUsersService.createOne({
       ...body,
       userId: user?.id,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: 'withdrawalUsers created successfully' });

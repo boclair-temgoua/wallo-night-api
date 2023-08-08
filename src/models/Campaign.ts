@@ -10,7 +10,6 @@ import {
 import { User } from './User';
 import { Transaction } from './Transaction';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Organization } from './Organization';
 import { Contribution } from './Contribution';
 
 @Entity('campaign')
@@ -43,14 +42,6 @@ export class Campaign extends BaseDeleteEntity {
   })
   @JoinColumn()
   user?: Relation<User>;
-
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.campaigns, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  organization?: Relation<Organization>;
 
   @OneToMany(() => Transaction, (transaction) => transaction.campaign, {
     onDelete: 'CASCADE',

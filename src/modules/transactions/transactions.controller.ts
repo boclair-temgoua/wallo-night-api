@@ -35,14 +35,11 @@ export class TransactionsController {
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
-    const { userId, organizationId } = filterTransactionQuery;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const transactions = await this.transactionsService.findAll({
       search,
       pagination,
-      userId,
-      organizationId,
     });
 
     return reply({ res, results: transactions });

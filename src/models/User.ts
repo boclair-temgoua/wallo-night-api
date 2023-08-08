@@ -13,7 +13,6 @@ import {
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Profile } from './Profile';
 import { Contributor } from './Contributor';
-import { Organization } from './Organization';
 import { Cart } from './Cart';
 import { Transaction } from './Transaction';
 import { Wallet } from './Wallet';
@@ -23,6 +22,7 @@ import { Withdrawal } from './Withdrawal';
 import { Membership } from './Membership';
 import { WithdrawalUser } from './WithdrawalUser';
 import { NextStep } from '../modules/users/users.type';
+import { Gallery } from './Gallery';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -58,9 +58,6 @@ export class User extends BaseDeleteEntity {
   nextStep?: NextStep;
 
   @Column({ type: 'uuid', nullable: true })
-  organizationInUtilizationId?: string;
-
-  @Column({ type: 'uuid', nullable: true })
   profileId?: string;
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
   @JoinColumn()
@@ -71,13 +68,11 @@ export class User extends BaseDeleteEntity {
   })
   wallet?: Wallet;
 
-  @OneToMany(() => Campaign, (campaign) => campaign.organization)
+  @OneToMany(() => Campaign, (campaign) => campaign.user)
   campaigns?: Campaign[];
 
-  @OneToMany(() => Organization, (organization) => organization.user, {
-    onDelete: 'CASCADE',
-  })
-  organizations?: Organization[];
+  @OneToMany(() => Gallery, (gallery) => gallery.user)
+  galleries?: Gallery[];
 
   @OneToMany(() => Transaction, (transaction) => transaction.user, {
     onDelete: 'CASCADE',
@@ -113,14 +108,6 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   memberships?: Membership[];
-
-  @ManyToOne(() => Organization, (organization) => organization.users, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn([
-    { name: 'organizationInUtilizationId', referencedColumnName: 'id' },
-  ])
-  organizationInUtilization?: Organization;
 
   async hashPassword(password: string) {
     this.password = await bcrypt.hashSync(

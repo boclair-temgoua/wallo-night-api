@@ -15,7 +15,6 @@ export type GetTransactionsSelections = {
   campaignId?: Transaction['campaignId'];
   userSendId?: Transaction['userSendId'];
   userReceiveId?: Transaction['userReceiveId'];
-  organizationId?: Transaction['organizationId'];
 };
 
 export type GetOneTransactionSelections = {

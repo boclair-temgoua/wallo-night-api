@@ -50,14 +50,13 @@ export class CampaignsController {
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
-    const { userId, organizationId } = filterCampaignQuery;
+    const { userId } = filterCampaignQuery;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const Campaigns = await this.campaignsService.findAll({
       search,
       pagination,
       userId,
-      organizationId,
     });
 
     return reply({ res, results: Campaigns });
@@ -101,7 +100,6 @@ export class CampaignsController {
     await this.campaignsService.createOne({
       ...body,
       userId: user?.id,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: 'Campaign created successfully' });

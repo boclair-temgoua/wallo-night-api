@@ -5,7 +5,6 @@ export type GetCampaignsSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: Campaign['userId'];
-  organizationId?: Campaign['organizationId'];
 };
 
 export type GetOneCampaignSelections = {

@@ -25,17 +25,11 @@ export class DiscountsService {
   ) {}
 
   async findAll(selections: GetDiscountsSelections): Promise<any> {
-    const { search, pagination, organizationId } = selections;
+    const { search, pagination } = selections;
 
     let query = this.driver
       .createQueryBuilder('discount')
       .where('discount.deletedAt IS NULL');
-
-    if (organizationId) {
-      query = query.andWhere('discount.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
 
     if (search) {
       query = query.andWhere(
@@ -87,14 +81,12 @@ export class DiscountsService {
 
   /** Create one Discounts to the database. */
   async createOne(options: CreateDiscountsOptions): Promise<Discount> {
-    const { name, description, organizationId, percent, expiredAt, startedAt } =
-      options;
+    const { name, description, percent, expiredAt, startedAt } = options;
 
     const discount = new Discount();
     discount.name = name;
     discount.description = description;
     discount.percent = percent;
-    discount.organizationId = organizationId;
     discount.startedAt = startedAt;
     discount.expiredAt = expiredAt;
 

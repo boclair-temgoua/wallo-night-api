@@ -11,7 +11,6 @@ export enum NextStep {
 export type JwtPayloadType = {
   id: string;
   profileId: string;
-  organizationInUtilizationId: string;
 };
 
 export type GetUsersSelections = {
@@ -40,7 +39,6 @@ export type GetOnUserPublic = {
   confirmedAt: Date;
   email: string;
   profileId: string;
-  organizationInUtilizationId: string;
   profile: {
     id: string;
     url: string;
@@ -50,11 +48,5 @@ export type GetOnUserPublic = {
     countryId: string;
     fullName: string;
     currencyId: string;
-  };
-  organization: {
-    id: string;
-    name: string;
-    color: string;
-    userId: string;
   };
 };

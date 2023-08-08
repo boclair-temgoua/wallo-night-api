@@ -25,7 +25,7 @@ export class MembershipsService {
   ) {}
 
   async findAll(selections: GetMembershipsSelections): Promise<any> {
-    const { search, pagination, organizationId, userId } = selections;
+    const { search, pagination, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('membership')
@@ -38,7 +38,6 @@ export class MembershipsService {
       .addSelect('membership.pricePerYearly', 'pricePerYearly')
       .addSelect('membership.currencyId', 'currencyId')
       .addSelect('membership.userId', 'userId')
-      .addSelect('membership.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'code', "currency"."code",
@@ -59,12 +58,6 @@ export class MembershipsService {
       )
       .where('membership.deletedAt IS NULL')
       .leftJoin('membership.currency', 'currency');
-
-    if (organizationId) {
-      query = query.andWhere('membership.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
 
     if (userId) {
       query = query.andWhere('membership.userId = :userId', {
@@ -119,7 +112,6 @@ export class MembershipsService {
       .addSelect('membership.pricePerYearly', 'pricePerYearly')
       .addSelect('membership.currencyId', 'currencyId')
       .addSelect('membership.userId', 'userId')
-      .addSelect('membership.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'code', "currency"."code",
@@ -164,7 +156,6 @@ export class MembershipsService {
       pricePerYearly,
       currencyId,
       userId,
-      organizationId,
     } = options;
 
     const membership = new Membership();
@@ -177,7 +168,6 @@ export class MembershipsService {
     membership.pricePerYearly = pricePerYearly;
     membership.currencyId = currencyId;
     membership.userId = userId;
-    membership.organizationId = organizationId;
 
     const query = this.driver.save(membership);
 
@@ -203,7 +193,6 @@ export class MembershipsService {
       currencyId,
       userId,
       isActive,
-      organizationId,
       deletedAt,
     } = options;
 
@@ -225,7 +214,6 @@ export class MembershipsService {
     findItem.pricePerYearly = pricePerYearly;
     findItem.currencyId = currencyId;
     findItem.userId = userId;
-    findItem.organizationId = organizationId;
     findItem.deletedAt = deletedAt;
 
     const query = this.driver.save(findItem);

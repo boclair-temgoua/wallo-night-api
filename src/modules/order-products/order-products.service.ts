@@ -27,7 +27,7 @@ export class OrderProductsService {
   ) {}
 
   async findAll(selections: GetOrderProductsSelections): Promise<any> {
-    const { search, pagination, organizationId, userId } = selections;
+    const { search, pagination, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('orderProduct')
@@ -49,13 +49,6 @@ export class OrderProductsService {
       .addSelect('orderProduct.statusConversation', 'statusConversation')
       .addSelect('orderProduct.status', 'status')
       .addSelect('orderProduct.productId', 'productId')
-      .addSelect('orderProduct.organizationId', 'organizationId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-        'color', "organization"."color",
-        'name', "organization"."name"
-    ) AS "organization"`,
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
         'id', "product"."id",
@@ -63,18 +56,7 @@ export class OrderProductsService {
     ) AS "product"`,
       )
       .where('orderProduct.deletedAt IS NULL')
-      .leftJoin('orderProduct.organization', 'organization')
       .leftJoin('orderProduct.product', 'product');
-
-    if (organizationId) {
-      query = query.andWhere('orderProduct.userId = :userId', { userId });
-    }
-
-    if (organizationId) {
-      query = query.andWhere('orderProduct.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
 
     if (search) {
       query = query.andWhere(
@@ -131,13 +113,6 @@ export class OrderProductsService {
       .addSelect('orderProduct.statusConversation', 'statusConversation')
       .addSelect('orderProduct.status', 'status')
       .addSelect('orderProduct.productId', 'productId')
-      .addSelect('orderProduct.organizationId', 'organizationId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'color', "organization"."color",
-          'name', "organization"."name"
-      ) AS "organization"`,
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "product"."id",
@@ -145,7 +120,6 @@ export class OrderProductsService {
       ) AS "product"`,
       )
       .where('orderProduct.deletedAt IS NULL')
-      .leftJoin('orderProduct.organization', 'organization')
       .leftJoin('orderProduct.product', 'product');
 
     if (orderProductId) {
@@ -180,7 +154,6 @@ export class OrderProductsService {
       status,
       productId,
       userId,
-      organizationId,
     } = options;
 
     const orderProduct = new OrderProduct();
@@ -202,7 +175,6 @@ export class OrderProductsService {
     orderProduct.status = status;
     orderProduct.userId = userId;
     orderProduct.productId = productId;
-    orderProduct.organizationId = organizationId;
 
     const query = this.driver.save(orderProduct);
 

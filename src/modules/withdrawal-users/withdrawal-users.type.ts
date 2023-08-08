@@ -5,7 +5,6 @@ export type GetWithdrawalUsersSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: WithdrawalUser['userId'];
-  organizationId?: WithdrawalUser['organizationId'];
 };
 
 export type GetOneWithdrawalUserSelections = {

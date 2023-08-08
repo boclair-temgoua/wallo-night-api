@@ -30,7 +30,7 @@ export class ContributorsService {
   async findAll(
     selections: GetContributorsSelections,
   ): Promise<GetContributorsSelections | any> {
-    const { userId, search, pagination, organizationId } = selections;
+    const { userId, search, pagination } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
@@ -38,15 +38,6 @@ export class ContributorsService {
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
-      .addSelect('contributor.organizationId', 'organizationId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "organization"."id",
-          'userId', "organization"."userId",
-          'color', "organization"."color",
-          'name', "organization"."name"
-      ) AS "organization"`,
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
@@ -64,12 +55,6 @@ export class ContributorsService {
       .addSelect('contributor.createdAt', 'createdAt')
       .where('contributor.deletedAt IS NULL');
 
-    if (organizationId) {
-      query = query.andWhere('contributor.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
-
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
     }
@@ -77,28 +62,22 @@ export class ContributorsService {
     if (search) {
       query = query.andWhere(
         new Brackets((qb) => {
-          qb.where('organization.name ::text ILIKE :search', {
-            search: `%${search}%`,
-          })
-            .orWhere(
-              '(profile.fullName ::text ILIKE :search OR profile.phone ::text ILIKE :search)',
-              {
-                search: `%${search}%`,
-              },
-            )
-            .orWhere(
-              '(user.email ::text ILIKE :search OR user.username ::text ILIKE :search)',
-              {
-                search: `%${search}%`,
-              },
-            );
+          qb.where(
+            '(profile.fullName ::text ILIKE :search OR profile.phone ::text ILIKE :search)',
+            {
+              search: `%${search}%`,
+            },
+          ).orWhere(
+            '(user.email ::text ILIKE :search OR user.username ::text ILIKE :search)',
+            {
+              search: `%${search}%`,
+            },
+          );
         }),
       );
     }
 
     query = query
-      .leftJoin('contributor.organization', 'organization')
-      .leftJoin('organization.user', 'userOrganization')
       .leftJoin('contributor.user', 'user')
       .leftJoin('user.profile', 'profile');
 
@@ -124,18 +103,12 @@ export class ContributorsService {
   async findAllNotPaginate(
     selections: GetContributorsSelections,
   ): Promise<GetContributorsSelections | any> {
-    const { userId, organizationId } = selections;
+    const { userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
       .addSelect('contributor.createdAt', 'createdAt')
       .where('contributor.deletedAt IS NULL');
-
-    if (organizationId) {
-      query = query.andWhere('contributor.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
 
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
@@ -150,7 +123,7 @@ export class ContributorsService {
   }
 
   async findOneBy(selections: GetOneContributorSelections): Promise<any> {
-    const { type, userId, organizationId, contributorId } = selections;
+    const { type, userId, contributorId } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
@@ -158,15 +131,6 @@ export class ContributorsService {
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
-      .addSelect('contributor.organizationId', 'organizationId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "organization"."id",
-          'userId', "organization"."userId",
-          'color', "organization"."color",
-          'name', "organization"."name"
-      ) AS "organization"`,
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
@@ -182,19 +146,11 @@ export class ContributorsService {
       ) AS "role"`,
       )
       .where('contributor.deletedAt IS NULL')
-      .leftJoin('contributor.organization', 'organization')
-      .leftJoin('organization.user', 'userOrganization')
       .leftJoin('contributor.user', 'user')
       .leftJoin('user.profile', 'profile');
 
     if (type) {
       query = query.andWhere('contributor.type = :type', { type });
-    }
-
-    if (organizationId) {
-      query = query.andWhere('contributor.organizationId = :organizationId', {
-        organizationId,
-      });
     }
 
     if (userId) {
@@ -214,19 +170,12 @@ export class ContributorsService {
 
   /** Create one Contributor to the database. */
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
-    const {
-      userId,
-      organizationId,
-      role,
-      userCreatedId,
-      type,
-    } = options;
+    const { userId, role, userCreatedId, type } = options;
 
     const contributor = new Contributor();
     contributor.userId = userId;
     contributor.type = type;
     contributor.role = role;
-    contributor.organizationId = organizationId;
     contributor.userCreatedId = userCreatedId;
     const query = this.driver.save(contributor);
 
@@ -287,13 +236,11 @@ export class ContributorsService {
   /** Permission. project */
   async canCheckPermissionContributor(options: {
     userId: string;
-    organizationId: string;
   }): Promise<any> {
-    const { userId, organizationId } = options;
+    const { userId } = options;
 
     const findOneContributor = await this.findOneBy({
       userId: userId,
-      organizationId: organizationId,
       type: FilterQueryType.ORGANIZATION,
     });
 

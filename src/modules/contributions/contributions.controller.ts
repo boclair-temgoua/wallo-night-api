@@ -144,7 +144,6 @@ export class ContributionsController {
       userReceiveId: findOneCampaign?.userId,
       userSendId: userSendId,
       campaignId: findOneCampaign?.id,
-      organizationId: findOneCampaign?.organizationId,
     });
 
     /** Update wallet */
@@ -210,7 +209,6 @@ export class ContributionsController {
       userSendId: userSendId,
       giftId: findOneGift?.id,
       type: meanOfPayment,
-      organizationId: findOneGift?.organizationId,
     });
 
     /** Update wallet */
@@ -285,7 +283,6 @@ export class ContributionsController {
       userReceiveId: findOneUser?.id,
       userSendId: userSendId ?? null,
       type: meanOfPayment,
-      organizationId: findOneUser?.organizationInUtilizationId,
     });
 
     /** Update wallet */

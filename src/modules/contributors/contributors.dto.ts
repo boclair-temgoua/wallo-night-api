@@ -14,11 +14,6 @@ export class CreateOneContributorOrganizationDto {
   @IsString()
   @IsUUID()
   userId: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
 }
 
 export class UpdateRoleContributorDto {

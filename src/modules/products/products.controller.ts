@@ -42,7 +42,7 @@ export class ProductsController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { search, organizationId } = searchQuery;
+    const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
@@ -50,7 +50,6 @@ export class ProductsController {
     const products = await this.productsService.findAll({
       search,
       pagination,
-      organizationId,
     });
 
     return reply({ res, results: products });
@@ -68,7 +67,6 @@ export class ProductsController {
     const product = await this.productsService.createOne({
       ...body,
       userCreatedId: user?.id,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: product });

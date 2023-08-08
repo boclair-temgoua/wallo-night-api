@@ -18,11 +18,6 @@ export class FilterCampaignsDto {
   @IsString()
   @IsUUID()
   userId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
 }
 
 export class CreateOrUpdateCampaignsDto {

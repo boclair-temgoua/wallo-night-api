@@ -25,7 +25,7 @@ export class GiftsService {
   ) {}
 
   async findAll(selections: GetGiftsSelections): Promise<any> {
-    const { search, pagination, organizationId, userId } = selections;
+    const { search, pagination, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('gift')
@@ -39,7 +39,6 @@ export class GiftsService {
       .addSelect('gift.expiredAt', 'expiredAt')
       .addSelect('gift.userId', 'userId')
       .addSelect('gift.description', 'description')
-      .addSelect('gift.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
     'code', "currency"."code",
@@ -60,12 +59,6 @@ export class GiftsService {
       )
       .where('gift.deletedAt IS NULL')
       .leftJoin('gift.currency', 'currency');
-
-    if (organizationId) {
-      query = query.andWhere('gift.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
 
     if (userId) {
       query = query.andWhere('gift.userId = :userId', {
@@ -118,7 +111,6 @@ export class GiftsService {
       .addSelect('gift.expiredAt', 'expiredAt')
       .addSelect('gift.userId', 'userId')
       .addSelect('gift.description', 'description')
-      .addSelect('gift.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
       'code', "currency"."code",
@@ -156,7 +148,6 @@ export class GiftsService {
   async createOne(options: CreateGiftsOptions): Promise<Gift> {
     const {
       description,
-      organizationId,
       title,
       isActive,
       amount,
@@ -174,7 +165,6 @@ export class GiftsService {
     gift.image = image;
     gift.currencyId = currencyId;
     gift.description = description;
-    gift.organizationId = organizationId;
     gift.expiredAt = expiredAt;
 
     const query = this.driver.save(gift);

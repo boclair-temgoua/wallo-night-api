@@ -102,7 +102,6 @@ export class ContactUsService {
       subject,
       description,
       userCreatedId,
-      organizationId,
     } = options;
 
     const contactUs = new ContactUs();
@@ -114,7 +113,6 @@ export class ContactUsService {
     contactUs.email = email;
     contactUs.description = description;
     contactUs.userCreatedId = userCreatedId;
-    contactUs.organizationId = organizationId;
 
     const query = this.driver.save(contactUs);
 

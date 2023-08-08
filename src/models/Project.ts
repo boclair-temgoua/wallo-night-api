@@ -31,11 +31,8 @@ export class Project extends BaseDeleteEntity {
   description?: string;
 
   @Column({ type: 'uuid', nullable: true })
-  userId?: string;
-  @ManyToOne(() => User, (user) => user.organizations, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  user?: User;
+  userCreatedId?: string;
 
   @Column({ type: 'uuid', nullable: true })
-  userCreatedId?: string;
+  userId?: string;
 }

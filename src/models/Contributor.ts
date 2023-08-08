@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { ContributorRole } from '../modules/contributors/contributors.type';
 import { User } from './User';
-import { Organization } from './Organization';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 
@@ -37,14 +36,6 @@ export class Contributor extends BaseDeleteEntity {
     default: ContributorRole.ADMIN,
   })
   role?: ContributorRole;
-
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.contributors, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  organization?: Relation<Organization>;
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;

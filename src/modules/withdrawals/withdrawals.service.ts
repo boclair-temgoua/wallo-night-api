@@ -31,7 +31,7 @@ export class WithdrawalsService {
   async findAll(
     selections: GetWithdrawalsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, userId, organizationId } = selections;
+    const { search, pagination, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('withdrawal')
@@ -39,12 +39,6 @@ export class WithdrawalsService {
 
     if (userId && isNotUndefined(String(userId))) {
       query = query.andWhere('withdrawal.userId = :userId', { userId });
-    }
-
-    if (organizationId && isNotUndefined(String(organizationId))) {
-      query = query.andWhere('withdrawal.organizationId = :organizationId', {
-        organizationId,
-      });
     }
 
     if (search && isNotUndefined(String(search))) {
@@ -97,21 +91,14 @@ export class WithdrawalsService {
 
   /** Create one Withdrawal to the database. */
   async createOne(options: CreateWithdrawalOptions): Promise<Withdrawal> {
-    const {
-      amount,
-      description,
-      withdrawalUserId,
-      userId,
-      confirmedAt,
-      organizationId,
-    } = options;
+    const { amount, description, withdrawalUserId, userId, confirmedAt } =
+      options;
 
     const withdrawal = new Withdrawal();
     withdrawal.amount = amount;
     withdrawal.userId = userId;
     withdrawal.withdrawalUserId = withdrawalUserId;
     withdrawal.confirmedAt = confirmedAt;
-    withdrawal.organizationId = organizationId;
     withdrawal.description = description;
 
     const query = this.driver.save(withdrawal);

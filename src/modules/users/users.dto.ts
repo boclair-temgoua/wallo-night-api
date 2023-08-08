@@ -19,14 +19,6 @@ export class UpdateInfoUserDto {
   @IsEmail()
   email?: string;
 
-  @IsNotEmpty()
-  @IsInt()
-  organizationInUtilizationId?: number;
-
-  @IsNotEmpty()
-  @IsInt()
-  organizationId: number;
-
   @IsOptional()
   user: any;
 }

@@ -4,7 +4,6 @@ import {
   User,
   Profile,
   ResetPassword,
-  Organization,
   Contributor,
   Wallet,
 } from '../../models';
@@ -15,7 +14,6 @@ import { CheckUserService } from './middleware/check-user.service';
 import { UsersController } from './users.controller';
 import { JwtAuthStrategy } from './middleware';
 import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
-import { OrganizationsService } from '../organizations/organizations.service';
 import { ContributorsUtil } from '../contributors/contributors.util';
 import { ContributorsService } from '../contributors/contributors.service';
 import { WalletsService } from '../wallets/wallets.service';
@@ -27,7 +25,6 @@ import { WalletsService } from '../wallets/wallets.service';
       Wallet,
       Profile,
       ResetPassword,
-      Organization,
       Contributor,
     ]),
   ],
@@ -40,7 +37,6 @@ import { WalletsService } from '../wallets/wallets.service';
     JwtAuthStrategy,
     ContributorsUtil,
     ContributorsService,
-    OrganizationsService,
     ResetPasswordsService,
   ],
 })

@@ -12,9 +12,4 @@ export class FilterTransactionsDto {
   @IsString()
   @IsUUID()
   userId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
 }

@@ -9,9 +9,6 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 import { Product } from './Product';
-import { User } from './User';
-import { Organization } from './Organization';
-
 @Entity('discount')
 export class Discount extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -37,12 +34,4 @@ export class Discount extends BaseDeleteEntity {
 
   @OneToMany(() => Product, (product) => product.discount)
   products: Product[];
-
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.discounts, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  organization: Organization;
 }

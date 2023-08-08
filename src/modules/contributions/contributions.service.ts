@@ -28,7 +28,8 @@ export class ContributionsService {
   async findAll(
     selections: GetContributionsSelections,
   ): Promise<GetContributionsSelections | any> {
-    const { userId, search, giftId, campaignId,currencyId, pagination } = selections;
+    const { userId, search, giftId, campaignId, currencyId, pagination } =
+      selections;
 
     let query = this.driver
       .createQueryBuilder('contribution')
@@ -90,21 +91,19 @@ export class ContributionsService {
     }
 
     if (currencyId) {
-      query = query.andWhere('contribution.currencyId = :currencyId', { currencyId });
+      query = query.andWhere('contribution.currencyId = :currencyId', {
+        currencyId,
+      });
     }
 
     if (search) {
       query = query.andWhere(
         new Brackets((qb) => {
-          qb.where('organization.name ::text ILIKE :search', {
+          qb.where('campaign.title ::text ILIKE :search', {
             search: `%${search}%`,
-          })
-            .orWhere('campaign.title ::text ILIKE :search', {
-              search: `%${search}%`,
-            })
-            .orWhere('gift.title ::text ILIKE :search', {
-              search: `%${search}%`,
-            });
+          }).orWhere('gift.title ::text ILIKE :search', {
+            search: `%${search}%`,
+          });
         }),
       );
     }

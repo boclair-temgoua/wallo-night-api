@@ -5,7 +5,6 @@ export type GetMembershipsSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: Membership['userId'];
-  organizationId?: Membership['organizationId'];
 };
 
 export type GetOneMembershipsSelections = {

@@ -40,7 +40,6 @@ import {
   authLoginJob,
   authPasswordResetJob,
 } from '../users.job';
-import { OrganizationsService } from '../../organizations/organizations.service';
 import { WalletsService } from '../../wallets/wallets.service';
 import {
   dateTimeNowUtc,
@@ -61,7 +60,6 @@ export class AuthUserController {
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
     private readonly contributorsService: ContributorsService,
-    private readonly organizationsService: OrganizationsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
 
@@ -90,12 +88,6 @@ export class AuthUserController {
       fullName,
     });
 
-    /** Create Organization */
-    const organization = await this.organizationsService.createOne({
-      name: `${fullName}`,
-      email,
-    });
-
     /** Create User */
     const usernameGenerate = `${generateLongUUID(8)}`.toLowerCase();
     const user = await this.usersService.createOne({
@@ -107,27 +99,12 @@ export class AuthUserController {
           ? usernameGenerate
           : username
         : usernameGenerate,
-      organizationInUtilizationId: organization?.id,
     });
-
-    /** Update Organization */
-    await this.organizationsService.updateOne(
-      { organizationId: organization?.id },
-      { userId: user?.id },
-    );
-
-    /** Update User */
-    await this.usersService.updateOne(
-      { userId: user?.id },
-      { organizationInUtilizationId: organization?.id },
-    );
-
     /** Create Contributor */
     await this.contributorsService.createOne({
       userId: user?.id,
       userCreatedId: user?.id,
       role: ContributorRole.ADMIN,
-      organizationId: organization?.id,
     });
 
     /** Create Wallet */
@@ -146,7 +123,6 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: user.id,
       profileId: user.profileId,
-      organizationInUtilizationId: user.organizationInUtilizationId,
     };
 
     const refreshToken = await this.checkUserService.createJwtTokens(
@@ -175,7 +151,6 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       profileId: findOnUser.profileId,
-      organizationInUtilizationId: findOnUser.organizationInUtilizationId,
     };
 
     const refreshToken = await this.checkUserService.createJwtTokens(
@@ -206,7 +181,6 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       profileId: findOnUser.profileId,
-      organizationInUtilizationId: findOnUser.organizationInUtilizationId,
     };
 
     if (!findOnUser)

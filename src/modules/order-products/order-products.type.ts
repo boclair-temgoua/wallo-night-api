@@ -5,7 +5,6 @@ export type GetOrderProductsSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: OrderProduct['userId'];
-  organizationId?: OrderProduct['organizationId'];
 };
 
 export type GetOneOrderProductSelections = {

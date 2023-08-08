@@ -5,7 +5,6 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 export type GetProductsSelections = {
   search?: string;
   pagination?: PaginationType;
-  organizationId?: Product['organizationId'];
 };
 
 export type GetOneProductsSelections = {

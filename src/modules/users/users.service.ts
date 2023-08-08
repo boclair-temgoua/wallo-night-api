@@ -40,10 +40,6 @@ export class UsersService {
       .addSelect('user.createdAt', 'createdAt')
       .addSelect('user.nextStep', 'nextStep')
       .addSelect(
-        'user.organizationInUtilizationId',
-        'organizationInUtilizationId',
-      )
-      .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
           'userId', "user"."id",
@@ -61,37 +57,23 @@ export class UsersService {
         )
         FROM "contributor" "con"
         WHERE "user"."id" = "con"."userId"
-        AND "user"."organizationInUtilizationId" = "con"."organizationId"
         AND "con"."type" IN ('ORGANIZATION')
         ) AS "role"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "organization"."id",
-          'color', "organization"."color",
-          'userId', "organization"."userId",
-          'name', "organization"."name"
-      ) AS "organization"`,
-      )
       .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile')
-      .leftJoin('user.organizationInUtilization', 'organization');
+      .leftJoin('user.profile', 'profile');
 
     if (search) {
       query = query.andWhere(
         new Brackets((qb) => {
           qb.where('user.email ::text ILIKE :search', {
             search: `%${search}%`,
-          })
-            .orWhere(
-              'profile.fullName ::text ILIKE :search OR profile.fullName ::text ILIKE :search OR profile.phone ::text ILIKE :search',
-              {
-                search: `%${search}%`,
-              },
-            )
-            .orWhere('organization.name ::text ILIKE :search', {
+          }).orWhere(
+            'profile.fullName ::text ILIKE :search OR profile.fullName ::text ILIKE :search OR profile.phone ::text ILIKE :search',
+            {
               search: `%${search}%`,
-            });
+            },
+          );
         }),
       );
     }
@@ -171,37 +153,16 @@ export class UsersService {
       )
       .addSelect(
         /*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT con) AS INT)
-      FROM "contributor" "con"
-      WHERE ("con"."userId" = "user"."id"
-      AND "con"."deletedAt" IS NULL
-      AND "con"."type" IN ('ORGANIZATION'))
-      GROUP BY "con"."userId", "con"."type", "user"."id"
-      ) AS "organizationTotal"`,
-      )
-      .addSelect(
-        /*sql*/ `(
         SELECT jsonb_build_object(
         'name', "con"."role"
         )
         FROM "contributor" "con"
         WHERE "user"."id" = "con"."userId"
-        AND "user"."organizationInUtilizationId" = "con"."organizationId"
         AND "con"."type" IN ('ORGANIZATION')
         ) AS "role"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "organization"."id",
-          'color', "organization"."color",
-          'userId', "organization"."userId",
-          'name', "organization"."name"
-      ) AS "organization"`,
-      )
       .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile')
-      .leftJoin('user.organizationInUtilization', 'organization');
+      .leftJoin('user.profile', 'profile');
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });
@@ -219,14 +180,7 @@ export class UsersService {
 
   /** Create one User to the database. */
   async createOne(options: CreateUserOptions): Promise<User> {
-    const {
-      email,
-      username,
-      password,
-      profileId,
-      nextStep,
-      organizationInUtilizationId,
-    } = options;
+    const { email, username, password, profileId, nextStep } = options;
 
     const user = new User();
     user.token = generateLongUUID(50);
@@ -235,7 +189,6 @@ export class UsersService {
     user.username = username;
     user.profileId = profileId;
     user.nextStep = nextStep;
-    user.organizationInUtilizationId = organizationInUtilizationId;
 
     const query = this.driver.save(user);
 
@@ -260,7 +213,6 @@ export class UsersService {
       deletedAt,
       nextStep,
       confirmedAt,
-      organizationInUtilizationId,
     } = options;
 
     let findQuery = this.driver.createQueryBuilder('user');
@@ -288,7 +240,6 @@ export class UsersService {
     findItem.refreshToken = refreshToken;
     findItem.deletedAt = deletedAt;
     findItem.confirmedAt = confirmedAt;
-    findItem.organizationInUtilizationId = organizationInUtilizationId;
 
     const query = this.driver.save(findItem);
     const [errorUp, result] = await useCatch(query);

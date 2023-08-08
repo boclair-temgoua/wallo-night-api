@@ -56,7 +56,6 @@ export class GiftsController {
     const gifts = await this.giftsService.findAll({
       search,
       pagination,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: gifts });
@@ -86,7 +85,6 @@ export class GiftsController {
       expiredAt,
       description,
       userId: user?.id,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: 'Gift created successfully' });

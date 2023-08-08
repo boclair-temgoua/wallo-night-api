@@ -10,7 +10,6 @@ import {
 import { OrderProduct } from './OrderProduct';
 import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Organization } from './Organization';
 import { Gift } from './Gift';
 import { Contribution } from './Contribution';
 import { TransactionType } from '../modules/transactions/transactions.type';
@@ -102,14 +101,6 @@ export class Transaction extends BaseDeleteEntity {
   })
   @JoinColumn()
   user?: Relation<User>;
-
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(() => Organization, (organization) => organization.transactions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  organization?: Relation<Organization>;
 
   @Column({ type: 'uuid', nullable: true })
   membershipId?: string;

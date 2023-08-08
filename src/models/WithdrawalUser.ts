@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Organization } from './Organization';
 import { TransactionType } from '../modules/transactions/transactions.type';
 import { Withdrawal } from './Withdrawal';
 
@@ -44,18 +43,6 @@ export class WithdrawalUser extends BaseDeleteEntity {
   })
   @JoinColumn()
   user?: Relation<User>;
-
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-  @ManyToOne(
-    () => Organization,
-    (organization) => organization.withdrawalUsers,
-    {
-      onDelete: 'CASCADE',
-    },
-  )
-  @JoinColumn()
-  organization?: Relation<Organization>;
 
   @OneToMany(() => Withdrawal, (withdrawal) => withdrawal.withdrawalUser, {
     onDelete: 'CASCADE',

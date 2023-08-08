@@ -12,7 +12,13 @@ import {
   WithPaginationResponse,
   withPagination,
 } from '../../app/utils/pagination/with-pagination';
-import { CreateCampaignOptions, GetCampaignsSelections, GetOneCampaignSelections, UpdateCampaignOptions, UpdateCampaignSelections } from './campaigns.type';
+import {
+  CreateCampaignOptions,
+  GetCampaignsSelections,
+  GetOneCampaignSelections,
+  UpdateCampaignOptions,
+  UpdateCampaignSelections,
+} from './campaigns.type';
 
 @Injectable()
 export class CampaignsService {
@@ -24,7 +30,7 @@ export class CampaignsService {
   async findAll(
     selections: GetCampaignsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, userId, organizationId } = selections;
+    const { search, pagination, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('campaign')
@@ -35,7 +41,6 @@ export class CampaignsService {
       .addSelect('Campaign.isActive', 'isActive')
       .addSelect('Campaign.createdAt', 'createdAt')
       .addSelect('Campaign.expiredAt', 'expiredAt')
-      .addSelect('Campaign.organizationId', 'organizationId')
       .addSelect('Campaign.description', 'description')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -48,18 +53,12 @@ export class CampaignsService {
         'url', "profile"."url"
     ) AS "profile"`,
       )
-      .where('Campaign.deletedAt IS NULL')
+      .where('campaign.deletedAt IS NULL')
       .leftJoin('Campaign.user', 'user')
       .leftJoin('user.profile', 'profile');
 
     if (userId) {
       query = query.andWhere('Campaign.userId = :userId', { userId });
-    }
-
-    if (organizationId) {
-      query = query.andWhere('Campaign.organizationId = :organizationId', {
-        organizationId,
-      });
     }
 
     if (search) {
@@ -97,7 +96,6 @@ export class CampaignsService {
       .addSelect('campaign.isActive', 'isActive')
       .addSelect('campaign.createdAt', 'createdAt')
       .addSelect('campaign.expiredAt', 'expiredAt')
-      .addSelect('campaign.organizationId', 'organizationId')
       .addSelect('campaign.description', 'description')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -140,20 +138,12 @@ export class CampaignsService {
 
   /** Create one Campaign to the database. */
   async createOne(options: CreateCampaignOptions): Promise<Campaign> {
-    const {
-      title,
-      expiredAt,
-      description,
-      userId,
-      image,
-      organizationId,
-    } = options;
+    const { title, expiredAt, description, userId, image } = options;
 
     const campaign = new Campaign();
     campaign.title = title;
     campaign.userId = userId;
     campaign.image = image;
-    campaign.organizationId = organizationId;
     campaign.expiredAt = expiredAt;
     campaign.description = description;
 
@@ -170,14 +160,8 @@ export class CampaignsService {
     options: UpdateCampaignOptions,
   ): Promise<Campaign> {
     const { campaignId } = selections;
-    const {
-      title,
-      image,
-      description,
-      isActive,
-      expiredAt,
-      deletedAt,
-    } = options;
+    const { title, image, description, isActive, expiredAt, deletedAt } =
+      options;
 
     let findQuery = this.driver.createQueryBuilder('campaign');
 

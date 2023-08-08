@@ -10,7 +10,6 @@ import { AppSeedDataSource } from './app/databases/orm/orm-config-seed';
 import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.module';
 import { ContactUsModule } from './modules/contact-us/contact-us.module';
 import { CategoriesModule } from './modules/categories/categories.module';
-import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { ContributorsModule } from './modules/contributors/contributors.module';
 import { ProductsModule } from './modules/products/products.module';
@@ -43,7 +42,6 @@ import { MembershipsModule } from './modules/memberships/memberships.module';
     CategoriesModule,
     CountriesModule,
     TransactionsModule,
-    OrganizationsModule,
     ResetPasswordsModule,
     ProductsModule,
     DiscountsModule,

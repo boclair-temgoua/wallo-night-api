@@ -5,7 +5,6 @@ export type GetGiftsSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: Gift['userId'];
-  organizationId?: Gift['organizationId'];
 };
 
 export type GetOneGiftsSelections = {

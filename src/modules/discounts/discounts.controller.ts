@@ -51,7 +51,6 @@ export class DiscountsController {
     const Discounts = await this.discountsService.findAll({
       search,
       pagination,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: Discounts });
@@ -74,7 +73,6 @@ export class DiscountsController {
       percent,
       expiredAt,
       startedAt,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: 'Discount created successfully' });

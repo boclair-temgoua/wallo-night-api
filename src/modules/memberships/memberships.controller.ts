@@ -87,7 +87,6 @@ export class MembershipsController {
       pricePerMonthly,
       userId: user?.id,
       currencyId: findOneCurrency?.id,
-      organizationId: user?.organizationInUtilizationId,
     });
 
     return reply({ res, results: 'membership created successfully' });

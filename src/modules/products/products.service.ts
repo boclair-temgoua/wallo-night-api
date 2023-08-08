@@ -27,7 +27,7 @@ export class ProductsService {
   ) {}
 
   async findAll(selections: GetProductsSelections): Promise<any> {
-    const { search, pagination, organizationId } = selections;
+    const { search, pagination } = selections;
 
     let query = this.driver
       .createQueryBuilder('product')
@@ -41,13 +41,6 @@ export class ProductsService {
       .addSelect('product.inventory', 'inventory')
       .addSelect('product.status', 'status')
       .addSelect('product.userCreatedId', 'userCreatedId')
-      .addSelect('product.organizationId', 'organizationId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-        'color', "organization"."color",
-        'name', "organization"."name"
-    ) AS "organization"`,
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
         'symbol', "currency"."symbol",
@@ -96,16 +89,9 @@ export class ProductsService {
       .addSelect('product.price', 'priceNoDiscount')
       .addSelect('product.createdAt', 'createdAt')
       .where('product.deletedAt IS NULL')
-      .leftJoin('product.organization', 'organization')
       .leftJoin('product.category', 'category')
       .leftJoin('product.currency', 'currency')
       .leftJoin('product.discount', 'discount');
-
-    if (organizationId) {
-      query = query.andWhere('product.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
 
     if (search) {
       query = query.andWhere(
@@ -152,13 +138,6 @@ export class ProductsService {
       .addSelect('product.inventory', 'inventory')
       .addSelect('product.status', 'status')
       .addSelect('product.userCreatedId', 'userCreatedId')
-      .addSelect('product.organizationId', 'organizationId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'color', "organization"."color",
-          'name', "organization"."name"
-      ) AS "organization"`,
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'symbol', "currency"."symbol",
@@ -206,7 +185,6 @@ export class ProductsService {
       .addSelect('product.price', 'priceNoDiscount')
       .addSelect('product.createdAt', 'createdAt')
       .where('product.deletedAt IS NULL')
-      .leftJoin('product.organization', 'organization')
       .leftJoin('product.category', 'category')
       .leftJoin('product.currency', 'currency')
       .leftJoin('product.discount', 'discount');
@@ -237,7 +215,6 @@ export class ProductsService {
       categoryId,
       discountId,
       userCreatedId,
-      organizationId,
     } = options;
 
     const product = new Product();
@@ -251,7 +228,6 @@ export class ProductsService {
     product.status = status;
     product.discountId = discountId;
     product.currencyId = currencyId;
-    product.organizationId = organizationId;
     product.slug = `${Slug(title)}-${generateNumber(4)}`;
     product.description = description;
     product.userCreatedId = userCreatedId;
