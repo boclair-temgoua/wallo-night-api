@@ -20,7 +20,7 @@ export class Gallery extends BaseDeleteEntity {
   id?: string;
 
   @Column({ nullable: true })
-  url?: string;
+  path?: string;
 
   @Column({
     type: 'enum',

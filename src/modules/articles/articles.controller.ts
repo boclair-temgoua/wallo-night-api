@@ -125,12 +125,12 @@ export class ArticlesController {
         HttpStatus.NOT_FOUND,
       );
 
-    const Article = await this.articlesService.updateOne(
+    const article = await this.articlesService.updateOne(
       { articleId },
       { title, status, description },
     );
 
-    return reply({ res, results: Article });
+    return reply({ res, results: article });
   }
 
   /** Delete Article */

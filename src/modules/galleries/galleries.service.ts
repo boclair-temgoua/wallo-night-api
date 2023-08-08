@@ -95,13 +95,15 @@ export class GalleriesService {
 
   /** Create one Galleries to the database. */
   async createOne(options: CreateGalleriesOptions): Promise<Gallery> {
-    const { description, title, allowDownload, whoCanSee, userId } = options;
+    const { description, title, allowDownload, whoCanSee, userId, path } =
+      options;
 
     const gallery = new Gallery();
     gallery.title = title;
     gallery.whoCanSee = whoCanSee;
     gallery.allowDownload = allowDownload;
     gallery.userId = userId;
+    gallery.path = path;
     gallery.description = description;
 
     const query = this.driver.save(gallery);
