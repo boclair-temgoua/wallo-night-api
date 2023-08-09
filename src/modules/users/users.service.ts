@@ -174,6 +174,7 @@ export class UsersService {
     selections: GetOneUserSelections,
   ): Promise<GetOnUserPublic> {
     const { userId, email } = selections;
+
     let query = this.driver
       .createQueryBuilder('user')
       .select('user.id', 'id')
