@@ -32,7 +32,7 @@ export class ArticlesService {
   async findAll(
     selections: GetArticlesSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination } = selections;
+    const { search, pagination, userId, type } = selections;
 
     let query = this.driver
       .createQueryBuilder('article')
@@ -41,9 +41,20 @@ export class ArticlesService {
       .addSelect('article.id', 'id')
       .addSelect('article.slug', 'slug')
       .addSelect('article.image', 'image')
+      .addSelect('article.allowDownload', 'allowDownload')
+      .addSelect('article.type', 'type')
+      .addSelect('article.whoCanSee', 'whoCanSee')
       .addSelect('article.createdAt', 'createdAt')
       .addSelect('article.description', 'description')
       .where('article.deletedAt IS NULL');
+
+    if (userId) {
+      query = query.andWhere('article.userId = :userId', { userId });
+    }
+
+    if (type) {
+      query = query.andWhere('article.type = :type', { type });
+    }
 
     if (search) {
       query = query.andWhere(
@@ -85,6 +96,9 @@ export class ArticlesService {
       .addSelect('article.id', 'id')
       .addSelect('article.slug', 'slug')
       .addSelect('article.image', 'image')
+      .addSelect('article.allowDownload', 'allowDownload')
+      .addSelect('article.type', 'type')
+      .addSelect('article.whoCanSee', 'whoCanSee')
       .addSelect('article.createdAt', 'createdAt')
       .addSelect('article.description', 'description')
       .where('article.deletedAt IS NULL');
@@ -94,6 +108,7 @@ export class ArticlesService {
         id: articleId,
       });
     }
+
     const [error, result] = await useCatch(query.getRawOne());
     if (error)
       throw new HttpException('article not found', HttpStatus.NOT_FOUND);
@@ -103,11 +118,23 @@ export class ArticlesService {
 
   /** Create one Article to the database. */
   async createOne(options: CreateArticleOptions): Promise<Article> {
-    const { userId, status, title, description, image } = options;
+    const {
+      userId,
+      status,
+      title,
+      type,
+      whoCanSee,
+      allowDownload,
+      description,
+      image,
+    } = options;
 
     const article = new Article();
     article.userId = userId;
     article.title = title;
+    article.type = type;
+    article.whoCanSee = whoCanSee;
+    article.allowDownload = allowDownload;
     article.slug = `${Slug(title)}-${generateNumber(4)}`;
     article.image = image;
     article.status = status;
@@ -127,7 +154,16 @@ export class ArticlesService {
     options: UpdateArticleOptions,
   ): Promise<Article> {
     const { articleId } = selections;
-    const { title, status, description, image, deletedAt } = options;
+    const {
+      title,
+      status,
+      type,
+      whoCanSee,
+      allowDownload,
+      description,
+      image,
+      deletedAt,
+    } = options;
 
     let findQuery = this.driver
       .createQueryBuilder('article')
@@ -144,6 +180,9 @@ export class ArticlesService {
     findItem.description = description;
     findItem.image = image;
     findItem.status = status;
+    findItem.type = type;
+    findItem.whoCanSee = whoCanSee;
+    findItem.allowDownload = allowDownload;
     findItem.deletedAt = deletedAt;
 
     const query = this.driver.save(findItem);

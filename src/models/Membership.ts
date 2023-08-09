@@ -33,10 +33,10 @@ export class Membership extends BaseDeleteEntity {
   @Column({ type: 'text', nullable: true })
   messageWelcome: string;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'float', nullable: true })
   pricePerMonthly: number;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'float', nullable: true })
   pricePerYearly: number;
 
   @Column({ type: 'uuid', nullable: true })

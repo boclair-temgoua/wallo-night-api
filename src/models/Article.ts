@@ -1,5 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Generated,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  Relation,
+} from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
+import { WhoCanSeeType } from '../app/utils/search-query';
+import { User } from './User';
+import { ArticleType } from '../modules/articles/articles.type';
 
 @Entity('article')
 export class Article extends BaseDeleteEntity {
@@ -15,12 +27,34 @@ export class Article extends BaseDeleteEntity {
   @Column({ nullable: true })
   title?: string;
 
+  @Column({
+    type: 'enum',
+    enum: WhoCanSeeType,
+    default: WhoCanSeeType.PUBLIC,
+  })
+  whoCanSee?: WhoCanSeeType;
+
+  @Column({
+    type: 'enum',
+    enum: ArticleType,
+    default: ArticleType.POST,
+  })
+  type?: ArticleType;
+
+  @Column({ default: true })
+  allowDownload?: boolean;
+
   @Column({ nullable: true })
   image?: string;
 
   @Column({ type: 'text', nullable: true })
   description?: string;
-  
-  @Column({ nullable: true })
+
+  @Column({ type: 'uuid', nullable: true })
   userId?: string;
+  @ManyToOne(() => User, (user) => user.articles, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  user?: Relation<User>;
 }

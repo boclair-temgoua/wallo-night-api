@@ -23,6 +23,7 @@ import { Membership } from './Membership';
 import { WithdrawalUser } from './WithdrawalUser';
 import { NextStep } from '../modules/users/users.type';
 import { Gallery } from './Gallery';
+import { Article } from './Article';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -70,6 +71,9 @@ export class User extends BaseDeleteEntity {
 
   @OneToMany(() => Campaign, (campaign) => campaign.user)
   campaigns?: Campaign[];
+
+  @OneToMany(() => Article, (article) => article.user)
+  articles?: Article[];
 
   @OneToMany(() => Gallery, (gallery) => gallery.user)
   galleries?: Gallery[];

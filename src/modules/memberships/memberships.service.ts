@@ -118,18 +118,18 @@ export class MembershipsService {
           'symbol', "currency"."symbol"
         ) AS "currency"`,
       )
-      .addSelect(
-        /*sql*/ `(
-        SELECT jsonb_build_object(
-        'amount', CAST((SUM("contr"."amountConvert") * "currency"."amount") / 100 AS BIGINT),
-        'total', CAST(COUNT(DISTINCT contr) AS BIGINT)
-        )
-        FROM "contribution" "contr"
-        WHERE "contr"."membershipId" = "membership"."id"
-        AND "contr"."deletedAt" IS NULL
-        GROUP BY "contr"."membershipId", "membership"."id"
-        ) AS "contribution"`,
-      )
+      // .addSelect(
+      //   /*sql*/ `(
+      //   SELECT jsonb_build_object(
+      //   'amount', CAST((SUM("contr"."amountConvert") * "currency"."amount") / 100 AS BIGINT),
+      //   'total', CAST(COUNT(DISTINCT contr) AS BIGINT)
+      //   )
+      //   FROM "contribution" "contr"
+      //   WHERE "contr"."membershipId" = "membership"."id"
+      //   AND "contr"."deletedAt" IS NULL
+      //   GROUP BY "contr"."membershipId", "membership"."id"
+      //   ) AS "contribution"`,
+      // )
       .where('membership.deletedAt IS NULL')
       .leftJoin('membership.currency', 'currency');
 
