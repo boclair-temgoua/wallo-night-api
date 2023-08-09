@@ -127,6 +127,49 @@ export class UsersService {
   }
 
   /** FindOne one User to the database. */
+  async findOnePublicBy(
+    selections: GetOneUserSelections,
+  ): Promise<GetOnUserPublic> {
+    const { userId, email, username } = selections;
+    let query = this.driver
+      .createQueryBuilder('user')
+      .select('user.id', 'id')
+      .addSelect('user.username', 'username')
+      .addSelect('user.profileId', 'profileId')
+      .addSelect('user.nextStep', 'nextStep')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'id', "profile"."id",
+            'userId', "user"."id",
+            'fullName', "profile"."fullName",
+            'image', "profile"."image",
+            'color', "profile"."color",
+            'countryId', "profile"."countryId",
+            'url', "profile"."url"
+        ) AS "profile"`,
+      )
+      .where('user.deletedAt IS NULL')
+      .leftJoin('user.profile', 'profile');
+
+    if (userId) {
+      query = query.andWhere('user.id = :id', { id: userId });
+    }
+
+    if (username) {
+      query = query.andWhere('user.username = :username', { username });
+    }
+
+    if (email) {
+      query = query.andWhere('user.email = :email', { email });
+    }
+
+    const [error, result] = await useCatch(query.getRawOne());
+    if (error) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    return result;
+  }
+
+  /** FindOne one User to the database. */
   async findOneInfoBy(
     selections: GetOneUserSelections,
   ): Promise<GetOnUserPublic> {

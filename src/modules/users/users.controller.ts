@@ -23,7 +23,11 @@ import {
   PaginationType,
 } from '../../app/utils/pagination';
 import { FilterQueryType, SearchQueryDto } from '../../app/utils/search-query';
-import { UpdateOneEmailUserDto, UpdateProfileDto } from './users.dto';
+import {
+  GetOneUserDto,
+  UpdateOneEmailUserDto,
+  UpdateProfileDto,
+} from './users.dto';
 import { ContributorsService } from '../contributors/contributors.service';
 
 @Controller('users')
@@ -54,6 +58,7 @@ export class UsersController {
 
   /** Get one user */
   @Get(`/show/:userId`)
+  @UseGuards(JwtAuthGuard)
   async getOneByIdUser(
     @Res() res,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -73,6 +78,27 @@ export class UsersController {
     return reply({
       res,
       results: { ...user, role: getOneContributor?.role },
+    });
+  }
+
+  @Get(`/view`)
+  async getOneByIdUserPublic(@Res() res, @Body() query: GetOneUserDto) {
+    const { userId, username } = query;
+
+    const findOneUser = await this.usersService.findOnePublicBy({
+      userId,
+      username,
+    });
+
+    if (!findOneUser)
+      throw new HttpException(
+        `User ${userId} not valid please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    return reply({
+      res,
+      results: { ...findOneUser },
     });
   }
 

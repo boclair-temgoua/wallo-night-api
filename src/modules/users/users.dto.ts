@@ -233,3 +233,13 @@ export class UpdateProfileDto {
   @IsString()
   image: string;
 }
+export class GetOneUserDto {
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
+
+  @IsOptional()
+  @IsString()
+  username: string;
+}
