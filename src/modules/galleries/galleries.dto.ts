@@ -10,10 +10,9 @@ import {
 import { WhoCanSeeType } from '../../app/utils/search-query/search-query.dto';
 
 export class CreateOrUpdateGalleriesDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(100)
-  @MinLength(3)
   title: string;
 
   @IsNotEmpty()
@@ -21,8 +20,8 @@ export class CreateOrUpdateGalleriesDto {
   @IsEnum(WhoCanSeeType)
   whoCanSee: WhoCanSeeType;
 
-  @IsNotEmpty()
-  @IsBoolean()
+  @IsOptional()
+  @IsString()
   allowDownload: boolean;
 
   @IsOptional()

@@ -134,6 +134,7 @@ export class UsersController {
       phone,
       firstAddress,
       secondAddress,
+      description,
     } = body;
 
     await this.profilesService.updateOne(
@@ -149,6 +150,7 @@ export class UsersController {
         phone,
         firstAddress,
         secondAddress,
+        description,
       },
     );
 

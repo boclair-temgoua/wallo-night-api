@@ -30,13 +30,16 @@ export class GalleriesService {
     let query = this.driver
       .createQueryBuilder('gallery')
       .select('gallery.id', 'id')
-      .addSelect('gallery.name', 'name')
-      .addSelect('gallery.code', 'code')
-      .addSelect('gallery.symbol', 'symbol')
+      .addSelect('gallery.allowDownload', 'allowDownload')
+      .addSelect('gallery.path', 'path')
+      .addSelect('gallery.whoCanSee', 'whoCanSee')
+      .addSelect('gallery.description', 'description')
+      .addSelect('gallery.title', 'title')
+      .addSelect('gallery.createdAt', 'createdAt')
       .where('gallery.deletedAt IS NULL');
 
     if (userId) {
-      query = query.andWhere('gift.userId = :userId', {
+      query = query.andWhere('gallery.userId = :userId', {
         userId,
       });
     }
@@ -59,8 +62,8 @@ export class GalleriesService {
     const [error, galleries] = await useCatch(
       query
         .orderBy('gallery.createdAt', pagination?.sort)
-        .take(pagination.take)
-        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
         .getRawMany(),
     );
     if (error) throw new NotFoundException(error);
@@ -77,9 +80,12 @@ export class GalleriesService {
     let query = this.driver
       .createQueryBuilder('gallery')
       .select('gallery.id', 'id')
-      .addSelect('gallery.name', 'name')
-      .addSelect('gallery.code', 'code')
-      .addSelect('gallery.symbol', 'symbol')
+      .addSelect('gallery.allowDownload', 'allowDownload')
+      .addSelect('gallery.path', 'path')
+      .addSelect('gallery.whoCanSee', 'whoCanSee')
+      .addSelect('gallery.description', 'description')
+      .addSelect('gallery.title', 'title')
+      .addSelect('gallery.createdAt', 'createdAt')
       .where('gallery.deletedAt IS NULL');
 
     if (galleryId) {

@@ -14,6 +14,7 @@ import {
   HttpException,
   UseInterceptors,
   UploadedFile,
+  Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
@@ -21,6 +22,11 @@ import { GalleriesService } from './galleries.service';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { CreateOrUpdateGalleriesDto } from './galleries.dto';
+import {
+  PaginationType,
+  RequestPaginationDto,
+  addPagination,
+} from './../../app/utils/pagination';
 import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
 import {
   formateNowDateYYMMDD,
@@ -34,11 +40,21 @@ export class GalleriesController {
 
   /** Get all Galleries */
   @Get(`/`)
-  async findAll(@Res() res, @Query() searchQuery: SearchQueryDto) {
+  async findAll(
+    @Res() res,
+    @Query() searchQuery: SearchQueryDto,
+    @Query('userId', ParseUUIDPipe) userId: string,
+    @Query() requestPaginationDto: RequestPaginationDto,
+  ) {
     const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
 
     const galleries = await this.galleriesService.findAll({
       search,
+      userId,
+      pagination,
     });
 
     return reply({ res, results: galleries });
@@ -47,7 +63,7 @@ export class GalleriesController {
   /** Post one Galleries */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('attachment'))
   async createOne(
     @Res() res,
     @Req() req,
@@ -57,6 +73,8 @@ export class GalleriesController {
     const { user } = req;
     const { title, whoCanSee, allowDownload, description } = body;
 
+    console.log('file =======>', file);
+    console.log('body =======>', body);
     // const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
     //   8,
     // )}`;
@@ -111,6 +129,29 @@ export class GalleriesController {
       },
     );
 
-    return reply({ res, results: 'Gallery updated successfully' });
+    return reply({ res, results: 'gallery updated successfully' });
+  }
+
+  /** Delete gallery */
+  @Delete(`/:galleryId`)
+  @UseGuards(JwtAuthGuard)
+  async deleteOne(
+    @Res() res,
+    @Req() req,
+    @Param('galleryId', ParseUUIDPipe) galleryId: string,
+  ) {
+    const findOneGallery = await this.galleriesService.findOneBy({ galleryId });
+    if (!findOneGallery)
+      throw new HttpException(
+        `This gallery ${galleryId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.galleriesService.updateOne(
+      { galleryId: findOneGallery?.id },
+      { deletedAt: new Date() },
+    );
+
+    return reply({ res, results: 'gallery deleted successfully' });
   }
 }
