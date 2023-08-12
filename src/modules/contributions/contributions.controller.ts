@@ -70,7 +70,7 @@ export class ContributionsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const Contributions = await this.contributionsService.findAll({
+    const contributions = await this.contributionsService.findAll({
       search,
       pagination,
       campaignId,
@@ -78,7 +78,7 @@ export class ContributionsController {
       userId,
     });
 
-    return reply({ res, results: Contributions });
+    return reply({ res, results: contributions });
   }
 
   /** Create campaign */

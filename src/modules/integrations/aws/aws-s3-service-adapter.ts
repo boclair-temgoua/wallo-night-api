@@ -1,11 +1,14 @@
-import {
-  S3Client,
-  GetObjectCommand,
-  PutObjectCommandInput,
-} from '@aws-sdk/client-s3';
 import { S3 } from 'aws-sdk';
 import { config } from '../../../app/config';
 import * as mime from 'mime-types';
+import {
+  S3Client,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  GetObjectCommand,
+  PutObjectCommandOutput,
+} from '@aws-sdk/client-s3';
+import axios from 'axios';
 
 export const awsS3ServiceAdapter = async (data: {
   file: PutObjectCommandInput['Body'];
@@ -17,7 +20,7 @@ export const awsS3ServiceAdapter = async (data: {
 
   const awsClient = new S3({
     region: config.implementations.aws.region,
-    accessKeyId: config.implementations.aws.accessKey,
+    accessKeyId: config.implementations.aws.accessKeyId,
     secretAccessKey: config.implementations.aws.secretKey,
   });
 
@@ -39,19 +42,17 @@ export const awsS3ServiceAdapter = async (data: {
   return response;
 };
 
-export const getFile = async (key: string, folder: string) => {
-  const awsClient = new S3Client({
-    credentials: {
-      accessKeyId: config.implementations.aws.accessKey,
-      secretAccessKey: config.implementations.aws.secretKey,
-    },
-    region: config.implementations.aws.region,
+export const getFileToAws = async (options: {
+  folder: string;
+  fileName: string;
+}): Promise<{ fileBuffer: Buffer; contentType: string }> => {
+  const { folder, fileName } = options;
+  const imageUrl = `https://${config.implementations.aws.bucket}.s3.${config.implementations.aws.region}.amazonaws.com/${folder}/${fileName}`;
+  const imageResponse = await axios.get(imageUrl, {
+    responseType: 'arraybuffer',
   });
+  const fileBuffer = Buffer.from(imageResponse.data, 'binary');
+  const contentType = imageResponse.headers['content-type'];
 
-  const command = new GetObjectCommand({
-    Bucket: config.implementations.aws.bucket,
-    Key: key,
-  });
-  const response = await awsClient.send(command);
-  return response.Body;
+  return { fileBuffer, contentType };
 };

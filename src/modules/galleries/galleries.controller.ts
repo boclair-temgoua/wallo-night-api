@@ -1,3 +1,4 @@
+import { config } from './../../app/config/index';
 import {
   Controller,
   Post,
@@ -27,12 +28,16 @@ import {
   RequestPaginationDto,
   addPagination,
 } from './../../app/utils/pagination';
-import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
+import {
+  awsS3ServiceAdapter,
+  getFileToAws,
+} from '../integrations/aws/aws-s3-service-adapter';
 import {
   formateNowDateYYMMDD,
   generateLongUUID,
 } from '../../app/utils/commons';
 import * as mime from 'mime-types';
+import axios from 'axios';
 
 @Controller('galleries')
 export class GalleriesController {
@@ -73,27 +78,26 @@ export class GalleriesController {
     const { user } = req;
     const { title, whoCanSee, allowDownload, description } = body;
 
-    console.log('file =======>', file);
-    console.log('body =======>', body);
-    // const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-    //   8,
-    // )}`;
-    // await awsS3ServiceAdapter({
-    //   name: nameFile,
-    //   mimeType: file?.mimetype,
-    //   folder: 'articles',
-    //   file: file.buffer,
-    // });
-    // const extension = mime.extension(file.mimetype);
-    // const fileName = `${nameFile}.${extension}`;
+    const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
+      8,
+    )}`;
+
+    await awsS3ServiceAdapter({
+      name: nameFile,
+      mimeType: file?.mimetype,
+      folder: 'galleries',
+      file: file.buffer,
+    });
+    const extension = mime.extension(file.mimetype);
+    const fileName = `${nameFile}.${extension}`;
 
     await this.galleriesService.createOne({
       title,
       whoCanSee,
       description,
-      allowDownload,
+      allowDownload: Boolean(allowDownload),
       userId: user?.id,
-      // image: fileName,
+      path: fileName,
     });
 
     return reply({ res, results: 'Gallery created successfully' });
@@ -110,10 +114,10 @@ export class GalleriesController {
   ) {
     const { title, whoCanSee, allowDownload, description } = body;
 
-    const findOneGift = await this.galleriesService.findOneBy({
+    const findOneGallery = await this.galleriesService.findOneBy({
       galleryId,
     });
-    if (!findOneGift)
+    if (!findOneGallery)
       throw new HttpException(
         `Gallery ${galleryId} don't exists please change`,
         HttpStatus.NOT_FOUND,
@@ -125,7 +129,7 @@ export class GalleriesController {
         title,
         whoCanSee,
         description,
-        allowDownload,
+        allowDownload: Boolean(allowDownload),
       },
     );
 
@@ -153,5 +157,24 @@ export class GalleriesController {
     );
 
     return reply({ res, results: 'gallery deleted successfully' });
+  }
+
+  /** Get on file gallery */
+  @Get(`/file/:fileName`)
+  // @UseGuards(JwtAuthGuard)
+  async getOneFileGallery(@Res() res, @Param('fileName') fileName: string) {
+    try {
+      const { fileBuffer, contentType } = await getFileToAws({
+        folder: 'galleries',
+        fileName,
+      });
+      res.status(200);
+      res.contentType(contentType);
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Erreur lors de la récupération de l'image.");
+    }
   }
 }
