@@ -1,13 +1,7 @@
 import { S3 } from 'aws-sdk';
 import { config } from '../../../app/config';
 import * as mime from 'mime-types';
-import {
-  S3Client,
-  PutObjectCommand,
-  PutObjectCommandInput,
-  GetObjectCommand,
-  PutObjectCommandOutput,
-} from '@aws-sdk/client-s3';
+import { PutObjectCommandInput } from '@aws-sdk/client-s3';
 import axios from 'axios';
 
 export const awsS3ServiceAdapter = async (data: {

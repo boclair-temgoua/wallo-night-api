@@ -29,7 +29,10 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
+import {
+  awsS3ServiceAdapter,
+  getFileToAws,
+} from '../integrations/aws/aws-s3-service-adapter';
 import {
   formateNowDateYYMMDD,
   generateLongUUID,
@@ -82,24 +85,24 @@ export class ArticlesController {
     const { user } = req;
     const { title, status, description } = body;
 
-    // const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-    //   8,
-    // )}`;
-    // await awsS3ServiceAdapter({
-    //   name: nameFile,
-    //   mimeType: file?.mimetype,
-    //   folder: 'articles',
-    //   file: file.buffer,
-    // });
-    // const extension = mime.extension(file.mimetype);
-    // const fileName = `${nameFile}.${extension}`;
+    const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
+      8,
+    )}`;
+    await awsS3ServiceAdapter({
+      name: nameFile,
+      mimeType: file?.mimetype,
+      folder: 'articles',
+      file: file.buffer,
+    });
+    const extension = mime.extension(file.mimetype);
+    const fileName = `${nameFile}.${extension}`;
 
     const article = await this.articlesService.createOne({
       title,
       status,
       userId: user?.id,
       description,
-      // image: fileName,
+      image: fileName,
     });
 
     return reply({ res, results: article });
@@ -154,5 +157,24 @@ export class ArticlesController {
     );
 
     return reply({ res, results: article });
+  }
+
+  /** Get on file article */
+  @Get(`/file/:fileName`)
+  // @UseGuards(JwtAuthGuard)
+  async getOneFileGallery(@Res() res, @Param('fileName') fileName: string) {
+    try {
+      const { fileBuffer, contentType } = await getFileToAws({
+        folder: 'articles',
+        fileName,
+      });
+      res.status(200);
+      res.contentType(contentType);
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Erreur lors de la récupération de l'image.");
+    }
   }
 }

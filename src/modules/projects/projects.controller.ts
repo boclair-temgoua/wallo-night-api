@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  NotFoundException,
   Body,
   Param,
   ParseUUIDPipe,
