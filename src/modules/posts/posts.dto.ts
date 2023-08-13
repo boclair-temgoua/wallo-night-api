@@ -10,8 +10,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-
-export class CreateOrUpdateArticlesDto {
+export class CreateOrUpdatePostsDto {
   @IsOptional()
   @IsBoolean()
   status: boolean;

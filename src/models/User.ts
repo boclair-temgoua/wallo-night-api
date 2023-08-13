@@ -11,19 +11,22 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Profile } from './Profile';
-import { Contributor } from './Contributor';
-import { Cart } from './Cart';
-import { Transaction } from './Transaction';
-import { Wallet } from './Wallet';
-import { Gift } from './Gift';
-import { Campaign } from './Campaign';
 import { Withdrawal } from './Withdrawal';
 import { Membership } from './Membership';
 import { WithdrawalUser } from './WithdrawalUser';
 import { NextStep } from '../modules/users/users.type';
-import { Gallery } from './Gallery';
-import { Article } from './Article';
+import {
+  Post,
+  Comment,
+  Gallery,
+  Campaign,
+  Gift,
+  Wallet,
+  Transaction,
+  Cart,
+  Contributor,
+  Profile,
+} from './index';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -72,8 +75,11 @@ export class User extends BaseDeleteEntity {
   @OneToMany(() => Campaign, (campaign) => campaign.user)
   campaigns?: Campaign[];
 
-  @OneToMany(() => Article, (article) => article.user)
-  articles?: Article[];
+  @OneToMany(() => Post, (post) => post.user)
+  posts?: Post[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments?: Comment[];
 
   @OneToMany(() => Gallery, (gallery) => gallery.user)
   galleries?: Gallery[];

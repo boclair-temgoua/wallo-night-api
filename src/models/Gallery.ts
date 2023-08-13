@@ -13,6 +13,7 @@ import { BaseDeleteEntity } from '../app/databases/common';
 import { Product } from './Product';
 import { User } from './User';
 import { WhoCanSeeType } from '../app/utils/search-query/search-query.dto';
+import { Comment } from './Comment';
 
 @Entity('gallery')
 export class Gallery extends BaseDeleteEntity {
@@ -45,4 +46,7 @@ export class Gallery extends BaseDeleteEntity {
   })
   @JoinColumn()
   user?: Relation<User>;
+
+  @OneToMany(() => Comment, (comment) => comment.gallery)
+  comments?: Comment[];
 }

@@ -9,6 +9,8 @@ export * from './Currency';
 export * from './Withdrawal';
 export * from './WithdrawalUser';
 export * from './Discount';
+export * from './Post';
+export * from './Comment';
 export * from './Campaign';
 export * from './Faq';
 export * from './Gift';

@@ -25,9 +25,10 @@ import { CurrenciesModule } from './modules/currencies/currencies.module';
 import { ContributionsModule } from './modules/contributions/contributions.module';
 import { WithdrawalsModule } from './modules/withdrawals/withdrawals.module';
 import { WithdrawalUsersModule } from './modules/withdrawal-users/withdrawal-users.module';
-import { ArticlesModule } from './modules/articles/articles.module';
+import { PostsModule } from './modules/posts/posts.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
 import { GalleriesModule } from './modules/galleries/galleries.module';
+import { CommentsModule } from './modules/comments/comments.module';
 
 @Module({
   imports: [
@@ -51,7 +52,8 @@ import { GalleriesModule } from './modules/galleries/galleries.module';
     WalletsModule,
     MediaModule,
     GiftsModule,
-    ArticlesModule,
+    PostsModule,
+    CommentsModule,
     CurrenciesModule,
     WithdrawalsModule,
     MembershipsModule,

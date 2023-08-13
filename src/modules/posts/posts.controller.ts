@@ -19,10 +19,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
-import { CreateOrUpdateArticlesDto } from './articles.dto';
+import { CreateOrUpdatePostsDto } from './posts.dto';
 import { JwtAuthGuard } from '../users/middleware';
 
-import { ArticlesService } from './articles.service';
+import { PostsService } from './posts.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import {
@@ -39,11 +39,11 @@ import {
 } from '../../app/utils/commons';
 import * as mime from 'mime-types';
 
-@Controller('articles')
-export class ArticlesController {
-  constructor(private readonly articlesService: ArticlesService) {}
+@Controller('posts')
+export class PostsController {
+  constructor(private readonly postsService: PostsService) {}
 
-  /** Get all Articles */
+  /** Get all Posts */
   @Get(`/`)
   async findAll(
     @Res() res,
@@ -55,31 +55,31 @@ export class ArticlesController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const articles = await this.articlesService.findAll({ search, pagination });
+    const Posts = await this.postsService.findAll({ search, pagination });
 
-    return reply({ res, results: articles });
+    return reply({ res, results: Posts });
   }
 
-  /** Get one Article */
-  @Get(`/show/:articleId`)
+  /** Get one Post */
+  @Get(`/show/:postId`)
   @UseGuards(JwtAuthGuard)
   async getOneByUUID(
     @Res() res,
-    @Param('articleId', ParseUUIDPipe) articleId: string,
+    @Param('postId', ParseUUIDPipe) postId: string,
   ) {
-    const article = await this.articlesService.findOneBy({ articleId });
+    const post = await this.postsService.findOneBy({ postId });
 
-    return reply({ res, results: article });
+    return reply({ res, results: post });
   }
 
-  /** Create Article */
+  /** Create Posts */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   async createOne(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateArticlesDto,
+    @Body() body: CreateOrUpdatePostsDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     const { user } = req;
@@ -91,13 +91,13 @@ export class ArticlesController {
     await awsS3ServiceAdapter({
       name: nameFile,
       mimeType: file?.mimetype,
-      folder: 'articles',
+      folder: 'posts',
       file: file.buffer,
     });
     const extension = mime.extension(file.mimetype);
     const fileName = `${nameFile}.${extension}`;
 
-    const article = await this.articlesService.createOne({
+    const postId = await this.postsService.createOne({
       title,
       status,
       userId: user?.id,
@@ -105,67 +105,67 @@ export class ArticlesController {
       image: fileName,
     });
 
-    return reply({ res, results: article });
+    return reply({ res, results: postId });
   }
 
-  /** Update Article */
-  @Put(`/:articleId`)
+  /** Update Post */
+  @Put(`/:postId`)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   async updateOne(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateArticlesDto,
+    @Body() body: CreateOrUpdatePostsDto,
     @UploadedFile() file: Express.Multer.File,
-    @Param('articleId', ParseUUIDPipe) articleId: string,
+    @Param('postId', ParseUUIDPipe) postId: string,
   ) {
     const { title, status, description } = body;
 
-    const findOneArticle = await this.articlesService.findOneBy({ articleId });
-    if (!findOneArticle)
+    const findOnePost = await this.postsService.findOneBy({ postId });
+    if (!findOnePost)
       throw new HttpException(
-        `This article ${articleId} dons't exist please change`,
+        `This post ${postId} dons't exist please change`,
         HttpStatus.NOT_FOUND,
       );
 
-    const article = await this.articlesService.updateOne(
-      { articleId },
+    const post = await this.postsService.updateOne(
+      { postId },
       { title, status, description },
     );
 
-    return reply({ res, results: article });
+    return reply({ res, results: post });
   }
 
-  /** Delete Article */
-  @Delete(`/:articleId`)
+  /** Delete postId */
+  @Delete(`/:postId`)
   @UseGuards(JwtAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,
-    @Param('articleId', ParseUUIDPipe) articleId: string,
+    @Param('postId', ParseUUIDPipe) postId: string,
   ) {
-    const findOneArticle = await this.articlesService.findOneBy({ articleId });
-    if (!findOneArticle)
+    const findOnePost = await this.postsService.findOneBy({ postId });
+    if (!findOnePost)
       throw new HttpException(
-        `This article ${articleId} dons't exist please change`,
+        `This post ${findOnePost} dons't exist please change`,
         HttpStatus.NOT_FOUND,
       );
 
-    const article = await this.articlesService.updateOne(
-      { articleId },
+    const post = await this.postsService.updateOne(
+      { postId },
       { deletedAt: new Date() },
     );
 
-    return reply({ res, results: article });
+    return reply({ res, results: post });
   }
 
-  /** Get on file article */
+  /** Get on file post */
   @Get(`/file/:fileName`)
   // @UseGuards(JwtAuthGuard)
   async getOneFileGallery(@Res() res, @Param('fileName') fileName: string) {
     try {
       const { fileBuffer, contentType } = await getFileToAws({
-        folder: 'articles',
+        folder: 'posts',
         fileName,
       });
       res.status(200);

@@ -11,10 +11,11 @@ import {
 import { BaseDeleteEntity } from '../app/databases/common';
 import { WhoCanSeeType } from '../app/utils/search-query';
 import { User } from './User';
-import { ArticleType } from '../modules/articles/articles.type';
+import { PostType } from '../modules/posts/posts.type';
+import { Comment } from './Comment';
 
-@Entity('article')
-export class Article extends BaseDeleteEntity {
+@Entity('post')
+export class Post extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -36,10 +37,10 @@ export class Article extends BaseDeleteEntity {
 
   @Column({
     type: 'enum',
-    enum: ArticleType,
-    default: ArticleType.POST,
+    enum: PostType,
+    default: PostType.ARTICLE,
   })
-  type?: ArticleType;
+  type?: PostType;
 
   @Column({ default: true })
   allowDownload?: boolean;
@@ -52,9 +53,12 @@ export class Article extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
-  @ManyToOne(() => User, (user) => user.articles, {
+  @ManyToOne(() => User, (user) => user.posts, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
   user?: Relation<User>;
+
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments?: Comment[];
 }
