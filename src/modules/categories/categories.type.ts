@@ -4,6 +4,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 export type GetCategoriesSelections = {
   search?: string;
   pagination?: PaginationType;
+  userId?: Category['userId'];
 };
 
 export type GetOneCategoriesSelections = {

@@ -84,20 +84,24 @@ export class PostsController {
   ) {
     const { user } = req;
     const { title, status, description } = body;
+    const attachment = req.file;
+    let fileName;
 
-    const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-      8,
-    )}`;
-    await awsS3ServiceAdapter({
-      name: nameFile,
-      mimeType: file?.mimetype,
-      folder: 'posts',
-      file: file.buffer,
-    });
-    const extension = mime.extension(file.mimetype);
-    const fileName = `${nameFile}.${extension}`;
+    if (attachment) {
+      const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
+        8,
+      )}`;
+      await awsS3ServiceAdapter({
+        name: nameFile,
+        mimeType: file?.mimetype,
+        folder: 'posts',
+        file: file.buffer,
+      });
+      const extension = mime.extension(file.mimetype);
+      fileName = `${nameFile}.${extension}`;
+    }
 
-    const postId = await this.postsService.createOne({
+    await this.postsService.createOne({
       title,
       status,
       userId: user?.id,
@@ -105,7 +109,7 @@ export class PostsController {
       image: fileName,
     });
 
-    return reply({ res, results: postId });
+    return reply({ res, results: 'post save successfully' });
   }
 
   /** Update Post */
@@ -120,6 +124,22 @@ export class PostsController {
     @Param('postId', ParseUUIDPipe) postId: string,
   ) {
     const { title, status, description } = body;
+    const attachment = req.file;
+    let fileName;
+
+    if (attachment) {
+      const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
+        8,
+      )}`;
+      await awsS3ServiceAdapter({
+        name: nameFile,
+        mimeType: file?.mimetype,
+        folder: 'posts',
+        file: file.buffer,
+      });
+      const extension = mime.extension(file.mimetype);
+      fileName = `${nameFile}.${extension}`;
+    }
 
     const findOnePost = await this.postsService.findOneBy({ postId });
     if (!findOnePost)
@@ -128,12 +148,12 @@ export class PostsController {
         HttpStatus.NOT_FOUND,
       );
 
-    const post = await this.postsService.updateOne(
+    await this.postsService.updateOne(
       { postId },
-      { title, status, description },
+      { title, status, description, image: fileName },
     );
 
-    return reply({ res, results: post });
+    return reply({ res, results: 'post updated successfully' });
   }
 
   /** Delete postId */
@@ -157,6 +177,29 @@ export class PostsController {
     );
 
     return reply({ res, results: post });
+  }
+
+  /** Create Image AWS */
+  @Post(`/upload`)
+  @UseInterceptors(FileInterceptor('image'))
+  async createOneFileAws(
+    @Res() res,
+    @Req() req,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
+      8,
+    )}`;
+    const response = await awsS3ServiceAdapter({
+      name: nameFile,
+      mimeType: file?.mimetype,
+      folder: 'posts',
+      file: file.buffer,
+    });
+
+    console.log('response =======>', response);
+
+    return reply({ res, results: { urlFile: response.Location } });
   }
 
   /** Get on file post */

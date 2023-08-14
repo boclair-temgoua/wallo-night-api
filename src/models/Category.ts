@@ -29,7 +29,7 @@ export class Category extends BaseDeleteEntity {
   description?: string;
 
   @Column({ type: 'uuid', nullable: true })
-  userCreatedId?: string;
+  userId?: string;
 
   @OneToMany(() => Product, (product) => product.category, {
     onDelete: 'CASCADE',

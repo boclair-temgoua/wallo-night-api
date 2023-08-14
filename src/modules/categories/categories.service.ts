@@ -28,11 +28,15 @@ export class CategoriesService {
   ) {}
 
   async findAllNotPaginate(selections: GetCategoriesSelections): Promise<any> {
-    const { search } = selections;
+    const { search, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('category')
       .where('category.deletedAt IS NULL');
+
+    if (userId) {
+      query = query.andWhere('category.userId = :userId', { userId });
+    }
 
     if (search) {
       query = query.andWhere(
@@ -53,11 +57,15 @@ export class CategoriesService {
   }
 
   async findAll(selections: GetCategoriesSelections): Promise<any> {
-    const { search, pagination } = selections;
+    const { search, pagination, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('category')
       .where('category.deletedAt IS NULL');
+
+    if (userId) {
+      query = query.andWhere('category.userId = :userId', { userId });
+    }
 
     if (search) {
       query = query.andWhere(
@@ -107,14 +115,14 @@ export class CategoriesService {
 
   /** Create one Categories to the database. */
   async createOne(options: CreateCategoriesOptions): Promise<Category> {
-    const { name, description, userCreatedId } = options;
+    const { name, description, userId } = options;
 
     const category = new Category();
     category.name = name;
     category.color = getRandomElement(colorsArrays);
     category.slug = `${Slug(name)}-${generateNumber(4)}`;
     category.description = description;
-    category.userCreatedId = userCreatedId;
+    category.userId = userId;
 
     const query = this.driver.save(category);
 
