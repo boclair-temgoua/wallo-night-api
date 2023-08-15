@@ -29,6 +29,7 @@ import { PostsModule } from './modules/posts/posts.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
 import { GalleriesModule } from './modules/galleries/galleries.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { PostCategoriesModule } from './modules/post-categories/post-categories.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { CommentsModule } from './modules/comments/comments.module';
     WithdrawalsModule,
     MembershipsModule,
     GalleriesModule,
+    PostCategoriesModule,
     WithdrawalUsersModule,
     ContributionsModule,
     ContactUsModule,

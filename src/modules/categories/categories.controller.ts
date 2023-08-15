@@ -36,25 +36,11 @@ export class CategoriesController {
   /** Get all CategoriesUs */
   @Get(`/all`)
   @UseGuards(JwtAuthGuard)
-  async findAll(@Res() res, @Req() req, @Query() searchQuery: SearchQueryDto) {
-    const { user } = req;
-    const { search } = searchQuery;
-
-    const categories = await this.categoriesService.findAllNotPaginate({
-      search,
-      userId: user?.id,
-    });
-
-    return reply({ res, results: categories });
-  }
-
-  @Get(`/`)
-  @UseGuards(JwtAuthGuard)
-  async findAllByOrganizationId(
+  async findAll(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
+    @Query() requestPaginationDto: RequestPaginationDto,
   ) {
     const { user } = req;
     const { search } = searchQuery;
@@ -66,6 +52,24 @@ export class CategoriesController {
       search,
       userId: user?.id,
       pagination,
+    });
+
+    return reply({ res, results: categories });
+  }
+
+  @Get(`/`)
+  @UseGuards(JwtAuthGuard)
+  async findAllByOrganizationId(
+    @Res() res,
+    @Req() req,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { user } = req;
+    const { search } = searchQuery;
+
+    const categories = await this.categoriesService.findAllNotPaginate({
+      search,
+      userId: user?.id,
     });
 
     return reply({ res, results: categories });

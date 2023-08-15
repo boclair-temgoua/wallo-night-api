@@ -38,10 +38,16 @@ import {
   generateLongUUID,
 } from '../../app/utils/commons';
 import * as mime from 'mime-types';
+import { CategoriesService } from '../categories/categories.service';
+import { PostCategoriesService } from '../post-categories/post-categories.service';
 
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly categoriesService: CategoriesService,
+    private readonly postCategoriesService: PostCategoriesService,
+  ) {}
 
   /** Get all Posts */
   @Get(`/`)
@@ -83,7 +89,7 @@ export class PostsController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const { user } = req;
-    const { title, status, description } = body;
+    const { title, status, description, categories } = body;
     const attachment = req.file;
     let fileName;
 
@@ -101,13 +107,29 @@ export class PostsController {
       fileName = `${nameFile}.${extension}`;
     }
 
-    await this.postsService.createOne({
+    let newCategories = [];
+
+    console.log('newCategories =====>', newCategories);
+    const savePost = await this.postsService.createOne({
       title,
       status,
       userId: user?.id,
       description,
       image: fileName,
     });
+
+    if (categories) {
+      Promise.all([
+        String(categories)
+          .split(',')
+          .forEach(async (categoryId) => {
+            await this.postCategoriesService.createOne({
+              postId: savePost?.id,
+              categoryId,
+            });
+          }),
+      ]);
+    }
 
     return reply({ res, results: 'post save successfully' });
   }

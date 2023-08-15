@@ -8,12 +8,17 @@ import {
   IsOptional,
   IsIn,
   IsUUID,
+  IsArray,
 } from 'class-validator';
 
 export class CreateOrUpdatePostsDto {
   @IsOptional()
   @IsBoolean()
   status: boolean;
+
+  @IsOptional()
+  @IsString()
+  categories: any[];
 
   @IsNotEmpty()
   @IsString()

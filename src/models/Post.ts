@@ -7,12 +7,16 @@ import {
   JoinColumn,
   OneToMany,
   Relation,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { WhoCanSeeType } from '../app/utils/search-query';
 import { User } from './User';
 import { PostType } from '../modules/posts/posts.type';
 import { Comment } from './Comment';
+import { Category } from './Category';
+import { PostCategory } from './PostCategory';
 
 @Entity('post')
 export class Post extends BaseDeleteEntity {
@@ -61,4 +65,7 @@ export class Post extends BaseDeleteEntity {
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments?: Comment[];
+
+  @OneToMany(() => PostCategory, (postCategory) => postCategory.post)
+  postCategories?: PostCategory[];
 }

@@ -144,10 +144,10 @@ export class PostsService {
       status,
       title,
       type,
+      image,
       whoCanSee,
       allowDownload,
       description,
-      image,
     } = options;
 
     const post = new Post();

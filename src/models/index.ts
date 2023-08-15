@@ -8,6 +8,7 @@ export * from './Country';
 export * from './Currency';
 export * from './Withdrawal';
 export * from './WithdrawalUser';
+export * from './PostCategory';
 export * from './Discount';
 export * from './Post';
 export * from './Comment';
