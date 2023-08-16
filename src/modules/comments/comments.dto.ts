@@ -18,20 +18,10 @@ export class CreateOrUpdateCommentsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  galleryId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
   postId: string;
 }
 
 export class CommentsDto {
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  galleryId: string;
-
   @IsOptional()
   @IsString()
   @IsUUID()

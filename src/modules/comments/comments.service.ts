@@ -26,14 +26,13 @@ export class CommentsService {
   ) {}
 
   async findAll(selections: GetCommentsSelections): Promise<any> {
-    const { search, pagination, postId, galleryId } = selections;
+    const { search, pagination, postId } = selections;
 
     let query = this.driver
       .createQueryBuilder('comment')
       .select('comment.id', 'id')
       .addSelect('comment.createdAt', 'createdAt')
       .addSelect('comment.description', 'description')
-      .addSelect('comment.galleryId', 'galleryId')
       .addSelect('comment.postId', 'postId')
       .addSelect('comment.userId', 'userId')
       .where('comment.deletedAt IS NULL')
@@ -54,11 +53,6 @@ export class CommentsService {
       query = query.andWhere('comment.postId = :postId', { postId });
     }
 
-    if (galleryId) {
-      query = query.andWhere('comment.galleryId = :galleryId', {
-        galleryId,
-      });
-    }
     if (search) {
       query = query.andWhere('comment.title ::text ILIKE :search', {
         search: `%${search}%`,
@@ -114,12 +108,11 @@ export class CommentsService {
 
   /** Create one Comment to the database. */
   async createOne(options: CreateCommentOptions): Promise<Comment> {
-    const { description, galleryId, postId, userId } = options;
+    const { description, postId, userId } = options;
 
     const comment = new Comment();
     comment.postId = postId;
     comment.userId = userId;
-    comment.galleryId = galleryId;
     comment.description = description;
 
     const query = this.driver.save(comment);

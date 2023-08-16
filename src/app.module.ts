@@ -27,7 +27,6 @@ import { WithdrawalsModule } from './modules/withdrawals/withdrawals.module';
 import { WithdrawalUsersModule } from './modules/withdrawal-users/withdrawal-users.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
-import { GalleriesModule } from './modules/galleries/galleries.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { PostCategoriesModule } from './modules/post-categories/post-categories.module';
 import { FollowsModule } from './modules/follows/follows.module';
@@ -59,7 +58,6 @@ import { FollowsModule } from './modules/follows/follows.module';
     CurrenciesModule,
     WithdrawalsModule,
     MembershipsModule,
-    GalleriesModule,
     FollowsModule,
     PostCategoriesModule,
     WithdrawalUsersModule,

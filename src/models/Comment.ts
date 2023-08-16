@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/index';
-import { Gallery } from './Gallery';
 import { Post } from './Post';
 
 @Entity('comment')
@@ -17,14 +16,6 @@ export class Comment extends BaseDeleteEntity {
 
   @Column({ type: 'text', nullable: true })
   description?: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  galleryId?: string;
-  @ManyToOne(() => Gallery, (gallery) => gallery.comments, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  gallery?: Gallery;
 
   @Column({ type: 'uuid', nullable: true })
   postId?: string;

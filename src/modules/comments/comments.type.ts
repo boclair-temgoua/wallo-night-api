@@ -4,7 +4,6 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 export type GetCommentsSelections = {
   search?: string;
   postId: Comment['postId'];
-  galleryId: Comment['galleryId'];
   pagination?: PaginationType;
 };
 

@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Comment, Post, Gallery } from '../../models';
+import { Comment, Post } from '../../models';
 import { CommentsController } from './comments.controller';
-import { GalleriesService } from '../galleries/galleries.service';
 import { PostsService } from '../posts/posts.service';
 import { CommentsService } from './comments.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comment, Gallery, Post])],
+  imports: [TypeOrmModule.forFeature([Comment, Post])],
   controllers: [CommentsController],
-  providers: [CommentsService, GalleriesService, PostsService],
+  providers: [CommentsService, PostsService],
 })
 export class CommentsModule {}

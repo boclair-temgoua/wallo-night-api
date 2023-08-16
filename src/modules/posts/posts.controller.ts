@@ -19,7 +19,11 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
-import { CreateOrUpdatePostsDto } from './posts.dto';
+import {
+  CreateOrUpdatePostsDto,
+  CreateOrUpdatePostsGalleriesDto,
+  GetGalleriesDto,
+} from './posts.dto';
 import { JwtAuthGuard } from '../users/middleware';
 
 import { PostsService } from './posts.service';
@@ -87,15 +91,17 @@ export class PostsController {
   @Get(`/`)
   async findAll(
     @Res() res,
+    @Query() query: GetGalleriesDto,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
+    const { type } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const posts = await this.postsService.findAll({ search, pagination });
+    const posts = await this.postsService.findAll({ search, pagination, type });
 
     return reply({ res, results: posts });
   }
@@ -112,6 +118,45 @@ export class PostsController {
     return reply({ res, results: post });
   }
 
+  /** Post one Galleries */
+  @Post(`/galleries`)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('attachment'))
+  async createOneGallery(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateOrUpdatePostsGalleriesDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const { user } = req;
+    const { title, whoCanSee, allowDownload, description, type } = body;
+
+    const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
+      8,
+    )}`;
+
+    await awsS3ServiceAdapter({
+      name: nameFile,
+      mimeType: file?.mimetype,
+      folder: 'galleries',
+      file: file.buffer,
+    });
+    const extension = mime.extension(file.mimetype);
+    const fileName = `${nameFile}.${extension}`;
+
+    await this.postsService.createOne({
+      type,
+      title,
+      whoCanSee,
+      description,
+      allowDownload: Boolean(allowDownload),
+      userId: user?.id,
+      image: fileName,
+    });
+
+    return reply({ res, results: 'Gallery created successfully' });
+  }
+
   /** Create Posts */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
@@ -123,7 +168,7 @@ export class PostsController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const { user } = req;
-    const { title, status, description, categories } = body;
+    const { title, status, description, categories, type } = body;
     const attachment = req.file;
     let fileName;
 
@@ -141,9 +186,8 @@ export class PostsController {
       fileName = `${nameFile}.${extension}`;
     }
 
-    let newCategories = [];
-
     const savePost = await this.postsService.createOne({
+      type,
       title,
       status,
       userId: user?.id,
@@ -273,10 +317,28 @@ export class PostsController {
   /** Get on file post */
   @Get(`/file/:fileName`)
   // @UseGuards(JwtAuthGuard)
-  async getOneFileGallery(@Res() res, @Param('fileName') fileName: string) {
+  async getOneFilePost(@Res() res, @Param('fileName') fileName: string) {
     try {
       const { fileBuffer, contentType } = await getFileToAws({
         folder: 'posts',
+        fileName,
+      });
+      res.status(200);
+      res.contentType(contentType);
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Erreur lors de la récupération de l'image.");
+    }
+  }
+  /** Get on file gallery */
+  @Get(`/gallery/:fileName`)
+  // @UseGuards(JwtAuthGuard)
+  async getOneFilePostGallery(@Res() res, @Param('fileName') fileName: string) {
+    try {
+      const { fileBuffer, contentType } = await getFileToAws({
+        folder: 'galleries',
         fileName,
       });
       res.status(200);

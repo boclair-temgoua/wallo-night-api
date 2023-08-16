@@ -18,7 +18,6 @@ import { NextStep } from '../modules/users/users.type';
 import {
   Post,
   Comment,
-  Gallery,
   Campaign,
   Gift,
   Wallet,
@@ -82,9 +81,6 @@ export class User extends BaseDeleteEntity {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[];
-
-  @OneToMany(() => Gallery, (gallery) => gallery.user)
-  galleries?: Gallery[];
 
   @OneToMany(() => Transaction, (transaction) => transaction.user, {
     onDelete: 'CASCADE',

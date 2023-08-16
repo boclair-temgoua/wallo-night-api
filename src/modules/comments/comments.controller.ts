@@ -28,13 +28,11 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 import { PostsService } from '../posts/posts.service';
-import { GalleriesService } from '../galleries/galleries.service';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
     private readonly commentsService: CommentsService,
-    private readonly galleriesService: GalleriesService,
     private readonly postsService: PostsService,
   ) {}
 
@@ -46,7 +44,7 @@ export class CommentsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { galleryId, postId } = query;
+    const { postId } = query;
     const { search } = searchQuery;
 
     if (postId) {
@@ -60,17 +58,6 @@ export class CommentsController {
         );
     }
 
-    if (galleryId) {
-      const findOneGalleryId = await this.galleriesService.findOneBy({
-        galleryId,
-      });
-      if (!findOneGalleryId)
-        throw new HttpException(
-          `This post ${galleryId} dons't exist please change`,
-          HttpStatus.NOT_FOUND,
-        );
-    }
-
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
@@ -78,7 +65,6 @@ export class CommentsController {
       search,
       pagination,
       postId,
-      galleryId,
     });
 
     return reply({ res, results: comments });
@@ -93,7 +79,7 @@ export class CommentsController {
     @Body() body: CreateOrUpdateCommentsDto,
   ) {
     const { user } = req;
-    const { description, galleryId, postId } = body;
+    const { description, postId } = body;
 
     if (postId) {
       const findOnePost = await this.postsService.findOneBy({
@@ -106,20 +92,8 @@ export class CommentsController {
         );
     }
 
-    if (galleryId) {
-      const findOneGallery = await this.galleriesService.findOneBy({
-        galleryId,
-      });
-      if (!findOneGallery)
-        throw new HttpException(
-          `This post ${galleryId} dons't exist please change`,
-          HttpStatus.NOT_FOUND,
-        );
-    }
-
     const comment = await this.commentsService.createOne({
       postId,
-      galleryId,
       userId: user?.id,
       description,
     });
