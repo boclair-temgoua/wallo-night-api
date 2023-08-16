@@ -30,7 +30,7 @@ export class UsersService {
   ) {}
 
   async findAll(selections: GetUsersSelections): Promise<any> {
-    const { search, pagination } = selections;
+    const { search, pagination, userId } = selections;
     let query = this.driver
       .createQueryBuilder('user')
       .select('user.id', 'id')
@@ -62,6 +62,18 @@ export class UsersService {
       )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile');
+
+    if (userId) {
+      query = query.addSelect(/*sql*/ `(
+        SELECT
+            CAST(COUNT(DISTINCT fol) AS INT)
+        FROM "follow" "fol"
+        WHERE ("fol"."followerId" = "user"."id"
+         AND "fol"."deletedAt" IS NULL
+         AND "fol"."userId" IN ('${userId}'))
+         GROUP BY "fol"."followerId", "user"."id"
+        ) AS "isFollow"`);
+    }
 
     if (search) {
       query = query.andWhere(
@@ -153,18 +165,17 @@ export class UsersService {
 
     if (userId) {
       query = query
-        // .addSelect(
-        //   /*sql*/ `(
-        // SELECT
-        //     CAST(COUNT(DISTINCT lk) AS INT)
-        // FROM "like" "lk"
-        // WHERE ("lk"."type" IN ('POST')
-        //  AND "lk"."deletedAt" IS NULL
-        //  AND "lk"."likeableId" = "post"."id"
-        //  AND "lk"."userId" IN ('${userId}'))
-        //  GROUP BY "lk"."likeableId", "post"."id"
-        // ) AS "isLike"`,
-        // )
+        .addSelect(
+          /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT fol) AS INT)
+      FROM "follow" "fol"
+      WHERE ("fol"."followerId" = "user"."id"
+       AND "fol"."deletedAt" IS NULL
+       AND "fol"."followerId" IN ('${userId}'))
+       GROUP BY "fol"."followerId", "user"."id"
+      ) AS "isFollow"`,
+        )
         .andWhere('user.id = :id', { id: userId });
     }
 
@@ -242,7 +253,19 @@ export class UsersService {
       .leftJoin('user.profile', 'profile');
 
     if (userId) {
-      query = query.andWhere('user.id = :id', { id: userId });
+      query = query
+        .addSelect(
+          /*sql*/ `(
+          SELECT
+              CAST(COUNT(DISTINCT fol) AS INT)
+          FROM "follow" "fol"
+          WHERE ("fol"."followerId" = "user"."id"
+          AND "fol"."deletedAt" IS NULL
+          AND "fol"."followerId" IN ('${userId}'))
+          GROUP BY "fol"."followerId", "user"."id"
+          ) AS "isFollow"`,
+        )
+        .andWhere('user.id = :id', { id: userId });
     }
 
     if (email) {

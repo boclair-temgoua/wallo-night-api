@@ -32,28 +32,50 @@ export class FollowsService {
   async findAll(
     selections: GetFollowsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, userId } = selections;
+    const { search, pagination, userId, followerId } = selections;
 
     let query = this.driver
       .createQueryBuilder('follow')
       .select('follow.followerId', 'followerId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-        'firstName', "profile"."firstName",
-        'lastName', "profile"."lastName",
-        'fullName', "profile"."fullName",
-        'image', "profile"."image",
-        'color', "profile"."color",
-        'userId', "follower"."id",
-        'email', "follower"."email"
-    ) AS "profile"`,
-      )
+      .addSelect('follow.createdAt', 'createdAt')
       .where('follow.deletedAt IS NULL')
       .leftJoin('follow.follower', 'follower')
-      .leftJoin('follower.profile', 'profile');
+      .leftJoin('follower.profile', 'profileFollowing')
+      .leftJoin('follow.user', 'user')
+      .leftJoin('user.profile', 'profileFollower');
 
     if (userId) {
-      query = query.andWhere('follow.userId = :userId', { userId });
+      query = query
+        .addSelect(
+          /*sql*/ `jsonb_build_object(
+        'firstName', "profileFollowing"."firstName",
+        'lastName', "profileFollowing"."lastName",
+        'fullName', "profileFollowing"."fullName",
+        'image', "profileFollowing"."image",
+        'color', "profileFollowing"."color",
+        'userId', "follower"."id",
+        'email', "follower"."email",
+        'username', "follower"."username"
+    ) AS "profile"`,
+        )
+        .andWhere('follow.userId = :userId', { userId });
+    }
+
+    if (followerId) {
+      query = query
+        .addSelect(
+          /*sql*/ `jsonb_build_object(
+        'firstName', "profileFollower"."firstName",
+        'lastName', "profileFollower"."lastName",
+        'fullName', "profileFollower"."fullName",
+        'image', "profileFollower"."image",
+        'color', "profileFollower"."color",
+        'userId', "user"."id",
+        'email', "user"."email",
+        'username', "user"."username"
+    ) AS "profile"`,
+        )
+        .andWhere('follow.followerId = :followerId', { followerId });
     }
 
     if (search) {
@@ -61,13 +83,16 @@ export class FollowsService {
         new Brackets((qb) => {
           qb.where('follower.email ::text ILIKE :search', {
             search: `%${search}%`,
-          }).orWhere('profile.firstName ::text ILIKE :search', {
-            search: `%${search}%`,
-          }).orWhere('profile.lastName ::text ILIKE :search', {
-            search: `%${search}%`,
-          }).orWhere('profile.fullName ::text ILIKE :search', {
-            search: `%${search}%`,
-          });
+          })
+            .orWhere('profile.firstName ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('profile.lastName ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('profile.fullName ::text ILIKE :search', {
+              search: `%${search}%`,
+            });
         }),
       );
     }

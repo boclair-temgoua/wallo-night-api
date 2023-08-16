@@ -31,9 +31,33 @@ export class FollowsController {
   constructor(private readonly followsService: FollowsService) {}
 
   /** Get all Follows */
-  @Get(`/`)
+  @Get(`/followers`)
   @UseGuards(JwtAuthGuard)
-  async findAll(
+  async findFollowers(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { user } = req;
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const follows = await this.followsService.findAll({
+      search,
+      pagination,
+      followerId: user?.id,
+    });
+
+    return reply({ res, results: follows });
+  }
+
+  /** Get all Follows */
+  @Get(`/followings`)
+  @UseGuards(JwtAuthGuard)
+  async findFollowings(
     @Res() res,
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
@@ -94,16 +118,16 @@ export class FollowsController {
       userId: user?.id,
     });
     if (!findOneFollow)
-    throw new HttpException(
-      `This follow ${followerId} dons't exist please change`,
-      HttpStatus.NOT_FOUND,
-    );
+      throw new HttpException(
+        `This follow ${followerId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
 
-   await this.followsService.updateOne(
+    await this.followsService.updateOne(
       { followId: findOneFollow?.id },
-      { deletedAt: new Date()},
+      { deletedAt: new Date() },
     );
 
-    return reply({ res, results: 'User follow deleted successfully'  });
+    return reply({ res, results: 'User follow deleted successfully' });
   }
 }

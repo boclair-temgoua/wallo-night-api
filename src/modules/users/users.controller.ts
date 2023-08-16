@@ -43,15 +43,21 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   async findAllUsers(
     @Res() res,
+    @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
+    const { user } = req;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const users = await this.usersService.findAll({ search, pagination });
+    const users = await this.usersService.findAll({
+      search,
+      pagination,
+      userId: user?.id,
+    });
 
     return reply({ res, results: users });
   }

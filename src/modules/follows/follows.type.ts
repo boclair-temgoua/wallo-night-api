@@ -4,6 +4,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 export type GetFollowsSelections = {
   search?: string;
   userId?: Follow['userId'];
+  followerId?: Follow['followerId'];
   pagination?: PaginationType;
 };
 
