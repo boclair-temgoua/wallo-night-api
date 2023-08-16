@@ -85,8 +85,8 @@ export class PostsService {
     const [error, posts] = await useCatch(
       query
         .orderBy('post.createdAt', pagination?.sort)
-        .take(pagination.take)
-        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
         .getRawMany(),
     );
     if (error) throw new NotFoundException(error);
@@ -119,6 +119,20 @@ export class PostsService {
             'userId', "user"."id",
             'email', "user"."email"
         ) AS "profile"`,
+      )
+
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'id', "ctg"."id",
+            'name', "ctg"."name"
+          )) 
+          FROM "post_category" "potctg"
+          LEFT JOIN "category" "ctg" On "potctg"."categoryId" = "ctg"."id"
+          WHERE "potctg"."postId" = "post"."id"
+          AND "ctg"."deletedAt" IS NULL
+          GROUP BY "post"."id", "potctg"."postId"
+          ) AS "categories"`,
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')

@@ -42,6 +42,9 @@ export enum FilterQueryType {
   MEMBERSHIP = 'MEMBERSHIP',
   GIFT = 'GIFT',
   HELP = 'HELP',
+  POST = 'POST',
+  GALLERY = 'GALLERY',
+  COMMENT = 'COMMENT',
 }
 
 export enum WhoCanSeeType {

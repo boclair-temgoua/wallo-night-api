@@ -84,8 +84,8 @@ export class GiftsService {
     const [error, Gifts] = await useCatch(
       query
         .orderBy('gift.createdAt', pagination?.sort)
-        .take(pagination.take)
-        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
         .getRawMany(),
     );
     if (error) throw new NotFoundException(error);

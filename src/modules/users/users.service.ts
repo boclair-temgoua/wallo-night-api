@@ -152,7 +152,20 @@ export class UsersService {
       .leftJoin('user.profile', 'profile');
 
     if (userId) {
-      query = query.andWhere('user.id = :id', { id: userId });
+      query = query
+        // .addSelect(
+        //   /*sql*/ `(
+        // SELECT
+        //     CAST(COUNT(DISTINCT lk) AS INT)
+        // FROM "like" "lk"
+        // WHERE ("lk"."type" IN ('POST')
+        //  AND "lk"."deletedAt" IS NULL
+        //  AND "lk"."likeableId" = "post"."id"
+        //  AND "lk"."userId" IN ('${userId}'))
+        //  GROUP BY "lk"."likeableId", "post"."id"
+        // ) AS "isLike"`,
+        // )
+        .andWhere('user.id = :id', { id: userId });
     }
 
     if (username) {
@@ -194,6 +207,26 @@ export class UsersService {
           'countryId', "profile"."countryId",
           'url', "profile"."url"
       ) AS "profile"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT fol) AS INT)
+      FROM "follow" "fol"
+      WHERE ("fol"."userId" = "user"."id"
+      AND "fol"."deletedAt" IS NULL)
+      GROUP BY "fol"."userId", "user"."id"
+      ) AS "followingsTotal"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT fol) AS INT)
+      FROM "follow" "fol"
+      WHERE ("fol"."followerId" = "user"."id"
+      AND "fol"."deletedAt" IS NULL)
+      GROUP BY "fol"."followerId", "user"."id"
+      ) AS "followersTotal"`,
       )
       .addSelect(
         /*sql*/ `(

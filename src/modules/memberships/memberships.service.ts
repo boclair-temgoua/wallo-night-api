@@ -83,8 +83,8 @@ export class MembershipsService {
     const [error, Memberships] = await useCatch(
       query
         .orderBy('membership.createdAt', pagination?.sort)
-        .take(pagination.take)
-        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
         .getRawMany(),
     );
     if (error) throw new NotFoundException(error);

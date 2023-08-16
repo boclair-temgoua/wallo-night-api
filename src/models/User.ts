@@ -27,6 +27,8 @@ import {
   Contributor,
   Profile,
 } from './index';
+import { Follow } from './Follow';
+import { Like } from './Like';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -99,10 +101,20 @@ export class User extends BaseDeleteEntity {
   })
   gifts?: Gift[];
 
+  @OneToMany(() => Like, (like) => like.user, {
+    onDelete: 'CASCADE',
+  })
+  likes?: Like[];
+
   @OneToMany(() => Withdrawal, (withdrawal) => withdrawal.user, {
     onDelete: 'CASCADE',
   })
   withdrawals?: Withdrawal[];
+
+  @OneToMany(() => Follow, (follow) => follow.user, {
+    onDelete: 'CASCADE',
+  })
+  follows?: Follow[];
 
   @OneToMany(() => WithdrawalUser, (withdrawalUser) => withdrawalUser.user, {
     onDelete: 'CASCADE',

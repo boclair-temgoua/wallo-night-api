@@ -109,7 +109,6 @@ export class PostsController {
 
     let newCategories = [];
 
-    console.log('newCategories =====>', newCategories);
     const savePost = await this.postsService.createOne({
       title,
       status,
@@ -145,7 +144,7 @@ export class PostsController {
     @UploadedFile() file: Express.Multer.File,
     @Param('postId', ParseUUIDPipe) postId: string,
   ) {
-    const { title, status, description } = body;
+    const { title, status, description, categories } = body;
     const attachment = req.file;
     let fileName;
 
@@ -174,6 +173,19 @@ export class PostsController {
       { postId },
       { title, status, description, image: fileName },
     );
+
+    // if (categories) {
+    //   Promise.all([
+    //     String(categories)
+    //       .split(',')
+    //       .forEach(async (categoryId) => {
+    //         await this.postCategoriesService.createOne({
+    //           postId: findOnePost?.id,
+    //           categoryId,
+    //         });
+    //       }),
+    //   ]);
+    // }
 
     return reply({ res, results: 'post updated successfully' });
   }
