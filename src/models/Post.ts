@@ -46,7 +46,7 @@ export class Post extends BaseDeleteEntity {
   })
   type?: PostType;
 
-  @Column({ default: true })
+  @Column({ default: false })
   allowDownload?: boolean;
 
   @Column({ nullable: true })
