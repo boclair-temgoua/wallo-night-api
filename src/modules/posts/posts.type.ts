@@ -12,6 +12,7 @@ export type GetPostsSelections = {
   pagination?: PaginationType;
   type?: PostType;
   userId?: Post['userId'];
+  followerIds?: string[];
 };
 
 export type GetOnePostSelections = {

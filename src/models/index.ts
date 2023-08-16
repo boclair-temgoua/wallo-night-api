@@ -11,6 +11,7 @@ export * from './WithdrawalUser';
 export * from './PostCategory';
 export * from './Discount';
 export * from './Post';
+export * from './Follow';
 export * from './Comment';
 export * from './Campaign';
 export * from './Faq';

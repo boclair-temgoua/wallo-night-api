@@ -40,14 +40,48 @@ import {
 import * as mime from 'mime-types';
 import { CategoriesService } from '../categories/categories.service';
 import { PostCategoriesService } from '../post-categories/post-categories.service';
+import { FollowsService } from '../follows/follows.service';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
-    private readonly categoriesService: CategoriesService,
+    private readonly followsService: FollowsService,
     private readonly postCategoriesService: PostCategoriesService,
   ) {}
+
+  /** Get all Posts */
+  @Get(`/follows`)
+  @UseGuards(JwtAuthGuard)
+  async findAllFollow(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { user } = req;
+    const { search } = searchQuery;
+
+    let userFollows: string[] = [];
+    const followings = await this.followsService.findAllNotPaginate({
+      userId: user?.id,
+    });
+
+    followings.forEach((element) => {
+      userFollows.push(element?.followerId);
+    });
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const posts = await this.postsService.findAllFollow({
+      search,
+      pagination,
+      followerIds: [...userFollows, user?.id],
+    });
+
+    return reply({ res, results: posts });
+  }
 
   /** Get all Posts */
   @Get(`/`)
@@ -61,9 +95,9 @@ export class PostsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const Posts = await this.postsService.findAll({ search, pagination });
+    const posts = await this.postsService.findAll({ search, pagination });
 
-    return reply({ res, results: Posts });
+    return reply({ res, results: posts });
   }
 
   /** Get one Post */

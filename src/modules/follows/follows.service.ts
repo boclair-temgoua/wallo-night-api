@@ -116,6 +116,29 @@ export class FollowsService {
     });
   }
 
+  async findAllNotPaginate(selections: GetFollowsSelections): Promise<any> {
+    const { userId, followerId } = selections;
+
+    let query = this.driver
+      .createQueryBuilder('follow')
+      .select('follow.followerId', 'followerId')
+      .addSelect('follow.userId', 'userId')
+      .where('follow.deletedAt IS NULL');
+
+    if (userId) {
+      query = query.andWhere('follow.userId = :userId', { userId });
+    }
+
+    if (followerId) {
+      query = query.andWhere('follow.followerId = :followerId', { followerId });
+    }
+
+    const [error, follows] = await useCatch(query.getRawMany());
+    if (error) throw new NotFoundException(error);
+
+    return follows;
+  }
+
   async findOneBy(selections: GetOneFollowSelections): Promise<Follow> {
     const { followId, followerId, userId } = selections;
     let query = this.driver

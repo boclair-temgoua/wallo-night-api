@@ -29,6 +29,74 @@ export class PostsService {
     private driver: Repository<Post>,
   ) {}
 
+  async findAllFollow(
+    selections: GetPostsSelections,
+  ): Promise<WithPaginationResponse | null> {
+    const { search, pagination, followerIds, type } = selections;
+
+    let query = this.driver
+      .createQueryBuilder('post')
+      .select('post.title', 'title')
+      .addSelect('post.status', 'status')
+      .addSelect('post.id', 'id')
+      .addSelect('post.slug', 'slug')
+      .addSelect('post.image', 'image')
+      .addSelect('post.allowDownload', 'allowDownload')
+      .addSelect('post.type', 'type')
+      .addSelect('post.whoCanSee', 'whoCanSee')
+      .addSelect('post.createdAt', 'createdAt')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'fullName', "profile"."fullName",
+              'image', "profile"."image",
+              'color', "profile"."color",
+              'userId', "user"."id",
+              'email', "user"."email"
+          ) AS "profile"`,
+      )
+      .addSelect('post.description', 'description')
+      .where('post.deletedAt IS NULL')
+      .andWhere('post.userId IN (:...followerIds)', {
+        followerIds,
+      })
+      .leftJoin('post.user', 'user')
+      .leftJoin('user.profile', 'profile');
+
+    if (type) {
+      query = query.andWhere('post.type = :type', { type });
+    }
+
+    if (search) {
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('post.title ::text ILIKE :search', {
+            search: `%${search}%`,
+          }).orWhere('post.description ::text ILIKE :search', {
+            search: `%${search}%`,
+          });
+        }),
+      );
+    }
+
+    const [errorRowCount, rowCount] = await useCatch(query.getCount());
+    if (errorRowCount) throw new NotFoundException(errorRowCount);
+
+    const [error, posts] = await useCatch(
+      query
+        .orderBy('post.createdAt', pagination?.sort)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
+        .getRawMany(),
+    );
+    if (error) throw new NotFoundException(error);
+
+    return withPagination({
+      pagination,
+      rowCount,
+      value: posts,
+    });
+  }
+
   async findAll(
     selections: GetPostsSelections,
   ): Promise<WithPaginationResponse | null> {
