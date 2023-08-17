@@ -48,6 +48,10 @@ export class CreateOrUpdatePostsDto {
   @IsEnum(WhoCanSeeType)
   whoCanSee: WhoCanSeeType;
 
+  @IsOptional()
+  @IsString()
+  allowDownload: string;
+
   @IsNotEmpty()
   @IsString()
   @IsEnum(PostType)

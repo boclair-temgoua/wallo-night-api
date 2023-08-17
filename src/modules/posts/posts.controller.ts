@@ -16,6 +16,7 @@ import {
   HttpException,
   UseInterceptors,
   UploadedFile,
+  ConsoleLogger,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
@@ -78,7 +79,7 @@ export class PostsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const posts = await this.postsService.findAllFollow({
+    const posts = await this.postsService.findAll({
       search,
       pagination,
       followerIds: [...userFollows, user?.id],
@@ -149,9 +150,9 @@ export class PostsController {
       title,
       whoCanSee,
       description,
-      allowDownload: Boolean(allowDownload),
       userId: user?.id,
       image: fileName,
+      allowDownload: allowDownload === 'true' ? true : false,
     });
 
     return reply({ res, results: 'Gallery created successfully' });
@@ -222,7 +223,8 @@ export class PostsController {
     @UploadedFile() file: Express.Multer.File,
     @Param('postId', ParseUUIDPipe) postId: string,
   ) {
-    const { title, status, description, categories } = body;
+    const { title, status, description, allowDownload, whoCanSee, categories } =
+      body;
     const attachment = req.file;
     let fileName;
 
@@ -249,7 +251,14 @@ export class PostsController {
 
     await this.postsService.updateOne(
       { postId },
-      { title, status, description, image: fileName },
+      {
+        title,
+        status,
+        whoCanSee,
+        description,
+        image: fileName,
+        allowDownload: allowDownload === 'true' ? true : false,
+      },
     );
 
     // if (categories) {

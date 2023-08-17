@@ -71,7 +71,7 @@ export class AuthUserController {
     @Body() body: CreateRegisterUserDto,
     @Headers('User-Agent') userAgent: string,
   ) {
-    const { email, password, fullName, firstName, lastName, username } = body;
+    const { email, password, firstName, lastName, username } = body;
 
     const findOnUser = await this.usersService.findOneBy({ email });
     const findOnUserByUsername = await this.usersService.findOneBy({
@@ -85,7 +85,7 @@ export class AuthUserController {
 
     /** Create Profile */
     const profile = await this.profilesService.createOne({
-      fullName,
+      fullName: `${firstName} ${lastName}`,
       lastName,
       firstName,
     });

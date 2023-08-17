@@ -103,11 +103,6 @@ export class CreateRegisterUserDto {
   @IsEnum(NextStep)
   nextStep: NextStep;
 
-  @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  fullName: string;
-
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)

@@ -54,7 +54,6 @@ export class FollowsService {
         'image', "profileFollowing"."image",
         'color', "profileFollowing"."color",
         'userId', "follower"."id",
-        'email', "follower"."email",
         'username', "follower"."username"
     ) AS "profile"`,
         )
@@ -71,7 +70,6 @@ export class FollowsService {
         'image', "profileFollower"."image",
         'color', "profileFollower"."color",
         'userId', "user"."id",
-        'email', "user"."email",
         'username', "user"."username"
     ) AS "profile"`,
         )
