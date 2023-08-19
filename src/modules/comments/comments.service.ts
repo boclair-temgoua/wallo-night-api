@@ -26,7 +26,7 @@ export class CommentsService {
   ) {}
 
   async findAll(selections: GetCommentsSelections): Promise<any> {
-    const { search, pagination, postId,parentId } = selections;
+    const { search, pagination, postId, parentId } = selections;
 
     let query = this.driver
       .createQueryBuilder('comment')
@@ -36,7 +36,6 @@ export class CommentsService {
       .addSelect('comment.postId', 'postId')
       .addSelect('comment.userId', 'userId')
       .addSelect('comment.parentId', 'parentId')
-      .where('comment.deletedAt IS NULL')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
@@ -48,14 +47,17 @@ export class CommentsService {
               'email', "user"."email"
           ) AS "profile"`,
       )
-      .where('comment.deletedAt IS NULL');
+      .where('comment.deletedAt IS NULL')
+      .andWhere('comment.parentId IS NULL');
 
     if (postId) {
       query = query.andWhere('comment.postId = :postId', { postId });
     }
 
     if (parentId) {
-      query = query.andWhere('comment.parentId = :parentId', { parentId });
+      query = query
+        .andWhere('comment.parentId IS NOT NULL')
+        .andWhere('comment.parentId = :parentId', { parentId });
     }
 
     if (search) {
@@ -112,11 +114,12 @@ export class CommentsService {
 
   /** Create one Comment to the database. */
   async createOne(options: CreateCommentOptions): Promise<Comment> {
-    const { description, postId, userId } = options;
+    const { description, postId, parentId, userId } = options;
 
     const comment = new Comment();
     comment.postId = postId;
     comment.userId = userId;
+    comment.parentId = parentId;
     comment.description = description;
 
     const query = this.driver.save(comment);

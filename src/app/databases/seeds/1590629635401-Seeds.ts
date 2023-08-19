@@ -14,6 +14,7 @@ import {
   Follow,
   User,
   Wallet,
+  Comment,
 } from '../../../models';
 import * as bcrypt from 'bcryptjs';
 import { getRandomElement } from '../../utils/array/get-random-element';
@@ -45,6 +46,7 @@ export class Seeds1590629635401 implements MigrationInterface {
           countryId: country?.id,
           firstName: firstName,
           lastName: lastName,
+          image: faker.image.url(),
         })
         .execute();
       const profile = { ...saveProfile['0'] };
@@ -86,7 +88,7 @@ export class Seeds1590629635401 implements MigrationInterface {
     }
     console.log('\x1b[32m%s\x1b[0m', '**** User seed finish ****');
 
-    for (let i = 0; i < 400; i++) {
+    for (let i = 0; i < 200; i++) {
       const title = faker.lorem.sentence(2);
       const user = await driver
         .createQueryBuilder(User, 'user')
@@ -114,6 +116,65 @@ export class Seeds1590629635401 implements MigrationInterface {
         .execute();
     }
     console.log('\x1b[32m%s\x1b[0m', '**** Post seed finish ****');
+
+    for (let i = 0; i < 600; i++) {
+      const title = faker.lorem.sentence(2);
+      const user = await driver
+        .createQueryBuilder(User, 'user')
+        .select('user.id', 'id')
+        .orderBy('RANDOM()')
+        .limit(1)
+        .getRawOne();
+
+      const post = await driver
+        .createQueryBuilder(Post, 'post')
+        .select('post.id', 'id')
+        .orderBy('RANDOM()')
+        .limit(1)
+        .getRawOne();
+
+      await driver
+        .createQueryBuilder()
+        .insert()
+        .into(Comment)
+        .values({
+          userId: user?.id,
+          postId: post?.id,
+          description: faker.lorem.sentence({ min: 2, max: 10 }),
+        })
+        .execute();
+    }
+    console.log('\x1b[32m%s\x1b[0m', '**** Comment seed finish ****');
+
+    for (let i = 0; i < 400; i++) {
+      const user = await driver
+        .createQueryBuilder(User, 'user')
+        .select('user.id', 'id')
+        .orderBy('RANDOM()')
+        .limit(1)
+        .getRawOne();
+
+      const comment = await driver
+        .createQueryBuilder(Comment, 'comment')
+        .select('comment.id', 'id')
+        .addSelect('comment.postId', 'postId')
+        .orderBy('RANDOM()')
+        .limit(1)
+        .getRawOne();
+
+      await driver
+        .createQueryBuilder()
+        .insert()
+        .into(Comment)
+        .values({
+          parentId: comment?.id,
+          postId: comment?.postId,
+          description: faker.lorem.sentence({ min: 2, max: 10 }),
+          userId: user?.id,
+        })
+        .execute();
+    }
+    console.log('\x1b[32m%s\x1b[0m', '**** Comment reply seed finish ****');
 
     for (let i = 0; i < 800; i++) {
       const userFollower = await driver

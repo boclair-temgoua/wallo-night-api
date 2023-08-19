@@ -19,6 +19,9 @@ export class Comment extends BaseDeleteEntity {
   description?: string;
 
   @Column({ type: 'uuid', nullable: true })
+  parentId?: string;
+  
+  @Column({ type: 'uuid', nullable: true })
   postId?: string;
   @ManyToOne(() => Post, (post) => post.comments, {
     onDelete: 'CASCADE',
@@ -32,9 +35,5 @@ export class Comment extends BaseDeleteEntity {
   @JoinColumn()
   user?: User;
 
-  @Column({ type: 'uuid', nullable: true })
-  parentId?: string;
-  @OneToMany(() => Comment, (reply) => reply)
-  @JoinColumn([{ name: 'parentId', referencedColumnName: 'id' }])
-  replies?: Comment[];
+
 }

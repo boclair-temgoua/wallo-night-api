@@ -131,6 +131,37 @@ export class CommentsController {
     return reply({ res, results: comment });
   }
 
+  /** Create reply Comment */
+  @Post(`/replies`)
+  @UseGuards(JwtAuthGuard)
+  async createOneCommentReplies(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateOrUpdateCommentsDto,
+    @Body('commentId', ParseUUIDPipe) commentId: string,
+  ) {
+    const { user } = req;
+    const { description } = body;
+
+    const findOneComment = await this.commentsService.findOneBy({
+      commentId,
+    });
+    if (!findOneComment)
+      throw new HttpException(
+        `This comment ${commentId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.commentsService.createOne({
+      postId: findOneComment?.postId,
+      parentId: findOneComment?.id,
+      userId: user?.id,
+      description,
+    });
+
+    return reply({ res, results: `comment save successfully` });
+  }
+
   /** Update Comment */
   @Put(`/:commentId`)
   @UseGuards(JwtAuthGuard)
