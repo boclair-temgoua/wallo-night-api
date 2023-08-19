@@ -70,6 +70,36 @@ export class CommentsController {
     return reply({ res, results: comments });
   }
 
+  @Get(`/replies`)
+  async findAllCommentsReplies(
+    @Res() res,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+    @Query('commentId', ParseUUIDPipe) commentId: string,
+  ) {
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const findOneComment = await this.commentsService.findOneBy({
+      commentId,
+    });
+    if (!findOneComment)
+      throw new HttpException(
+        `This comment ${commentId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const comments = await this.commentsService.findAll({
+      search,
+      pagination,
+      parentId: commentId,
+    });
+
+    return reply({ res, results: comments });
+  }
+
   /** Create Comment */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)

@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/index';
@@ -30,4 +31,10 @@ export class Comment extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  parentId?: string;
+  @OneToMany(() => Comment, (reply) => reply)
+  @JoinColumn([{ name: 'parentId', referencedColumnName: 'id' }])
+  replies?: Comment[];
 }

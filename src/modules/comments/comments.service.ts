@@ -26,7 +26,7 @@ export class CommentsService {
   ) {}
 
   async findAll(selections: GetCommentsSelections): Promise<any> {
-    const { search, pagination, postId } = selections;
+    const { search, pagination, postId,parentId } = selections;
 
     let query = this.driver
       .createQueryBuilder('comment')
@@ -35,6 +35,7 @@ export class CommentsService {
       .addSelect('comment.description', 'description')
       .addSelect('comment.postId', 'postId')
       .addSelect('comment.userId', 'userId')
+      .addSelect('comment.parentId', 'parentId')
       .where('comment.deletedAt IS NULL')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -53,6 +54,10 @@ export class CommentsService {
       query = query.andWhere('comment.postId = :postId', { postId });
     }
 
+    if (parentId) {
+      query = query.andWhere('comment.parentId = :parentId', { parentId });
+    }
+
     if (search) {
       query = query.andWhere('comment.title ::text ILIKE :search', {
         search: `%${search}%`,
@@ -61,7 +66,6 @@ export class CommentsService {
 
     query = query
       .leftJoin('comment.post', 'post')
-      .leftJoin('comment.gallery', 'gallery')
       .leftJoin('comment.user', 'user')
       .leftJoin('user.profile', 'profile');
 

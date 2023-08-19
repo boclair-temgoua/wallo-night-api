@@ -61,7 +61,7 @@ export class PostsService {
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile');
 
-    if (followerIds.length > 0) {
+    if (followerIds && followerIds.length > 0) {
       query = query.andWhere('post.userId IN (:...followerIds)', {
         followerIds,
       });
