@@ -131,7 +131,7 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/mime-types": "^2.1.1",
     "@types/multer": "^1.4.7",
-    "@types/node": "^20.4.10",
+    "@types/node": "^20.5.1",
     "@types/nodemailer": "^6.4.9",
     "@types/passport-jwt": "^3.0.9",
     "@types/pdfkit": "^0.12.10",

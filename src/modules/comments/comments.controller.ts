@@ -94,7 +94,7 @@ export class CommentsController {
     const comments = await this.commentsService.findAll({
       search,
       pagination,
-      parentId: commentId,
+      parentId: findOneComment?.id,
     });
 
     return reply({ res, results: comments });

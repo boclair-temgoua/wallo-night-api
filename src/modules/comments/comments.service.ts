@@ -47,8 +47,7 @@ export class CommentsService {
               'email', "user"."email"
           ) AS "profile"`,
       )
-      .where('comment.deletedAt IS NULL')
-      .andWhere('comment.parentId IS NULL');
+      .where('comment.deletedAt IS NULL');
 
     if (postId) {
       query = query.andWhere('comment.postId = :postId', { postId });
@@ -58,6 +57,8 @@ export class CommentsService {
       query = query
         .andWhere('comment.parentId IS NOT NULL')
         .andWhere('comment.parentId = :parentId', { parentId });
+    } else {
+      query = query.andWhere('comment.parentId IS NULL');
     }
 
     if (search) {
