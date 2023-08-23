@@ -53,13 +53,46 @@ export class PostsService {
               'image', "profile"."image",
               'color', "profile"."color",
               'userId', "user"."id",
-              'email', "user"."email"
+              'username', "user"."username"
           ) AS "profile"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT
+            CAST(COUNT(DISTINCT lik) AS INT)
+        FROM "like" "lik"
+        WHERE ("lik"."likeableId" = "post"."id"
+         AND "lik"."type" IN ('POST')
+         AND "lik"."deletedAt" IS NULL)
+         GROUP BY "lik"."likeableId", "lik"."type", "post"."id"
+        ) AS "totalLike"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT
+            CAST(COUNT(DISTINCT com) AS INT)
+        FROM "comment" "com"
+        WHERE ("com"."postId" = "post"."id"
+         AND "com"."deletedAt" IS NULL)
+         GROUP BY "com"."postId", "post"."id"
+        ) AS "totalComment"`,
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile');
+
+    if (userId) {
+      query = query.addSelect(/*sql*/ `(
+              SELECT
+                  CAST(COUNT(DISTINCT lk) AS INT)
+              FROM "like" "lk"
+              WHERE ("lk"."type" IN ('POST')
+               AND "lk"."deletedAt" IS NULL
+               AND "lk"."likeableId" = "post"."id"
+               AND "lk"."userId" IN ('${userId}'))
+              ) AS "isLike"`);
+    }
 
     if (followerIds && followerIds.length > 0) {
       query = query.andWhere('post.userId IN (:...followerIds)', {
@@ -107,7 +140,7 @@ export class PostsService {
   }
 
   async findOneBy(selections: GetOnePostSelections): Promise<Post> {
-    const { postId } = selections;
+    const { postId, userId } = selections;
     let query = this.driver
       .createQueryBuilder('post')
       .select('post.title', 'title')
@@ -127,27 +160,47 @@ export class PostsService {
             'image', "profile"."image",
             'color', "profile"."color",
             'userId', "user"."id",
-            'email', "user"."email"
+            'username', "user"."username"
         ) AS "profile"`,
       )
-
       .addSelect(
         /*sql*/ `(
-          SELECT array_agg(jsonb_build_object(
-            'id', "ctg"."id",
-            'name', "ctg"."name"
-          )) 
-          FROM "post_category" "potctg"
-          LEFT JOIN "category" "ctg" On "potctg"."categoryId" = "ctg"."id"
-          WHERE "potctg"."postId" = "post"."id"
-          AND "ctg"."deletedAt" IS NULL
-          GROUP BY "post"."id", "potctg"."postId"
-          ) AS "categories"`,
+        SELECT
+            CAST(COUNT(DISTINCT lik) AS INT)
+        FROM "like" "lik"
+        WHERE ("lik"."likeableId" = "post"."id"
+         AND "lik"."type" IN ('POST')
+         AND "lik"."deletedAt" IS NULL)
+         GROUP BY "lik"."likeableId", "lik"."type", "post"."id"
+        ) AS "totalLike"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT
+            CAST(COUNT(DISTINCT com) AS INT)
+        FROM "comment" "com"
+        WHERE ("com"."postId" = "post"."id"
+         AND "com"."deletedAt" IS NULL)
+         GROUP BY "com"."postId", "post"."id"
+        ) AS "totalComment"`,
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile');
+
+    if (userId) {
+      query = query.addSelect(/*sql*/ `(
+            SELECT
+                CAST(COUNT(DISTINCT lk) AS INT)
+            FROM "like" "lk"
+            WHERE ("lk"."type" IN ('POST')
+             AND "lk"."deletedAt" IS NULL
+             AND "lk"."likeableId" = "post"."id"
+             AND "lk"."userId" IN ('${userId}'))
+             GROUP BY "lk"."likeableId", "post"."id"
+            ) AS "isLike"`);
+    }
 
     if (postId) {
       query = query.andWhere('post.id = :id', {

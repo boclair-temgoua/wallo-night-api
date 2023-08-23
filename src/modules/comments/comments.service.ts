@@ -26,7 +26,7 @@ export class CommentsService {
   ) {}
 
   async findAll(selections: GetCommentsSelections): Promise<any> {
-    const { search, pagination, postId, parentId } = selections;
+    const { search, pagination, postId, parentId, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('comment')
@@ -47,7 +47,31 @@ export class CommentsService {
               'email', "user"."email"
           ) AS "profile"`,
       )
+      .addSelect(
+        /*sql*/ `(
+        SELECT
+            CAST(COUNT(DISTINCT lik) AS INT)
+        FROM "like" "lik"
+        WHERE ("lik"."likeableId" = "comment"."id"
+         AND "lik"."type" IN ('COMMENT')
+         AND "lik"."deletedAt" IS NULL)
+         GROUP BY "lik"."likeableId", "lik"."type", "comment"."id"
+        ) AS "totalLike"`,
+      )
       .where('comment.deletedAt IS NULL');
+
+    if (userId) {
+      query = query.addSelect(/*sql*/ `(
+                SELECT
+                    CAST(COUNT(DISTINCT lk) AS INT)
+                FROM "like" "lk"
+                WHERE ("lk"."type" IN ('COMMENT')
+                 AND "lk"."deletedAt" IS NULL
+                 AND "lk"."likeableId" = "comment"."id"
+                 AND "lk"."userId" IN ('${userId}'))
+                 GROUP BY "lk"."likeableId", "comment"."id"
+                ) AS "isLike"`);
+    }
 
     if (postId) {
       query = query.andWhere('comment.postId = :postId', { postId });

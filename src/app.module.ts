@@ -30,6 +30,7 @@ import { MembershipsModule } from './modules/memberships/memberships.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { PostCategoriesModule } from './modules/post-categories/post-categories.module';
 import { FollowsModule } from './modules/follows/follows.module';
+import { LikesModule } from './modules/likes/likes.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { FollowsModule } from './modules/follows/follows.module';
     WithdrawalsModule,
     MembershipsModule,
     FollowsModule,
+    LikesModule,
     PostCategoriesModule,
     WithdrawalUsersModule,
     ContributionsModule,

@@ -82,6 +82,7 @@ export class PostsController {
     const posts = await this.postsService.findAll({
       search,
       pagination,
+      userId: user?.id,
       followerIds: [...userFollows, user?.id],
     });
 
@@ -139,7 +140,7 @@ export class PostsController {
     await awsS3ServiceAdapter({
       name: nameFile,
       mimeType: file?.mimetype,
-      folder: 'galleries',
+      folder: 'posts',
       file: file.buffer,
     });
     const extension = mime.extension(file.mimetype);
@@ -323,31 +324,13 @@ export class PostsController {
     return reply({ res, results: { urlFile: response.Location } });
   }
 
-  /** Get on file post */
-  @Get(`/file/:fileName`)
-  // @UseGuards(JwtAuthGuard)
-  async getOneFilePost(@Res() res, @Param('fileName') fileName: string) {
-    try {
-      const { fileBuffer, contentType } = await getFileToAws({
-        folder: 'posts',
-        fileName,
-      });
-      res.status(200);
-      res.contentType(contentType);
-      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
-      res.send(fileBuffer);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Erreur lors de la récupération de l'image.");
-    }
-  }
   /** Get on file gallery */
   @Get(`/gallery/:fileName`)
   // @UseGuards(JwtAuthGuard)
   async getOneFilePostGallery(@Res() res, @Param('fileName') fileName: string) {
     try {
       const { fileBuffer, contentType } = await getFileToAws({
-        folder: 'galleries',
+        folder: 'posts',
         fileName,
       });
       res.status(200);

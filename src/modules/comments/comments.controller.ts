@@ -38,12 +38,15 @@ export class CommentsController {
 
   /** Get all Comments */
   @Get(`/`)
+  @UseGuards(JwtAuthGuard)
   async findAllComments(
     @Res() res,
+    @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
+    const { user } = req;
     const { postId } = query;
     const { search } = searchQuery;
 
@@ -65,18 +68,22 @@ export class CommentsController {
       search,
       pagination,
       postId,
+      userId: user?.id,
     });
 
     return reply({ res, results: comments });
   }
 
   @Get(`/replies`)
+  @UseGuards(JwtAuthGuard)
   async findAllCommentsReplies(
     @Res() res,
+    @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query('commentId', ParseUUIDPipe) commentId: string,
   ) {
+    const { user } = req;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -94,6 +101,7 @@ export class CommentsController {
     const comments = await this.commentsService.findAll({
       search,
       pagination,
+      userId: user?.id,
       parentId: findOneComment?.id,
     });
 
@@ -138,28 +146,28 @@ export class CommentsController {
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateCommentsDto,
-    @Body('commentId', ParseUUIDPipe) commentId: string,
+    @Body('parentId', ParseUUIDPipe) parentId: string,
   ) {
     const { user } = req;
     const { description } = body;
 
     const findOneComment = await this.commentsService.findOneBy({
-      commentId,
+      commentId: parentId,
     });
     if (!findOneComment)
       throw new HttpException(
-        `This comment ${commentId} dons't exist please change`,
+        `This comment ${parentId} dons't exist please change`,
         HttpStatus.NOT_FOUND,
       );
 
     await this.commentsService.createOne({
       postId: findOneComment?.postId,
-      parentId: findOneComment?.id,
+      parentId: parentId,
       userId: user?.id,
       description,
     });
 
-    return reply({ res, results: `comment save successfully` });
+    return reply({ res, results: { id: parentId } });
   }
 
   /** Update Comment */
@@ -214,6 +222,6 @@ export class CommentsController {
       { deletedAt: new Date() },
     );
 
-    return reply({ res, results: `comment deleted successfully` });
+    return reply({ res, results: { id: commentId } });
   }
 }
