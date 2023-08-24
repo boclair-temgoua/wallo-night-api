@@ -73,7 +73,7 @@ export class UsersController {
 
     const getOneContributor = await this.contributorsService.findOneBy({
       userId: user?.id,
-      type: FilterQueryType.ORGANIZATION,
+      type: 'ORGANIZATION',
     });
     if (!getOneContributor)
       throw new HttpException(

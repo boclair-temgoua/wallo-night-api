@@ -3,11 +3,10 @@ import {
   IsNotEmpty,
   IsOptional,
   IsUUID,
-  IsEnum,
+  IsIn,
 } from 'class-validator';
-import { ContributorRole } from './contributors.type';
+import { ContributorRole, contributorRoleArrays } from './contributors.type';
 import { MaxLength, IsEmail } from 'class-validator';
-import { FilterQueryType } from '../../app/utils/search-query';
 
 export class CreateOneContributorOrganizationDto {
   @IsNotEmpty()
@@ -24,7 +23,7 @@ export class UpdateRoleContributorDto {
 
   @IsOptional()
   @IsString()
-  @IsEnum(ContributorRole)
+  @IsIn(contributorRoleArrays)
   role: ContributorRole;
 }
 
@@ -46,6 +45,6 @@ export class CreateOneNewUserContributorsDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(ContributorRole)
+  @IsIn(contributorRoleArrays)
   role: ContributorRole;
 }

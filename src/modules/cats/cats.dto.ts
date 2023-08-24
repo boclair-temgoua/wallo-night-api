@@ -7,10 +7,7 @@ import {
   IsInt,
 } from 'class-validator';
 
-export enum StatusCart {
-  ADDED = 'ADDED',
-  COMPLETED = 'COMPLETED',
-}
+export type StatusCart = 'ADDED' | 'COMPLETED';
 
 export class CreateOrUpdateCartsDto {
   @IsNotEmpty()

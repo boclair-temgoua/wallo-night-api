@@ -1,12 +1,18 @@
 import { User } from '../../models/User';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
-export enum NextStep {
-  CONFIRM_EMAIL = 'CONFIRM_EMAIL',
-  SETTING_PROFILE = 'SETTING_PROFILE',
-  SETTING_INTEREST = 'SETTING_INTEREST',
-  COMPLETE_REGISTRATION = 'COMPLETE_REGISTRATION',
-}
+export type NextStep =
+  | 'CONFIRM_EMAIL'
+  | 'SETTING_PROFILE'
+  | 'SETTING_INTEREST'
+  | 'COMPLETE_REGISTRATION';
+
+export const nextStepArrays = [
+  'CONFIRM_EMAIL',
+  'SETTING_PROFILE',
+  'SETTING_INTEREST',
+  'COMPLETE_REGISTRATION',
+];
 
 export type JwtPayloadType = {
   id: string;
@@ -16,7 +22,7 @@ export type JwtPayloadType = {
 export type GetUsersSelections = {
   search?: string;
   pagination?: PaginationType;
-  userId?: ['userId']
+  userId?: ['userId'];
 };
 
 export type GetOneUserSelections = {

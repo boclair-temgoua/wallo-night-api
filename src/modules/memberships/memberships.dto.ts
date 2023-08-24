@@ -11,9 +11,9 @@ import {
   MinLength,
   IsUUID,
   MinDate,
-  IsEnum,
+  IsIn,
 } from 'class-validator';
-import { CurrencyCode } from '../currencies/currencies.type';
+import { CurrencyCode, currencyCodeArrays } from '../currencies/currencies.type';
 
 export class CreateOrUpdateMembershipsDto {
   @IsNotEmpty()
@@ -38,7 +38,7 @@ export class CreateOrUpdateMembershipsDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(CurrencyCode)
+  @IsIn(currencyCodeArrays)
   currency: CurrencyCode;
 
   @IsNotEmpty()

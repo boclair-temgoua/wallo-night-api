@@ -32,18 +32,10 @@ export class Post extends BaseDeleteEntity {
   @Column({ nullable: true })
   title?: string;
 
-  @Column({
-    type: 'enum',
-    enum: WhoCanSeeType,
-    default: WhoCanSeeType.PUBLIC,
-  })
+  @Column({ default: 'PUBLIC' })
   whoCanSee?: WhoCanSeeType;
 
-  @Column({
-    type: 'enum',
-    enum: PostType,
-    default: PostType.ARTICLE,
-  })
+  @Column({ default: 'ARTICLE' })
   type?: PostType;
 
   @Column({ default: false })

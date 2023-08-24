@@ -1,12 +1,8 @@
 import { Currency } from '../../models';
 
-export enum CurrencyCode {
-  USD = 'USD',
-  EUR = 'EUR',
-  GBP = 'GBP',
-  XAF = 'XAF',
-  XOF = 'XOF',
-}
+export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'XAF' | 'XOF';
+
+export const currencyCodeArrays = ['USD', 'EUR', 'GBP', 'XAF', 'XOF'];
 
 export type GetCurrenciesSelections = {
   search?: string;

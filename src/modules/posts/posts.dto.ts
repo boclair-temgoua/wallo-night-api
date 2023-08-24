@@ -1,5 +1,4 @@
-import { User } from '../../models/User';
-import { WhoCanSeeType } from '../../app/utils/search-query/search-query.dto';
+import { WhoCanSeeType, whoCanSeeTypeArrays } from '../../app/utils/search-query/search-query.dto';
 import {
   IsString,
   IsNotEmpty,
@@ -7,9 +6,9 @@ import {
   MinLength,
   IsBoolean,
   IsOptional,
-  IsEnum,
+  IsIn,
 } from 'class-validator';
-import { PostType } from './posts.type';
+import { PostType, postTypeArrays } from './posts.type';
 
 export class CreateOrUpdatePostsGalleriesDto {
   @IsOptional()
@@ -19,7 +18,7 @@ export class CreateOrUpdatePostsGalleriesDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(WhoCanSeeType)
+  @IsIn(whoCanSeeTypeArrays)
   whoCanSee: WhoCanSeeType;
 
   @IsOptional()
@@ -32,20 +31,20 @@ export class CreateOrUpdatePostsGalleriesDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(PostType)
+  @IsIn(postTypeArrays)
   type: PostType;
 }
 
 export class GetGalleriesDto {
   @IsOptional()
   @IsString()
-  @IsEnum(PostType)
+  @IsIn(postTypeArrays)
   type: PostType;
 }
 export class CreateOrUpdatePostsDto {
   @IsNotEmpty()
   @IsString()
-  @IsEnum(WhoCanSeeType)
+  @IsIn(whoCanSeeTypeArrays)
   whoCanSee: WhoCanSeeType;
 
   @IsOptional()
@@ -54,7 +53,7 @@ export class CreateOrUpdatePostsDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(PostType)
+  @IsIn(postTypeArrays)
   type: PostType;
 
   @IsOptional()

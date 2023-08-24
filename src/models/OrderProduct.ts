@@ -66,11 +66,7 @@ export class OrderProduct extends BaseDeleteEntity {
   @Column({ default: 0 })
   statusConversation: number;
 
-  @Column({
-    type: 'enum',
-    enum: StatusOderProduct,
-    default: StatusOderProduct.ORDERED,
-  })
+  @Column({ default: 'ORDERED' })
   status?: StatusOderProduct;
 
   @Column({ type: 'uuid', nullable: true })

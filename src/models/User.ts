@@ -55,11 +55,7 @@ export class User extends BaseDeleteEntity {
   @Column({ nullable: true })
   password?: string;
 
-  @Column({
-    type: 'enum',
-    enum: NextStep,
-    default: NextStep.SETTING_PROFILE,
-  })
+  @Column({ default: 'SETTING_PROFILE' })
   nextStep?: NextStep;
 
   @Column({ type: 'uuid', nullable: true })

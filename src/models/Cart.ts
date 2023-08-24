@@ -19,11 +19,7 @@ export class Cart extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({
-    type: 'enum',
-    enum: StatusCart,
-    default: StatusCart.ADDED,
-  })
+  @Column({ default: 'ADDED' })
   status?: StatusCart;
 
   @Column({ type: 'uuid', nullable: true })

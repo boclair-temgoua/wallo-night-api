@@ -47,11 +47,7 @@ export class Transaction extends BaseDeleteEntity {
   @JoinColumn()
   contribution?: Relation<Contribution>;
 
-  @Column({
-    type: 'enum',
-    enum: TransactionType,
-    default: TransactionType.CARD,
-  })
+  @Column({ default: 'CARD' })
   type?: TransactionType;
 
   @Column({ type: 'uuid', nullable: true })

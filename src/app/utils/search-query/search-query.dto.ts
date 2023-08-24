@@ -1,5 +1,4 @@
 import {
-  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -35,20 +34,29 @@ export class PasswordBodyDto {
   password: string;
 }
 
-export enum FilterQueryType {
-  ORGANIZATION = 'ORGANIZATION',
-  CAMPAIGN = 'CAMPAIGN',
-  DONATION = 'DONATION',
-  MEMBERSHIP = 'MEMBERSHIP',
-  GIFT = 'GIFT',
-  HELP = 'HELP',
-  POST = 'POST',
-  GALLERY = 'GALLERY',
-  COMMENT = 'COMMENT',
-}
+export type FilterQueryType =
+  | 'ORGANIZATION'
+  | 'CAMPAIGN'
+  | 'DONATION'
+  | 'MEMBERSHIP'
+  | 'GIFT'
+  | 'HELP'
+  | 'POST'
+  | 'GALLERY'
+  | 'COMMENT';
 
-export enum WhoCanSeeType {
-  PUBLIC = 'PUBLIC',
-  MEMBERSHIP = 'MEMBERSHIP',
-  SUPPORTER = 'SUPPORTER',
-}
+export const filterQueryTypeArrays = [
+  'ORGANIZATION',
+  'CAMPAIGN',
+  'DONATION',
+  'MEMBERSHIP',
+  'GIFT',
+  'HELP',
+  'POST',
+  'GALLERY',
+  'COMMENT',
+];
+
+export type WhoCanSeeType = 'PUBLIC' | 'MEMBERSHIP' | 'SUPPORTER';
+
+export const whoCanSeeTypeArrays = ['PUBLIC', 'MEMBERSHIP', 'SUPPORTER'];

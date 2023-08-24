@@ -1,13 +1,20 @@
 import { Contributor } from '../../models/Contributor';
 import { PaginationType } from '../../app/utils/pagination';
 
-export enum ContributorRole {
-  ADMIN = 'ADMIN',
-  MODERATOR = 'MODERATOR',
-  EDITOR = 'EDITOR',
-  GHOST = 'GHOST',
-  ANALYST = 'ANALYST',
-}
+export type ContributorRole =
+  | 'ADMIN'
+  | 'MODERATOR'
+  | 'EDITOR'
+  | 'GHOST'
+  | 'ANALYST';
+
+export const contributorRoleArrays = [
+  'ADMIN',
+  'MODERATOR',
+  'EDITOR',
+  'GHOST',
+  'ANALYST',
+];
 
 export type GetContributorsSelections = {
   search?: string;

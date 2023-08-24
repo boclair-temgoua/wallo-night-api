@@ -7,7 +7,4 @@ import {
   IsInt,
 } from 'class-validator';
 
-export enum StatusOderProduct {
-  ORDERED = 'ORDERED',
-  DELIVERING = 'DELIVERING',
-}
+export type StatusOderProduct = 'ORDERED' | 'DELIVERING'

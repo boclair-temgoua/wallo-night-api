@@ -42,7 +42,7 @@ export class CartsController {
 
     const carts = await this.cartsService.findAll({
       userId: user?.id,
-      status: StatusCart.ADDED,
+      status: 'ADDED',
     });
 
     return reply({ res, results: carts });
@@ -71,7 +71,7 @@ export class CartsController {
     const findOneProductCart = await this.cartsService.findOneBy({
       productId,
       userId: user?.id,
-      status: StatusCart.ADDED,
+      status: 'ADDED',
     });
 
     if (findOneProductCart) {

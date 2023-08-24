@@ -13,6 +13,8 @@ import {
   Query,
   HttpStatus,
   HttpException,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
@@ -28,6 +30,7 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 import { CreateOrUpdateProductsDto } from './products.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('products')
 export class ProductsController {
@@ -58,11 +61,14 @@ export class ProductsController {
   /** Post one Products */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('attachments'))
   async createOne(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateProductsDto,
+    @UploadedFiles() files: Express.Multer.File,
   ) {
+    console.log('files ===========>',files)
     const { user } = req;
     const product = await this.productsService.createOne({
       ...body,

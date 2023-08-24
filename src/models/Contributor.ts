@@ -23,18 +23,10 @@ export class Contributor extends BaseDeleteEntity {
   @JoinColumn()
   user?: User;
 
-  @Column({
-    type: 'enum',
-    enum: FilterQueryType,
-    default: FilterQueryType.ORGANIZATION,
-  })
+  @Column({ default: 'ORGANIZATION' })
   type?: FilterQueryType;
 
-  @Column({
-    type: 'enum',
-    enum: ContributorRole,
-    default: ContributorRole.ADMIN,
-  })
+  @Column({ default: 'ADMIN' })
   role?: ContributorRole;
 
   @Column({ type: 'uuid', nullable: true })

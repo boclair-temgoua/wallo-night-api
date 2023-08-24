@@ -7,10 +7,7 @@ import {
   IsInt,
 } from 'class-validator';
 
-export enum StatusProduct {
-  ACTIVE = 'ACTIVE',
-  PENDING = 'PENDING',
-}
+export type StatusProduct = 'ACTIVE' | 'PENDING'
 export class CreateOrUpdateProductsDto {
   @IsNotEmpty()
   @IsString()

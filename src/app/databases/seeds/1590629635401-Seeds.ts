@@ -61,7 +61,7 @@ export class Seeds1590629635401 implements MigrationInterface {
           password: await bcrypt.hashSync('password', 8),
           profileId: profile?.id,
           confirmedAt: new Date(),
-          nextStep: NextStep.COMPLETE_REGISTRATION,
+          nextStep: 'COMPLETE_REGISTRATION',
         })
         .execute();
       const user = { ...saveUser['0'] };
@@ -73,7 +73,7 @@ export class Seeds1590629635401 implements MigrationInterface {
         .values({
           userId: user?.id,
           userCreatedId: user?.id,
-          role: ContributorRole.ADMIN,
+          role: 'ADMIN',
         })
         .execute();
 

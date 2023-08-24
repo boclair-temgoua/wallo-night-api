@@ -29,11 +29,7 @@ export class WithdrawalUser extends BaseDeleteEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column({
-    type: 'enum',
-    enum: TransactionType,
-    default: TransactionType.CARD,
-  })
+  @Column({ default: 'CARD' })
   type?: TransactionType;
 
   @Column({ type: 'uuid', nullable: true })

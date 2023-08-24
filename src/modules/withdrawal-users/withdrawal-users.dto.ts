@@ -3,19 +3,19 @@ import {
   IsString,
   IsNotEmpty,
   MaxLength,
-  IsEnum,
   MinLength,
   IsPositive,
   Min,
   IsInt,
   IsOptional,
+  IsIn,
 } from 'class-validator';
-import { TransactionType } from '../transactions/transactions.type';
+import { TransactionType, transactionTypeArrays } from '../transactions/transactions.type';
 
 export class CreateWithdrawalUsersDto {
   @IsNotEmpty()
   @IsString()
-  @IsEnum(TransactionType)
+  @IsIn(transactionTypeArrays)
   type: TransactionType;
   
   @IsOptional()

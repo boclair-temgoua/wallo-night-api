@@ -14,6 +14,7 @@ export * from './Like';
 export * from './Post';
 export * from './Follow';
 export * from './Comment';
+export * from './Upload';
 export * from './Campaign';
 export * from './Faq';
 export * from './Gift';

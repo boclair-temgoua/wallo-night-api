@@ -7,11 +7,11 @@ import {
   IsInt,
   IsOptional,
   IsUUID,
-  IsEnum,
   IsDate,
+  IsIn,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
-import { NextStep } from './users.type';
+import { NextStep, nextStepArrays } from './users.type';
 export class UpdateInfoUserDto {
   @IsNotEmpty()
   @IsString()
@@ -100,7 +100,7 @@ export class CreateLoginUserDto {
 export class CreateRegisterUserDto {
   @IsNotEmpty()
   @IsString()
-  @IsEnum(NextStep)
+  @IsIn(nextStepArrays)
   nextStep: NextStep;
 
   @IsNotEmpty()
@@ -223,7 +223,7 @@ export class UpdateProfileDto {
 
   @IsOptional()
   @IsString()
-  @IsEnum(NextStep)
+  @IsIn(nextStepArrays)
   nextStep: NextStep;
 
   @IsOptional()

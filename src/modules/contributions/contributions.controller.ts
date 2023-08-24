@@ -132,7 +132,7 @@ export class ContributionsController {
       campaignId,
       amountConvert: amountConvert * 100,
       currencyId: findOneCurrency?.id,
-      type: FilterQueryType.CAMPAIGN,
+      type: 'CAMPAIGN',
     });
 
     /** Create transaction */
@@ -196,7 +196,7 @@ export class ContributionsController {
       giftId: findOneGift?.id,
       currencyId: findOneGift?.currencyId,
       amountConvert: amountConvert * 100,
-      type: FilterQueryType.GIFT,
+      type: 'GIFT',
     });
 
     /** create transaction */
@@ -271,7 +271,7 @@ export class ContributionsController {
       userId: findOneUser?.id,
       amountConvert: amountConvert * 100,
       currencyId: findOneCurrency?.id,
-      type: FilterQueryType.DONATION,
+      type: 'DONATION',
     });
 
     /** Create transaction */

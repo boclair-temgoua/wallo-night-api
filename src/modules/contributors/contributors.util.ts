@@ -14,7 +14,7 @@ export class ContributorsUtil {
     if (userId) {
       const contributor = await this.contributorsService.findOneBy({
         userId,
-        type: FilterQueryType.ORGANIZATION,
+        type: 'ORGANIZATION',
       });
       return { contributor };
     }

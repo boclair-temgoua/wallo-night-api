@@ -15,11 +15,7 @@ export class Like extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({
-    type: 'enum',
-    enum: FilterQueryType,
-    default: FilterQueryType.COMMENT,
-  })
+  @Column({ default: 'COMMENT' })
   type?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })

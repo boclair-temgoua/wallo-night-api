@@ -1,12 +1,9 @@
 import { Transaction } from '../../models/Transaction';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
-export enum TransactionType {
-  PAYPAL = 'PAYPAL',
-  CARD = 'CARD',
-  COUPON = 'COUPON',
-  PHONE = 'PHONE',
-}
+export type TransactionType = 'PAYPAL' | 'CARD' | 'COUPON' | 'PHONE';
+
+export const transactionTypeArrays = ['PAYPAL', 'CARD', 'COUPON', 'PHONE'];
 
 export type GetTransactionsSelections = {
   search?: string;

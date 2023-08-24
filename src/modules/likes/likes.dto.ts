@@ -1,11 +1,10 @@
 import { User } from '../../models/User';
-import { FilterQueryType } from '../../app/utils/search-query/search-query.dto';
+import { FilterQueryType, filterQueryTypeArrays } from '../../app/utils/search-query/search-query.dto';
 import {
   IsString,
   IsNotEmpty,
   MaxLength,
   MinLength,
-  IsEnum,
   IsOptional,
   IsIn,
   IsUUID,
@@ -14,7 +13,7 @@ import {
 export class CreateOrUpdateLikesDto {
   @IsNotEmpty()
   @IsString()
-  @IsEnum(FilterQueryType)
+  @IsIn(filterQueryTypeArrays)
   type: FilterQueryType;
 
   @IsOptional()

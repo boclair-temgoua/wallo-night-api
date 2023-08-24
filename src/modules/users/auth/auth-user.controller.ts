@@ -37,7 +37,6 @@ import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-pass
 import { config } from '../../../app/config/index';
 import {
   authCodeConfirmationJob,
-  authLoginJob,
   authPasswordResetJob,
 } from '../users.job';
 import { WalletsService } from '../../wallets/wallets.service';
@@ -106,7 +105,7 @@ export class AuthUserController {
     await this.contributorsService.createOne({
       userId: user?.id,
       userCreatedId: user?.id,
-      role: ContributorRole.ADMIN,
+      role: 'ADMIN',
     });
 
     /** Create Wallet */
@@ -127,9 +126,8 @@ export class AuthUserController {
       profileId: user.profileId,
     };
 
-    const refreshToken = await this.checkUserService.createJwtTokens(
-      jwtPayload,
-    );
+    const refreshToken =
+      await this.checkUserService.createJwtTokens(jwtPayload);
 
     return reply({
       res,
@@ -155,13 +153,16 @@ export class AuthUserController {
       profileId: findOnUser.profileId,
     };
 
-    const refreshToken = await this.checkUserService.createJwtTokens(
-      jwtPayload,
-    );
+    const refreshToken =
+      await this.checkUserService.createJwtTokens(jwtPayload);
 
     return reply({
       res,
-      results: { accessToken: `Bearer ${refreshToken}`, id: findOnUser.id },
+      results: {
+        accessToken: `Bearer ${refreshToken}`,
+        id: findOnUser.id,
+        nextStep: findOnUser?.nextStep,
+      },
     });
   }
 

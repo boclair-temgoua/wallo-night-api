@@ -1,11 +1,9 @@
 import { Post } from '../../models/Post';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
-export enum PostType {
-  AUDIO = 'AUDIO',
-  ARTICLE = 'ARTICLE',
-  GALLERY = 'GALLERY',
-}
+export type PostType = 'AUDIO' | 'ARTICLE' | 'GALLERY';
+
+export const postTypeArrays = ['AUDIO', 'ARTICLE', 'GALLERY'];
 
 export type GetPostsSelections = {
   search?: string;

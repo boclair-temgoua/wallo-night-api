@@ -7,10 +7,10 @@ import {
   Min,
   IsPositive,
   IsInt,
-  IsEnum,
+  IsIn,
 } from 'class-validator';
-import { CurrencyCode } from '../currencies/currencies.type';
-import { TransactionType } from '../transactions/transactions.type';
+import { CurrencyCode, currencyCodeArrays } from '../currencies/currencies.type';
+import { TransactionType, transactionTypeArrays } from '../transactions/transactions.type';
 
 export class SearchContributionDto {
   @IsOptional()
@@ -32,12 +32,12 @@ export class SearchContributionDto {
 export class CreateOneContributionDto {
   @IsNotEmpty()
   @IsString()
-  @IsEnum(CurrencyCode)
+  @IsIn(currencyCodeArrays)
   currency: CurrencyCode;
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(TransactionType)
+  @IsIn(transactionTypeArrays)
   meanOfPayment: TransactionType;
 
   @IsOptional()
@@ -79,7 +79,7 @@ export class CreateOneContributionGiftDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(TransactionType)
+  @IsIn(transactionTypeArrays)
   meanOfPayment: TransactionType;
 
   @IsOptional()
@@ -94,12 +94,12 @@ export class CreateOneContributionDonationDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(CurrencyCode)
+  @IsIn(currencyCodeArrays)
   currency: CurrencyCode;
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(TransactionType)
+  @IsIn(transactionTypeArrays)
   meanOfPayment: TransactionType;
 
   @IsOptional()

@@ -47,11 +47,7 @@ export class Product extends BaseDeleteEntity {
   @Column({ type: 'bigint', nullable: true })
   inventory: number;
 
-  @Column({
-    type: 'enum',
-    enum: StatusProduct,
-    default: StatusProduct.ACTIVE,
-  })
+  @Column({ default: 'ACTIVE' })
   status?: StatusProduct;
 
   @Column({ type: 'bigint', nullable: true })
