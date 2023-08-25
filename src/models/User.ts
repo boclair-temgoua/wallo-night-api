@@ -25,6 +25,7 @@ import {
   Cart,
   Contributor,
   Profile,
+  Product,
 } from './index';
 import { Follow } from './Follow';
 import { Like } from './Like';
@@ -77,6 +78,9 @@ export class User extends BaseDeleteEntity {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[];
+
+  @OneToMany(() => Product, (product) => product.user)
+  products?: Product[];
 
   @OneToMany(() => Transaction, (transaction) => transaction.user, {
     onDelete: 'CASCADE',

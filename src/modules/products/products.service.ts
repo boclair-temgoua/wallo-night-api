@@ -125,63 +125,64 @@ export class ProductsService {
   }
 
   async findOneBy(selections: GetOneProductsSelections): Promise<Product> {
-    const { productId } = selections;
+    const { productId,productSlug,userId } = selections;
     let query = this.driver
       .createQueryBuilder('product')
       .select('product.id', 'id')
       .addSelect('product.title', 'title')
       .addSelect('product.subTitle', 'subTitle')
       .addSelect('product.slug', 'slug')
-      .addSelect('product.sku', 'sku')
-      .addSelect('product.description', 'description')
-      .addSelect('product.moreDescription', 'moreDescription')
-      .addSelect('product.inventory', 'inventory')
-      .addSelect('product.status', 'status')
-      .addSelect('product.userCreatedId', 'userCreatedId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'symbol', "currency"."symbol",
-          'name', "currency"."name",
-          'code', "currency"."code"
-      ) AS "currency"`,
-      )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'name', "category"."name",
-          'color', "category"."color"
-      ) AS "category"`,
-      )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'startedAt', "discount"."startedAt",
-          'expiredAt', "discount"."expiredAt",
-          'percent', "discount"."percent",
-          'isValid', CASE 
-          WHEN ("discount"."expiredAt" >= now()::date 
-          AND "discount"."deletedAt" IS NULL
-          AND "discount"."isActive" IS TRUE) THEN true
-          WHEN ("discount"."expiredAt" < now()::date
-          AND "discount"."deletedAt" IS NULL
-          AND "discount"."isActive" IS TRUE) THEN false
-          ELSE false
-          END
-      ) AS "discount"`,
-      )
-      .addSelect(
-        /*sql*/ `
-        CASE 
-        WHEN ("discount"."expiredAt" >= now()::date 
-        AND "discount"."deletedAt" IS NULL
-        AND "discount"."isActive" IS TRUE) THEN  
-        CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
-        WHEN ("discount"."expiredAt" < now()::date
-        AND "discount"."deletedAt" IS NULL
-        AND "discount"."isActive" IS TRUE) THEN "product"."price"
-        ELSE "product"."price"
-        END
-    `,
-        'price',
-      )
+      .addSelect('product.userId', 'userId')
+    //   .addSelect('product.sku', 'sku')
+    //   .addSelect('product.description', 'description')
+    //   .addSelect('product.moreDescription', 'moreDescription')
+    //   .addSelect('product.inventory', 'inventory')
+    //   .addSelect('product.status', 'status')
+    //   .addSelect('product.userCreatedId', 'userCreatedId')
+    //   .addSelect(
+    //     /*sql*/ `jsonb_build_object(
+    //       'symbol', "currency"."symbol",
+    //       'name', "currency"."name",
+    //       'code', "currency"."code"
+    //   ) AS "currency"`,
+    //   )
+    //   .addSelect(
+    //     /*sql*/ `jsonb_build_object(
+    //       'name', "category"."name",
+    //       'color', "category"."color"
+    //   ) AS "category"`,
+    //   )
+    //   .addSelect(
+    //     /*sql*/ `jsonb_build_object(
+    //       'startedAt', "discount"."startedAt",
+    //       'expiredAt', "discount"."expiredAt",
+    //       'percent', "discount"."percent",
+    //       'isValid', CASE 
+    //       WHEN ("discount"."expiredAt" >= now()::date 
+    //       AND "discount"."deletedAt" IS NULL
+    //       AND "discount"."isActive" IS TRUE) THEN true
+    //       WHEN ("discount"."expiredAt" < now()::date
+    //       AND "discount"."deletedAt" IS NULL
+    //       AND "discount"."isActive" IS TRUE) THEN false
+    //       ELSE false
+    //       END
+    //   ) AS "discount"`,
+    //   )
+    //   .addSelect(
+    //     /*sql*/ `
+    //     CASE 
+    //     WHEN ("discount"."expiredAt" >= now()::date 
+    //     AND "discount"."deletedAt" IS NULL
+    //     AND "discount"."isActive" IS TRUE) THEN  
+    //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+    //     WHEN ("discount"."expiredAt" < now()::date
+    //     AND "discount"."deletedAt" IS NULL
+    //     AND "discount"."isActive" IS TRUE) THEN "product"."price"
+    //     ELSE "product"."price"
+    //     END
+    // `,
+    //     'price',
+    //   )
       .addSelect('product.price', 'priceNoDiscount')
       .addSelect('product.createdAt', 'createdAt')
       .where('product.deletedAt IS NULL')
@@ -191,6 +192,14 @@ export class ProductsService {
 
     if (productId) {
       query = query.andWhere('product.id = :id', { id: productId });
+    }
+
+    if (userId) {
+      query = query.andWhere('product.userId = :userId', { userId });
+    }
+
+    if (productSlug) {
+      query = query.andWhere('product.slug = :slug', { slug: productSlug });
     }
 
     const [error, result] = await useCatch(query.getRawOne());
@@ -214,7 +223,7 @@ export class ProductsService {
       currencyId,
       categoryId,
       discountId,
-      userCreatedId,
+      userId,
     } = options;
 
     const product = new Product();
@@ -230,7 +239,7 @@ export class ProductsService {
     product.currencyId = currencyId;
     product.slug = `${Slug(title)}-${generateNumber(4)}`;
     product.description = description;
-    product.userCreatedId = userCreatedId;
+    product.userId = userId;
 
     const query = this.driver.save(product);
 

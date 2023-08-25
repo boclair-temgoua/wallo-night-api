@@ -8,7 +8,9 @@ export type GetProductsSelections = {
 };
 
 export type GetOneProductsSelections = {
-  productId: Product['id'];
+  productId?: Product['id'];
+  userId?: Product['userId'];
+  productSlug?: Product['slug'];
 };
 
 export type UpdateProductsSelections = {

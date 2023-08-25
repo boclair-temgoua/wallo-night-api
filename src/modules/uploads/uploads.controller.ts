@@ -7,25 +7,55 @@ import {
   Res,
   Req,
   Get,
+  Query,
+  Put,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { JwtAuthGuard } from '../users/middleware';
 
 import { UploadsService } from './uploads.service';
+import { getFileToAws } from '../integrations/aws/aws-s3-service-adapter';
 
 @Controller('uploads')
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
   /** Get all faqs */
-  @Get(`/products/:productId`)
+  @Get(`/products`)
   async findAll(
     @Res() res,
-    @Param('productId', ParseUUIDPipe) productId: string,
+    @Query('productId', ParseUUIDPipe) productId: string,
   ) {
     const uploads = await this.uploadsService.findAll({ productId });
 
     return reply({ res, results: uploads });
+  }
+
+  @Put(`/products/:productId`)
+  @UseGuards(JwtAuthGuard)
+  async deleteAndUpdate(
+    @Res() res,
+    @Req() req,
+    @Param('productId', ParseUUIDPipe) productId: string,
+  ) {
+    const uploads = await this.uploadsService.findAll({ productId });
+
+    Promise.all(
+      uploads.map(async (upload) => {
+        await this.uploadsService.updateOne(
+          { uploadId: upload?.uid },
+          { deletedAt: new Date() },
+        );
+      }),
+    );
+
+    Promise.all(
+      req?.body?.newFileLists.map(async (upload) => {
+        await this.uploadsService.createOne({ ...upload });
+      }),
+    );
+
+    return reply({ res, results: 'Image upload' });
   }
 
   /** Delete upload */
@@ -49,5 +79,23 @@ export class UploadsController {
     // );
 
     return reply({ res, results: '' });
+  }
+
+  /** Get on file upload */
+  @Get(`/products/:fileName`)
+  async getOneFileUploadProduct(@Res() res, @Param('fileName') fileName: string) {
+    try {
+      const { fileBuffer, contentType } = await getFileToAws({
+        folder: 'products',
+        fileName,
+      });
+      res.status(200);
+      res.contentType(contentType);
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Erreur lors de la récupération de l'image.");
+    }
   }
 }

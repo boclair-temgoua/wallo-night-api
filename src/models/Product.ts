@@ -17,6 +17,7 @@ import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
 import { StatusProduct } from '../modules/products/products.dto';
 import { Discount } from './Discount';
+import { User } from '.';
 
 @Entity('product')
 export class Product extends BaseDeleteEntity {
@@ -89,7 +90,10 @@ export class Product extends BaseDeleteEntity {
   // orderProducts: OrderProduct[];
 
   @Column({ type: 'uuid', nullable: true })
-  userCreatedId?: string;
+  userId?: string;
+  @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  user?: User;
 
   @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
   orderProducts: OrderProduct[];

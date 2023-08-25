@@ -28,8 +28,9 @@ export class UploadsService {
 
     let query = this.driver
       .createQueryBuilder('upload')
-      .select('upload.id', 'id')
+      .select('upload.id', 'uid')
       .addSelect('upload.name', 'name')
+      .addSelect('upload.path', 'path')
       .addSelect('upload.status', 'status')
       .addSelect('upload.url', 'url')
       .addSelect('upload.productId', 'productId')
@@ -40,7 +41,7 @@ export class UploadsService {
     }
 
     const [errors, results] = await useCatch(
-      query.orderBy('upload.createdAt', 'DESC').getRawMany(),
+      query.orderBy('upload.createdAt', 'ASC').getRawMany(),
     );
     if (errors) throw new NotFoundException(errors);
 
@@ -49,10 +50,11 @@ export class UploadsService {
 
   /** Create one Upload to the database. */
   async createOne(options: CreateUploadOptions): Promise<Upload> {
-    const { name, status, url, productId } = options;
+    const { name, status, url, path, productId } = options;
 
     const upload = new Upload();
     upload.url = url;
+    upload.path = path;
     upload.name = name;
     upload.status = status;
     upload.productId = productId;
@@ -73,7 +75,7 @@ export class UploadsService {
     const { uploadId } = selections;
     const { deletedAt } = options;
 
-    let findQuery = this.driver.createQueryBuilder('Upload');
+    let findQuery = this.driver.createQueryBuilder('upload');
 
     if (uploadId) {
       findQuery = findQuery.where('upload.id = :id', { id: uploadId });

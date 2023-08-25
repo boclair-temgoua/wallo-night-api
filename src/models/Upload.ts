@@ -14,6 +14,9 @@ export class Upload extends BaseDeleteEntity {
   name?: string;
 
   @Column({ nullable: true })
+  path?: string;
+
+  @Column({ nullable: true })
   status?: string;
 
   @Column({ nullable: true })
