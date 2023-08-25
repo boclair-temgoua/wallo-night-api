@@ -36,6 +36,8 @@ export class ProductsService {
       .addSelect('product.subTitle', 'subTitle')
       .addSelect('product.slug', 'slug')
       .addSelect('product.sku', 'sku')
+      .addSelect('product.urlMedia', 'urlMedia')
+      .addSelect('product.messageAfterPurchase', 'messageAfterPurchase')
       .addSelect('product.description', 'description')
       .addSelect('product.moreDescription', 'moreDescription')
       .addSelect('product.inventory', 'inventory')
@@ -48,13 +50,13 @@ export class ProductsService {
         'code', "currency"."code"
     ) AS "currency"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-        'slug', "category"."slug",
-        'name', "category"."name",
-        'color', "category"."color"
-    ) AS "category"`,
-      )
+    //   .addSelect(
+    //     /*sql*/ `jsonb_build_object(
+    //     'slug', "category"."slug",
+    //     'name', "category"."name",
+    //     'color', "category"."color"
+    // ) AS "category"`,
+    //   )
       .addSelect(
         /*sql*/ `jsonb_build_object(
         'startedAt', "discount"."startedAt",
@@ -125,7 +127,7 @@ export class ProductsService {
   }
 
   async findOneBy(selections: GetOneProductsSelections): Promise<Product> {
-    const { productId,productSlug,userId } = selections;
+    const { productId, productSlug, userId } = selections;
     let query = this.driver
       .createQueryBuilder('product')
       .select('product.id', 'id')
@@ -133,56 +135,57 @@ export class ProductsService {
       .addSelect('product.subTitle', 'subTitle')
       .addSelect('product.slug', 'slug')
       .addSelect('product.userId', 'userId')
-    //   .addSelect('product.sku', 'sku')
-    //   .addSelect('product.description', 'description')
-    //   .addSelect('product.moreDescription', 'moreDescription')
-    //   .addSelect('product.inventory', 'inventory')
-    //   .addSelect('product.status', 'status')
-    //   .addSelect('product.userCreatedId', 'userCreatedId')
-    //   .addSelect(
-    //     /*sql*/ `jsonb_build_object(
-    //       'symbol', "currency"."symbol",
-    //       'name', "currency"."name",
-    //       'code', "currency"."code"
-    //   ) AS "currency"`,
-    //   )
-    //   .addSelect(
-    //     /*sql*/ `jsonb_build_object(
-    //       'name', "category"."name",
-    //       'color', "category"."color"
-    //   ) AS "category"`,
-    //   )
-    //   .addSelect(
-    //     /*sql*/ `jsonb_build_object(
-    //       'startedAt', "discount"."startedAt",
-    //       'expiredAt', "discount"."expiredAt",
-    //       'percent', "discount"."percent",
-    //       'isValid', CASE 
-    //       WHEN ("discount"."expiredAt" >= now()::date 
-    //       AND "discount"."deletedAt" IS NULL
-    //       AND "discount"."isActive" IS TRUE) THEN true
-    //       WHEN ("discount"."expiredAt" < now()::date
-    //       AND "discount"."deletedAt" IS NULL
-    //       AND "discount"."isActive" IS TRUE) THEN false
-    //       ELSE false
-    //       END
-    //   ) AS "discount"`,
-    //   )
-    //   .addSelect(
-    //     /*sql*/ `
-    //     CASE 
-    //     WHEN ("discount"."expiredAt" >= now()::date 
-    //     AND "discount"."deletedAt" IS NULL
-    //     AND "discount"."isActive" IS TRUE) THEN  
-    //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
-    //     WHEN ("discount"."expiredAt" < now()::date
-    //     AND "discount"."deletedAt" IS NULL
-    //     AND "discount"."isActive" IS TRUE) THEN "product"."price"
-    //     ELSE "product"."price"
-    //     END
-    // `,
-    //     'price',
-    //   )
+      .addSelect('product.urlMedia', 'urlMedia')
+      .addSelect('product.messageAfterPurchase', 'messageAfterPurchase')
+      .addSelect('product.sku', 'sku')
+      .addSelect('product.description', 'description')
+      .addSelect('product.moreDescription', 'moreDescription')
+      .addSelect('product.inventory', 'inventory')
+      .addSelect('product.status', 'status')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'symbol', "currency"."symbol",
+            'name', "currency"."name",
+            'code', "currency"."code"
+        ) AS "currency"`,
+      )
+      // .addSelect(
+      //   /*sql*/ `jsonb_build_object(
+      //       'name', "category"."name",
+      //       'color', "category"."color"
+      //   ) AS "category"`,
+      // )
+      // .addSelect(
+      //   /*sql*/ `jsonb_build_object(
+      //       'startedAt', "discount"."startedAt",
+      //       'expiredAt', "discount"."expiredAt",
+      //       'percent', "discount"."percent",
+      //       'isValid', CASE
+      //       WHEN ("discount"."expiredAt" >= now()::date
+      //       AND "discount"."deletedAt" IS NULL
+      //       AND "discount"."isActive" IS TRUE) THEN true
+      //       WHEN ("discount"."expiredAt" < now()::date
+      //       AND "discount"."deletedAt" IS NULL
+      //       AND "discount"."isActive" IS TRUE) THEN false
+      //       ELSE false
+      //       END
+      //   ) AS "discount"`,
+      // )
+      // .addSelect(
+      //   /*sql*/ `
+      //     CASE
+      //     WHEN ("discount"."expiredAt" >= now()::date
+      //     AND "discount"."deletedAt" IS NULL
+      //     AND "discount"."isActive" IS TRUE) THEN
+      //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+      //     WHEN ("discount"."expiredAt" < now()::date
+      //     AND "discount"."deletedAt" IS NULL
+      //     AND "discount"."isActive" IS TRUE) THEN "product"."price"
+      //     ELSE "product"."price"
+      //     END
+      // `,
+      //   'price',
+      // )
       .addSelect('product.price', 'priceNoDiscount')
       .addSelect('product.createdAt', 'createdAt')
       .where('product.deletedAt IS NULL')
@@ -223,6 +226,8 @@ export class ProductsService {
       currencyId,
       categoryId,
       discountId,
+      urlMedia,
+      messageAfterPurchase,
       userId,
     } = options;
 
@@ -237,6 +242,8 @@ export class ProductsService {
     product.status = status;
     product.discountId = discountId;
     product.currencyId = currencyId;
+    product.messageAfterPurchase = messageAfterPurchase;
+    product.urlMedia = urlMedia;
     product.slug = `${Slug(title)}-${generateNumber(4)}`;
     product.description = description;
     product.userId = userId;
@@ -268,6 +275,8 @@ export class ProductsService {
       currencyId,
       categoryId,
       deletedAt,
+      urlMedia,
+      messageAfterPurchase
     } = options;
 
     let findQuery = this.driver.createQueryBuilder('product');
@@ -289,6 +298,8 @@ export class ProductsService {
     findItem.categoryId = categoryId;
     findItem.currencyId = currencyId;
     findItem.discountId = discountId;
+    findItem.messageAfterPurchase = messageAfterPurchase;
+    findItem.urlMedia = urlMedia;
     findItem.description = description;
     findItem.deletedAt = deletedAt;
 

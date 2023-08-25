@@ -36,11 +36,17 @@ export class Product extends BaseDeleteEntity {
   @Column({ nullable: true })
   sku: string;
 
+  @Column({ nullable: true })
+  urlMedia: string;
+
   @Column({ type: 'bigint', nullable: true })
   price: number;
 
   @Column({ type: 'text', nullable: true })
   description: string;
+
+  @Column({ type: 'text', nullable: true })
+  messageAfterPurchase: string;
 
   @Column({ nullable: true })
   moreDescription: string;

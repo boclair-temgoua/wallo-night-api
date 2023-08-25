@@ -5,6 +5,7 @@ import {
   IsUUID,
   IsOptional,
   IsArray,
+  IsInt,
 } from 'class-validator';
 
 export type StatusProduct = 'ACTIVE' | 'PENDING';
@@ -28,18 +29,22 @@ export class CreateOrUpdateProductsDto {
   // @IsUUID()
   // discountId: string;
 
-  // @IsNotEmpty()
-  // @IsInt()
-  // price: number;
+  @IsOptional()
+  @IsInt()
+  price: number;
 
-  // @IsNotEmpty()
-  // @IsInt()
-  // inventory: number;
+  @IsOptional()
+  @IsString()
+  urlMedia: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // @MaxLength(100)
-  // description: string;
+  @IsOptional()
+  @IsString()
+  messageAfterPurchase: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  description: string;
 }
 
 export class GetOneProductDto {

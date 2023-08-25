@@ -91,6 +91,7 @@ export class ProductsController {
         const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
           8,
         )}`;
+        
         const urlAWS = await awsS3ServiceAdapter({
           name: nameFile,
           mimeType: file?.mimetype,
@@ -133,7 +134,7 @@ export class ProductsController {
         HttpStatus.NOT_FOUND,
       );
 
-    // await this.productsService.updateOne({ productId }, { ...body });
+    await this.productsService.updateOne({ productId }, { ...body });
 
     Promise.all(
       files.map(async (file) => {
