@@ -2,6 +2,7 @@ import { Upload } from '../../models/Upload';
 
 export type GetUploadsSelections = {
   search?: string;
+  uploadType?: string;
   productId?: Upload['productId'];
 };
 

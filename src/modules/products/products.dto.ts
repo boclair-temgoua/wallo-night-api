@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsArray,
   IsInt,
+  IsBoolean,
 } from 'class-validator';
 
 export type StatusProduct = 'ACTIVE' | 'PENDING';
@@ -30,12 +31,24 @@ export class CreateOrUpdateProductsDto {
   // discountId: string;
 
   @IsOptional()
-  @IsInt()
-  price: number;
+  @IsString()
+  price: string;
+
+  @IsOptional()
+  @IsString()
+  limitSlot: string
+
+  @IsOptional()
+  @IsString()
+  isLimitSlot: string
 
   @IsOptional()
   @IsString()
   urlMedia: string;
+
+  @IsOptional()
+  @IsString()
+  isChooseQuantity: string;
 
   @IsOptional()
   @IsString()

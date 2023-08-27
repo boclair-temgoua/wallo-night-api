@@ -1,9 +1,6 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common/index';
+import { UploadType } from '../modules/uploads/uploads.dto';
 
 @Entity('upload')
 export class Upload extends BaseDeleteEntity {
@@ -21,6 +18,9 @@ export class Upload extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   url?: string;
+
+  @Column({ default: 'IMAGE' })
+  uploadType?: UploadType;
 
   @Column({ type: 'uuid', nullable: true })
   productId?: string;

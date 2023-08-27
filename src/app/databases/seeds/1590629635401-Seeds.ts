@@ -89,7 +89,7 @@ export class Seeds1590629635401 implements MigrationInterface {
     console.log('\x1b[32m%s\x1b[0m', '**** User seed finish ****');
 
     for (let i = 0; i < 200; i++) {
-      const title = faker.lorem.sentence(2);
+      const title = faker.lorem.sentence({ min: 5, max: 15 });
       const user = await driver
         .createQueryBuilder(User, 'user')
         .select('user.id', 'id')
@@ -102,15 +102,16 @@ export class Seeds1590629635401 implements MigrationInterface {
         .insert()
         .into(Post)
         .values({
-          title,
+          title: title,
           whoCanSee: getRandomElement([
             'PUBLIC',
             'SUPPORTER',
             'MEMBERSHIP',
           ]) as any,
           type: getRandomElement(['ARTICLE', 'AUDIO', 'GALLERY']) as any,
+          slug: Slug(title),
           image: faker.image.url(),
-          description: faker.lorem.sentence(6),
+          description: faker.lorem.sentence({ min: 100, max: 300 }),
           userId: user?.id,
         })
         .execute();
@@ -140,7 +141,7 @@ export class Seeds1590629635401 implements MigrationInterface {
         .values({
           userId: user?.id,
           postId: post?.id,
-          description: faker.lorem.sentence({ min: 2, max: 10 }),
+          description: faker.lorem.sentence({ min: 10, max: 50 }),
         })
         .execute();
     }

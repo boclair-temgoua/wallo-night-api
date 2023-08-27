@@ -24,7 +24,7 @@ export class UploadsService {
   ) {}
 
   async findAll(selections: GetUploadsSelections): Promise<any> {
-    const { productId } = selections;
+    const { productId, uploadType } = selections;
 
     let query = this.driver
       .createQueryBuilder('upload')
@@ -33,11 +33,16 @@ export class UploadsService {
       .addSelect('upload.path', 'path')
       .addSelect('upload.status', 'status')
       .addSelect('upload.url', 'url')
+      .addSelect('upload.uploadType', 'uploadType')
       .addSelect('upload.productId', 'productId')
       .where('upload.deletedAt IS NULL');
 
     if (productId) {
       query = query.andWhere('upload.productId = :productId', { productId });
+    }
+
+    if (uploadType) {
+      query = query.andWhere('upload.uploadType = :uploadType', { uploadType });
     }
 
     const [errors, results] = await useCatch(
@@ -50,13 +55,14 @@ export class UploadsService {
 
   /** Create one Upload to the database. */
   async createOne(options: CreateUploadOptions): Promise<Upload> {
-    const { name, status, url, path, productId } = options;
+    const { name, status, uploadType, url, path, productId } = options;
 
     const upload = new Upload();
     upload.url = url;
     upload.path = path;
     upload.name = name;
     upload.status = status;
+    upload.uploadType = uploadType;
     upload.productId = productId;
 
     const query = this.driver.save(upload);

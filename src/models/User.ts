@@ -26,6 +26,7 @@ import {
   Contributor,
   Profile,
   Product,
+  Discount,
 } from './index';
 import { Follow } from './Follow';
 import { Like } from './Like';
@@ -78,6 +79,9 @@ export class User extends BaseDeleteEntity {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[];
+
+  @OneToMany(() => Discount, (discount) => discount.user)
+  discounts?: Discount[];
 
   @OneToMany(() => Product, (product) => product.user)
   products?: Product[];

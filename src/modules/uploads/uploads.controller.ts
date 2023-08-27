@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '../users/middleware';
 
 import { UploadsService } from './uploads.service';
 import { getFileToAws } from '../integrations/aws/aws-s3-service-adapter';
+import { UploadsDto } from './uploads.dto';
 
 @Controller('uploads')
 export class UploadsController {
@@ -22,11 +23,13 @@ export class UploadsController {
 
   /** Get all faqs */
   @Get(`/products`)
-  async findAll(
-    @Res() res,
-    @Query('productId', ParseUUIDPipe) productId: string,
-  ) {
-    const uploads = await this.uploadsService.findAll({ productId });
+  async findAll(@Res() res, @Query() query: UploadsDto) {
+    const { productId, uploadType } = query;
+
+    const uploads = await this.uploadsService.findAll({
+      productId,
+      uploadType: uploadType.toUpperCase(),
+    });
 
     return reply({ res, results: uploads });
   }
@@ -46,6 +49,12 @@ export class UploadsController {
           { uploadId: upload?.uid },
           { deletedAt: new Date() },
         );
+      }),
+    );
+
+    Promise.all(
+      req?.body?.newImageLists.map(async (upload) => {
+        await this.uploadsService.createOne({ ...upload });
       }),
     );
 
@@ -83,7 +92,10 @@ export class UploadsController {
 
   /** Get on file upload */
   @Get(`/products/:fileName`)
-  async getOneFileUploadProduct(@Res() res, @Param('fileName') fileName: string) {
+  async getOneFileUploadProduct(
+    @Res() res,
+    @Param('fileName') fileName: string,
+  ) {
     try {
       const { fileBuffer, contentType } = await getFileToAws({
         folder: 'products',

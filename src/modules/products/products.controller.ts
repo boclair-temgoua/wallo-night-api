@@ -79,37 +79,83 @@ export class ProductsController {
     @Body() body: CreateOrUpdateProductsDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
+    const {
+      title,
+      price,
+      isLimitSlot,
+      urlMedia,
+      isChooseQuantity,
+      messageAfterPurchase,
+      description,
+      limitSlot,
+    } = body;
     const { user } = req;
 
     const product = await this.productsService.createOne({
-      ...body,
+      title,
+      price: Number(price),
+      limitSlot: Number(limitSlot),
+      urlMedia,
+      description,
+      messageAfterPurchase,
+      isLimitSlot: isLimitSlot === 'true' ? true : false,
+      isChooseQuantity: isChooseQuantity === 'true' ? true : false,
       userId: user?.id,
     });
 
-    Promise.all(
-      files.map(async (file) => {
-        const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-          8,
-        )}`;
-        
-        const urlAWS = await awsS3ServiceAdapter({
-          name: nameFile,
-          mimeType: file?.mimetype,
-          folder: 'products',
-          file: file.buffer,
-        });
-        const extension = mime.extension(file.mimetype);
-        const fileName = `${nameFile}.${extension}`;
+    Promise.all([
+      files
+        .filter((lk: any) => lk?.fieldname === 'attachmentImages')
+        .map(async (file) => {
+          const nameFile = `${formateNowDateYYMMDD(
+            new Date(),
+          )}${generateLongUUID(8)}`;
 
-        await this.uploadsService.createOne({
-          name: nameFile,
-          path: fileName,
-          status: 'success',
-          url: urlAWS.Location,
-          productId: product?.id,
-        });
-      }),
-    );
+          const urlAWS = await awsS3ServiceAdapter({
+            name: nameFile,
+            mimeType: file?.mimetype,
+            folder: 'products',
+            file: file.buffer,
+          });
+          const extension = mime.extension(file.mimetype);
+          const fileName = `${nameFile}.${extension}`;
+
+          await this.uploadsService.createOne({
+            name: file?.originalname,
+            path: fileName,
+            status: 'success',
+            url: urlAWS.Location,
+            uploadType: 'IMAGE',
+            productId: product?.id,
+          });
+        }),
+
+      files
+        .filter((lk: any) => lk?.fieldname === 'attachmentFiles')
+        .map(async (file) => {
+          const nameFile = `${formateNowDateYYMMDD(
+            new Date(),
+          )}${generateLongUUID(8)}`;
+
+          const urlAWS = await awsS3ServiceAdapter({
+            name: nameFile,
+            mimeType: file?.mimetype,
+            folder: 'products',
+            file: file.buffer,
+          });
+          const extension = mime.extension(file.mimetype);
+          const fileName = `${nameFile}.${extension}`;
+
+          await this.uploadsService.createOne({
+            name: file?.originalname,
+            path: fileName,
+            status: 'success',
+            url: urlAWS.Location,
+            uploadType: 'FILE',
+            productId: product?.id,
+          });
+        }),
+    ]);
 
     return reply({ res, results: 'product' });
   }
@@ -125,6 +171,17 @@ export class ProductsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('productId', ParseUUIDPipe) productId: string,
   ) {
+    const {
+      title,
+      price,
+      isLimitSlot,
+      urlMedia,
+      isChooseQuantity,
+      messageAfterPurchase,
+      description,
+      limitSlot,
+    } = body;
+
     const findOneProduct = await this.productsService.findOneBy({
       productId,
     });
@@ -134,31 +191,76 @@ export class ProductsController {
         HttpStatus.NOT_FOUND,
       );
 
-    await this.productsService.updateOne({ productId }, { ...body });
-
-    Promise.all(
-      files.map(async (file) => {
-        const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-          8,
-        )}`;
-        const urlAWS = await awsS3ServiceAdapter({
-          name: nameFile,
-          mimeType: file?.mimetype,
-          folder: 'products',
-          file: file.buffer,
-        });
-        const extension = mime.extension(file.mimetype);
-        const fileName = `${nameFile}.${extension}`;
-
-        await this.uploadsService.createOne({
-          name: nameFile,
-          path: fileName,
-          status: 'success',
-          url: urlAWS.Location,
-          productId: productId,
-        });
-      }),
+    await this.productsService.updateOne(
+      { productId },
+      {
+        title,
+        price: Number(price),
+        urlMedia,
+        description,
+        messageAfterPurchase,
+        limitSlot: Number(limitSlot),
+        isLimitSlot: isLimitSlot === 'true' ? true : false,
+        isChooseQuantity: isChooseQuantity === 'true' ? true : false,
+      },
     );
+    
+
+
+    console.log('files =====>',files)
+    Promise.all([
+      files
+        .filter((lk: any) => lk?.fieldname === 'attachmentImages')
+        .map(async (file) => {
+          const nameFile = `${formateNowDateYYMMDD(
+            new Date(),
+          )}${generateLongUUID(8)}`;
+
+          const urlAWS = await awsS3ServiceAdapter({
+            name: nameFile,
+            mimeType: file?.mimetype,
+            folder: 'products',
+            file: file.buffer,
+          });
+          const extension = mime.extension(file.mimetype);
+          const fileName = `${nameFile}.${extension}`;
+
+          await this.uploadsService.createOne({
+            name: file?.originalname,
+            path: fileName,
+            status: 'success',
+            url: urlAWS.Location,
+            uploadType: 'IMAGE',
+            productId: productId,
+          });
+        }),
+
+      files
+        .filter((lk: any) => lk?.fieldname === 'attachmentFiles')
+        .map(async (file) => {
+          const nameFile = `${formateNowDateYYMMDD(
+            new Date(),
+          )}${generateLongUUID(8)}`;
+
+          const urlAWS = await awsS3ServiceAdapter({
+            name: nameFile,
+            mimeType: file?.mimetype,
+            folder: 'products',
+            file: file.buffer,
+          });
+          const extension = mime.extension(file.mimetype);
+          const fileName = `${nameFile}.${extension}`;
+
+          await this.uploadsService.createOne({
+            name: file?.originalname,
+            path: fileName,
+            status: 'success',
+            url: urlAWS.Location,
+            uploadType: 'FILE',
+            productId: productId,
+          });
+        }),
+    ]);
 
     return reply({ res, results: 'Product updated successfully' });
   }

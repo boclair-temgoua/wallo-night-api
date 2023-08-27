@@ -19,7 +19,7 @@ export class Currency extends BaseEntity {
   @Column({ nullable: true })
   symbol: string;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'float', default: 0 })
   amount: number;
 
   @Column({ default: true, type: 'boolean' })

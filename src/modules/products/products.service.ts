@@ -35,28 +35,41 @@ export class ProductsService {
       .addSelect('product.title', 'title')
       .addSelect('product.subTitle', 'subTitle')
       .addSelect('product.slug', 'slug')
-      .addSelect('product.sku', 'sku')
+      .addSelect('product.userId', 'userId')
       .addSelect('product.urlMedia', 'urlMedia')
       .addSelect('product.messageAfterPurchase', 'messageAfterPurchase')
+      .addSelect('product.sku', 'sku')
       .addSelect('product.description', 'description')
       .addSelect('product.moreDescription', 'moreDescription')
-      .addSelect('product.inventory', 'inventory')
+      .addSelect('product.limitSlot', 'limitSlot')
       .addSelect('product.status', 'status')
-      .addSelect('product.userCreatedId', 'userCreatedId')
+      .addSelect('product.isLimitSlot', 'isLimitSlot')
+      .addSelect('product.isChooseQuantity', 'isChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-        'symbol', "currency"."symbol",
-        'name', "currency"."name",
-        'code', "currency"."code"
-    ) AS "currency"`,
+            'symbol', "currency"."symbol",
+            'name', "currency"."name",
+            'code', "currency"."code"
+        ) AS "currency"`,
       )
-    //   .addSelect(
-    //     /*sql*/ `jsonb_build_object(
-    //     'slug', "category"."slug",
-    //     'name', "category"."name",
-    //     'color', "category"."color"
-    // ) AS "category"`,
-    //   )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'fullName', "profile"."fullName",
+              'firstName', "profile"."firstName",
+              'lastName', "profile"."lastName",
+              'image', "profile"."image",
+              'color', "profile"."color",
+              'userId', "user"."id",
+              'username', "user"."username"
+          ) AS "profile"`,
+      )
+      //   .addSelect(
+      //     /*sql*/ `jsonb_build_object(
+      //     'slug', "category"."slug",
+      //     'name', "category"."name",
+      //     'color', "category"."color"
+      // ) AS "category"`,
+      //   )
       .addSelect(
         /*sql*/ `jsonb_build_object(
         'startedAt', "discount"."startedAt",
@@ -93,7 +106,9 @@ export class ProductsService {
       .where('product.deletedAt IS NULL')
       .leftJoin('product.category', 'category')
       .leftJoin('product.currency', 'currency')
-      .leftJoin('product.discount', 'discount');
+      .leftJoin('product.discount', 'discount')
+      .leftJoin('product.user', 'user')
+      .leftJoin('user.profile', 'profile');
 
     if (search) {
       query = query.andWhere(
@@ -140,14 +155,27 @@ export class ProductsService {
       .addSelect('product.sku', 'sku')
       .addSelect('product.description', 'description')
       .addSelect('product.moreDescription', 'moreDescription')
-      .addSelect('product.inventory', 'inventory')
+      .addSelect('product.limitSlot', 'limitSlot')
       .addSelect('product.status', 'status')
+      .addSelect('product.isLimitSlot', 'isLimitSlot')
+      .addSelect('product.isChooseQuantity', 'isChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'symbol', "currency"."symbol",
             'name', "currency"."name",
             'code', "currency"."code"
         ) AS "currency"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'fullName', "profile"."fullName",
+              'firstName', "profile"."firstName",
+              'lastName', "profile"."lastName",
+              'image', "profile"."image",
+              'color', "profile"."color",
+              'userId', "user"."id",
+              'username', "user"."username"
+          ) AS "profile"`,
       )
       // .addSelect(
       //   /*sql*/ `jsonb_build_object(
@@ -171,27 +199,29 @@ export class ProductsService {
       //       END
       //   ) AS "discount"`,
       // )
-      // .addSelect(
-      //   /*sql*/ `
-      //     CASE
-      //     WHEN ("discount"."expiredAt" >= now()::date
-      //     AND "discount"."deletedAt" IS NULL
-      //     AND "discount"."isActive" IS TRUE) THEN
-      //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
-      //     WHEN ("discount"."expiredAt" < now()::date
-      //     AND "discount"."deletedAt" IS NULL
-      //     AND "discount"."isActive" IS TRUE) THEN "product"."price"
-      //     ELSE "product"."price"
-      //     END
-      // `,
-      //   'price',
-      // )
+      .addSelect(
+        /*sql*/ `
+          CASE
+          WHEN ("discount"."expiredAt" >= now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."isActive" IS TRUE) THEN
+          CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+          WHEN ("discount"."expiredAt" < now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."isActive" IS TRUE) THEN "product"."price"
+          ELSE "product"."price"
+          END
+      `,
+        'price',
+      )
       .addSelect('product.price', 'priceNoDiscount')
       .addSelect('product.createdAt', 'createdAt')
       .where('product.deletedAt IS NULL')
       .leftJoin('product.category', 'category')
       .leftJoin('product.currency', 'currency')
-      .leftJoin('product.discount', 'discount');
+      .leftJoin('product.discount', 'discount')
+      .leftJoin('product.user', 'user')
+      .leftJoin('user.profile', 'profile');
 
     if (productId) {
       query = query.andWhere('product.id = :id', { id: productId });
@@ -221,13 +251,15 @@ export class ProductsService {
       price,
       description,
       moreDescription,
-      inventory,
+      limitSlot,
       status,
       currencyId,
       categoryId,
       discountId,
       urlMedia,
+      isLimitSlot,
       messageAfterPurchase,
+      isChooseQuantity,
       userId,
     } = options;
 
@@ -237,11 +269,13 @@ export class ProductsService {
     product.sku = sku;
     product.subTitle = subTitle;
     product.moreDescription = moreDescription;
-    product.inventory = inventory;
+    product.limitSlot = limitSlot;
     product.categoryId = categoryId;
     product.status = status;
     product.discountId = discountId;
     product.currencyId = currencyId;
+    product.isLimitSlot = isLimitSlot;
+    product.isChooseQuantity = isChooseQuantity;
     product.messageAfterPurchase = messageAfterPurchase;
     product.urlMedia = urlMedia;
     product.slug = `${Slug(title)}-${generateNumber(4)}`;
@@ -269,14 +303,16 @@ export class ProductsService {
       price,
       description,
       moreDescription,
-      inventory,
       status,
       discountId,
       currencyId,
       categoryId,
       deletedAt,
       urlMedia,
-      messageAfterPurchase
+      limitSlot,
+      isLimitSlot,
+      messageAfterPurchase,
+      isChooseQuantity,
     } = options;
 
     let findQuery = this.driver.createQueryBuilder('product');
@@ -285,25 +321,27 @@ export class ProductsService {
       findQuery = findQuery.where('product.id = :id', { id: productId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, product] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.title = title;
-    findItem.price = price;
-    findItem.sku = sku;
-    findItem.subTitle = subTitle;
-    findItem.moreDescription = moreDescription;
-    findItem.inventory = inventory;
-    findItem.status = status;
-    findItem.categoryId = categoryId;
-    findItem.currencyId = currencyId;
-    findItem.discountId = discountId;
-    findItem.messageAfterPurchase = messageAfterPurchase;
-    findItem.urlMedia = urlMedia;
-    findItem.description = description;
-    findItem.deletedAt = deletedAt;
+    product.title = title;
+    product.price = price;
+    product.sku = sku;
+    product.subTitle = subTitle;
+    product.moreDescription = moreDescription;
+    product.categoryId = categoryId;
+    product.status = status;
+    product.discountId = discountId;
+    product.currencyId = currencyId;
+    product.limitSlot = limitSlot;
+    product.isLimitSlot = isLimitSlot;
+    product.isChooseQuantity = isChooseQuantity;
+    product.messageAfterPurchase = messageAfterPurchase;
+    product.urlMedia = urlMedia;
+    product.description = description;
+    product.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(product);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);

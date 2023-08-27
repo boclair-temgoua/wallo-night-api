@@ -39,7 +39,7 @@ export class Product extends BaseDeleteEntity {
   @Column({ nullable: true })
   urlMedia: string;
 
-  @Column({ type: 'bigint', nullable: true })
+  @Column({ type: 'bigint', default: 0 })
   price: number;
 
   @Column({ type: 'text', nullable: true })
@@ -51,14 +51,17 @@ export class Product extends BaseDeleteEntity {
   @Column({ nullable: true })
   moreDescription: string;
 
-  @Column({ type: 'bigint', nullable: true })
-  inventory: number;
+  @Column({ type: 'boolean', default: false })
+  isChooseQuantity: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  isLimitSlot: boolean;
+
+  @Column({ type: 'bigint', default: 0 })
+  limitSlot: number;
 
   @Column({ default: 'ACTIVE' })
   status?: StatusProduct;
-
-  @Column({ type: 'bigint', nullable: true })
-  imageUploadId: number;
 
   @Column({ type: 'uuid', nullable: true })
   categoryId: string;
