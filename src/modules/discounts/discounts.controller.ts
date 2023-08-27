@@ -48,12 +48,13 @@ export class DiscountsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const Discounts = await this.discountsService.findAll({
+    const discounts = await this.discountsService.findAll({
       search,
       pagination,
+      userId: user?.id,
     });
 
-    return reply({ res, results: Discounts });
+    return reply({ res, results: discounts });
   }
 
   /** Post one Discounts */
@@ -65,17 +66,20 @@ export class DiscountsController {
     @Body() body: CreateOrUpdateDiscountsDto,
   ) {
     const { user } = req;
-    const { name, description, percent, expiredAt, startedAt } = body;
+    const { code, description, percent, expiredAt, startedAt, isExpired } =
+      body;
 
     await this.discountsService.createOne({
-      name,
+      code,
       description,
       percent,
       expiredAt,
       startedAt,
+      userId: user?.id,
+      isExpired: isExpired,
     });
 
-    return reply({ res, results: 'Discount created successfully' });
+    return reply({ res, results: 'discount created successfully' });
   }
 
   /** Post one Discounts */
@@ -98,7 +102,7 @@ export class DiscountsController {
 
     await this.discountsService.updateOne({ discountId }, { ...body });
 
-    return reply({ res, results: 'Discount updated successfully' });
+    return reply({ res, results: 'discount updated successfully' });
   }
 
   /** Get one Discounts */
@@ -142,7 +146,7 @@ export class DiscountsController {
       { isActive: !findOneDiscount?.isActive },
     );
 
-    return reply({ res, results: 'Discount update successfully' });
+    return reply({ res, results: 'discount update successfully' });
   }
 
   /** Delete one Discounts */
@@ -155,11 +159,11 @@ export class DiscountsController {
   ) {
     const { user } = req;
 
-    const category = await this.discountsService.updateOne(
+    await this.discountsService.updateOne(
       { discountId },
       { deletedAt: new Date() },
     );
 
-    return reply({ res, results: 'Discount deleted successfully' });
+    return reply({ res, results: 'discount deleted successfully' });
   }
 }

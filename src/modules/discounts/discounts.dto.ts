@@ -8,18 +8,23 @@ import {
   IsOptional,
   IsInt,
   IsPositive,
+  IsBoolean,
 } from 'class-validator';
 
 export class CreateOrUpdateDiscountsDto {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  name: string;
+  code: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(100)
   description: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isExpired: boolean;
 
   @IsNotEmpty()
   @IsInt()
@@ -28,10 +33,9 @@ export class CreateOrUpdateDiscountsDto {
   @Max(100)
   percent?: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   startedAt: Date;
 
-  @IsNotEmpty()
-  @MatchDate('startedAt')
+  @IsOptional()
   expiredAt: Date;
 }

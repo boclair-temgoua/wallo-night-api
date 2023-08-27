@@ -45,9 +45,8 @@ export class UploadsController {
 
     Promise.all(
       uploads.map(async (upload) => {
-        await this.uploadsService.updateOne(
+        await this.uploadsService.deleteOne(
           { uploadId: upload?.uid },
-          { deletedAt: new Date() },
         );
       }),
     );

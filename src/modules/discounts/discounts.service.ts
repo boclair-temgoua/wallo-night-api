@@ -25,11 +25,15 @@ export class DiscountsService {
   ) {}
 
   async findAll(selections: GetDiscountsSelections): Promise<any> {
-    const { search, pagination } = selections;
+    const { search, pagination, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('discount')
       .where('discount.deletedAt IS NULL');
+
+    if (userId) {
+      query = query.andWhere('discount.userId = :userId', { userId });
+    }
 
     if (search) {
       query = query.andWhere(
@@ -81,12 +85,22 @@ export class DiscountsService {
 
   /** Create one Discounts to the database. */
   async createOne(options: CreateDiscountsOptions): Promise<Discount> {
-    const { name, description, percent, expiredAt, startedAt } = options;
+    const {
+      code,
+      description,
+      isExpired,
+      userId,
+      percent,
+      expiredAt,
+      startedAt,
+    } = options;
 
     const discount = new Discount();
-    discount.name = name;
+    discount.code = code;
     discount.description = description;
+    discount.userId = userId;
     discount.percent = percent;
+    discount.isExpired = isExpired;
     discount.startedAt = startedAt;
     discount.expiredAt = expiredAt;
 
@@ -105,7 +119,8 @@ export class DiscountsService {
   ): Promise<Discount> {
     const { discountId } = selections;
     const {
-      name,
+      code,
+      isExpired,
       description,
       isActive,
       percent,
@@ -120,18 +135,19 @@ export class DiscountsService {
       findQuery = findQuery.where('discount.id = :id', { id: discountId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, discount] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.name = name;
-    findItem.description = description;
-    findItem.percent = percent;
-    findItem.isActive = isActive;
-    findItem.startedAt = startedAt;
-    findItem.expiredAt = expiredAt;
-    findItem.deletedAt = deletedAt;
+    discount.code = code;
+    discount.description = description;
+    discount.percent = percent;
+    discount.isActive = isActive;
+    discount.isExpired = isExpired;
+    discount.startedAt = startedAt;
+    discount.expiredAt = expiredAt;
+    discount.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(discount);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);

@@ -16,7 +16,7 @@ export class Discount extends BaseDeleteEntity {
   id?: string;
 
   @Column({ nullable: true })
-  name: string;
+  code: string;
 
   @Column({ nullable: true })
   description: string;
@@ -26,6 +26,9 @@ export class Discount extends BaseDeleteEntity {
 
   @Column({ default: false })
   isActive: boolean;
+
+  @Column({ default: false })
+  isExpired: boolean;
 
   @Column({ nullable: true, type: 'timestamptz' })
   expiredAt: Date;

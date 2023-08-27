@@ -99,4 +99,21 @@ export class UploadsService {
 
     return result;
   }
+  /** Delete one Upload to the database. */
+  async deleteOne(
+    selections: UpdateUploadSelections,
+  ): Promise<any> {
+    const { uploadId } = selections;
+
+    let findQuery = this.driver.createQueryBuilder('upload').delete();
+
+    if (uploadId) {
+      findQuery = findQuery.where('upload.id = :id', { id: uploadId });
+    }
+
+    const [errorFind, findItem] = await useCatch(findQuery.execute());
+    if (errorFind) throw new NotFoundException(errorFind);
+
+    return findItem;
+  }
 }
