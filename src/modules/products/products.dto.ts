@@ -16,19 +16,10 @@ export class CreateOrUpdateProductsDto {
   @MaxLength(100)
   title: string;
 
-  // @IsOptional()
-  // @IsArray()
-  // fileList: any;
-
-  // @IsNotEmpty()
-  // @IsString()
-  // @IsUUID()
-  // categoryId: string;
-
-  // @IsOptional()
-  // @IsString()
-  // @IsUUID()
-  // discountId: string;
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  discountId: string;
 
   @IsOptional()
   @IsString()
@@ -44,6 +35,10 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
+  isDiscount: string
+
+  @IsOptional()
+  @IsString()
   urlMedia: string;
 
   @IsOptional()
@@ -56,7 +51,6 @@ export class CreateOrUpdateProductsDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(100)
   description: string;
 }
 

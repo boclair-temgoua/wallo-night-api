@@ -43,7 +43,10 @@ export class ProductsService {
       .addSelect('product.moreDescription', 'moreDescription')
       .addSelect('product.limitSlot', 'limitSlot')
       .addSelect('product.status', 'status')
+      .addSelect('product.price', 'price')
       .addSelect('product.isLimitSlot', 'isLimitSlot')
+      .addSelect('product.isDiscount', 'isDiscount')
+      .addSelect('product.discountId', 'discountId')
       .addSelect('product.isChooseQuantity', 'isChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -63,45 +66,45 @@ export class ProductsService {
               'username', "user"."username"
           ) AS "profile"`,
       )
-      //   .addSelect(
-      //     /*sql*/ `jsonb_build_object(
-      //     'slug', "category"."slug",
-      //     'name', "category"."name",
-      //     'color', "category"."color"
-      // ) AS "category"`,
-      //   )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-        'startedAt', "discount"."startedAt",
-        'expiredAt', "discount"."expiredAt",
-        'percent', "discount"."percent",
-        'isValid', CASE 
-        WHEN ("discount"."expiredAt" >= now()::date 
-        AND "discount"."deletedAt" IS NULL
-        AND "discount"."isActive" IS TRUE) THEN true
-        WHEN ("discount"."expiredAt" < now()::date
-        AND "discount"."deletedAt" IS NULL
-        AND "discount"."isActive" IS TRUE) THEN false
-        ELSE false
-        END
-    ) AS "discount"`,
-      )
+      // .addSelect(
+      //   /*sql*/ `jsonb_build_object(
+      //       'name', "category"."name",
+      //       'color', "category"."color"
+      //   ) AS "category"`,
+      // )
+      // .addSelect(
+      //   /*sql*/ `jsonb_build_object(
+      //       'startedAt', "discount"."startedAt",
+      //       'expiredAt', "discount"."expiredAt",
+      //       'percent', "discount"."percent",
+      //       'isValid', CASE
+      //       WHEN ("discount"."expiredAt" >= now()::date
+      //       AND "discount"."deletedAt" IS NULL
+      //       AND "discount"."isActive" IS TRUE) THEN true
+      //       WHEN ("discount"."expiredAt" < now()::date
+      //       AND "discount"."deletedAt" IS NULL
+      //       AND "discount"."isActive" IS TRUE) THEN false
+      //       ELSE false
+      //       END
+      //   ) AS "discount"`,
+      // )
       .addSelect(
         /*sql*/ `
-      CASE 
-      WHEN ("discount"."expiredAt" >= now()::date 
-      AND "discount"."deletedAt" IS NULL
-      AND "discount"."isActive" IS TRUE) THEN  
-      CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
-      WHEN ("discount"."expiredAt" < now()::date
-      AND "discount"."deletedAt" IS NULL
-      AND "discount"."isActive" IS TRUE) THEN "product"."price"
-      ELSE "product"."price"
-      END
-  `,
-        'price',
+          CASE
+          WHEN ("discount"."expiredAt" >= now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS TRUE
+          AND "product"."isDiscount" IS TRUE) THEN
+          CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+          WHEN ("discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS FALSE
+          AND "product"."isDiscount" IS TRUE) THEN
+          CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+          ELSE "product"."price"
+          END
+      `,
+        'priceDiscount',
       )
-      .addSelect('product.price', 'priceNoDiscount')
       .addSelect('product.createdAt', 'createdAt')
       .where('product.deletedAt IS NULL')
       .leftJoin('product.category', 'category')
@@ -157,7 +160,10 @@ export class ProductsService {
       .addSelect('product.moreDescription', 'moreDescription')
       .addSelect('product.limitSlot', 'limitSlot')
       .addSelect('product.status', 'status')
+      .addSelect('product.price', 'price')
       .addSelect('product.isLimitSlot', 'isLimitSlot')
+      .addSelect('product.isDiscount', 'isDiscount')
+      .addSelect('product.discountId', 'discountId')
       .addSelect('product.isChooseQuantity', 'isChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -204,17 +210,18 @@ export class ProductsService {
           CASE
           WHEN ("discount"."expiredAt" >= now()::date
           AND "discount"."deletedAt" IS NULL
-          AND "discount"."isActive" IS TRUE) THEN
+          AND "discount"."enableExpiredAt" IS TRUE
+          AND "product"."isDiscount" IS TRUE) THEN
           CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
-          WHEN ("discount"."expiredAt" < now()::date
-          AND "discount"."deletedAt" IS NULL
-          AND "discount"."isActive" IS TRUE) THEN "product"."price"
+          WHEN ("discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS FALSE
+          AND "product"."isDiscount" IS TRUE) THEN
+          CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
           ELSE "product"."price"
           END
       `,
-        'price',
+        'priceDiscount',
       )
-      .addSelect('product.price', 'priceNoDiscount')
       .addSelect('product.createdAt', 'createdAt')
       .where('product.deletedAt IS NULL')
       .leftJoin('product.category', 'category')
@@ -258,6 +265,7 @@ export class ProductsService {
       discountId,
       urlMedia,
       isLimitSlot,
+      isDiscount,
       messageAfterPurchase,
       isChooseQuantity,
       userId,
@@ -275,6 +283,7 @@ export class ProductsService {
     product.discountId = discountId;
     product.currencyId = currencyId;
     product.isLimitSlot = isLimitSlot;
+    product.isDiscount = isDiscount;
     product.isChooseQuantity = isChooseQuantity;
     product.messageAfterPurchase = messageAfterPurchase;
     product.urlMedia = urlMedia;
@@ -311,6 +320,7 @@ export class ProductsService {
       urlMedia,
       limitSlot,
       isLimitSlot,
+      isDiscount,
       messageAfterPurchase,
       isChooseQuantity,
     } = options;
@@ -335,6 +345,7 @@ export class ProductsService {
     product.currencyId = currencyId;
     product.limitSlot = limitSlot;
     product.isLimitSlot = isLimitSlot;
+    product.isDiscount = isDiscount;
     product.isChooseQuantity = isChooseQuantity;
     product.messageAfterPurchase = messageAfterPurchase;
     product.urlMedia = urlMedia;

@@ -55,6 +55,9 @@ export class Product extends BaseDeleteEntity {
   isChooseQuantity: boolean;
 
   @Column({ type: 'boolean', default: false })
+  isDiscount: boolean;
+
+  @Column({ type: 'boolean', default: false })
   isLimitSlot: boolean;
 
   @Column({ type: 'bigint', default: 0 })

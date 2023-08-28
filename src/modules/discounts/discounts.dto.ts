@@ -24,14 +24,14 @@ export class CreateOrUpdateDiscountsDto {
 
   @IsOptional()
   @IsBoolean()
-  isExpired: boolean;
+  enableExpiredAt: boolean;
 
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
   @Min(1)
   @Max(100)
-  percent?: number;
+  percent: number;
 
   @IsOptional()
   startedAt: Date;

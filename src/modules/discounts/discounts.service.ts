@@ -28,7 +28,28 @@ export class DiscountsService {
     const { search, pagination, userId } = selections;
 
     let query = this.driver
-      .createQueryBuilder('discount')
+      .createQueryBuilder('discount') 
+      .select('discount.id', 'id')
+      .addSelect('discount.code', 'code')
+      .addSelect('discount.userId', 'userId')
+      .addSelect('discount.expiredAt', 'expiredAt')
+      .addSelect('discount.enableExpiredAt', 'enableExpiredAt')
+      .addSelect('discount.percent', 'percent')
+      .addSelect('discount.description', 'description')
+      .addSelect('discount.createdAt', 'createdAt')
+      .addSelect(
+        /*sql*/ `
+      CASE WHEN ("discount"."expiredAt" >= now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS TRUE) THEN true 
+          WHEN ("discount"."expiredAt" < now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS TRUE) THEN false
+          ELSE true
+          END
+        `,
+        'isValid',
+      )
       .where('discount.deletedAt IS NULL');
 
     if (userId) {
@@ -38,7 +59,7 @@ export class DiscountsService {
     if (search) {
       query = query.andWhere(
         new Brackets((qb) => {
-          qb.where('discount.name ::text ILIKE :search', {
+          qb.where('discount.code ::text ILIKE :search', {
             search: `%${search}%`,
           }).orWhere('discount.description ::text ILIKE :search', {
             search: `%${search}%`,
@@ -55,7 +76,7 @@ export class DiscountsService {
         .orderBy('discount.createdAt', pagination?.sort)
         .take(pagination.take)
         .skip(pagination.skip)
-        .getMany(),
+        .getRawMany(),
     );
     if (error) throw new NotFoundException(error);
 
@@ -64,6 +85,58 @@ export class DiscountsService {
       rowCount,
       value: discounts,
     });
+  }
+
+  async findAllNotPaginate(selections: GetDiscountsSelections): Promise<any> {
+    const { search, userId } = selections;
+
+    let query = this.driver
+      .createQueryBuilder('discount')
+      .select('discount.id', 'id')
+      .addSelect('discount.code', 'code')
+      .addSelect('discount.userId', 'userId')
+      .addSelect('discount.expiredAt', 'expiredAt')
+      .addSelect('discount.enableExpiredAt', 'enableExpiredAt')
+      .addSelect('discount.percent', 'percent')
+      .addSelect('discount.description', 'description')
+      .addSelect('discount.createdAt', 'createdAt')
+      .addSelect(
+        /*sql*/ `
+      CASE WHEN ("discount"."expiredAt" >= now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS TRUE) THEN true 
+          WHEN ("discount"."expiredAt" < now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS TRUE) THEN false
+          ELSE true
+          END
+        `,
+        'isValid',
+      )
+      .where('discount.deletedAt IS NULL');
+
+    if (userId) {
+      query = query.andWhere('discount.userId = :userId', { userId });
+    }
+
+    if (search) {
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('discount.code ::text ILIKE :search', {
+            search: `%${search}%`,
+          }).orWhere('discount.description ::text ILIKE :search', {
+            search: `%${search}%`,
+          });
+        }),
+      );
+    }
+
+    const [error, discounts] = await useCatch(
+      query.orderBy('discount.createdAt', 'DESC').getRawMany(),
+    );
+    if (error) throw new NotFoundException(error);
+
+    return discounts;
   }
 
   async findOneBy(selections: GetOneDiscountsSelections): Promise<Discount> {
@@ -87,12 +160,12 @@ export class DiscountsService {
   async createOne(options: CreateDiscountsOptions): Promise<Discount> {
     const {
       code,
-      description,
-      isExpired,
       userId,
       percent,
       expiredAt,
       startedAt,
+      description,
+      enableExpiredAt,
     } = options;
 
     const discount = new Discount();
@@ -100,9 +173,9 @@ export class DiscountsService {
     discount.description = description;
     discount.userId = userId;
     discount.percent = percent;
-    discount.isExpired = isExpired;
     discount.startedAt = startedAt;
     discount.expiredAt = expiredAt;
+    discount.enableExpiredAt = enableExpiredAt;
 
     const query = this.driver.save(discount);
 
@@ -120,13 +193,12 @@ export class DiscountsService {
     const { discountId } = selections;
     const {
       code,
-      isExpired,
       description,
-      isActive,
       percent,
       expiredAt,
       startedAt,
       deletedAt,
+      enableExpiredAt,
     } = options;
 
     let findQuery = this.driver.createQueryBuilder('discount');
@@ -141,10 +213,9 @@ export class DiscountsService {
     discount.code = code;
     discount.description = description;
     discount.percent = percent;
-    discount.isActive = isActive;
-    discount.isExpired = isExpired;
     discount.startedAt = startedAt;
     discount.expiredAt = expiredAt;
+    discount.enableExpiredAt = enableExpiredAt;
     discount.deletedAt = deletedAt;
 
     const query = this.driver.save(discount);

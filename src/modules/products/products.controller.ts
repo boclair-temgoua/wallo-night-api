@@ -88,6 +88,8 @@ export class ProductsController {
       messageAfterPurchase,
       description,
       limitSlot,
+      isDiscount,
+      discountId,
     } = body;
     const { user } = req;
 
@@ -97,7 +99,9 @@ export class ProductsController {
       limitSlot: Number(limitSlot),
       urlMedia,
       description,
+      discountId,
       messageAfterPurchase,
+      isDiscount: isDiscount === 'true' ? true : false,
       isLimitSlot: isLimitSlot === 'true' ? true : false,
       isChooseQuantity: isChooseQuantity === 'true' ? true : false,
       userId: user?.id,
@@ -180,6 +184,8 @@ export class ProductsController {
       messageAfterPurchase,
       description,
       limitSlot,
+      discountId,
+      isDiscount,
     } = body;
 
     const findOneProduct = await this.productsService.findOneBy({
@@ -198,16 +204,15 @@ export class ProductsController {
         price: Number(price),
         urlMedia,
         description,
+        discountId,
         messageAfterPurchase,
         limitSlot: Number(limitSlot),
+        isDiscount: isDiscount === 'true' ? true : false,
         isLimitSlot: isLimitSlot === 'true' ? true : false,
         isChooseQuantity: isChooseQuantity === 'true' ? true : false,
       },
     );
     
-
-
-    console.log('files =====>',files)
     Promise.all([
       files
         .filter((lk: any) => lk?.fieldname === 'attachmentImages')

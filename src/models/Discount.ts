@@ -24,14 +24,11 @@ export class Discount extends BaseDeleteEntity {
   @Column({ type: 'bigint', default: 0 })
   percent: number;
 
-  @Column({ default: false })
-  isActive: boolean;
-
-  @Column({ default: false })
-  isExpired: boolean;
-
   @Column({ nullable: true, type: 'timestamptz' })
   expiredAt: Date;
+
+  @Column({ default: false })
+  enableExpiredAt: boolean;
 
   @Column({ nullable: true, type: 'timestamptz' })
   startedAt: Date;

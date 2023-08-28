@@ -13,15 +13,11 @@ import {
   Query,
   HttpStatus,
   HttpException,
-  ParseBoolPipe,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
 import { DiscountsService } from './discounts.service';
-import {
-  PasswordBodyDto,
-  SearchQueryDto,
-} from '../../app/utils/search-query/search-query.dto';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { CreateOrUpdateDiscountsDto } from './discounts.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
@@ -34,9 +30,21 @@ import {
 export class DiscountsController {
   constructor(private readonly discountsService: DiscountsService) {}
 
+  @Get(`/user`)
+  @UseGuards(JwtAuthGuard)
+  async findAllByUserId(@Res() res, @Req() req) {
+    const { user } = req;
+
+    const discounts = await this.discountsService.findAllNotPaginate({
+      userId: user?.id,
+    });
+
+    return reply({ res, results: discounts });
+  }
+
   @Get(`/`)
   @UseGuards(JwtAuthGuard)
-  async findAllByOrganizationId(
+  async findAllByUserNotPaginate(
     @Res() res,
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
@@ -66,18 +74,8 @@ export class DiscountsController {
     @Body() body: CreateOrUpdateDiscountsDto,
   ) {
     const { user } = req;
-    const { code, description, percent, expiredAt, startedAt, isExpired } =
-      body;
 
-    await this.discountsService.createOne({
-      code,
-      description,
-      percent,
-      expiredAt,
-      startedAt,
-      userId: user?.id,
-      isExpired: isExpired,
-    });
+    await this.discountsService.createOne({ ...body, userId: user?.id });
 
     return reply({ res, results: 'discount created successfully' });
   }
@@ -91,6 +89,7 @@ export class DiscountsController {
     @Body() body: CreateOrUpdateDiscountsDto,
     @Param('discountId', ParseUUIDPipe) discountId: string,
   ) {
+    const { code, description, enableExpiredAt, percent, expiredAt } = body;
     const findOneDiscount = await this.discountsService.findOneBy({
       discountId,
     });
@@ -100,7 +99,16 @@ export class DiscountsController {
         HttpStatus.NOT_FOUND,
       );
 
-    await this.discountsService.updateOne({ discountId }, { ...body });
+    await this.discountsService.updateOne(
+      { discountId },
+      {
+        code,
+        description,
+        enableExpiredAt,
+        percent,
+        expiredAt: enableExpiredAt ? expiredAt : null,
+      },
+    );
 
     return reply({ res, results: 'discount updated successfully' });
   }
@@ -122,31 +130,6 @@ export class DiscountsController {
       );
 
     return reply({ res, results: findOneDiscount });
-  }
-
-  /** Active one Discounts */
-  @Get(`/status`)
-  @UseGuards(JwtAuthGuard)
-  async changeStatusOne(
-    @Res() res,
-    @Req() req,
-    @Query('discountId', ParseUUIDPipe) discountId: string,
-  ) {
-    const findOneDiscount = await this.discountsService.findOneBy({
-      discountId,
-    });
-    if (!findOneDiscount)
-      throw new HttpException(
-        `Discount ${discountId} don't exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
-
-    await this.discountsService.updateOne(
-      { discountId },
-      { isActive: !findOneDiscount?.isActive },
-    );
-
-    return reply({ res, results: 'discount update successfully' });
   }
 
   /** Delete one Discounts */
