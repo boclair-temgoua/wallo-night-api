@@ -17,7 +17,7 @@ import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
 import { StatusProduct } from '../modules/products/products.dto';
 import { Discount } from './Discount';
-import { User } from '.';
+import { Cart, User } from '.';
 
 @Entity('product')
 export class Product extends BaseDeleteEntity {
@@ -55,7 +55,7 @@ export class Product extends BaseDeleteEntity {
   isChooseQuantity: boolean;
 
   @Column({ type: 'boolean', default: false })
-  isDiscount: boolean;
+  enableDiscount: boolean;
 
   @Column({ type: 'boolean', default: false })
   isLimitSlot: boolean;
@@ -106,6 +106,9 @@ export class Product extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @OneToMany(() => Cart, (cart) => cart.product)
+  carts: Cart[];
 
   @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
   orderProducts: OrderProduct[];

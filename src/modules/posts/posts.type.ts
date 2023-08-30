@@ -1,9 +1,9 @@
 import { Post } from '../../models/Post';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
-export type PostType = 'AUDIO' | 'ARTICLE' | 'GALLERY';
+export type PostType = 'AUDIO' | 'VIDEO' | 'ARTICLE' | 'GALLERY';
 
-export const postTypeArrays = ['AUDIO', 'ARTICLE', 'GALLERY'];
+export const postTypeArrays = ['AUDIO', 'VIDEO', 'ARTICLE', 'GALLERY'];
 
 export type GetPostsSelections = {
   search?: string;
@@ -15,6 +15,7 @@ export type GetPostsSelections = {
 
 export type GetOnePostSelections = {
   postId: Post['id'];
+  type?: string;
   userId?: Post['userId'];
 };
 

@@ -35,7 +35,7 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
-  isDiscount: string
+  enableDiscount: string
 
   @IsOptional()
   @IsString()

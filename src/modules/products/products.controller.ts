@@ -88,7 +88,7 @@ export class ProductsController {
       messageAfterPurchase,
       description,
       limitSlot,
-      isDiscount,
+      enableDiscount,
       discountId,
     } = body;
     const { user } = req;
@@ -101,7 +101,8 @@ export class ProductsController {
       description,
       discountId,
       messageAfterPurchase,
-      isDiscount: isDiscount === 'true' ? true : false,
+      currencyId: user?.profile?.currencyId, 
+      enableDiscount: enableDiscount === 'true' ? true : false,
       isLimitSlot: isLimitSlot === 'true' ? true : false,
       isChooseQuantity: isChooseQuantity === 'true' ? true : false,
       userId: user?.id,
@@ -185,11 +186,13 @@ export class ProductsController {
       description,
       limitSlot,
       discountId,
-      isDiscount,
+      enableDiscount,
     } = body;
+    const { user } = req;
 
     const findOneProduct = await this.productsService.findOneBy({
       productId,
+      userId: user?.id,
     });
     if (!findOneProduct)
       throw new HttpException(
@@ -207,7 +210,8 @@ export class ProductsController {
         discountId,
         messageAfterPurchase,
         limitSlot: Number(limitSlot),
-        isDiscount: isDiscount === 'true' ? true : false,
+        currencyId: user?.profile?.currencyId, 
+        enableDiscount: enableDiscount === 'true' ? true : false,
         isLimitSlot: isLimitSlot === 'true' ? true : false,
         isChooseQuantity: isChooseQuantity === 'true' ? true : false,
       },

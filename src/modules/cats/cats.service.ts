@@ -37,48 +37,64 @@ export class CartsService {
       .addSelect('cart.userId', 'userId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-        'startedAt', "discount"."startedAt",
-        'expiredAt', "discount"."expiredAt",
-        'percent', "discount"."percent",
-        'isValid', CASE 
-        WHEN ("discount"."expiredAt" >= now()::date 
-        AND "discount"."deletedAt" IS NULL
-        AND "discount"."isActive" IS TRUE) THEN true
-        WHEN ("discount"."expiredAt" < now()::date
-        AND "discount"."deletedAt" IS NULL
-        AND "discount"."isActive" IS TRUE) THEN false
-        ELSE false
-        END
-    ) AS "discount"`,
+            'enableExpiredAt', "discount"."enableExpiredAt",
+            'expiredAt', "discount"."expiredAt",
+            'percent', "discount"."percent",
+            'isValid', CASE WHEN ("discount"."expiredAt" >= now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN true 
+            WHEN ("discount"."expiredAt" < now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN false
+            ELSE true
+            END
+        ) AS "discount"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "product"."id",
-          'title', "product"."title",
-          'description', "product"."description",
-          'slug', "product"."slug",
-          'priceNoDiscount', "product"."price",
-          'price',  CASE 
-          WHEN ("discount"."expiredAt" >= now()::date 
-          AND "discount"."deletedAt" IS NULL
-          AND "discount"."isActive" IS TRUE) THEN  
-          CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
-          WHEN ("discount"."expiredAt" < now()::date
-          AND "discount"."deletedAt" IS NULL
-          AND "discount"."isActive" IS TRUE) THEN "product"."price"
-          ELSE "product"."price"
-          END, 
-          'category', jsonb_build_object(
-            'slug', "category"."slug",
-            'name', "category"."name",
-            'color', "category"."color"
-            ),
-          'currency', jsonb_build_object(
-            'code', "currency"."code",
-            'symbol', "currency"."symbol"
-            )
-      ) AS "product"`,
-      )
+      // .addSelect(
+      //   /*sql*/ `
+      //     CASE
+      //     WHEN ("discount"."expiredAt" >= now()::date
+      //     AND "discount"."deletedAt" IS NULL
+      //     AND "discount"."enableExpiredAt" IS TRUE
+      //     AND "product"."enableDiscount" IS TRUE) THEN
+      //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+      //     WHEN ("discount"."deletedAt" IS NULL
+      //     AND "discount"."enableExpiredAt" IS FALSE
+      //     AND "product"."enableDiscount" IS TRUE) THEN
+      //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+      //     ELSE "product"."price"
+      //     END
+      // `,
+      //   'priceDiscount',
+      // )
+      // .addSelect(
+      //   /*sql*/ `jsonb_build_object(
+      //     'id', "product"."id",
+      //     'title', "product"."title",
+      //     'description', "product"."description",
+      //     'slug', "product"."slug",
+      //     'priceNoDiscount', "product"."price",
+      //     'price',  CASE 
+      //     WHEN ("discount"."expiredAt" >= now()::date 
+      //     AND "discount"."deletedAt" IS NULL
+      //     AND "discount"."isActive" IS TRUE) THEN  
+      //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+      //     WHEN ("discount"."expiredAt" < now()::date
+      //     AND "discount"."deletedAt" IS NULL
+      //     AND "discount"."isActive" IS TRUE) THEN "product"."price"
+      //     ELSE "product"."price"
+      //     END, 
+      //     'category', jsonb_build_object(
+      //       'slug', "category"."slug",
+      //       'name', "category"."name",
+      //       'color', "category"."color"
+      //       ),
+      //     'currency', jsonb_build_object(
+      //       'code', "currency"."code",
+      //       'symbol', "currency"."symbol"
+      //       )
+      // ) AS "product"`,
+      // )
       .addSelect('cart.createdAt', 'createdAt')
       .where('cart.deletedAt IS NULL')
       .leftJoin('cart.product', 'product')
@@ -156,7 +172,10 @@ export class CartsService {
       )
       .addSelect('cart.createdAt', 'createdAt')
       .where('cart.deletedAt IS NULL')
-      .leftJoin('cart.product', 'product');
+      .leftJoin('cart.product', 'product')
+      .leftJoin('product.currency', 'currency')
+      .leftJoin('product.category', 'category')
+      .leftJoin('product.discount', 'discount');
 
     if (cartId) {
       query = query.andWhere('cart.id = :id', { id: cartId });
@@ -212,13 +231,13 @@ export class CartsService {
       findQuery = findQuery.where('cart.id = :id', { id: cartId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, cart] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.quantity = quantity;
-    findItem.deletedAt = deletedAt;
+    cart.quantity = quantity;
+    cart.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(cart);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);

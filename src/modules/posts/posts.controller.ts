@@ -113,9 +113,16 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   async getOneByUUID(
     @Res() res,
+    @Req() req,
     @Param('postId', ParseUUIDPipe) postId: string,
+    @Query('type') type: string,
   ) {
-    const post = await this.postsService.findOneBy({ postId });
+    const { user } = req;
+    const post = await this.postsService.findOneBy({
+      postId,
+      userId: user?.id,
+      type: type.toUpperCase(),
+    });
 
     return reply({ res, results: post });
   }
@@ -170,7 +177,7 @@ export class PostsController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const { user } = req;
-    const { title, status, description, categories, type } = body;
+    const { title, status, description, categories, urlMedia, type } = body;
     const attachment = req.file;
     let fileName;
 
@@ -192,6 +199,7 @@ export class PostsController {
       type,
       title,
       status,
+      urlMedia,
       userId: user?.id,
       description,
       image: fileName,
@@ -224,8 +232,15 @@ export class PostsController {
     @UploadedFile() file: Express.Multer.File,
     @Param('postId', ParseUUIDPipe) postId: string,
   ) {
-    const { title, status, description, allowDownload, whoCanSee, categories } =
-      body;
+    const {
+      title,
+      status,
+      description,
+      allowDownload,
+      urlMedia,
+      whoCanSee,
+      categories,
+    } = body;
     const attachment = req.file;
     let fileName;
 
@@ -256,6 +271,7 @@ export class PostsController {
         title,
         status,
         whoCanSee,
+        urlMedia,
         description,
         image: fileName,
         allowDownload: allowDownload === 'true' ? true : false,

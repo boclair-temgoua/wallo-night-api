@@ -20,7 +20,10 @@ import {
   UpdatePostSelections,
 } from './posts.type';
 import { useCatch } from '../../app/utils/use-catch';
-import { generateNumber } from '../../app/utils/commons/generate-random';
+import {
+  generateLongUUID,
+  generateNumber,
+} from '../../app/utils/commons/generate-random';
 
 @Injectable()
 export class PostsService {
@@ -43,6 +46,7 @@ export class PostsService {
       .addSelect('post.image', 'image')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.type', 'type')
+      .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.createdAt', 'createdAt')
       .addSelect(
@@ -140,7 +144,7 @@ export class PostsService {
   }
 
   async findOneBy(selections: GetOnePostSelections): Promise<Post> {
-    const { postId, userId } = selections;
+    const { postId, userId, type } = selections;
     let query = this.driver
       .createQueryBuilder('post')
       .select('post.title', 'title')
@@ -150,6 +154,7 @@ export class PostsService {
       .addSelect('post.image', 'image')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.type', 'type')
+      .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.createdAt', 'createdAt')
       .addSelect(
@@ -202,6 +207,10 @@ export class PostsService {
             ) AS "isLike"`);
     }
 
+    if (type) {
+      query = query.andWhere('post.type = :type', { type });
+    }
+
     if (postId) {
       query = query.andWhere('post.id = :id', {
         id: postId,
@@ -222,6 +231,7 @@ export class PostsService {
       title,
       type,
       image,
+      urlMedia,
       whoCanSee,
       allowDownload,
       description,
@@ -231,9 +241,12 @@ export class PostsService {
     post.userId = userId;
     post.title = title;
     post.type = type;
+    post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
     post.allowDownload = allowDownload;
-    post.slug = `${Slug(title)}-${generateNumber(4)}`;
+    post.slug = `${
+      title ? `${Slug(title)}-${generateNumber(4)}` : generateLongUUID(10)
+    }`;
     post.image = image;
     post.status = status;
     post.description = description;
@@ -260,6 +273,7 @@ export class PostsService {
       allowDownload,
       description,
       image,
+      urlMedia,
       deletedAt,
     } = options;
 
@@ -271,19 +285,20 @@ export class PostsService {
       findQuery = findQuery.andWhere('post.id = :id', { id: postId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, post] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.title = title;
-    findItem.description = description;
-    findItem.image = image;
-    findItem.status = status;
-    findItem.type = type;
-    findItem.whoCanSee = whoCanSee;
-    findItem.allowDownload = allowDownload;
-    findItem.deletedAt = deletedAt;
+    post.title = title;
+    post.type = type;
+    post.urlMedia = urlMedia;
+    post.whoCanSee = whoCanSee;
+    post.allowDownload = allowDownload;
+    post.image = image;
+    post.status = status;
+    post.description = description;
+    post.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(post);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);

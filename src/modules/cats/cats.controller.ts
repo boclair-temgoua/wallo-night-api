@@ -74,6 +74,8 @@ export class CartsController {
       status: 'ADDED',
     });
 
+    console.log('findOneProductCart ===========>',findOneProductCart)
+
     if (findOneProductCart) {
       await this.cartsService.updateOne(
         { cartId: findOneProductCart?.id },

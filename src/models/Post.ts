@@ -32,6 +32,9 @@ export class Post extends BaseDeleteEntity {
   @Column({ nullable: true })
   title?: string;
 
+  @Column({ nullable: true })
+  urlMedia?: string;
+
   @Column({ default: 'PUBLIC' })
   whoCanSee?: WhoCanSeeType;
 

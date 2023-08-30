@@ -33,7 +33,7 @@ export class Cart extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   productId?: string;
-  @ManyToOne(() => Product, (product) => product.orderProducts)
+  @ManyToOne(() => Product, (product) => product.carts)
   @JoinColumn()
   product?: Relation<Product>;
 }

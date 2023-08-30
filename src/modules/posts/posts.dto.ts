@@ -51,6 +51,10 @@ export class CreateOrUpdatePostsDto {
   @IsString()
   allowDownload: string;
 
+  @IsOptional()
+  @IsString()
+  urlMedia: string; 
+
   @IsNotEmpty()
   @IsString()
   @IsIn(postTypeArrays)
@@ -64,10 +68,9 @@ export class CreateOrUpdatePostsDto {
   @IsString()
   categories: any[];
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @MaxLength(100)
-  @MinLength(3)
+  @MaxLength(200)
   title: string;
 
   @IsNotEmpty()

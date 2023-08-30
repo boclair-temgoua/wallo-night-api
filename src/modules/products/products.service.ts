@@ -45,7 +45,7 @@ export class ProductsService {
       .addSelect('product.status', 'status')
       .addSelect('product.price', 'price')
       .addSelect('product.isLimitSlot', 'isLimitSlot')
-      .addSelect('product.isDiscount', 'isDiscount')
+      .addSelect('product.enableDiscount', 'enableDiscount')
       .addSelect('product.discountId', 'discountId')
       .addSelect('product.isChooseQuantity', 'isChooseQuantity')
       .addSelect(
@@ -72,33 +72,32 @@ export class ProductsService {
       //       'color', "category"."color"
       //   ) AS "category"`,
       // )
-      // .addSelect(
-      //   /*sql*/ `jsonb_build_object(
-      //       'startedAt', "discount"."startedAt",
-      //       'expiredAt', "discount"."expiredAt",
-      //       'percent', "discount"."percent",
-      //       'isValid', CASE
-      //       WHEN ("discount"."expiredAt" >= now()::date
-      //       AND "discount"."deletedAt" IS NULL
-      //       AND "discount"."isActive" IS TRUE) THEN true
-      //       WHEN ("discount"."expiredAt" < now()::date
-      //       AND "discount"."deletedAt" IS NULL
-      //       AND "discount"."isActive" IS TRUE) THEN false
-      //       ELSE false
-      //       END
-      //   ) AS "discount"`,
-      // )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'enableExpiredAt', "discount"."enableExpiredAt",
+            'expiredAt', "discount"."expiredAt",
+            'percent', "discount"."percent",
+            'isValid', CASE WHEN ("discount"."expiredAt" >= now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN true 
+            WHEN ("discount"."expiredAt" < now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN false
+            ELSE true
+            END
+        ) AS "discount"`,
+      )
       .addSelect(
         /*sql*/ `
           CASE
           WHEN ("discount"."expiredAt" >= now()::date
           AND "discount"."deletedAt" IS NULL
           AND "discount"."enableExpiredAt" IS TRUE
-          AND "product"."isDiscount" IS TRUE) THEN
+          AND "product"."enableDiscount" IS TRUE) THEN
           CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
           WHEN ("discount"."deletedAt" IS NULL
           AND "discount"."enableExpiredAt" IS FALSE
-          AND "product"."isDiscount" IS TRUE) THEN
+          AND "product"."enableDiscount" IS TRUE) THEN
           CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
           ELSE "product"."price"
           END
@@ -162,7 +161,7 @@ export class ProductsService {
       .addSelect('product.status', 'status')
       .addSelect('product.price', 'price')
       .addSelect('product.isLimitSlot', 'isLimitSlot')
-      .addSelect('product.isDiscount', 'isDiscount')
+      .addSelect('product.enableDiscount', 'enableDiscount')
       .addSelect('product.discountId', 'discountId')
       .addSelect('product.isChooseQuantity', 'isChooseQuantity')
       .addSelect(
@@ -206,16 +205,31 @@ export class ProductsService {
       //   ) AS "discount"`,
       // )
       .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'enableExpiredAt', "discount"."enableExpiredAt",
+            'expiredAt', "discount"."expiredAt",
+            'percent', "discount"."percent",
+            'isValid', CASE WHEN ("discount"."expiredAt" >= now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN true 
+            WHEN ("discount"."expiredAt" < now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN false
+            ELSE true
+            END
+        ) AS "discount"`,
+      )
+      .addSelect(
         /*sql*/ `
           CASE
           WHEN ("discount"."expiredAt" >= now()::date
           AND "discount"."deletedAt" IS NULL
           AND "discount"."enableExpiredAt" IS TRUE
-          AND "product"."isDiscount" IS TRUE) THEN
+          AND "product"."enableDiscount" IS TRUE) THEN
           CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
           WHEN ("discount"."deletedAt" IS NULL
           AND "discount"."enableExpiredAt" IS FALSE
-          AND "product"."isDiscount" IS TRUE) THEN
+          AND "product"."enableDiscount" IS TRUE) THEN
           CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
           ELSE "product"."price"
           END
@@ -265,7 +279,7 @@ export class ProductsService {
       discountId,
       urlMedia,
       isLimitSlot,
-      isDiscount,
+      enableDiscount,
       messageAfterPurchase,
       isChooseQuantity,
       userId,
@@ -283,7 +297,7 @@ export class ProductsService {
     product.discountId = discountId;
     product.currencyId = currencyId;
     product.isLimitSlot = isLimitSlot;
-    product.isDiscount = isDiscount;
+    product.enableDiscount = enableDiscount;
     product.isChooseQuantity = isChooseQuantity;
     product.messageAfterPurchase = messageAfterPurchase;
     product.urlMedia = urlMedia;
@@ -320,7 +334,7 @@ export class ProductsService {
       urlMedia,
       limitSlot,
       isLimitSlot,
-      isDiscount,
+      enableDiscount,
       messageAfterPurchase,
       isChooseQuantity,
     } = options;
@@ -345,7 +359,7 @@ export class ProductsService {
     product.currencyId = currencyId;
     product.limitSlot = limitSlot;
     product.isLimitSlot = isLimitSlot;
-    product.isDiscount = isDiscount;
+    product.enableDiscount = enableDiscount;
     product.isChooseQuantity = isChooseQuantity;
     product.messageAfterPurchase = messageAfterPurchase;
     product.urlMedia = urlMedia;
