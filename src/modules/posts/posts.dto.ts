@@ -95,6 +95,11 @@ export class GetOnePostDto {
 
   @IsOptional()
   @IsString()
+  @IsUUID()
+  likeUserId: string;
+
+  @IsOptional()
+  @IsString()
   postSlug: string;
 
   @IsOptional()

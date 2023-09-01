@@ -35,7 +35,7 @@ export class PostsService {
   async findAll(
     selections: GetPostsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, userId, type, followerIds } = selections;
+    const { search, pagination, userId, type,likeUserId, followerIds } = selections;
 
     let query = this.driver
       .createQueryBuilder('post')
@@ -87,7 +87,7 @@ export class PostsService {
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile');
 
-    if (userId) {
+    if (likeUserId) {
       query = query.addSelect(/*sql*/ `(
               SELECT
                   CAST(COUNT(DISTINCT lk) AS INT)
@@ -95,7 +95,7 @@ export class PostsService {
               WHERE ("lk"."type" IN ('POST')
                AND "lk"."deletedAt" IS NULL
                AND "lk"."likeableId" = "post"."id"
-               AND "lk"."userId" IN ('${userId}'))
+               AND "lk"."userId" IN ('${likeUserId}'))
               ) AS "isLike"`);
     }
 
@@ -145,7 +145,7 @@ export class PostsService {
   }
 
   async findOneBy(selections: GetOnePostSelections): Promise<Post> {
-    const { postId, userId, postSlug, type } = selections;
+    const { postId, userId, postSlug, likeUserId, type } = selections;
     let query = this.driver
       .createQueryBuilder('post')
       .select('post.title', 'title')
@@ -196,18 +196,21 @@ export class PostsService {
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile');
 
+    if (likeUserId) {
+      query = query.addSelect(/*sql*/ `(
+              SELECT
+                  CAST(COUNT(DISTINCT lk) AS INT)
+              FROM "like" "lk"
+              WHERE ("lk"."type" IN ('POST')
+               AND "lk"."deletedAt" IS NULL
+               AND "lk"."likeableId" = "post"."id"
+               AND "lk"."userId" IN ('${likeUserId}'))
+               GROUP BY "lk"."likeableId", "post"."id"
+              ) AS "isLike"`);
+    }
+
     if (userId) {
-      query = query.andWhere('post.userId = :userId', { userId })
-        .addSelect(/*sql*/ `(
-            SELECT
-                CAST(COUNT(DISTINCT lk) AS INT)
-            FROM "like" "lk"
-            WHERE ("lk"."type" IN ('POST')
-             AND "lk"."deletedAt" IS NULL
-             AND "lk"."likeableId" = "post"."id"
-             AND "lk"."userId" IN ('${userId}'))
-             GROUP BY "lk"."likeableId", "post"."id"
-            ) AS "isLike"`);
+      query = query.andWhere('post.userId = :userId', { userId });
     }
 
     if (type) {

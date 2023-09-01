@@ -84,6 +84,7 @@ export class PostsController {
       search,
       pagination,
       userId: user?.id,
+      likeUserId: user?.id,
       followerIds: [...userFollows, user?.id],
     });
 
@@ -112,12 +113,13 @@ export class PostsController {
   /** Get one Posts */
   @Get(`/view`)
   async getOne(@Res() res, @Query() query: GetOnePostDto) {
-    const { postId, userId, type, postSlug } = query;
+    const { postId, userId, likeUserId, type, postSlug } = query;
 
     const findOnePost = await this.postsService.findOneBy({
       postId,
       postSlug,
       userId,
+      likeUserId,
       type: type?.toUpperCase(),
     });
     if (!findOnePost)

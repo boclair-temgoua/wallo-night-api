@@ -46,8 +46,7 @@ export class CommentsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { user } = req;
-    const { postId, userId } = query;
+    const { postId, likeUserId } = query;
     const { search } = searchQuery;
 
     if (postId) {
@@ -68,7 +67,7 @@ export class CommentsController {
       search,
       pagination,
       postId,
-      userId: userId,
+      likeUserId: likeUserId,
     });
 
     return reply({ res, results: comments });
@@ -83,7 +82,7 @@ export class CommentsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { commentId, userId } = query;
+    const { commentId, likeUserId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -101,7 +100,7 @@ export class CommentsController {
     const comments = await this.commentsService.findAll({
       search,
       pagination,
-      userId: userId,
+      likeUserId: likeUserId,
       parentId: findOneComment?.id,
     });
 

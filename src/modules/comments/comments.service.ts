@@ -26,7 +26,8 @@ export class CommentsService {
   ) {}
 
   async findAll(selections: GetCommentsSelections): Promise<any> {
-    const { search, pagination, postId, parentId, userId } = selections;
+    const { search, pagination, postId, parentId, userId, likeUserId } =
+      selections;
 
     let query = this.driver
       .createQueryBuilder('comment')
@@ -60,7 +61,7 @@ export class CommentsService {
       )
       .where('comment.deletedAt IS NULL');
 
-    if (userId) {
+    if (likeUserId) {
       query = query.addSelect(/*sql*/ `(
                 SELECT
                     CAST(COUNT(DISTINCT lk) AS INT)
@@ -68,7 +69,7 @@ export class CommentsService {
                 WHERE ("lk"."type" IN ('COMMENT')
                  AND "lk"."deletedAt" IS NULL
                  AND "lk"."likeableId" = "comment"."id"
-                 AND "lk"."userId" IN ('${userId}'))
+                 AND "lk"."userId" IN ('${likeUserId}'))
                  GROUP BY "lk"."likeableId", "comment"."id"
                 ) AS "isLike"`);
     }
