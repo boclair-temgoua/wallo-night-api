@@ -45,6 +45,7 @@ export class PostsService {
       .addSelect('post.slug', 'slug')
       .addSelect('post.image', 'image')
       .addSelect('post.allowDownload', 'allowDownload')
+      .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.whoCanSee', 'whoCanSee')
@@ -144,7 +145,7 @@ export class PostsService {
   }
 
   async findOneBy(selections: GetOnePostSelections): Promise<Post> {
-    const { postId, userId, type } = selections;
+    const { postId, userId, postSlug, type } = selections;
     let query = this.driver
       .createQueryBuilder('post')
       .select('post.title', 'title')
@@ -153,6 +154,7 @@ export class PostsService {
       .addSelect('post.slug', 'slug')
       .addSelect('post.image', 'image')
       .addSelect('post.allowDownload', 'allowDownload')
+      .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.whoCanSee', 'whoCanSee')
@@ -195,7 +197,8 @@ export class PostsService {
       .leftJoin('user.profile', 'profile');
 
     if (userId) {
-      query = query.addSelect(/*sql*/ `(
+      query = query.andWhere('post.userId = :userId', { userId })
+        .addSelect(/*sql*/ `(
             SELECT
                 CAST(COUNT(DISTINCT lk) AS INT)
             FROM "like" "lk"
@@ -215,6 +218,10 @@ export class PostsService {
       query = query.andWhere('post.id = :id', {
         id: postId,
       });
+    }
+
+    if (postSlug) {
+      query = query.andWhere('post.slug = :slug', { slug: postSlug });
     }
 
     const [error, result] = await useCatch(query.getRawOne());

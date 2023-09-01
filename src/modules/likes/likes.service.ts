@@ -22,19 +22,22 @@ export class LikesService {
     private driver: Repository<Like>,
   ) {}
 
-  /** Create one Like to the database. */
-  async createOne(options: CreateLikeOptions): Promise<Like> {
-    const { likeableId, type, userId } = options;
+  /** Find all Like to the database. */
+  async findAllBy(selections: GetOneLikeSelections): Promise<Like[]> {
+    const { type, likeableId, userId } = selections;
+    let query = this.driver
+      .createQueryBuilder('like')
+      .where('like.deletedAt IS NULL');
 
-    const like = new Like();
-    like.type = type;
-    like.userId = userId;
-    like.likeableId = likeableId;
+    if (type && likeableId && userId) {
+      query = query
+        .andWhere('like.type = :type', { type })
+        .andWhere('like.userId = :userId', { userId })
+        .andWhere('like.likeableId = :likeableId', { likeableId });
+    }
 
-    const query = this.driver.save(like);
-
-    const [error, result] = await useCatch(query);
-    if (error) throw new NotFoundException(error);
+    const [error, result] = await useCatch(query.getMany());
+    if (error) throw new HttpException('like not found', HttpStatus.NOT_FOUND);
 
     return result;
   }
@@ -55,6 +58,23 @@ export class LikesService {
 
     const [error, result] = await useCatch(query.getOne());
     if (error) throw new HttpException('like not found', HttpStatus.NOT_FOUND);
+
+    return result;
+  }
+
+  /** Create one Like to the database. */
+  async createOne(options: CreateLikeOptions): Promise<Like> {
+    const { likeableId, type, userId } = options;
+
+    const like = new Like();
+    like.type = type;
+    like.userId = userId;
+    like.likeableId = likeableId;
+
+    const query = this.driver.save(like);
+
+    const [error, result] = await useCatch(query);
+    if (error) throw new NotFoundException(error);
 
     return result;
   }

@@ -38,7 +38,7 @@ export class CommentsController {
 
   /** Get all Comments */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async findAllComments(
     @Res() res,
     @Req() req,
@@ -47,7 +47,7 @@ export class CommentsController {
     @Query() query: CommentsDto,
   ) {
     const { user } = req;
-    const { postId } = query;
+    const { postId, userId } = query;
     const { search } = searchQuery;
 
     if (postId) {
@@ -68,22 +68,22 @@ export class CommentsController {
       search,
       pagination,
       postId,
-      userId: user?.id,
+      userId: userId,
     });
 
     return reply({ res, results: comments });
   }
 
   @Get(`/replies`)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async findAllCommentsReplies(
     @Res() res,
     @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Query('commentId', ParseUUIDPipe) commentId: string,
+    @Query() query: CommentsDto,
   ) {
-    const { user } = req;
+    const { commentId, userId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -101,7 +101,7 @@ export class CommentsController {
     const comments = await this.commentsService.findAll({
       search,
       pagination,
-      userId: user?.id,
+      userId: userId,
       parentId: findOneComment?.id,
     });
 

@@ -50,22 +50,21 @@ export class LikesController {
     const { user } = req;
     const { type, likeableId } = params;
 
-    const findOneLike = await this.likesService.findOneBy({
+    const likes = await this.likesService.findAllBy({
       type,
       likeableId,
       userId: user?.id,
     });
-    if (!findOneLike)
-      throw new HttpException(
-        `This like ${likeableId} dons't exist please change`,
-        HttpStatus.NOT_FOUND,
-      );
 
-    await this.likesService.updateOne(
-      { likeId: findOneLike?.id },
-      { deletedAt: new Date() },
-    );
-
+    Promise.all([
+      likes.map(async (like) => {
+        await this.likesService.updateOne(
+          { likeId: like?.id },
+          { deletedAt: new Date() },
+        );
+      }),
+    ]);
+    
     return reply({ res, results: `like deleted successfully` });
   }
 }

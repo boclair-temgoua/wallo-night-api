@@ -1,4 +1,7 @@
-import { WhoCanSeeType, whoCanSeeTypeArrays } from '../../app/utils/search-query/search-query.dto';
+import {
+  WhoCanSeeType,
+  whoCanSeeTypeArrays,
+} from '../../app/utils/search-query/search-query.dto';
 import {
   IsString,
   IsNotEmpty,
@@ -7,6 +10,7 @@ import {
   IsBoolean,
   IsOptional,
   IsIn,
+  IsUUID,
 } from 'class-validator';
 import { PostType, postTypeArrays } from './posts.type';
 
@@ -53,7 +57,7 @@ export class CreateOrUpdatePostsDto {
 
   @IsOptional()
   @IsString()
-  urlMedia: string; 
+  urlMedia: string;
 
   @IsNotEmpty()
   @IsString()
@@ -73,7 +77,27 @@ export class CreateOrUpdatePostsDto {
   @MaxLength(200)
   title: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
+}
+
+export class GetOnePostDto {
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  postId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
+
+  @IsOptional()
+  @IsString()
+  postSlug: string;
+
+  @IsOptional()
+  @IsString()
+  type: string;
 }

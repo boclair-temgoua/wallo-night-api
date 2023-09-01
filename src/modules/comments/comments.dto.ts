@@ -26,4 +26,14 @@ export class CommentsDto {
   @IsString()
   @IsUUID()
   postId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  commentId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
 }

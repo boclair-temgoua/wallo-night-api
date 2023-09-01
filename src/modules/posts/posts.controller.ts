@@ -24,6 +24,7 @@ import {
   CreateOrUpdatePostsDto,
   CreateOrUpdatePostsGalleriesDto,
   GetGalleriesDto,
+  GetOnePostDto,
 } from './posts.dto';
 import { JwtAuthGuard } from '../users/middleware';
 
@@ -108,23 +109,24 @@ export class PostsController {
     return reply({ res, results: posts });
   }
 
-  /** Get one Post */
-  @Get(`/show/:postId`)
-  @UseGuards(JwtAuthGuard)
-  async getOneByUUID(
-    @Res() res,
-    @Req() req,
-    @Param('postId', ParseUUIDPipe) postId: string,
-    @Query('type') type: string,
-  ) {
-    const { user } = req;
-    const post = await this.postsService.findOneBy({
-      postId,
-      userId: user?.id,
-      type: type.toUpperCase(),
-    });
+  /** Get one Posts */
+  @Get(`/view`)
+  async getOne(@Res() res, @Query() query: GetOnePostDto) {
+    const { postId, userId, type, postSlug } = query;
 
-    return reply({ res, results: post });
+    const findOnePost = await this.postsService.findOneBy({
+      postId,
+      postSlug,
+      userId,
+      type: type?.toUpperCase(),
+    });
+    if (!findOnePost)
+      throw new HttpException(
+        `Post ${postId} ${postSlug} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    return reply({ res, results: findOnePost });
   }
 
   /** Post one Galleries */

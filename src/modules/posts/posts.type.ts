@@ -16,6 +16,7 @@ export type GetPostsSelections = {
 export type GetOnePostSelections = {
   postId: Post['id'];
   type?: string;
+  postSlug?: string;
   userId?: Post['userId'];
 };
 
