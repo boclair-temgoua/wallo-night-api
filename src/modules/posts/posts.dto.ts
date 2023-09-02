@@ -39,12 +39,6 @@ export class CreateOrUpdatePostsGalleriesDto {
   type: PostType;
 }
 
-export class GetGalleriesDto {
-  @IsOptional()
-  @IsString()
-  @IsIn(postTypeArrays)
-  type: PostType;
-}
 export class CreateOrUpdatePostsDto {
   @IsNotEmpty()
   @IsString()
@@ -105,4 +99,16 @@ export class GetOnePostDto {
   @IsOptional()
   @IsString()
   type: string;
+}
+
+export class GetGalleriesDto {
+  @IsOptional()
+  @IsString()
+  @IsIn(postTypeArrays)
+  type: PostType;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
 }

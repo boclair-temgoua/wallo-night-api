@@ -89,22 +89,23 @@ export class UsersController {
 
   @Get(`/view`)
   async getOneByIdUserPublic(@Res() res, @Query() query: GetOneUserDto) {
-    const { userId, username } = query;
+    const { userId, username, followerId } = query;
 
     const findOneUser = await this.usersService.findOnePublicBy({
       userId,
       username,
+      followerId,
     });
 
     if (!findOneUser)
       throw new HttpException(
-        `User ${userId || username} not valid please change`,
+        `User ${userId || username || followerId} not valid please change`,
         HttpStatus.NOT_FOUND,
       );
 
     return reply({
       res,
-      results: { ...findOneUser },
+      results: findOneUser,
     });
   }
 

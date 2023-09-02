@@ -99,13 +99,18 @@ export class PostsController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { type } = query;
+    const { type, userId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const posts = await this.postsService.findAll({ search, pagination, type });
+    const posts = await this.postsService.findAll({
+      search,
+      pagination,
+      type,
+      userId,
+    });
 
     return reply({ res, results: posts });
   }

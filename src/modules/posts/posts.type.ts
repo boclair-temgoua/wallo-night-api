@@ -12,6 +12,7 @@ export type GetPostsSelections = {
   userId?: Post['userId'];
   likeUserId?: Post['userId'];
   followerIds?: string[];
+  typeIds?: [];
 };
 
 export type GetOnePostSelections = {

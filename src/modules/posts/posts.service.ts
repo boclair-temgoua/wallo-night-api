@@ -35,7 +35,15 @@ export class PostsService {
   async findAll(
     selections: GetPostsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, userId, type,likeUserId, followerIds } = selections;
+    const {
+      search,
+      pagination,
+      userId,
+      type,
+      likeUserId,
+      followerIds,
+      typeIds,
+    } = selections;
 
     let query = this.driver
       .createQueryBuilder('post')
@@ -103,6 +111,10 @@ export class PostsService {
       query = query.andWhere('post.userId IN (:...followerIds)', {
         followerIds,
       });
+    }
+
+    if (typeIds && typeIds.length > 0) {
+      query = query.andWhere('post.type IN (:...typeIds)', { typeIds });
     }
 
     if (userId) {
