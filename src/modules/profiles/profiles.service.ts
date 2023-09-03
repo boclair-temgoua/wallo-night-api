@@ -103,23 +103,23 @@ export class ProfilesService {
       });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, profile] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.image = image;
-    findItem.url = url;
-    findItem.phone = phone;
-    findItem.color = color;
-    findItem.description = description;
-    findItem.firstAddress = firstAddress;
-    findItem.secondAddress = secondAddress;
-    findItem.birthday = birthday;
-    findItem.countryId = countryId;
-    findItem.fullName = fullName;
-    findItem.currencyId = currencyId;
-    findItem.deletedAt = deletedAt;
+    profile.image = image;
+    profile.url = url;
+    profile.phone = phone;
+    profile.color = color;
+    profile.description = description;
+    profile.firstAddress = firstAddress;
+    profile.secondAddress = secondAddress;
+    profile.birthday = birthday;
+    profile.countryId = countryId;
+    profile.fullName = fullName;
+    profile.currencyId = currencyId;
+    profile.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(profile);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);

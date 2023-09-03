@@ -87,12 +87,12 @@ export class UploadsService {
       findQuery = findQuery.where('upload.id = :id', { id: uploadId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, upload] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.deletedAt = deletedAt;
+    upload.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(upload);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);
@@ -111,9 +111,9 @@ export class UploadsService {
       findQuery = findQuery.where('upload.id = :id', { id: uploadId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.execute());
+    const [errorFind, upload] = await useCatch(findQuery.execute());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    return findItem;
+    return upload;
   }
 }

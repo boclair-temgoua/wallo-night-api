@@ -202,21 +202,21 @@ export class MembershipsService {
       findQuery = findQuery.where('membership.id = :id', { id: membershipId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, membership] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.title = title;
-    findItem.image = image;
-    findItem.isActive = isActive;
-    findItem.description = description;
-    findItem.messageWelcome = messageWelcome;
-    findItem.pricePerMonthly = pricePerMonthly;
-    findItem.pricePerYearly = pricePerYearly;
-    findItem.currencyId = currencyId;
-    findItem.userId = userId;
-    findItem.deletedAt = deletedAt;
+    membership.title = title;
+    membership.image = image;
+    membership.isActive = isActive;
+    membership.description = description;
+    membership.messageWelcome = messageWelcome;
+    membership.pricePerMonthly = pricePerMonthly;
+    membership.pricePerYearly = pricePerYearly;
+    membership.currencyId = currencyId;
+    membership.userId = userId;
+    membership.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(membership);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);

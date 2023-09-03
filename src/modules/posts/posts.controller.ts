@@ -73,6 +73,7 @@ export class PostsController {
       userId: user?.id,
     });
 
+
     followings.forEach((element) => {
       userFollows.push(element?.followerId);
     });
@@ -83,7 +84,6 @@ export class PostsController {
     const posts = await this.postsService.findAll({
       search,
       pagination,
-      userId: user?.id,
       likeUserId: user?.id,
       followerIds: [...userFollows, user?.id],
     });

@@ -82,12 +82,12 @@ export class WalletsService {
       findQuery = findQuery.where('wallet.userId = :userId', { userId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, wallet] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.amount = amount;
+    wallet.amount = amount;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(wallet);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);

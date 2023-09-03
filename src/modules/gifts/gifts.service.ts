@@ -198,19 +198,19 @@ export class GiftsService {
       findQuery = findQuery.where('gift.id = :id', { id: giftId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, gift] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.title = title;
-    findItem.amount = amount * 100;
-    findItem.isActive = isActive;
-    findItem.image = image;
-    findItem.currencyId = currencyId;
-    findItem.description = description;
-    findItem.expiredAt = expiredAt;
-    findItem.deletedAt = deletedAt;
+    gift.title = title;
+    gift.amount = amount * 100;
+    gift.isActive = isActive;
+    gift.image = image;
+    gift.currencyId = currencyId;
+    gift.description = description;
+    gift.expiredAt = expiredAt;
+    gift.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(gift);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);

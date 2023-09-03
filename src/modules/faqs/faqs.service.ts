@@ -132,16 +132,16 @@ export class FaqsService {
       findQuery = findQuery.where('faq.id = :id', { id: faqId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, faq] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.title = title;
-    findItem.description = description;
-    findItem.status = status;
-    findItem.type = type;
-    findItem.deletedAt = deletedAt;
+    faq.title = title;
+    faq.description = description;
+    faq.status = status;
+    faq.type = type;
+    faq.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(faq);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);

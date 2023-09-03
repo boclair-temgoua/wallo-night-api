@@ -355,21 +355,21 @@ export class UsersService {
       findQuery = findQuery.where('user.profileId = :profileId', { profileId });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, user] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.email = email;
-    findItem.username = username;
+    user.email = email;
+    user.username = username;
     if (password) {
-      findItem.hashPassword(password);
+      user.hashPassword(password);
     }
-    findItem.accessToken = accessToken;
-    findItem.nextStep = nextStep;
-    findItem.refreshToken = refreshToken;
-    findItem.deletedAt = deletedAt;
-    findItem.confirmedAt = confirmedAt;
+    user.accessToken = accessToken;
+    user.nextStep = nextStep;
+    user.refreshToken = refreshToken;
+    user.deletedAt = deletedAt;
+    user.confirmedAt = confirmedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(user);
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);
 

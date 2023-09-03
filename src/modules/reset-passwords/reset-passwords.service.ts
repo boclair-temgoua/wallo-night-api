@@ -73,12 +73,12 @@ export class ResetPasswordsService {
       findQuery = findQuery.where('resetPassword.token = :token', { token });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, resetPassword] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.deletedAt = deletedAt;
+    resetPassword.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(resetPassword);
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);
 

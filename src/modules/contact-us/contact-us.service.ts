@@ -138,13 +138,13 @@ export class ContactUsService {
       });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, contactUs] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.isRed = isRed;
-    findItem.deletedAt = deletedAt;
+    contactUs.isRed = isRed;
+    contactUs.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(contactUs);
 
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);
