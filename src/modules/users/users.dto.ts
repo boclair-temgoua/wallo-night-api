@@ -189,6 +189,16 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   @MaxLength(50)
+  firstName: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  lastName: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
   username: string;
 
   @IsOptional()

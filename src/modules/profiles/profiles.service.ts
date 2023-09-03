@@ -44,6 +44,8 @@ export class ProfilesService {
   async createOne(options: CreateProfileOptions): Promise<Profile> {
     const {
       fullName,
+      firstName,
+      lastName,
       currencyId,
       countryId,
       url,
@@ -58,6 +60,8 @@ export class ProfilesService {
     profile.image = image;
     profile.fullName = fullName;
     profile.phone = phone;
+    profile.firstName = firstName;
+    profile.lastName = lastName;
     profile.firstAddress = firstAddress;
     profile.secondAddress = secondAddress;
     profile.birthday = birthday;
@@ -82,6 +86,8 @@ export class ProfilesService {
     const { profileId } = selections;
     const {
       fullName,
+      firstName,
+      lastName,
       currencyId,
       countryId,
       image,
@@ -110,6 +116,8 @@ export class ProfilesService {
     profile.url = url;
     profile.phone = phone;
     profile.color = color;
+    profile.firstName = firstName;
+    profile.lastName = lastName;
     profile.description = description;
     profile.firstAddress = firstAddress;
     profile.secondAddress = secondAddress;
