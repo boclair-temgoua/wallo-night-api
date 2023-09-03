@@ -73,7 +73,6 @@ export class PostsController {
       userId: user?.id,
     });
 
-
     followings.forEach((element) => {
       userFollows.push(element?.followerId);
     });
@@ -99,7 +98,7 @@ export class PostsController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { type, userId } = query;
+    const { type, userId, likeUserId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -110,6 +109,7 @@ export class PostsController {
       pagination,
       type,
       userId,
+      likeUserId,
     });
 
     return reply({ res, results: posts });
