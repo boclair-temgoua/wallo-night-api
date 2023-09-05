@@ -116,4 +116,8 @@ export class GetGalleriesDto {
   @IsString()
   @IsUUID()
   likeUserId: string;
+
+  @IsOptional()
+  @IsString()
+  typeIds: string;
 }

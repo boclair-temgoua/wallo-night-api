@@ -98,7 +98,7 @@ export class PostsController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { type, userId, likeUserId } = query;
+    const { type, userId, likeUserId, typeIds } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -110,6 +110,7 @@ export class PostsController {
       type,
       userId,
       likeUserId,
+      typeIds: typeIds ? (String(typeIds).split(',') as []) : null,
     });
 
     return reply({ res, results: posts });
