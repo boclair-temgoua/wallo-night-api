@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../users/middleware';
 import { UploadsService } from './uploads.service';
 import { getFileToAws } from '../integrations/aws/aws-s3-service-adapter';
 import { UploadsDto } from './uploads.dto';
+import { Readable } from 'stream';
 
 @Controller('uploads')
 export class UploadsController {
@@ -45,9 +46,7 @@ export class UploadsController {
 
     Promise.all(
       uploads.map(async (upload) => {
-        await this.uploadsService.deleteOne(
-          { uploadId: upload?.uid },
-        );
+        await this.uploadsService.deleteOne({ uploadId: upload?.uid });
       }),
     );
 
@@ -104,6 +103,34 @@ export class UploadsController {
       res.contentType(contentType);
       res.set('Cross-Origin-Resource-Policy', 'cross-origin');
       res.send(fileBuffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Erreur lors de la récupération de l'image.");
+    }
+  }
+
+  /** Get on file upload */
+  @Get(`/download/:folder/:fileName`)
+  async getOneFileUploadDownload(
+    @Res() res,
+    @Param('folder') folder: string,
+    @Param('fileName') fileName: string,
+  ) {
+    try {
+      const { fileBuffer, contentType } = await getFileToAws({
+        folder,
+        fileName,
+      });
+      const readStream = Readable.from([fileBuffer]);
+
+      res.status(200);
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${fileName}"`,
+      );
+      res.contentType(contentType);
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      readStream.pipe(res);
     } catch (error) {
       console.error(error);
       res.status(500).send("Erreur lors de la récupération de l'image.");

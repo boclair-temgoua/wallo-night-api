@@ -127,7 +127,6 @@ export class PostsController {
     @Query() query: GetOnePostDto,
     @Cookies('x-cookies-login') user: any,
   ) {
-    console.log('user ==========>', user);
     const { postId, userId, type, postSlug } = query;
 
     const findOnePost = await this.postsService.findOneBy({
@@ -361,7 +360,6 @@ export class PostsController {
 
   /** Get on file gallery */
   @Get(`/gallery/:fileName`)
-  // @UseGuards(JwtAuthGuard)
   async getOneFilePostGallery(@Res() res, @Param('fileName') fileName: string) {
     try {
       const { fileBuffer, contentType } = await getFileToAws({

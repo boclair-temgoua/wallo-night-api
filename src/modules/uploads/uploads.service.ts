@@ -29,10 +29,10 @@ export class UploadsService {
     let query = this.driver
       .createQueryBuilder('upload')
       .select('upload.id', 'uid')
+      .addSelect('upload.url', 'url')
       .addSelect('upload.name', 'name')
       .addSelect('upload.path', 'path')
       .addSelect('upload.status', 'status')
-      .addSelect('upload.url', 'url')
       .addSelect('upload.uploadType', 'uploadType')
       .addSelect('upload.productId', 'productId')
       .where('upload.deletedAt IS NULL');
@@ -100,9 +100,7 @@ export class UploadsService {
     return result;
   }
   /** Delete one Upload to the database. */
-  async deleteOne(
-    selections: UpdateUploadSelections,
-  ): Promise<any> {
+  async deleteOne(selections: UpdateUploadSelections): Promise<any> {
     const { uploadId } = selections;
 
     let findQuery = this.driver.createQueryBuilder('upload').delete();
