@@ -256,10 +256,5 @@ export class GetOneUserDto {
 
   @IsOptional()
   @IsString()
-  @IsUUID()
-  followerId: string;
-
-  @IsOptional()
-  @IsString()
   username: string;
 }

@@ -47,6 +47,7 @@ import * as mime from 'mime-types';
 import { CategoriesService } from '../categories/categories.service';
 import { PostCategoriesService } from '../post-categories/post-categories.service';
 import { FollowsService } from '../follows/follows.service';
+import { Cookies } from '../users/middleware/cookie.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -94,11 +95,13 @@ export class PostsController {
   @Get(`/`)
   async findAll(
     @Res() res,
+    @Req() req,
     @Query() query: GetGalleriesDto,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
+    @Cookies('x-cookies-login') user: any,
   ) {
-    const { type, userId, likeUserId, typeIds } = query;
+    const { type, userId, typeIds } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -109,7 +112,7 @@ export class PostsController {
       pagination,
       type,
       userId,
-      likeUserId,
+      likeUserId: user?.id,
       typeIds: typeIds ? (String(typeIds).split(',') as []) : null,
     });
 
@@ -118,14 +121,20 @@ export class PostsController {
 
   /** Get one Posts */
   @Get(`/view`)
-  async getOne(@Res() res, @Query() query: GetOnePostDto) {
-    const { postId, userId, likeUserId, type, postSlug } = query;
+  async getOne(
+    @Res() res,
+    @Req() req,
+    @Query() query: GetOnePostDto,
+    @Cookies('x-cookies-login') user: any,
+  ) {
+    console.log('user ==========>', user);
+    const { postId, userId, type, postSlug } = query;
 
     const findOnePost = await this.postsService.findOneBy({
       postId,
       postSlug,
       userId,
-      likeUserId,
+      likeUserId: user?.id,
       type: type?.toUpperCase(),
     });
     if (!findOnePost)

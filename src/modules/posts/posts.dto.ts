@@ -89,11 +89,6 @@ export class GetOnePostDto {
 
   @IsOptional()
   @IsString()
-  @IsUUID()
-  likeUserId: string;
-
-  @IsOptional()
-  @IsString()
   postSlug: string;
 
   @IsOptional()
@@ -111,11 +106,6 @@ export class GetGalleriesDto {
   @IsString()
   @IsUUID()
   userId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  likeUserId: string;
 
   @IsOptional()
   @IsString()

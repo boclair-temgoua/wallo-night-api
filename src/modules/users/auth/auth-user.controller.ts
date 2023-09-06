@@ -35,10 +35,7 @@ import { CheckUserService } from '../middleware/check-user.service';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
 import { config } from '../../../app/config/index';
-import {
-  authCodeConfirmationJob,
-  authPasswordResetJob,
-} from '../users.job';
+import { authCodeConfirmationJob, authPasswordResetJob } from '../users.job';
 import { WalletsService } from '../../wallets/wallets.service';
 import {
   dateTimeNowUtc,
@@ -49,6 +46,7 @@ import { JwtAuthGuard } from '../middleware';
 import {
   expire_cookie_setting,
   validation_code_verification_cookie_setting,
+  validation_login_cookie_setting,
 } from '../../../app/utils/cookies';
 
 @Controller()
@@ -155,6 +153,8 @@ export class AuthUserController {
 
     const refreshToken =
       await this.checkUserService.createJwtTokens(jwtPayload);
+
+    res.cookie('x-cookies-login', jwtPayload, validation_login_cookie_setting);
 
     return reply({
       res,

@@ -13,11 +13,11 @@ export const config = {
   cookieKey: process.env.COOKIE_KEY || '@3%NE8IksyHK4yC5POFurDCAVW@FqxBe',
   cookie_access: {
     user: {
-      accessExpire: process.env.USER_ACCESS_EXPIRE || '1200000',
-      refreshExpire: process.env.USER_REFRESH_EXPIRE || '86400000',
-      firstStepExpire: process.env.USER_FIRST_STEP_EXPIRE || '300000',
-      verificationExpire: process.env.VERIFICATION_EXPIRE || '300000',
-      validationTokenExpire: process.env.USER_VALIDATION_TOKEN_EXPIRE,
+      accessExpire: process.env.COOKIE_ACCESS_EXPIRE || '86400000',
+      refreshExpire: process.env.COOKIE_REFRESH_EXPIRE || '96400000',
+      firstStepExpire: process.env.COOKIE_FIRST_STEP_EXPIRE || '300000',
+      verificationExpire: process.env.COOKIE_VERIFICATION_EXPIRE || '300000',
+      validationTokenExpire: process.env.COOKIE_VALIDATION_TOKEN_EXPIRE,
     },
   },
   /**

@@ -28,6 +28,7 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 import { PostsService } from '../posts/posts.service';
+import { Cookies } from '../users/middleware/cookie.guard';
 
 @Controller('comments')
 export class CommentsController {
@@ -38,15 +39,15 @@ export class CommentsController {
 
   /** Get all Comments */
   @Get(`/`)
-  // @UseGuards(JwtAuthGuard)
   async findAllComments(
     @Res() res,
     @Req() req,
+    @Cookies('x-cookies-login') user: any,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { postId, likeUserId } = query;
+    const { postId } = query;
     const { search } = searchQuery;
 
     if (postId) {
@@ -67,22 +68,22 @@ export class CommentsController {
       search,
       pagination,
       postId,
-      likeUserId: likeUserId,
+      likeUserId: user?.id,
     });
 
     return reply({ res, results: comments });
   }
 
   @Get(`/replies`)
-  // @UseGuards(JwtAuthGuard)
   async findAllCommentsReplies(
     @Res() res,
     @Req() req,
+    @Cookies('x-cookies-login') user: any,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { commentId, likeUserId } = query;
+    const { commentId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -100,7 +101,7 @@ export class CommentsController {
     const comments = await this.commentsService.findAll({
       search,
       pagination,
-      likeUserId: likeUserId,
+      likeUserId: user?.id,
       parentId: findOneComment?.id,
     });
 

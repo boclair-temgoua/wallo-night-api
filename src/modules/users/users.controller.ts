@@ -29,6 +29,7 @@ import {
   UpdateProfileDto,
 } from './users.dto';
 import { ContributorsService } from '../contributors/contributors.service';
+import { Cookies } from './middleware/cookie.guard';
 
 @Controller('users')
 export class UsersController {
@@ -88,18 +89,22 @@ export class UsersController {
   }
 
   @Get(`/view`)
-  async getOneByIdUserPublic(@Res() res, @Query() query: GetOneUserDto) {
-    const { userId, username, followerId } = query;
+  async getOneByIdUserPublic(
+    @Res() res,
+    @Query() query: GetOneUserDto,
+    @Cookies('x-cookies-login') user: any,
+  ) {
+    const { userId, username } = query;
 
     const findOneUser = await this.usersService.findOnePublicBy({
       userId,
       username,
-      followerId,
+      followerId: user?.id,
     });
 
     if (!findOneUser)
       throw new HttpException(
-        `User ${userId || username || followerId} not valid please change`,
+        `User ${userId || username} not valid please change`,
         HttpStatus.NOT_FOUND,
       );
 

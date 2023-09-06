@@ -36,9 +36,4 @@ export class CommentsDto {
   @IsString()
   @IsUUID()
   userId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  likeUserId: string;
 }
