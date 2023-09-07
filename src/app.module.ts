@@ -32,6 +32,7 @@ import { PostCategoriesModule } from './modules/post-categories/post-categories.
 import { FollowsModule } from './modules/follows/follows.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { CommissionsModule } from './modules/commissions/commissions.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     FollowsModule,
     LikesModule,
     UploadsModule,
+    CommissionsModule,
     PostCategoriesModule,
     WithdrawalUsersModule,
     ContributionsModule,

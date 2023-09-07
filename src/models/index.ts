@@ -21,6 +21,7 @@ export * from './Faq';
 export * from './Gift';
 export * from './OrderProduct';
 export * from './Product';
+export * from './Commission';
 export * from './Profile';
 export * from './Project';
 export * from './ResetPassword';
