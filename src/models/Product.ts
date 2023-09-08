@@ -46,7 +46,7 @@ export class Product extends BaseDeleteEntity {
   description: string;
 
   @Column({ type: 'text', nullable: true })
-  messageAfterPurchase: string;
+  messageAfterPayment: string;
 
   @Column({ nullable: true })
   moreDescription: string;

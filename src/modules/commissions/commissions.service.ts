@@ -40,7 +40,7 @@ export class CommissionsService {
       .addSelect('commission.description', 'description')
       .addSelect('commission.isLimitSlot', 'isLimitSlot')
       .addSelect('commission.limitSlot', 'limitSlot')
-      .addSelect('commission.messageAfterPurchase', 'messageAfterPurchase')
+      .addSelect('commission.messageAfterPayment', 'messageAfterPayment')
       .addSelect('commission.status', 'status')
       .addSelect('commission.currencyId', 'currencyId')
       .addSelect(
@@ -117,7 +117,7 @@ export class CommissionsService {
       .addSelect('commission.description', 'description')
       .addSelect('commission.isLimitSlot', 'isLimitSlot')
       .addSelect('commission.limitSlot', 'limitSlot')
-      .addSelect('commission.messageAfterPurchase', 'messageAfterPurchase')
+      .addSelect('commission.messageAfterPayment', 'messageAfterPayment')
       .addSelect('commission.status', 'status')
       .addSelect('commission.currencyId', 'currencyId')
       .addSelect(
@@ -167,7 +167,7 @@ export class CommissionsService {
       urlMedia,
       price,
       description,
-      messageAfterPurchase,
+      messageAfterPayment,
       status,
       currencyId,
       limitSlot,
@@ -183,7 +183,7 @@ export class CommissionsService {
     commission.currencyId = currencyId;
     commission.limitSlot = limitSlot;
     commission.isLimitSlot = isLimitSlot;
-    commission.messageAfterPurchase = messageAfterPurchase;
+    commission.messageAfterPayment = messageAfterPayment;
     commission.urlMedia = urlMedia;
     commission.description = description;
     commission.userId = userId;
@@ -208,7 +208,7 @@ export class CommissionsService {
       urlMedia,
       price,
       description,
-      messageAfterPurchase,
+      messageAfterPayment,
       status,
       limitSlot,
       isLimitSlot,
@@ -232,7 +232,7 @@ export class CommissionsService {
     commission.currencyId = currencyId;
     commission.limitSlot = limitSlot;
     commission.isLimitSlot = isLimitSlot;
-    commission.messageAfterPurchase = messageAfterPurchase;
+    commission.messageAfterPayment = messageAfterPayment;
     commission.urlMedia = urlMedia;
     commission.description = description;
     commission.deletedAt = deletedAt;

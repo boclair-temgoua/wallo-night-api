@@ -40,7 +40,7 @@ export class Commission extends BaseDeleteEntity {
   limitSlot: number;
 
   @Column({ type: 'text', nullable: true })
-  messageAfterPurchase: string;
+  messageAfterPayment: string;
 
   @Column({ default: 'ACTIVE' })
   status?: StatusCommission;

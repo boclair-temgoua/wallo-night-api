@@ -27,15 +27,15 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
-  limitSlot: string
+  limitSlot: string;
 
   @IsOptional()
   @IsString()
-  isLimitSlot: string
+  isLimitSlot: string;
 
   @IsOptional()
   @IsString()
-  enableDiscount: string
+  enableDiscount: string;
 
   @IsOptional()
   @IsString()
@@ -47,7 +47,7 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
-  messageAfterPurchase: string;
+  messageAfterPayment: string;
 
   @IsNotEmpty()
   @IsString()

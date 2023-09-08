@@ -96,7 +96,7 @@ export class CommissionsController {
       urlMedia,
       limitSlot,
       isLimitSlot,
-      messageAfterPurchase,
+      messageAfterPayment,
     } = body;
     const { user } = req;
 
@@ -105,7 +105,7 @@ export class CommissionsController {
       price: Number(price),
       urlMedia,
       description,
-      messageAfterPurchase,
+      messageAfterPayment,
       currencyId: user?.profile?.currencyId,
       userId: user?.id,
       limitSlot: Number(limitSlot),
@@ -139,7 +139,7 @@ export class CommissionsController {
       urlMedia,
       limitSlot,
       isLimitSlot,
-      messageAfterPurchase,
+      messageAfterPayment,
     } = body;
     const { user } = req;
 
@@ -160,7 +160,7 @@ export class CommissionsController {
         price: Number(price),
         urlMedia,
         description,
-        messageAfterPurchase,
+        messageAfterPayment,
         currencyId: user?.profile?.currencyId,
         limitSlot: Number(limitSlot),
         isLimitSlot: isLimitSlot === 'true' ? true : false,
@@ -188,7 +188,7 @@ export class CommissionsController {
     @Param('commissionId', ParseUUIDPipe) commissionId: string,
   ) {
     const { user } = req;
-    const { title, price, description, messageAfterPurchase, urlMedia } = body;
+    const { title, price, description, messageAfterPayment, urlMedia } = body;
     const attachment = req.file;
     let fileName;
 
@@ -224,7 +224,7 @@ export class CommissionsController {
         urlMedia,
         description,
         image: fileName,
-        messageAfterPurchase,
+        messageAfterPayment,
       },
     );
 

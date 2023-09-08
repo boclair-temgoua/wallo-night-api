@@ -37,7 +37,7 @@ export class ProductsService {
       .addSelect('product.slug', 'slug')
       .addSelect('product.userId', 'userId')
       .addSelect('product.urlMedia', 'urlMedia')
-      .addSelect('product.messageAfterPurchase', 'messageAfterPurchase')
+      .addSelect('product.messageAfterPayment', 'messageAfterPayment')
       .addSelect('product.sku', 'sku')
       .addSelect('product.description', 'description')
       .addSelect('product.moreDescription', 'moreDescription')
@@ -153,7 +153,7 @@ export class ProductsService {
       .addSelect('product.slug', 'slug')
       .addSelect('product.userId', 'userId')
       .addSelect('product.urlMedia', 'urlMedia')
-      .addSelect('product.messageAfterPurchase', 'messageAfterPurchase')
+      .addSelect('product.messageAfterPayment', 'messageAfterPayment')
       .addSelect('product.sku', 'sku')
       .addSelect('product.description', 'description')
       .addSelect('product.moreDescription', 'moreDescription')
@@ -280,7 +280,7 @@ export class ProductsService {
       urlMedia,
       isLimitSlot,
       enableDiscount,
-      messageAfterPurchase,
+      messageAfterPayment,
       isChooseQuantity,
       userId,
     } = options;
@@ -299,7 +299,7 @@ export class ProductsService {
     product.isLimitSlot = isLimitSlot;
     product.enableDiscount = enableDiscount;
     product.isChooseQuantity = isChooseQuantity;
-    product.messageAfterPurchase = messageAfterPurchase;
+    product.messageAfterPayment = messageAfterPayment;
     product.urlMedia = urlMedia;
     product.slug = `${Slug(title)}-${generateNumber(4)}`;
     product.description = description;
@@ -335,7 +335,7 @@ export class ProductsService {
       limitSlot,
       isLimitSlot,
       enableDiscount,
-      messageAfterPurchase,
+      messageAfterPayment,
       isChooseQuantity,
     } = options;
 
@@ -361,7 +361,7 @@ export class ProductsService {
     product.isLimitSlot = isLimitSlot;
     product.enableDiscount = enableDiscount;
     product.isChooseQuantity = isChooseQuantity;
-    product.messageAfterPurchase = messageAfterPurchase;
+    product.messageAfterPayment = messageAfterPayment;
     product.urlMedia = urlMedia;
     product.description = description;
     product.deletedAt = deletedAt;

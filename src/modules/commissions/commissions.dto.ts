@@ -34,7 +34,7 @@ export class CreateOrUpdateCommissionsDto {
 
   @IsOptional()
   @IsString()
-  messageAfterPurchase: string;
+  messageAfterPayment: string;
 
   @IsNotEmpty()
   @IsString()
