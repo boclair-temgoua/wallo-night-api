@@ -62,4 +62,8 @@ export class GetCommissionsDto {
   @IsString()
   @IsUUID()
   userId: string;
+
+  @IsOptional()
+  @IsString()
+  status: string;
 }

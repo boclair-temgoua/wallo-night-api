@@ -9,6 +9,7 @@ export type GetPostsSelections = {
   search?: string;
   pagination?: PaginationType;
   type?: PostType;
+  status?: string;
   userId?: Post['userId'];
   likeUserId?: Post['userId'];
   followerIds?: string[];
@@ -18,6 +19,7 @@ export type GetPostsSelections = {
 export type GetOnePostSelections = {
   postId: Post['id'];
   type?: string;
+  status?: string;
   postSlug?: string;
   userId?: Post['userId'];
   likeUserId?: Post['userId'];

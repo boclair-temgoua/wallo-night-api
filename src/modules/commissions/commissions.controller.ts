@@ -41,7 +41,6 @@ import {
   GetOneCommissionDto,
 } from './commissions.dto';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { UploadsService } from '../uploads/uploads.service';
 import {
   awsS3ServiceAdapter,
   getFileToAws,
@@ -64,7 +63,7 @@ export class CommissionsController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { userId } = query;
+    const { userId, status } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -74,6 +73,7 @@ export class CommissionsController {
       search,
       userId,
       pagination,
+      status: status ? status.toUpperCase() : null,
     });
 
     return reply({ res, results: commissions });

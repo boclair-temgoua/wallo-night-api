@@ -4,6 +4,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetCommissionsSelections = {
   search?: string;
+  status?: string;
   pagination?: PaginationType;
   userId?: Commission['userId'];
 };

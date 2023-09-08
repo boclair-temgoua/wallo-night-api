@@ -17,6 +17,7 @@ import { PostType } from '../modules/posts/posts.type';
 import { Comment } from './Comment';
 import { Category } from './Category';
 import { PostCategory } from './PostCategory';
+import { StatusType } from '../app/utils/pagination';
 
 @Entity('post')
 export class Post extends BaseDeleteEntity {
@@ -25,9 +26,6 @@ export class Post extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   slug?: string;
-
-  @Column({ default: true })
-  status?: boolean;
 
   @Column({ nullable: true })
   title?: string;
@@ -40,6 +38,9 @@ export class Post extends BaseDeleteEntity {
 
   @Column({ default: 'ARTICLE' })
   type?: PostType;
+
+  @Column({ default: 'ACTIVE' })
+  status?: StatusType;
 
   @Column({ default: false })
   allowDownload?: boolean;

@@ -15,15 +15,8 @@ import {
   HttpException,
   UseInterceptors,
   UploadedFiles,
-  UploadedFile,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import * as mime from 'mime-types';
-import {
-  formateNowDateYYMMDD,
-  generateLongUUID,
-} from '../../app/utils/commons';
-
 import { ProductsService } from './products.service';
 import {
   PasswordBodyDto,
@@ -35,10 +28,12 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import { CreateOrUpdateProductsDto, GetOneProductDto } from './products.dto';
-import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { UploadsService } from '../uploads/uploads.service';
-import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
+import {
+  CreateOrUpdateProductsDto,
+  GetOneProductDto,
+  GetProductsDto,
+} from './products.dto';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { UploadsUtil } from '../uploads/uploads.util';
 
 @Controller('products')
@@ -54,9 +49,11 @@ export class ProductsController {
   async findAll(
     @Res() res,
     @Req() req,
+    @Query() query: GetProductsDto,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
+    const { userId, status } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -65,6 +62,8 @@ export class ProductsController {
     const products = await this.productsService.findAll({
       search,
       pagination,
+      userId,
+      status: status ? status.toUpperCase() : null,
     });
 
     return reply({ res, results: products });

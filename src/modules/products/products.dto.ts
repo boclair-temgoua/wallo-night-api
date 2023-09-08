@@ -69,3 +69,18 @@ export class GetOneProductDto {
   @IsString()
   productSlug: string;
 }
+
+export class GetProductsDto {
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
+
+  @IsOptional()
+  @IsString()
+  typeIds: string;
+
+  @IsOptional()
+  @IsString()
+  status: string;
+}

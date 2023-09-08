@@ -11,8 +11,8 @@ import {
 import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { OrderProduct } from './OrderProduct';
-import { Cart, User } from '.';
-
+import { Cart, User } from './index';
+import { StatusType } from '../app/utils/pagination';
 @Entity('commission')
 export class Commission extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -43,7 +43,7 @@ export class Commission extends BaseDeleteEntity {
   messageAfterPayment: string;
 
   @Column({ default: 'ACTIVE' })
-  status?: StatusCommission;
+  status?: StatusType;
 
   @Column({ type: 'uuid', nullable: true })
   currencyId: string;

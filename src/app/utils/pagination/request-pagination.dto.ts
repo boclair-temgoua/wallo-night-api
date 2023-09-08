@@ -11,6 +11,8 @@ import {
 } from 'class-validator';
 
 export type SortType = 'ASC' | 'DESC';
+
+export type StatusType = 'ACTIVE' | 'PENDING';
 export class RequestPaginationDto {
   @IsNotEmpty()
   @IsInt()

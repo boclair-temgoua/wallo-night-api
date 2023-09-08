@@ -10,7 +10,6 @@ import { Repository, Brackets } from 'typeorm';
 import * as Slug from 'slug';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { generateNumber } from '../../app/utils/commons';
 import {
   CreateCommissionsOptions,
   GetOneCommissionsSelections,
@@ -27,7 +26,7 @@ export class CommissionsService {
   ) {}
 
   async findAll(selections: GetCommissionsSelections): Promise<any> {
-    const { search, pagination, userId } = selections;
+    const { search, pagination, status, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('commission')
@@ -69,6 +68,10 @@ export class CommissionsService {
 
     if (userId) {
       query = query.andWhere('commission.userId = :userId', { userId });
+    }
+
+    if (status) {
+      query = query.andWhere('commission.status = :status', { status });
     }
 
     if (search) {

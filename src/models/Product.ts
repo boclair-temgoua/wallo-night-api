@@ -17,7 +17,8 @@ import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
 import { StatusProduct } from '../modules/products/products.dto';
 import { Discount } from './Discount';
-import { Cart, User } from '.';
+import { Cart, User } from './index';
+import { StatusType } from '../app/utils/pagination';
 
 @Entity('product')
 export class Product extends BaseDeleteEntity {
@@ -64,7 +65,7 @@ export class Product extends BaseDeleteEntity {
   limitSlot: number;
 
   @Column({ default: 'ACTIVE' })
-  status?: StatusProduct;
+  status?: StatusType;
 
   @Column({ type: 'uuid', nullable: true })
   categoryId: string;

@@ -13,6 +13,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { PostType, postTypeArrays } from './posts.type';
+import { StatusType } from '../../app/utils/pagination';
 
 export class CreateOrUpdatePostsGalleriesDto {
   @IsOptional()
@@ -59,8 +60,8 @@ export class CreateOrUpdatePostsDto {
   type: PostType;
 
   @IsOptional()
-  @IsBoolean()
-  status: boolean;
+  @IsString()
+  status: StatusType;
 
   @IsOptional()
   @IsString()
@@ -110,4 +111,8 @@ export class GetGalleriesDto {
   @IsOptional()
   @IsString()
   typeIds: string;
+
+  @IsOptional()
+  @IsString()
+  status: string;
 }

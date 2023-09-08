@@ -40,6 +40,7 @@ export class PostsService {
       pagination,
       userId,
       type,
+      status,
       likeUserId,
       followerIds,
       typeIds,
@@ -121,6 +122,10 @@ export class PostsService {
       query = query.andWhere('post.userId = :userId', { userId });
     }
 
+    if (status) {
+      query = query.andWhere('post.status = :status', { status });
+    }
+
     if (type) {
       query = query.andWhere('post.type = :type', { type });
     }
@@ -157,7 +162,7 @@ export class PostsService {
   }
 
   async findOneBy(selections: GetOnePostSelections): Promise<Post> {
-    const { postId, userId, postSlug, likeUserId, type } = selections;
+    const { postId, userId, postSlug, likeUserId, type, status } = selections;
     let query = this.driver
       .createQueryBuilder('post')
       .select('post.title', 'title')
@@ -219,6 +224,10 @@ export class PostsService {
                AND "lk"."userId" IN ('${likeUserId}'))
                GROUP BY "lk"."likeableId", "post"."id"
               ) AS "isLike"`);
+    }
+
+    if (status) {
+      query = query.andWhere('post.status = :status', { status });
     }
 
     if (userId) {

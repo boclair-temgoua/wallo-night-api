@@ -27,7 +27,7 @@ export class ProductsService {
   ) {}
 
   async findAll(selections: GetProductsSelections): Promise<any> {
-    const { search, pagination } = selections;
+    const { search, pagination, status, userId } = selections;
 
     let query = this.driver
       .createQueryBuilder('product')
@@ -41,8 +41,8 @@ export class ProductsService {
       .addSelect('product.sku', 'sku')
       .addSelect('product.description', 'description')
       .addSelect('product.moreDescription', 'moreDescription')
-      .addSelect('product.limitSlot', 'limitSlot')
       .addSelect('product.status', 'status')
+      .addSelect('product.limitSlot', 'limitSlot')
       .addSelect('product.price', 'price')
       .addSelect('product.isLimitSlot', 'isLimitSlot')
       .addSelect('product.enableDiscount', 'enableDiscount')
@@ -111,6 +111,14 @@ export class ProductsService {
       .leftJoin('product.discount', 'discount')
       .leftJoin('product.user', 'user')
       .leftJoin('user.profile', 'profile');
+
+    if (userId) {
+      query = query.andWhere('product.userId = :userId', { userId });
+    }
+
+    if (status) {
+      query = query.andWhere('product.status = :status', { status });
+    }
 
     if (search) {
       query = query.andWhere(
