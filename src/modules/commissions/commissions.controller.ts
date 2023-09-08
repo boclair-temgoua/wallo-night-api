@@ -40,15 +40,19 @@ import {
   GetCommissionsDto,
   GetOneCommissionDto,
 } from './commissions.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { UploadsService } from '../uploads/uploads.service';
-import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
+import {
+  awsS3ServiceAdapter,
+  getFileToAws,
+} from '../integrations/aws/aws-s3-service-adapter';
+import { UploadsUtil } from '../uploads/uploads.util';
 
 @Controller('commissions')
 export class CommissionsController {
   constructor(
     private readonly commissionsService: CommissionsService,
-    private readonly uploadsService: UploadsService,
+    private readonly uploadsUtil: UploadsUtil,
   ) {}
 
   /** Get all Commissions */
@@ -78,33 +82,25 @@ export class CommissionsController {
   /** Post one Commissions */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateCommissionsDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
+    const {
+      title,
+      price,
+      description,
+      urlMedia,
+      limitSlot,
+      isLimitSlot,
+      messageAfterPurchase,
+    } = body;
     const { user } = req;
-    const { title, price, description, urlMedia, messageAfterPurchase } = body;
-    const attachment = req.file;
-    let fileName;
 
-    if (attachment) {
-      const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-        8,
-      )}`;
-      await awsS3ServiceAdapter({
-        name: nameFile,
-        mimeType: file?.mimetype,
-        folder: 'commissions',
-        file: file.buffer,
-      });
-      const extension = mime.extension(file.mimetype);
-      fileName = `${nameFile}.${extension}`;
-    }
-
-    await this.commissionsService.createOne({
+    const commission = await this.commissionsService.createOne({
       title,
       price: Number(price),
       urlMedia,
@@ -112,7 +108,14 @@ export class CommissionsController {
       messageAfterPurchase,
       currencyId: user?.profile?.currencyId,
       userId: user?.id,
-      image: fileName,
+      limitSlot: Number(limitSlot),
+      isLimitSlot: isLimitSlot === 'true' ? true : false,
+    });
+
+    await this.uploadsUtil.saveOrUpdateAws({
+      commissionId: commission?.id,
+      folder: 'commissions',
+      files,
     });
 
     return reply({ res, results: 'commission' });
@@ -121,8 +124,63 @@ export class CommissionsController {
   /** Post one Commissions */
   @Put(`/:commissionId`)
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateOrUpdateCommissionsDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Param('commissionId', ParseUUIDPipe) commissionId: string,
+  ) {
+    const {
+      title,
+      price,
+      description,
+      urlMedia,
+      limitSlot,
+      isLimitSlot,
+      messageAfterPurchase,
+    } = body;
+    const { user } = req;
+
+    const findOneCommission = await this.commissionsService.findOneBy({
+      commissionId,
+      userId: user?.id,
+    });
+    if (!findOneCommission)
+      throw new HttpException(
+        `Commission ${commissionId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.commissionsService.updateOne(
+      { commissionId },
+      {
+        title,
+        price: Number(price),
+        urlMedia,
+        description,
+        messageAfterPurchase,
+        currencyId: user?.profile?.currencyId,
+        limitSlot: Number(limitSlot),
+        isLimitSlot: isLimitSlot === 'true' ? true : false,
+      },
+    );
+
+    await this.uploadsUtil.saveOrUpdateAws({
+      commissionId: commissionId,
+      folder: 'commissions',
+      files,
+    });
+
+    return reply({ res, results: 'commission updated successfully' });
+  }
+
+  /** Post one Commissions */
+  @Put(`/:commissionId`)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async updateOneOld(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateCommissionsDto,
@@ -211,5 +269,23 @@ export class CommissionsController {
     );
 
     return reply({ res, results: 'commission deleted successfully' });
+  }
+
+  /** Get on file gallery */
+  @Get(`/file/:fileName`)
+  async getOneFilePostGallery(@Res() res, @Param('fileName') fileName: string) {
+    try {
+      const { fileBuffer, contentType } = await getFileToAws({
+        folder: 'commissions',
+        fileName,
+      });
+      res.status(200);
+      res.contentType(contentType);
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Erreur lors de la récupération de l'image.");
+    }
   }
 }

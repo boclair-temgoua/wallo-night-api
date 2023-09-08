@@ -39,12 +39,13 @@ import { CreateOrUpdateProductsDto, GetOneProductDto } from './products.dto';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { UploadsService } from '../uploads/uploads.service';
 import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
+import { UploadsUtil } from '../uploads/uploads.util';
 
 @Controller('products')
 export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
-    private readonly uploadsService: UploadsService,
+    private readonly uploadsUtil: UploadsUtil,
   ) {}
 
   /** Get all Products */
@@ -101,66 +102,18 @@ export class ProductsController {
       description,
       discountId,
       messageAfterPurchase,
-      currencyId: user?.profile?.currencyId, 
+      currencyId: user?.profile?.currencyId,
       enableDiscount: enableDiscount === 'true' ? true : false,
       isLimitSlot: isLimitSlot === 'true' ? true : false,
       isChooseQuantity: isChooseQuantity === 'true' ? true : false,
       userId: user?.id,
     });
 
-    Promise.all([
-      files
-        .filter((lk: any) => lk?.fieldname === 'attachmentImages')
-        .map(async (file) => {
-          const nameFile = `${formateNowDateYYMMDD(
-            new Date(),
-          )}${generateLongUUID(8)}`;
-
-          const urlAWS = await awsS3ServiceAdapter({
-            name: nameFile,
-            mimeType: file?.mimetype,
-            folder: 'products',
-            file: file.buffer,
-          });
-          const extension = mime.extension(file.mimetype);
-          const fileName = `${nameFile}.${extension}`;
-
-          await this.uploadsService.createOne({
-            name: file?.originalname,
-            path: fileName,
-            status: 'success',
-            url: urlAWS.Location,
-            uploadType: 'IMAGE',
-            productId: product?.id,
-          });
-        }),
-
-      files
-        .filter((lk: any) => lk?.fieldname === 'attachmentFiles')
-        .map(async (file) => {
-          const nameFile = `${formateNowDateYYMMDD(
-            new Date(),
-          )}${generateLongUUID(8)}`;
-
-          const urlAWS = await awsS3ServiceAdapter({
-            name: nameFile,
-            mimeType: file?.mimetype,
-            folder: 'products',
-            file: file.buffer,
-          });
-          const extension = mime.extension(file.mimetype);
-          const fileName = `${nameFile}.${extension}`;
-
-          await this.uploadsService.createOne({
-            name: file?.originalname,
-            path: fileName,
-            status: 'success',
-            url: urlAWS.Location,
-            uploadType: 'FILE',
-            productId: product?.id,
-          });
-        }),
-    ]);
+    await this.uploadsUtil.saveOrUpdateAws({
+      productId: product?.id,
+      folder: 'products',
+      files,
+    });
 
     return reply({ res, results: 'product' });
   }
@@ -210,66 +163,18 @@ export class ProductsController {
         discountId,
         messageAfterPurchase,
         limitSlot: Number(limitSlot),
-        currencyId: user?.profile?.currencyId, 
+        currencyId: user?.profile?.currencyId,
         enableDiscount: enableDiscount === 'true' ? true : false,
         isLimitSlot: isLimitSlot === 'true' ? true : false,
         isChooseQuantity: isChooseQuantity === 'true' ? true : false,
       },
     );
-    
-    Promise.all([
-      files
-        .filter((lk: any) => lk?.fieldname === 'attachmentImages')
-        .map(async (file) => {
-          const nameFile = `${formateNowDateYYMMDD(
-            new Date(),
-          )}${generateLongUUID(8)}`;
 
-          const urlAWS = await awsS3ServiceAdapter({
-            name: nameFile,
-            mimeType: file?.mimetype,
-            folder: 'products',
-            file: file.buffer,
-          });
-          const extension = mime.extension(file.mimetype);
-          const fileName = `${nameFile}.${extension}`;
-
-          await this.uploadsService.createOne({
-            name: file?.originalname,
-            path: fileName,
-            status: 'success',
-            url: urlAWS.Location,
-            uploadType: 'IMAGE',
-            productId: productId,
-          });
-        }),
-
-      files
-        .filter((lk: any) => lk?.fieldname === 'attachmentFiles')
-        .map(async (file) => {
-          const nameFile = `${formateNowDateYYMMDD(
-            new Date(),
-          )}${generateLongUUID(8)}`;
-
-          const urlAWS = await awsS3ServiceAdapter({
-            name: nameFile,
-            mimeType: file?.mimetype,
-            folder: 'products',
-            file: file.buffer,
-          });
-          const extension = mime.extension(file.mimetype);
-          const fileName = `${nameFile}.${extension}`;
-
-          await this.uploadsService.createOne({
-            name: file?.originalname,
-            path: fileName,
-            status: 'success',
-            url: urlAWS.Location,
-            uploadType: 'FILE',
-            productId: productId,
-          });
-        }),
-    ]);
+    await this.uploadsUtil.saveOrUpdateAws({
+      productId: productId,
+      folder: 'products',
+      files,
+    });
 
     return reply({ res, results: 'Product updated successfully' });
   }

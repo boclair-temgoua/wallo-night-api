@@ -24,4 +24,7 @@ export class Upload extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   productId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  commissionId?: string;
 }

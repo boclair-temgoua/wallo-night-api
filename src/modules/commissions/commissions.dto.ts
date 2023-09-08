@@ -22,6 +22,14 @@ export class CreateOrUpdateCommissionsDto {
 
   @IsOptional()
   @IsString()
+  limitSlot: string;
+
+  @IsOptional()
+  @IsString()
+  isLimitSlot: string;
+
+  @IsOptional()
+  @IsString()
   urlMedia: string;
 
   @IsOptional()

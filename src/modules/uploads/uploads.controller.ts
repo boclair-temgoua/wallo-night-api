@@ -23,26 +23,31 @@ export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
   /** Get all faqs */
-  @Get(`/products`)
+  @Get(`/`)
   async findAll(@Res() res, @Query() query: UploadsDto) {
-    const { productId, uploadType } = query;
+    const { productId, commissionId, uploadType } = query;
 
     const uploads = await this.uploadsService.findAll({
       productId,
+      commissionId,
       uploadType: uploadType.toUpperCase(),
     });
 
     return reply({ res, results: uploads });
   }
 
-  @Put(`/products/:productId`)
+  @Put(`/update`)
   @UseGuards(JwtAuthGuard)
-  async deleteAndUpdate(
-    @Res() res,
-    @Req() req,
-    @Param('productId', ParseUUIDPipe) productId: string,
-  ) {
-    const uploads = await this.uploadsService.findAll({ productId });
+  async deleteAndUpdate(@Res() res, @Req() req, @Query() query: UploadsDto) {
+    const { productId, commissionId, uploadType } = query;
+    const newFileLists = req?.body?.newFileLists;
+    const newImageLists = req?.body?.newImageLists;
+
+    const uploads = await this.uploadsService.findAll({
+      productId,
+      commissionId,
+      uploadType: uploadType.toUpperCase(),
+    });
 
     Promise.all(
       uploads.map(async (upload) => {
@@ -50,42 +55,23 @@ export class UploadsController {
       }),
     );
 
-    Promise.all(
-      req?.body?.newImageLists.map(async (upload) => {
-        await this.uploadsService.createOne({ ...upload });
-      }),
-    );
+    if (newFileLists && newFileLists.length > 0) {
+      Promise.all(
+        newFileLists.map(async (upload) => {
+          await this.uploadsService.createOne({ ...upload });
+        }),
+      );
+    }
 
-    Promise.all(
-      req?.body?.newFileLists.map(async (upload) => {
-        await this.uploadsService.createOne({ ...upload });
-      }),
-    );
+    if (newImageLists && newImageLists.length > 0) {
+      Promise.all(
+        newImageLists.map(async (upload) => {
+          await this.uploadsService.createOne({ ...upload });
+        }),
+      );
+    }
 
     return reply({ res, results: 'Image upload' });
-  }
-
-  /** Delete upload */
-  @Delete(`/:uploadId`)
-  @UseGuards(JwtAuthGuard)
-  async deleteOne(
-    @Res() res,
-    @Req() req,
-    @Param('uploadId', ParseUUIDPipe) uploadId: string,
-  ) {
-    // const findOneFaq = await this.uploadsService.findOneBy({ faqId });
-    // if (!findOneFaq)
-    //   throw new HttpException(
-    //     `This faq ${faqId} dons't exist please change`,
-    //     HttpStatus.NOT_FOUND,
-    //   );
-
-    // const faq = await this.faqsService.updateOne(
-    //   { faqId: findOneFaq?.id },
-    //   { deletedAt: new Date() },
-    // );
-
-    return reply({ res, results: '' });
   }
 
   /** Get on file upload */
@@ -97,6 +83,27 @@ export class UploadsController {
     try {
       const { fileBuffer, contentType } = await getFileToAws({
         folder: 'products',
+        fileName,
+      });
+      res.status(200);
+      res.contentType(contentType);
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.send(fileBuffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Erreur lors de la récupération de l'image.");
+    }
+  }
+
+  /** Get on file upload */
+  @Get(`/commissions/:fileName`)
+  async getOneFileUploadCommission(
+    @Res() res,
+    @Param('fileName') fileName: string,
+  ) {
+    try {
+      const { fileBuffer, contentType } = await getFileToAws({
+        folder: 'commissions',
         fileName,
       });
       res.status(200);

@@ -33,6 +33,12 @@ export class Commission extends BaseDeleteEntity {
   @Column({ type: 'text', nullable: true })
   description: string;
 
+  @Column({ type: 'boolean', default: false })
+  isLimitSlot: boolean;
+
+  @Column({ type: 'bigint', default: 0 })
+  limitSlot: number;
+
   @Column({ type: 'text', nullable: true })
   messageAfterPurchase: string;
 

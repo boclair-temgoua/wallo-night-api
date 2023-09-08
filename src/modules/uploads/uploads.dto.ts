@@ -3,12 +3,17 @@ import { IsString, IsOptional, IsUUID, IsNotEmpty } from 'class-validator';
 export type UploadType = 'IMAGE' | 'FILE';
 
 export class UploadsDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsUUID()
   productId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  commissionId: string;
+
+  @IsOptional()
   @IsString()
   uploadType: string;
 }
