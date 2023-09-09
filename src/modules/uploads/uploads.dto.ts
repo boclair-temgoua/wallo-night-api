@@ -11,6 +11,11 @@ export class UploadsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
+  postId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
   commissionId: string;
 
   @IsOptional()

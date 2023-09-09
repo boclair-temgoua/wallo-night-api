@@ -67,22 +67,17 @@ export class CampaignsService {
       });
     }
 
-    const [errorRowCount, rowCount] = await useCatch(query.getCount());
-    if (errorRowCount) throw new NotFoundException(errorRowCount);
-
-    const [error, Campaigns] = await useCatch(
-      query
-        .orderBy('Campaign.createdAt', pagination?.sort)
-        .limit(pagination.limit)
-        .offset(pagination.offset)
-        .getRawMany(),
-    );
-    if (error) throw new NotFoundException(error);
+    const rowCount = await query.getCount();
+    const campaigns = await query
+      .orderBy('Campaign.createdAt', pagination?.sort)
+      .limit(pagination.limit)
+      .offset(pagination.offset)
+      .getRawMany();
 
     return withPagination({
       pagination,
       rowCount,
-      value: Campaigns,
+      value: campaigns,
     });
   }
 
@@ -129,11 +124,9 @@ export class CampaignsService {
       query = query.andWhere('campaign.id = :id', { id: campaignId });
     }
 
-    const [error, result] = await useCatch(query.getRawOne());
-    if (error)
-      throw new HttpException('campaign not found', HttpStatus.NOT_FOUND);
+    const campaign = await query.getRawOne();
 
-    return result;
+    return campaign;
   }
 
   /** Create one Campaign to the database. */

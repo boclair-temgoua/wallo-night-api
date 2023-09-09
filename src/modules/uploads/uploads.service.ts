@@ -1,15 +1,9 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Upload } from '../../models/Upload';
 import { Repository } from 'typeorm';
 import {
   CreateUploadOptions,
-  GetOneUploadSelections,
   GetUploadsSelections,
   UpdateUploadOptions,
   UpdateUploadSelections,
@@ -24,7 +18,7 @@ export class UploadsService {
   ) {}
 
   async findAll(selections: GetUploadsSelections): Promise<any> {
-    const { productId, commissionId, uploadType } = selections;
+    const { productId, postId, commissionId, uploadType } = selections;
 
     let query = this.driver
       .createQueryBuilder('upload')
@@ -35,11 +29,16 @@ export class UploadsService {
       .addSelect('upload.status', 'status')
       .addSelect('upload.uploadType', 'uploadType')
       .addSelect('upload.productId', 'productId')
+      .addSelect('upload.postId', 'postId')
       .addSelect('upload.commissionId', 'commissionId')
       .where('upload.deletedAt IS NULL');
 
     if (productId) {
       query = query.andWhere('upload.productId = :productId', { productId });
+    }
+
+    if (postId) {
+      query = query.andWhere('upload.postId = :postId', { postId });
     }
 
     if (commissionId) {
@@ -62,14 +61,23 @@ export class UploadsService {
 
   /** Create one Upload to the database. */
   async createOne(options: CreateUploadOptions): Promise<Upload> {
-    const { name, status, uploadType, url, path, productId, commissionId } =
-      options;
+    const {
+      name,
+      status,
+      uploadType,
+      url,
+      path,
+      postId,
+      productId,
+      commissionId,
+    } = options;
 
     const upload = new Upload();
     upload.url = url;
     upload.path = path;
     upload.name = name;
     upload.status = status;
+    upload.postId = postId;
     upload.uploadType = uploadType;
     upload.productId = productId;
     upload.commissionId = commissionId;

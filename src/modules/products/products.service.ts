@@ -135,14 +135,11 @@ export class ProductsService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const [error, products] = await useCatch(
-      query
-        .orderBy('product.createdAt', pagination?.sort)
-        .limit(pagination.limit)
-        .offset(pagination.offset)
-        .getRawMany(),
-    );
-    if (error) throw new NotFoundException(error);
+    const products = await query
+      .orderBy('product.createdAt', pagination?.sort)
+      .limit(pagination.limit)
+      .offset(pagination.offset)
+      .getRawMany();
 
     return withPagination({
       pagination,
@@ -264,11 +261,9 @@ export class ProductsService {
       query = query.andWhere('product.slug = :slug', { slug: productSlug });
     }
 
-    const [error, result] = await useCatch(query.getRawOne());
-    if (error)
-      throw new HttpException('product not found', HttpStatus.NOT_FOUND);
+    const products = await query.getRawOne();
 
-    return result;
+    return products;
   }
 
   /** Create one Products to the database. */
