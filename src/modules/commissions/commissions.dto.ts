@@ -26,7 +26,7 @@ export class CreateOrUpdateCommissionsDto {
 
   @IsOptional()
   @IsString()
-  isLimitSlot: string;
+  enableLimitSlot: string;
 
   @IsOptional()
   @IsString()

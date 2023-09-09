@@ -116,10 +116,7 @@ export class DiscountsController {
   /** Get one Discounts */
   @Get(`/show/:discountId`)
   @UseGuards(JwtAuthGuard)
-  async getOne(
-    @Res() res,
-    @Param('discountId', ParseUUIDPipe) discountId: string,
-  ) {
+  async getOne(@Res() res, @Param('discountId') discountId: string) {
     const findOneDiscount = await this.discountsService.findOneBy({
       discountId,
     });

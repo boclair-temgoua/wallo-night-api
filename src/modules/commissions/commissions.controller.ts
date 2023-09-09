@@ -73,7 +73,7 @@ export class CommissionsController {
       search,
       userId,
       pagination,
-      status: status ? status.toUpperCase() : null,
+      status: status?.toUpperCase(),
     });
 
     return reply({ res, results: commissions });
@@ -95,7 +95,7 @@ export class CommissionsController {
       description,
       urlMedia,
       limitSlot,
-      isLimitSlot,
+      enableLimitSlot,
       messageAfterPayment,
     } = body;
     const { user } = req;
@@ -109,7 +109,7 @@ export class CommissionsController {
       currencyId: user?.profile?.currencyId,
       userId: user?.id,
       limitSlot: Number(limitSlot),
-      isLimitSlot: isLimitSlot === 'true' ? true : false,
+      enableLimitSlot: enableLimitSlot === 'true' ? true : false,
     });
 
     await this.uploadsUtil.saveOrUpdateAws({
@@ -138,7 +138,7 @@ export class CommissionsController {
       description,
       urlMedia,
       limitSlot,
-      isLimitSlot,
+      enableLimitSlot,
       messageAfterPayment,
     } = body;
     const { user } = req;
@@ -163,7 +163,7 @@ export class CommissionsController {
         messageAfterPayment,
         currencyId: user?.profile?.currencyId,
         limitSlot: Number(limitSlot),
-        isLimitSlot: isLimitSlot === 'true' ? true : false,
+        enableLimitSlot: enableLimitSlot === 'true' ? true : false,
       },
     );
 
@@ -269,23 +269,5 @@ export class CommissionsController {
     );
 
     return reply({ res, results: 'commission deleted successfully' });
-  }
-
-  /** Get on file gallery */
-  @Get(`/file/:fileName`)
-  async getOneFilePostGallery(@Res() res, @Param('fileName') fileName: string) {
-    try {
-      const { fileBuffer, contentType } = await getFileToAws({
-        folder: 'commissions',
-        fileName,
-      });
-      res.status(200);
-      res.contentType(contentType);
-      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
-      res.send(fileBuffer);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Erreur lors de la récupération de l'image.");
-    }
   }
 }

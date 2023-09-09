@@ -34,7 +34,7 @@ export class Commission extends BaseDeleteEntity {
   description: string;
 
   @Column({ type: 'boolean', default: false })
-  isLimitSlot: boolean;
+  enableLimitSlot: boolean;
 
   @Column({ type: 'bigint', default: 0 })
   limitSlot: number;

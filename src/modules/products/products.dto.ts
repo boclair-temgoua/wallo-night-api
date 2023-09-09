@@ -18,7 +18,6 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
-  @IsUUID()
   discountId: string;
 
   @IsOptional()
@@ -31,7 +30,7 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
-  isLimitSlot: string;
+  enableLimitSlot: string;
 
   @IsOptional()
   @IsString()
@@ -43,7 +42,7 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
-  isChooseQuantity: string;
+  enableChooseQuantity: string;
 
   @IsOptional()
   @IsString()

@@ -44,10 +44,10 @@ export class ProductsService {
       .addSelect('product.status', 'status')
       .addSelect('product.limitSlot', 'limitSlot')
       .addSelect('product.price', 'price')
-      .addSelect('product.isLimitSlot', 'isLimitSlot')
+      .addSelect('product.enableLimitSlot', 'enableLimitSlot')
       .addSelect('product.enableDiscount', 'enableDiscount')
       .addSelect('product.discountId', 'discountId')
-      .addSelect('product.isChooseQuantity', 'isChooseQuantity')
+      .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'symbol', "currency"."symbol",
@@ -168,10 +168,10 @@ export class ProductsService {
       .addSelect('product.limitSlot', 'limitSlot')
       .addSelect('product.status', 'status')
       .addSelect('product.price', 'price')
-      .addSelect('product.isLimitSlot', 'isLimitSlot')
+      .addSelect('product.enableLimitSlot', 'enableLimitSlot')
       .addSelect('product.enableDiscount', 'enableDiscount')
       .addSelect('product.discountId', 'discountId')
-      .addSelect('product.isChooseQuantity', 'isChooseQuantity')
+      .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'symbol', "currency"."symbol",
@@ -286,10 +286,10 @@ export class ProductsService {
       categoryId,
       discountId,
       urlMedia,
-      isLimitSlot,
+      enableLimitSlot,
       enableDiscount,
       messageAfterPayment,
-      isChooseQuantity,
+      enableChooseQuantity,
       userId,
     } = options;
 
@@ -304,9 +304,9 @@ export class ProductsService {
     product.status = status;
     product.discountId = discountId;
     product.currencyId = currencyId;
-    product.isLimitSlot = isLimitSlot;
+    product.enableLimitSlot = enableLimitSlot;
     product.enableDiscount = enableDiscount;
-    product.isChooseQuantity = isChooseQuantity;
+    product.enableChooseQuantity = enableChooseQuantity;
     product.messageAfterPayment = messageAfterPayment;
     product.urlMedia = urlMedia;
     product.slug = `${Slug(title)}-${generateNumber(4)}`;
@@ -341,10 +341,10 @@ export class ProductsService {
       deletedAt,
       urlMedia,
       limitSlot,
-      isLimitSlot,
+      enableLimitSlot,
       enableDiscount,
       messageAfterPayment,
-      isChooseQuantity,
+      enableChooseQuantity,
     } = options;
 
     let findQuery = this.driver.createQueryBuilder('product');
@@ -366,9 +366,9 @@ export class ProductsService {
     product.discountId = discountId;
     product.currencyId = currencyId;
     product.limitSlot = limitSlot;
-    product.isLimitSlot = isLimitSlot;
+    product.enableLimitSlot = enableLimitSlot;
     product.enableDiscount = enableDiscount;
-    product.isChooseQuantity = isChooseQuantity;
+    product.enableChooseQuantity = enableChooseQuantity;
     product.messageAfterPayment = messageAfterPayment;
     product.urlMedia = urlMedia;
     product.description = description;

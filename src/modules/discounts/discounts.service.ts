@@ -16,6 +16,7 @@ import {
 } from './discounts.type';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { isNotUndefined } from '../../app/utils/commons/generate-random';
 
 @Injectable()
 export class DiscountsService {
@@ -28,7 +29,7 @@ export class DiscountsService {
     const { search, pagination, userId } = selections;
 
     let query = this.driver
-      .createQueryBuilder('discount') 
+      .createQueryBuilder('discount')
       .select('discount.id', 'id')
       .addSelect('discount.code', 'code')
       .addSelect('discount.userId', 'userId')
@@ -149,11 +150,9 @@ export class DiscountsService {
       query = query.andWhere('discount.id = :id', { id: discountId });
     }
 
-    const [error, result] = await useCatch(query.getOne());
-    if (error)
-      throw new HttpException('discount not found', HttpStatus.NOT_FOUND);
+    const discount = await query.getOne();
 
-    return result;
+    return discount;
   }
 
   /** Create one Discounts to the database. */

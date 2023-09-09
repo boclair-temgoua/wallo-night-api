@@ -37,7 +37,7 @@ export class CommissionsService {
       .addSelect('commission.userId', 'userId')
       .addSelect('commission.urlMedia', 'urlMedia')
       .addSelect('commission.description', 'description')
-      .addSelect('commission.isLimitSlot', 'isLimitSlot')
+      .addSelect('commission.enableLimitSlot', 'enableLimitSlot')
       .addSelect('commission.limitSlot', 'limitSlot')
       .addSelect('commission.messageAfterPayment', 'messageAfterPayment')
       .addSelect('commission.status', 'status')
@@ -118,7 +118,7 @@ export class CommissionsService {
       .addSelect('commission.userId', 'userId')
       .addSelect('commission.urlMedia', 'urlMedia')
       .addSelect('commission.description', 'description')
-      .addSelect('commission.isLimitSlot', 'isLimitSlot')
+      .addSelect('commission.enableLimitSlot', 'enableLimitSlot')
       .addSelect('commission.limitSlot', 'limitSlot')
       .addSelect('commission.messageAfterPayment', 'messageAfterPayment')
       .addSelect('commission.status', 'status')
@@ -174,7 +174,7 @@ export class CommissionsService {
       status,
       currencyId,
       limitSlot,
-      isLimitSlot,
+      enableLimitSlot,
       userId,
     } = options;
 
@@ -185,7 +185,7 @@ export class CommissionsService {
     commission.status = status;
     commission.currencyId = currencyId;
     commission.limitSlot = limitSlot;
-    commission.isLimitSlot = isLimitSlot;
+    commission.enableLimitSlot = enableLimitSlot;
     commission.messageAfterPayment = messageAfterPayment;
     commission.urlMedia = urlMedia;
     commission.description = description;
@@ -214,7 +214,7 @@ export class CommissionsService {
       messageAfterPayment,
       status,
       limitSlot,
-      isLimitSlot,
+      enableLimitSlot,
       currencyId,
       deletedAt,
     } = options;
@@ -234,7 +234,7 @@ export class CommissionsService {
     commission.status = status;
     commission.currencyId = currencyId;
     commission.limitSlot = limitSlot;
-    commission.isLimitSlot = isLimitSlot;
+    commission.enableLimitSlot = enableLimitSlot;
     commission.messageAfterPayment = messageAfterPayment;
     commission.urlMedia = urlMedia;
     commission.description = description;

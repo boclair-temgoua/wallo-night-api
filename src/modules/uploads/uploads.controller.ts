@@ -46,7 +46,7 @@ export class UploadsController {
     const uploads = await this.uploadsService.findAll({
       productId,
       commissionId,
-      uploadType: uploadType.toUpperCase(),
+      uploadType: uploadType?.toUpperCase(),
     });
 
     Promise.all(
@@ -75,35 +75,15 @@ export class UploadsController {
   }
 
   /** Get on file upload */
-  @Get(`/products/:fileName`)
+  @Get(`/view/:folder/:fileName`)
   async getOneFileUploadProduct(
     @Res() res,
+    @Param('folder') folder: string,
     @Param('fileName') fileName: string,
   ) {
     try {
       const { fileBuffer, contentType } = await getFileToAws({
-        folder: 'products',
-        fileName,
-      });
-      res.status(200);
-      res.contentType(contentType);
-      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
-      res.send(fileBuffer);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Erreur lors de la récupération de l'image.");
-    }
-  }
-
-  /** Get on file upload */
-  @Get(`/commissions/:fileName`)
-  async getOneFileUploadCommission(
-    @Res() res,
-    @Param('fileName') fileName: string,
-  ) {
-    try {
-      const { fileBuffer, contentType } = await getFileToAws({
-        folder: 'commissions',
+        folder,
         fileName,
       });
       res.status(200);

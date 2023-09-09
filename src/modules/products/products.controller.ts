@@ -35,12 +35,15 @@ import {
 } from './products.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { UploadsUtil } from '../uploads/uploads.util';
+import { DiscountsService } from '../discounts/discounts.service';
+import { isNotUndefined } from '../../app/utils/commons/generate-random';
 
 @Controller('products')
 export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
     private readonly uploadsUtil: UploadsUtil,
+    private readonly discountsService: DiscountsService,
   ) {}
 
   /** Get all Products */
@@ -63,7 +66,7 @@ export class ProductsController {
       search,
       pagination,
       userId,
-      status: status ? status.toUpperCase() : null,
+      status: status?.toUpperCase(),
     });
 
     return reply({ res, results: products });
@@ -82,9 +85,9 @@ export class ProductsController {
     const {
       title,
       price,
-      isLimitSlot,
+      enableLimitSlot,
       urlMedia,
-      isChooseQuantity,
+      enableChooseQuantity,
       messageAfterPayment,
       description,
       limitSlot,
@@ -99,12 +102,12 @@ export class ProductsController {
       limitSlot: Number(limitSlot),
       urlMedia,
       description,
-      discountId,
       messageAfterPayment,
       currencyId: user?.profile?.currencyId,
+      discountId: isNotUndefined(discountId) ? discountId : null,
       enableDiscount: enableDiscount === 'true' ? true : false,
-      isLimitSlot: isLimitSlot === 'true' ? true : false,
-      isChooseQuantity: isChooseQuantity === 'true' ? true : false,
+      enableLimitSlot: enableLimitSlot === 'true' ? true : false,
+      enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
       userId: user?.id,
     });
 
@@ -114,7 +117,7 @@ export class ProductsController {
       files,
     });
 
-    return reply({ res, results: 'product' });
+    return reply({ res, results: product });
   }
 
   /** Post one Products */
@@ -131,9 +134,9 @@ export class ProductsController {
     const {
       title,
       price,
-      isLimitSlot,
+      enableLimitSlot,
       urlMedia,
-      isChooseQuantity,
+      enableChooseQuantity,
       messageAfterPayment,
       description,
       limitSlot,
@@ -159,13 +162,13 @@ export class ProductsController {
         price: Number(price),
         urlMedia,
         description,
-        discountId,
         messageAfterPayment,
         limitSlot: Number(limitSlot),
         currencyId: user?.profile?.currencyId,
+        discountId: isNotUndefined(discountId) ? discountId : null,
         enableDiscount: enableDiscount === 'true' ? true : false,
-        isLimitSlot: isLimitSlot === 'true' ? true : false,
-        isChooseQuantity: isChooseQuantity === 'true' ? true : false,
+        enableLimitSlot: enableLimitSlot === 'true' ? true : false,
+        enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
       },
     );
 
