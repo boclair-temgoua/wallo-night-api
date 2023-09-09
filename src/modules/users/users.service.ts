@@ -46,6 +46,9 @@ export class UsersService {
           'firstName', "profile"."firstName",
           'lastName', "profile"."lastName",
           'fullName', "profile"."fullName",
+          'enableShop', "profile"."enableShop",
+          'enableGallery', "profile"."enableGallery",
+          'enableCommission', "profile"."enableCommission",
           'image', "profile"."image",
           'color', "profile"."color",
           'countryId', "profile"."countryId",
@@ -153,18 +156,19 @@ export class UsersService {
       .addSelect('user.nextStep', 'nextStep')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-            'id', "profile"."id",
-            'userId', "user"."id",
-            'url', "profile"."url",
-            'description', "profile"."description",
-            'firstName', "profile"."firstName",
-            'lastName', "profile"."lastName",
-            'fullName', "profile"."fullName",
-            'image', "profile"."image",
-            'color', "profile"."color",
-            'countryId', "profile"."countryId",
-            'url', "profile"."url"
-        ) AS "profile"`,
+          'id', "profile"."id",
+          'userId', "user"."id",
+          'firstName', "profile"."firstName",
+          'lastName', "profile"."lastName",
+          'fullName', "profile"."fullName",
+          'enableShop', "profile"."enableShop",
+          'enableGallery', "profile"."enableGallery",
+          'enableCommission', "profile"."enableCommission",
+          'image', "profile"."image",
+          'color', "profile"."color",
+          'countryId', "profile"."countryId",
+          'url', "profile"."url"
+      ) AS "profile"`,
       )
       .addSelect(
         /*sql*/ `(
@@ -241,6 +245,9 @@ export class UsersService {
           'firstName', "profile"."firstName",
           'lastName', "profile"."lastName",
           'fullName', "profile"."fullName",
+          'enableShop', "profile"."enableShop",
+          'enableGallery', "profile"."enableGallery",
+          'enableCommission', "profile"."enableCommission",
           'image', "profile"."image",
           'color', "profile"."color",
           'countryId', "profile"."countryId",

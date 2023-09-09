@@ -54,6 +54,9 @@ export class ProfilesService {
       firstAddress,
       secondAddress,
       birthday,
+      enableCommission,
+      enableShop,
+      enableGallery,
     } = options;
 
     const profile = new Profile();
@@ -67,6 +70,9 @@ export class ProfilesService {
     profile.birthday = birthday;
     profile.color = getRandomElement(colorsArrays);
     profile.currencyId = currencyId;
+    profile.enableShop = enableShop;
+    profile.enableGallery = enableGallery;
+    profile.enableCommission = enableCommission;
     profile.countryId = countryId;
     profile.url = url;
 
@@ -98,6 +104,9 @@ export class ProfilesService {
       secondAddress,
       birthday,
       color,
+      enableCommission,
+      enableShop,
+      enableGallery,
       deletedAt,
     } = options;
 
@@ -124,6 +133,9 @@ export class ProfilesService {
     profile.birthday = birthday;
     profile.countryId = countryId;
     profile.fullName = fullName;
+    profile.enableShop = enableShop;
+    profile.enableGallery = enableGallery;
+    profile.enableCommission = enableCommission;
     profile.currencyId = currencyId;
     profile.deletedAt = deletedAt;
 

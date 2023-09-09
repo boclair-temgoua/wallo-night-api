@@ -13,10 +13,12 @@ export class UploadsUtil {
   async saveOrUpdateAws(options: {
     productId?: string;
     commissionId?: string;
-    folder: 'products' | 'commissions';
+    userId?: string;
+    postId?: string;
+    folder: 'products' | 'commissions' | 'posts';
     files: Array<Express.Multer.File>;
   }): Promise<any> {
-    const { files, commissionId, productId, folder } = options;
+    const { files, userId, postId, commissionId, productId, folder } = options;
 
     Promise.all([
       files
@@ -43,6 +45,8 @@ export class UploadsUtil {
             uploadType: 'IMAGE',
             commissionId: commissionId,
             productId: productId,
+            userId: userId,
+            postId: postId,
           });
         }),
 
@@ -70,6 +74,8 @@ export class UploadsUtil {
             uploadType: 'FILE',
             commissionId: commissionId,
             productId: productId,
+            userId: userId,
+            postId: postId,
           });
         }),
     ]);

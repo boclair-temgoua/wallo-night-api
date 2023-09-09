@@ -9,6 +9,7 @@ import {
   IsUUID,
   IsDate,
   IsIn,
+  IsBoolean,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
 import { NextStep, nextStepArrays } from './users.type';
@@ -257,4 +258,18 @@ export class GetOneUserDto {
   @IsOptional()
   @IsString()
   username: string;
+}
+
+export class UpdateEnableProfileDto {
+  @IsOptional()
+  @IsString()
+  enableGallery: string;
+
+  @IsOptional()
+  @IsString()
+  enableShop: string;
+
+  @IsOptional()
+  @IsString()
+  enableCommission: string;
 }

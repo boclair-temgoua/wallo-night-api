@@ -40,12 +40,13 @@ export class UploadsController {
   @Put(`/update`)
   @UseGuards(JwtAuthGuard)
   async deleteAndUpdate(@Res() res, @Req() req, @Query() query: UploadsDto) {
-    const { postId, productId, commissionId, uploadType } = query;
+    const { postId, userId, productId, commissionId, uploadType } = query;
     const newFileLists = req?.body?.newFileLists;
     const newImageLists = req?.body?.newImageLists;
 
     const uploads = await this.uploadsService.findAll({
       postId,
+      userId,
       productId,
       commissionId,
       uploadType: uploadType?.toUpperCase(),

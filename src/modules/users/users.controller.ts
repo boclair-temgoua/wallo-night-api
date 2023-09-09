@@ -25,11 +25,13 @@ import {
 import { FilterQueryType, SearchQueryDto } from '../../app/utils/search-query';
 import {
   GetOneUserDto,
+  UpdateEnableProfileDto,
   UpdateOneEmailUserDto,
   UpdateProfileDto,
 } from './users.dto';
 import { ContributorsService } from '../contributors/contributors.service';
 import { Cookies } from './middleware/cookie.guard';
+import { query } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -171,6 +173,35 @@ export class UsersController {
     );
 
     return reply({ res, results: 'Profile updated successfully' });
+  }
+
+  @Put(`/update/enable/:profileId`)
+  @UseGuards(JwtAuthGuard)
+  async updateEnableProfile(
+    @Res() res,
+    @Req() req,
+    @Query() query: UpdateEnableProfileDto,
+    @Param('profileId', ParseUUIDPipe) profileId: string,
+  ) {
+    const { enableGallery, enableShop, enableCommission } = query;
+    const findOneProfile = await this.profilesService.findOneBy({
+      profileId,
+    });
+    if (!findOneProfile)
+      throw new HttpException(
+        `profile ${profileId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    await this.profilesService.updateOne(
+      { profileId: profileId },
+      {
+        enableGallery: enableGallery && !findOneProfile?.enableGallery,
+        enableShop: enableShop && !findOneProfile?.enableShop,
+        enableCommission: enableCommission && !findOneProfile?.enableCommission,
+      },
+    );
+
+    return reply({ res, results: 'profile updated successfully' });
   }
 
   @Put(`/change-email`)

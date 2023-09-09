@@ -51,6 +51,15 @@ export class Profile extends BaseDeleteEntity {
   @Column({ nullable: true })
   color?: string;
 
+  @Column({ type: 'boolean', default: false })
+  enableCommission: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  enableShop: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  enableGallery: boolean;
+
   @Column({ nullable: true })
   url?: string;
 

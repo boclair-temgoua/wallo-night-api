@@ -18,7 +18,7 @@ export class UploadsService {
   ) {}
 
   async findAll(selections: GetUploadsSelections): Promise<any> {
-    const { productId, postId, commissionId, uploadType } = selections;
+    const { productId, postId, userId, commissionId, uploadType } = selections;
 
     let query = this.driver
       .createQueryBuilder('upload')
@@ -30,6 +30,7 @@ export class UploadsService {
       .addSelect('upload.uploadType', 'uploadType')
       .addSelect('upload.productId', 'productId')
       .addSelect('upload.postId', 'postId')
+      .addSelect('upload.userId', 'userId')
       .addSelect('upload.commissionId', 'commissionId')
       .where('upload.deletedAt IS NULL');
 
@@ -39,6 +40,10 @@ export class UploadsService {
 
     if (postId) {
       query = query.andWhere('upload.postId = :postId', { postId });
+    }
+
+    if (userId) {
+      query = query.andWhere('upload.userId = :userId', { userId });
     }
 
     if (commissionId) {
@@ -68,6 +73,7 @@ export class UploadsService {
       url,
       path,
       postId,
+      userId,
       productId,
       commissionId,
     } = options;
@@ -77,6 +83,7 @@ export class UploadsService {
     upload.path = path;
     upload.name = name;
     upload.status = status;
+    upload.userId = userId;
     upload.postId = postId;
     upload.uploadType = uploadType;
     upload.productId = productId;
