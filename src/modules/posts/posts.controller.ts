@@ -112,7 +112,7 @@ export class PostsController {
       pagination,
       type,
       userId,
-      status: status ? status.toUpperCase() : null,
+      status: status?.toUpperCase(),
       likeUserId: user?.id,
       typeIds: typeIds ? (String(typeIds).split(',') as []) : null,
     });
