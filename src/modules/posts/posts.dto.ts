@@ -54,6 +54,10 @@ export class CreateOrUpdatePostsDto {
   @IsString()
   urlMedia: string;
 
+  @IsOptional()
+  @IsString()
+  enableUrlMedia: string;
+
   @IsNotEmpty()
   @IsString()
   @IsIn(postTypeArrays)

@@ -277,6 +277,16 @@ export class UsersService {
       .addSelect(
         /*sql*/ `(
       SELECT
+          CAST(COUNT(DISTINCT pro) AS INT)
+      FROM "product" "pro"
+      WHERE ("pro"."userId" = "user"."id"
+      AND "pro"."deletedAt" IS NULL)
+      GROUP BY "pro"."userId", "user"."id"
+      ) AS "totalProduct"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
           CAST(COUNT(DISTINCT fol) AS INT)
       FROM "follow" "fol"
       WHERE ("fol"."followerId" = "user"."id"

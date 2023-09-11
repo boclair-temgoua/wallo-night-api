@@ -17,8 +17,9 @@ import {
   UseInterceptors,
   UploadedFile,
   ConsoleLogger,
+  UploadedFiles,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
 import {
   CreateOrUpdatePostsDto,
@@ -44,17 +45,17 @@ import {
   generateLongUUID,
 } from '../../app/utils/commons';
 import * as mime from 'mime-types';
-import { CategoriesService } from '../categories/categories.service';
 import { PostCategoriesService } from '../post-categories/post-categories.service';
 import { FollowsService } from '../follows/follows.service';
 import { Cookies } from '../users/middleware/cookie.guard';
+import { UploadsUtil } from '../uploads/uploads.util';
 
 @Controller('posts')
 export class PostsController {
   constructor(
+    private readonly uploadsUtil: UploadsUtil,
     private readonly postsService: PostsService,
     private readonly followsService: FollowsService,
-    private readonly postCategoriesService: PostCategoriesService,
   ) {}
 
   /** Get all Posts */
@@ -188,54 +189,32 @@ export class PostsController {
   /** Create Posts */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdatePostsDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
-    const { title, status, description, categories, urlMedia, type } = body;
-    const attachment = req.file;
-    let fileName;
+    const { title, status, description, enableUrlMedia, urlMedia, type } = body;
 
-    if (attachment) {
-      const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-        8,
-      )}`;
-      await awsS3ServiceAdapter({
-        name: nameFile,
-        mimeType: file?.mimetype,
-        folder: 'posts',
-        file: file.buffer,
-      });
-      const extension = mime.extension(file.mimetype);
-      fileName = `${nameFile}.${extension}`;
-    }
-
-    const savePost = await this.postsService.createOne({
+    const post = await this.postsService.createOne({
       type,
       title,
       status,
       urlMedia,
       userId: user?.id,
       description,
-      image: fileName,
+      enableUrlMedia: enableUrlMedia === 'true' ? true : false,
     });
 
-    if (categories) {
-      Promise.all([
-        String(categories)
-          .split(',')
-          .forEach(async (categoryId) => {
-            await this.postCategoriesService.createOne({
-              postId: savePost?.id,
-              categoryId,
-            });
-          }),
-      ]);
-    }
+    await this.uploadsUtil.saveOrUpdateAws({
+      postId: post?.id,
+      userId: post?.userId,
+      folder: 'posts',
+      files,
+    });
 
     return reply({ res, results: 'post save successfully' });
   }
@@ -243,12 +222,12 @@ export class PostsController {
   /** Update Post */
   @Put(`/:postId`)
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdatePostsDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('postId', ParseUUIDPipe) postId: string,
   ) {
     const {
@@ -258,24 +237,9 @@ export class PostsController {
       allowDownload,
       urlMedia,
       whoCanSee,
-      categories,
+      enableUrlMedia,
     } = body;
-    const attachment = req.file;
-    let fileName;
-
-    if (attachment) {
-      const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-        8,
-      )}`;
-      await awsS3ServiceAdapter({
-        name: nameFile,
-        mimeType: file?.mimetype,
-        folder: 'posts',
-        file: file.buffer,
-      });
-      const extension = mime.extension(file.mimetype);
-      fileName = `${nameFile}.${extension}`;
-    }
+    const { user } = req;
 
     const findOnePost = await this.postsService.findOneBy({ postId });
     if (!findOnePost)
@@ -292,23 +256,19 @@ export class PostsController {
         whoCanSee,
         urlMedia,
         description,
-        image: fileName,
         allowDownload: allowDownload === 'true' ? true : false,
+        enableUrlMedia: enableUrlMedia === 'true' ? true : false,
       },
     );
 
-    // if (categories) {
-    //   Promise.all([
-    //     String(categories)
-    //       .split(',')
-    //       .forEach(async (categoryId) => {
-    //         await this.postCategoriesService.createOne({
-    //           postId: findOnePost?.id,
-    //           categoryId,
-    //         });
-    //       }),
-    //   ]);
-    // }
+    console.log('Updated post',files)
+
+    await this.uploadsUtil.saveOrUpdateAws({
+      postId: postId,
+      userId: user?.id,
+      folder: 'posts',
+      files,
+    });
 
     return reply({ res, results: 'post updated successfully' });
   }
@@ -337,27 +297,27 @@ export class PostsController {
   }
 
   /** Create Image AWS */
-  @Post(`/upload`)
-  @UseInterceptors(FileInterceptor('image'))
-  async createOneFileAws(
-    @Res() res,
-    @Req() req,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-      8,
-    )}`;
-    const response = await awsS3ServiceAdapter({
-      name: nameFile,
-      mimeType: file?.mimetype,
-      folder: 'posts',
-      file: file.buffer,
-    });
+  // @Post(`/upload`)
+  // @UseInterceptors(FileInterceptor('image'))
+  // async createOneFileAws(
+  //   @Res() res,
+  //   @Req() req,
+  //   @UploadedFile() file: Express.Multer.File,
+  // ) {
+  //   const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
+  //     8,
+  //   )}`;
+  //   const response = await awsS3ServiceAdapter({
+  //     name: nameFile,
+  //     mimeType: file?.mimetype,
+  //     folder: 'posts',
+  //     file: file.buffer,
+  //   });
 
-    console.log('response =======>', response);
+  //   console.log('response =======>', response);
 
-    return reply({ res, results: { urlFile: response.Location } });
-  }
+  //   return reply({ res, results: { urlFile: response.Location } });
+  // }
 
   /** Get on file gallery */
   @Get(`/gallery/:fileName`)

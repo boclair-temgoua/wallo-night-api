@@ -57,6 +57,7 @@ export class PostsService {
       .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
+      .addSelect('post.enableUrlMedia', 'enableUrlMedia')
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.createdAt', 'createdAt')
       .addSelect(
@@ -174,6 +175,7 @@ export class PostsService {
       .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
+      .addSelect('post.enableUrlMedia', 'enableUrlMedia')
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.createdAt', 'createdAt')
       .addSelect(
@@ -264,6 +266,7 @@ export class PostsService {
       image,
       urlMedia,
       whoCanSee,
+      enableUrlMedia,
       allowDownload,
       description,
     } = options;
@@ -275,6 +278,7 @@ export class PostsService {
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
     post.allowDownload = allowDownload;
+    post.enableUrlMedia = enableUrlMedia;
     post.slug = `${
       title ? `${Slug(title)}-${generateNumber(4)}` : generateLongUUID(10)
     }`;
@@ -302,6 +306,7 @@ export class PostsService {
       type,
       whoCanSee,
       allowDownload,
+      enableUrlMedia,
       description,
       image,
       urlMedia,
@@ -327,6 +332,7 @@ export class PostsService {
     post.image = image;
     post.status = status;
     post.description = description;
+    post.enableUrlMedia = enableUrlMedia;
     post.deletedAt = deletedAt;
 
     const query = this.driver.save(post);
