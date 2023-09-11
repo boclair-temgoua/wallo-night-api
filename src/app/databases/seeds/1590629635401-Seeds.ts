@@ -110,7 +110,6 @@ export class Seeds1590629635401 implements MigrationInterface {
           ]) as any,
           type: getRandomElement(['ARTICLE', 'AUDIO', 'GALLERY']) as any,
           slug: Slug(title),
-          image: faker.image.url(),
           description: faker.lorem.sentence({ min: 100, max: 300 }),
           userId: user?.id,
         })

@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  NotFoundException,
   Body,
   Param,
   ParseUUIDPipe,
@@ -15,11 +14,9 @@ import {
   HttpStatus,
   HttpException,
   UseInterceptors,
-  UploadedFile,
-  ConsoleLogger,
   UploadedFiles,
 } from '@nestjs/common';
-import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
 import {
   CreateOrUpdatePostsDto,
@@ -36,16 +33,6 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import {
-  awsS3ServiceAdapter,
-  getFileToAws,
-} from '../integrations/aws/aws-s3-service-adapter';
-import {
-  formateNowDateYYMMDD,
-  generateLongUUID,
-} from '../../app/utils/commons';
-import * as mime from 'mime-types';
-import { PostCategoriesService } from '../post-categories/post-categories.service';
 import { FollowsService } from '../follows/follows.service';
 import { Cookies } from '../users/middleware/cookie.guard';
 import { UploadsUtil } from '../uploads/uploads.util';
@@ -150,37 +137,30 @@ export class PostsController {
   /** Post one Galleries */
   @Post(`/galleries`)
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('attachment'))
+  @UseInterceptors(AnyFilesInterceptor())
   async createOneGallery(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdatePostsGalleriesDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
     const { title, whoCanSee, allowDownload, description, type } = body;
 
-    const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-      8,
-    )}`;
-
-    await awsS3ServiceAdapter({
-      name: nameFile,
-      mimeType: file?.mimetype,
-      folder: 'posts',
-      file: file.buffer,
-    });
-    const extension = mime.extension(file.mimetype);
-    const fileName = `${nameFile}.${extension}`;
-
-    await this.postsService.createOne({
+    const post = await this.postsService.createOne({
       type,
       title,
       whoCanSee,
       description,
       userId: user?.id,
-      image: fileName,
       allowDownload: allowDownload === 'true' ? true : false,
+    });
+
+    await this.uploadsUtil.saveOrUpdateAws({
+      postId: post?.id,
+      userId: post?.userId,
+      folder: 'posts',
+      files,
     });
 
     return reply({ res, results: 'Gallery created successfully' });
@@ -261,7 +241,7 @@ export class PostsController {
       },
     );
 
-    console.log('Updated post',files)
+    console.log('Updated post', files);
 
     await this.uploadsUtil.saveOrUpdateAws({
       postId: postId,
@@ -320,20 +300,20 @@ export class PostsController {
   // }
 
   /** Get on file gallery */
-  @Get(`/gallery/:fileName`)
-  async getOneFilePostGallery(@Res() res, @Param('fileName') fileName: string) {
-    try {
-      const { fileBuffer, contentType } = await getFileToAws({
-        folder: 'posts',
-        fileName,
-      });
-      res.status(200);
-      res.contentType(contentType);
-      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
-      res.send(fileBuffer);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Erreur lors de la récupération de l'image.");
-    }
-  }
+  // @Get(`/gallery/:fileName`)
+  // async getOneFilePostGallery(@Res() res, @Param('fileName') fileName: string) {
+  //   try {
+  //     const { fileBuffer, contentType } = await getFileToAws({
+  //       folder: 'posts',
+  //       fileName,
+  //     });
+  //     res.status(200);
+  //     res.contentType(contentType);
+  //     res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  //     res.send(fileBuffer);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).send("Erreur lors de la récupération de l'image.");
+  //   }
+  // }
 }

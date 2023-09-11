@@ -203,19 +203,13 @@ export class ProductsController {
   }
 
   /** Delete one Products */
-  @Delete(`/delete/:productId`)
+  @Delete(`/:productId`)
   @UseGuards(JwtAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,
-    @Body() body: PasswordBodyDto,
     @Param('productId', ParseUUIDPipe) productId: string,
   ) {
-    const { user } = req;
-    const { password } = body;
-    if (!user?.checkIfPasswordMatch(password))
-      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
-
     await this.productsService.updateOne(
       { productId },
       { deletedAt: new Date() },

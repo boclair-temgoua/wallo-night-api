@@ -13,7 +13,6 @@ export type StatusProduct = 'ACTIVE' | 'PENDING';
 export class CreateOrUpdateProductsDto {
   @IsNotEmpty()
   @IsString()
-  @MaxLength(100)
   title: string;
 
   @IsOptional()

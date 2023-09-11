@@ -27,10 +27,10 @@ export class UploadsService {
       .addSelect('upload.name', 'name')
       .addSelect('upload.path', 'path')
       .addSelect('upload.status', 'status')
-      .addSelect('upload.uploadType', 'uploadType')
-      .addSelect('upload.productId', 'productId')
       .addSelect('upload.postId', 'postId')
       .addSelect('upload.userId', 'userId')
+      .addSelect('upload.productId', 'productId')
+      .addSelect('upload.uploadType', 'uploadType')
       .addSelect('upload.commissionId', 'commissionId')
       .where('upload.deletedAt IS NULL');
 

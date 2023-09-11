@@ -30,9 +30,6 @@ export class Post extends BaseDeleteEntity {
   @Column({ nullable: true })
   title?: string;
 
-  @Column({ nullable: true })
-  media?: string;
-
   @Column({ type: 'boolean', default: false })
   enableUrlMedia: boolean;
 
@@ -50,9 +47,6 @@ export class Post extends BaseDeleteEntity {
 
   @Column({ default: false })
   allowDownload?: boolean;
-
-  @Column({ nullable: true })
-  image?: string;
 
   @Column({ type: 'text', nullable: true })
   description?: string;

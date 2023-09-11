@@ -52,7 +52,6 @@ export class PostsService {
       .addSelect('post.status', 'status')
       .addSelect('post.id', 'id')
       .addSelect('post.slug', 'slug')
-      .addSelect('post.image', 'image')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
@@ -91,6 +90,42 @@ export class PostsService {
          AND "com"."deletedAt" IS NULL)
          GROUP BY "com"."postId", "post"."id"
         ) AS "totalComment"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'id', "upl"."id",
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'status', "upl"."status",
+            'url', "upl"."url",
+            'userId', "upl"."userId",
+            'postId', "upl"."postId"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."postId" = "post"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "post"."id", "upl"."postId"
+          ) AS "uploadsImage"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'id', "upl"."id",
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'status', "upl"."status",
+            'url', "upl"."url",
+            'userId', "upl"."userId",
+            'postId', "upl"."postId"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."postId" = "post"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."uploadType" IN ('FILE')
+          GROUP BY "post"."id", "upl"."postId"
+          ) AS "uploadsFile"`,
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
@@ -170,7 +205,6 @@ export class PostsService {
       .addSelect('post.status', 'status')
       .addSelect('post.id', 'id')
       .addSelect('post.slug', 'slug')
-      .addSelect('post.image', 'image')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
@@ -209,6 +243,42 @@ export class PostsService {
          AND "com"."deletedAt" IS NULL)
          GROUP BY "com"."postId", "post"."id"
         ) AS "totalComment"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'id', "upl"."id",
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'status', "upl"."status",
+            'url', "upl"."url",
+            'userId', "upl"."userId",
+            'postId', "upl"."postId"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."postId" = "post"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "post"."id", "upl"."postId"
+          ) AS "uploadsImage"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'id', "upl"."id",
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'status', "upl"."status",
+            'url', "upl"."url",
+            'userId', "upl"."userId",
+            'postId', "upl"."postId"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."postId" = "post"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."uploadType" IN ('FILE')
+          GROUP BY "post"."id", "upl"."postId"
+          ) AS "uploadsFile"`,
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
@@ -263,7 +333,6 @@ export class PostsService {
       status,
       title,
       type,
-      image,
       urlMedia,
       whoCanSee,
       enableUrlMedia,
@@ -282,7 +351,6 @@ export class PostsService {
     post.slug = `${
       title ? `${Slug(title)}-${generateNumber(4)}` : generateLongUUID(10)
     }`;
-    post.image = image;
     post.status = status;
     post.description = description;
 
@@ -308,7 +376,6 @@ export class PostsService {
       allowDownload,
       enableUrlMedia,
       description,
-      image,
       urlMedia,
       deletedAt,
     } = options;
@@ -329,7 +396,6 @@ export class PostsService {
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
     post.allowDownload = allowDownload;
-    post.image = image;
     post.status = status;
     post.description = description;
     post.enableUrlMedia = enableUrlMedia;
