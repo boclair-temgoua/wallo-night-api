@@ -26,20 +26,8 @@ export class Upload extends BaseDeleteEntity {
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
 
-  @Column({ type: 'uuid', nullable: true })
-  postId?: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  productId?: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  commissionId?: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  membershipId?: string;
-
-  @Column({ default: 'PRODUCTS' })
-  type?: FilterQueryType;
+  @Column({ default: 'PRODUCT' })
+  model?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
   uploadableId?: string;

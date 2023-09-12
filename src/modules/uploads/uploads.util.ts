@@ -5,20 +5,20 @@ import { GetCommissionsSelections } from '../commissions/commissions.type';
 import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
 import * as mime from 'mime-types';
 import { UploadsService } from './uploads.service';
+import { FilterQueryType } from '../../app/utils/search-query';
 
 @Injectable()
 export class UploadsUtil {
   constructor(private readonly uploadsService: UploadsService) {} // private driver: Repository<Commission>, // @InjectRepository(Commission)
 
   async saveOrUpdateAws(options: {
-    productId?: string;
-    commissionId?: string;
     userId?: string;
-    postId?: string;
+    model: FilterQueryType;
+    uploadableId: string;
     folder: 'products' | 'commissions' | 'posts';
     files: Array<Express.Multer.File>;
   }): Promise<any> {
-    const { files, userId, postId, commissionId, productId, folder } = options;
+    const { files, userId, model, uploadableId, folder } = options;
 
     Promise.all([
       files
@@ -43,10 +43,9 @@ export class UploadsUtil {
             status: 'success',
             url: urlAWS.Location,
             uploadType: 'IMAGE',
-            commissionId: commissionId,
-            productId: productId,
+            model: model,
             userId: userId,
-            postId: postId,
+            uploadableId: uploadableId,
           });
         }),
 
@@ -72,10 +71,9 @@ export class UploadsUtil {
             status: 'success',
             url: urlAWS.Location,
             uploadType: 'FILE',
-            commissionId: commissionId,
-            productId: productId,
+            model: model,
             userId: userId,
-            postId: postId,
+            uploadableId: uploadableId,
           });
         }),
     ]);

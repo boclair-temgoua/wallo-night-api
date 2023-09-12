@@ -157,7 +157,8 @@ export class PostsController {
     });
 
     await this.uploadsUtil.saveOrUpdateAws({
-      postId: post?.id,
+      model: 'POST',
+      uploadableId: post?.id,
       userId: post?.userId,
       folder: 'posts',
       files,
@@ -190,7 +191,8 @@ export class PostsController {
     });
 
     await this.uploadsUtil.saveOrUpdateAws({
-      postId: post?.id,
+      model: 'POST',
+      uploadableId: post?.id,
       userId: post?.userId,
       folder: 'posts',
       files,
@@ -244,7 +246,8 @@ export class PostsController {
     console.log('Updated post', files);
 
     await this.uploadsUtil.saveOrUpdateAws({
-      postId: postId,
+      model: 'POST',
+      uploadableId: postId,
       userId: user?.id,
       folder: 'posts',
       files,

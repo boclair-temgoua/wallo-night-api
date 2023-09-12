@@ -18,38 +18,29 @@ export class UploadsService {
   ) {}
 
   async findAll(selections: GetUploadsSelections): Promise<any> {
-    const { productId, postId, userId, commissionId, uploadType } = selections;
+    const { model, uploadableId, uploadType } = selections;
 
     let query = this.driver
       .createQueryBuilder('upload')
-      .select('upload.id', 'uid')
+      .select('upload.id', 'id')
       .addSelect('upload.url', 'url')
       .addSelect('upload.name', 'name')
       .addSelect('upload.path', 'path')
       .addSelect('upload.status', 'status')
-      .addSelect('upload.postId', 'postId')
       .addSelect('upload.userId', 'userId')
-      .addSelect('upload.productId', 'productId')
+      .addSelect('upload.model', 'model')
       .addSelect('upload.uploadType', 'uploadType')
-      .addSelect('upload.commissionId', 'commissionId')
+      .addSelect('upload.uploadableId', 'uploadableId')
       .where('upload.deletedAt IS NULL');
 
-    if (productId) {
-      query = query.andWhere('upload.productId = :productId', { productId });
-    }
-
-    if (postId) {
-      query = query.andWhere('upload.postId = :postId', { postId });
-    }
-
-    if (userId) {
-      query = query.andWhere('upload.userId = :userId', { userId });
-    }
-
-    if (commissionId) {
-      query = query.andWhere('upload.commissionId = :commissionId', {
-        commissionId,
+    if (uploadableId) {
+      query = query.andWhere('upload.uploadableId = :uploadableId', {
+        uploadableId,
       });
+    }
+
+    if (model) {
+      query = query.andWhere('upload.model = :model', { model });
     }
 
     if (uploadType) {
@@ -66,17 +57,8 @@ export class UploadsService {
 
   /** Create one Upload to the database. */
   async createOne(options: CreateUploadOptions): Promise<Upload> {
-    const {
-      name,
-      status,
-      uploadType,
-      url,
-      path,
-      postId,
-      userId,
-      productId,
-      commissionId,
-    } = options;
+    const { name, status, uploadType, url, path, model, userId, uploadableId } =
+      options;
 
     const upload = new Upload();
     upload.url = url;
@@ -84,10 +66,9 @@ export class UploadsService {
     upload.name = name;
     upload.status = status;
     upload.userId = userId;
-    upload.postId = postId;
+    upload.model = model;
     upload.uploadType = uploadType;
-    upload.productId = productId;
-    upload.commissionId = commissionId;
+    upload.uploadableId = uploadableId;
 
     const query = this.driver.save(upload);
 

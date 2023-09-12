@@ -91,6 +91,7 @@ export class PostsService {
          GROUP BY "com"."postId", "post"."id"
         ) AS "totalComment"`,
       )
+
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
@@ -100,13 +101,16 @@ export class PostsService {
             'status', "upl"."status",
             'url', "upl"."url",
             'userId', "upl"."userId",
-            'postId', "upl"."postId"
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType",
+            'uploadableId', "upl"."uploadableId"
           )) 
           FROM "upload" "upl"
-          WHERE "upl"."postId" = "post"."id"
+          WHERE "upl"."uploadableId" = "post"."id"
           AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('POST')
           AND "upl"."uploadType" IN ('IMAGE')
-          GROUP BY "post"."id", "upl"."postId"
+          GROUP BY "post"."id", "upl"."uploadableId"
           ) AS "uploadsImage"`,
       )
       .addSelect(
@@ -118,13 +122,16 @@ export class PostsService {
             'status', "upl"."status",
             'url', "upl"."url",
             'userId', "upl"."userId",
-            'postId', "upl"."postId"
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType",
+            'uploadableId', "upl"."uploadableId"
           )) 
           FROM "upload" "upl"
-          WHERE "upl"."postId" = "post"."id"
+          WHERE "upl"."uploadableId" = "post"."id"
           AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('POST')
           AND "upl"."uploadType" IN ('FILE')
-          GROUP BY "post"."id", "upl"."postId"
+          GROUP BY "post"."id", "upl"."uploadableId"
           ) AS "uploadsFile"`,
       )
       .addSelect('post.description', 'description')
@@ -253,13 +260,16 @@ export class PostsService {
             'status', "upl"."status",
             'url', "upl"."url",
             'userId', "upl"."userId",
-            'postId', "upl"."postId"
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType",
+            'uploadableId', "upl"."uploadableId"
           )) 
           FROM "upload" "upl"
-          WHERE "upl"."postId" = "post"."id"
+          WHERE "upl"."uploadableId" = "post"."id"
           AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('POST')
           AND "upl"."uploadType" IN ('IMAGE')
-          GROUP BY "post"."id", "upl"."postId"
+          GROUP BY "post"."id", "upl"."uploadableId"
           ) AS "uploadsImage"`,
       )
       .addSelect(
@@ -271,13 +281,16 @@ export class PostsService {
             'status', "upl"."status",
             'url', "upl"."url",
             'userId', "upl"."userId",
-            'postId', "upl"."postId"
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType",
+            'uploadableId', "upl"."uploadableId"
           )) 
           FROM "upload" "upl"
-          WHERE "upl"."postId" = "post"."id"
+          WHERE "upl"."uploadableId" = "post"."id"
           AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('POST')
           AND "upl"."uploadType" IN ('FILE')
-          GROUP BY "post"."id", "upl"."postId"
+          GROUP BY "post"."id", "upl"."uploadableId"
           ) AS "uploadsFile"`,
       )
       .addSelect(

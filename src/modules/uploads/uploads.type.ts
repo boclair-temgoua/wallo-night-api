@@ -3,10 +3,9 @@ import { Upload } from '../../models/Upload';
 export type GetUploadsSelections = {
   search?: string;
   uploadType?: string;
-  postId?: Upload['postId'];
+  model?: string;
   userId?: Upload['userId'];
-  productId?: Upload['productId'];
-  commissionId?: Upload['commissionId'];
+  uploadableId?: Upload['uploadableId'];
 };
 
 export type UpdateUploadSelections = {

@@ -22,15 +22,15 @@ import { Readable } from 'stream';
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
-  /** Get all faqs */
+  /** Get all uploads */
   @Get(`/`)
   async findAll(@Res() res, @Query() query: UploadsDto) {
-    const { productId, postId, commissionId, uploadType } = query;
+    const { model, userId, uploadableId, uploadType } = query;
 
     const uploads = await this.uploadsService.findAll({
-      postId,
-      productId,
-      commissionId,
+      userId,
+      uploadableId,
+      model: model?.toUpperCase(),
       uploadType: uploadType.toUpperCase(),
     });
 
@@ -40,21 +40,19 @@ export class UploadsController {
   @Put(`/update`)
   @UseGuards(JwtAuthGuard)
   async deleteAndUpdate(@Res() res, @Req() req, @Query() query: UploadsDto) {
-    const { postId, userId, productId, commissionId, uploadType } = query;
+    const { model, userId, uploadableId } = query;
     const newFileLists = req?.body?.newFileLists;
     const newImageLists = req?.body?.newImageLists;
 
     const uploads = await this.uploadsService.findAll({
-      postId,
       userId,
-      productId,
-      commissionId,
-      uploadType: uploadType?.toUpperCase(),
+      uploadableId,
+      model: model?.toUpperCase(),
     });
 
     Promise.all(
       uploads.map(async (upload) => {
-        await this.uploadsService.deleteOne({ uploadId: upload?.uid });
+        await this.uploadsService.deleteOne({ uploadId: upload?.id });
       }),
     );
 

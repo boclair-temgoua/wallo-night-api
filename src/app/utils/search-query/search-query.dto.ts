@@ -38,6 +38,8 @@ export type FilterQueryType =
   | 'ORGANIZATION'
   | 'CAMPAIGN'
   | 'DONATION'
+  | 'PRODUCT'
+  | 'COMMISSION'
   | 'MEMBERSHIP'
   | 'GIFT'
   | 'HELP'
@@ -50,6 +52,8 @@ export const filterQueryTypeArrays = [
   'CAMPAIGN',
   'DONATION',
   'MEMBERSHIP',
+  'COMMISSION',
+  'PRODUCT',
   'GIFT',
   'HELP',
   'POST',

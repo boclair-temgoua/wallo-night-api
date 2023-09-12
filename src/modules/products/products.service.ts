@@ -66,12 +66,48 @@ export class ProductsService {
               'username', "user"."username"
           ) AS "profile"`,
       )
-      // .addSelect(
-      //   /*sql*/ `jsonb_build_object(
-      //       'name', "category"."name",
-      //       'color', "category"."color"
-      //   ) AS "category"`,
-      // )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'id', "upl"."id",
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'status', "upl"."status",
+            'url', "upl"."url",
+            'userId', "upl"."userId",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType",
+            'uploadableId', "upl"."uploadableId"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "product"."id", "upl"."uploadableId"
+          ) AS "uploadsImage"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'id', "upl"."id",
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'status', "upl"."status",
+            'url', "upl"."url",
+            'userId', "upl"."userId",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType",
+            'uploadableId', "upl"."uploadableId"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."uploadType" IN ('FILE')
+          GROUP BY "product"."id", "upl"."uploadableId"
+          ) AS "uploadsFile"`,
+      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'enableExpiredAt', "discount"."enableExpiredAt",
@@ -187,28 +223,48 @@ export class ProductsService {
               'username', "user"."username"
           ) AS "profile"`,
       )
-      // .addSelect(
-      //   /*sql*/ `jsonb_build_object(
-      //       'name', "category"."name",
-      //       'color', "category"."color"
-      //   ) AS "category"`,
-      // )
-      // .addSelect(
-      //   /*sql*/ `jsonb_build_object(
-      //       'startedAt', "discount"."startedAt",
-      //       'expiredAt', "discount"."expiredAt",
-      //       'percent', "discount"."percent",
-      //       'isValid', CASE
-      //       WHEN ("discount"."expiredAt" >= now()::date
-      //       AND "discount"."deletedAt" IS NULL
-      //       AND "discount"."isActive" IS TRUE) THEN true
-      //       WHEN ("discount"."expiredAt" < now()::date
-      //       AND "discount"."deletedAt" IS NULL
-      //       AND "discount"."isActive" IS TRUE) THEN false
-      //       ELSE false
-      //       END
-      //   ) AS "discount"`,
-      // )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'id', "upl"."id",
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'status', "upl"."status",
+            'url', "upl"."url",
+            'userId', "upl"."userId",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType",
+            'uploadableId', "upl"."uploadableId"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "product"."id", "upl"."uploadableId"
+          ) AS "uploadsImage"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'id', "upl"."id",
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'status', "upl"."status",
+            'url', "upl"."url",
+            'userId', "upl"."userId",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType",
+            'uploadableId', "upl"."uploadableId"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."uploadType" IN ('FILE')
+          GROUP BY "product"."id", "upl"."uploadableId"
+          ) AS "uploadsFile"`,
+      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'enableExpiredAt', "discount"."enableExpiredAt",
