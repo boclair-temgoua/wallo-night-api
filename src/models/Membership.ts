@@ -12,6 +12,7 @@ import { Transaction } from './Transaction';
 import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Contribution } from './Contribution';
+import { StatusType } from '../app/utils/pagination';
 
 @Entity('membership')
 export class Membership extends BaseDeleteEntity {
@@ -21,20 +22,17 @@ export class Membership extends BaseDeleteEntity {
   @Column({ nullable: true })
   title: string;
 
-  @Column({ nullable: true })
-  image: string;
-
-  @Column({ default: true })
-  isActive: boolean;
+  @Column({ default: 'ACTIVE' })
+  status?: StatusType;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ type: 'text', nullable: true })
-  messageWelcome: string;
-
   @Column({ type: 'float', nullable: true })
   pricePerMonthly: number;
+
+  @Column({ type: 'text', nullable: true })
+  messageWelcome: string;
 
   @Column({ type: 'float', nullable: true })
   pricePerYearly: number;

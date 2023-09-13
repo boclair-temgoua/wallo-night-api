@@ -31,11 +31,11 @@ export class MembershipsService {
       .createQueryBuilder('membership')
       .select('membership.id', 'id')
       .addSelect('membership.title', 'title')
-      .addSelect('membership.image', 'image')
+      .addSelect('membership.status', 'status')
       .addSelect('membership.description', 'description')
-      .addSelect('membership.messageWelcome', 'messageWelcome')
       .addSelect('membership.pricePerMonthly', 'pricePerMonthly')
       .addSelect('membership.pricePerYearly', 'pricePerYearly')
+      .addSelect('membership.messageWelcome', 'messageWelcome')
       .addSelect('membership.currencyId', 'currencyId')
       .addSelect('membership.userId', 'userId')
       .addSelect(
@@ -46,16 +46,44 @@ export class MembershipsService {
       )
       .addSelect(
         /*sql*/ `(
-          SELECT jsonb_build_object(
-          'amount', CAST((SUM("contr"."amountConvert") * "currency"."amount") / 100 AS BIGINT),
-          'total', CAST(COUNT(DISTINCT contr) AS BIGINT)
-          )
-          FROM "contribution" "contr"
-          WHERE "contr"."membershipId" = "membership"."id"
-          AND "contr"."deletedAt" IS NULL
-          GROUP BY "contr"."membershipId", "membership"."id"
-          ) AS "contribution"`,
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "membership"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('MEMBERSHIP')
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "membership"."id", "upl"."uploadableId"
+          ) AS "uploadsImage"`,
       )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "membership"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('MEMBERSHIP')
+          AND "upl"."uploadType" IN ('FILE')
+          GROUP BY "membership"."id", "upl"."uploadableId"
+          ) AS "uploadsFile"`,
+      )
+      // .addSelect(
+      //   /*sql*/ `(
+      //     SELECT jsonb_build_object(
+      //     'amount', CAST((SUM("contr"."amountConvert") * "currency"."amount") / 100 AS BIGINT),
+      //     'total', CAST(COUNT(DISTINCT contr) AS BIGINT)
+      //     )
+      //     FROM "contribution" "contr"
+      //     WHERE "contr"."membershipId" = "membership"."id"
+      //     AND "contr"."deletedAt" IS NULL
+      //     GROUP BY "contr"."membershipId", "membership"."id"
+      //     ) AS "contribution"`,
+      // )
       .where('membership.deletedAt IS NULL')
       .leftJoin('membership.currency', 'currency');
 
@@ -99,17 +127,16 @@ export class MembershipsService {
   async findOneBy(
     selections: GetOneMembershipsSelections,
   ): Promise<Membership> {
-    const { membershipId } = selections;
+    const { membershipId,userId } = selections;
     let query = this.driver
       .createQueryBuilder('membership')
       .select('membership.id', 'id')
       .addSelect('membership.title', 'title')
-      .addSelect('membership.isActive', 'isActive')
-      .addSelect('membership.image', 'image')
+      .addSelect('membership.status', 'status')
       .addSelect('membership.description', 'description')
-      .addSelect('membership.messageWelcome', 'messageWelcome')
       .addSelect('membership.pricePerMonthly', 'pricePerMonthly')
       .addSelect('membership.pricePerYearly', 'pricePerYearly')
+      .addSelect('membership.messageWelcome', 'messageWelcome')
       .addSelect('membership.currencyId', 'currencyId')
       .addSelect('membership.userId', 'userId')
       .addSelect(
@@ -118,23 +145,15 @@ export class MembershipsService {
           'symbol', "currency"."symbol"
         ) AS "currency"`,
       )
-      // .addSelect(
-      //   /*sql*/ `(
-      //   SELECT jsonb_build_object(
-      //   'amount', CAST((SUM("contr"."amountConvert") * "currency"."amount") / 100 AS BIGINT),
-      //   'total', CAST(COUNT(DISTINCT contr) AS BIGINT)
-      //   )
-      //   FROM "contribution" "contr"
-      //   WHERE "contr"."membershipId" = "membership"."id"
-      //   AND "contr"."deletedAt" IS NULL
-      //   GROUP BY "contr"."membershipId", "membership"."id"
-      //   ) AS "contribution"`,
-      // )
       .where('membership.deletedAt IS NULL')
       .leftJoin('membership.currency', 'currency');
 
     if (membershipId) {
       query = query.andWhere('membership.id = :id', { id: membershipId });
+    }
+
+    if (userId) {
+      query = query.andWhere('membership.userId = :userId', { userId });
     }
 
     const [error, result] = await useCatch(query.getRawOne());
@@ -148,8 +167,7 @@ export class MembershipsService {
   async createOne(options: CreateMembershipsOptions): Promise<Membership> {
     const {
       title,
-      image,
-      isActive,
+      status,
       description,
       messageWelcome,
       pricePerMonthly,
@@ -160,14 +178,14 @@ export class MembershipsService {
 
     const membership = new Membership();
     membership.title = title;
-    membership.image = image;
-    membership.isActive = isActive;
+    membership.title = title;
     membership.description = description;
     membership.messageWelcome = messageWelcome;
-    membership.pricePerMonthly = pricePerMonthly;
     membership.pricePerYearly = pricePerYearly;
+    membership.pricePerMonthly = pricePerMonthly;
     membership.currencyId = currencyId;
     membership.userId = userId;
+    membership.currencyId = currencyId;
 
     const query = this.driver.save(membership);
 
@@ -185,14 +203,13 @@ export class MembershipsService {
     const { membershipId } = selections;
     const {
       title,
-      image,
+      status,
       description,
       messageWelcome,
-      pricePerMonthly,
       pricePerYearly,
+      pricePerMonthly,
       currencyId,
       userId,
-      isActive,
       deletedAt,
     } = options;
 
@@ -206,12 +223,11 @@ export class MembershipsService {
     if (errorFind) throw new NotFoundException(errorFind);
 
     membership.title = title;
-    membership.image = image;
-    membership.isActive = isActive;
+    membership.status = status;
     membership.description = description;
     membership.messageWelcome = messageWelcome;
-    membership.pricePerMonthly = pricePerMonthly;
     membership.pricePerYearly = pricePerYearly;
+    membership.pricePerMonthly = pricePerMonthly;
     membership.currencyId = currencyId;
     membership.userId = userId;
     membership.deletedAt = deletedAt;

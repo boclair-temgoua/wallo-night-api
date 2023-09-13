@@ -9,6 +9,7 @@ export type GetMembershipsSelections = {
 
 export type GetOneMembershipsSelections = {
   membershipId: Membership['id'];
+  userId?: Membership['userId'];
 };
 
 export type UpdateMembershipsSelections = {

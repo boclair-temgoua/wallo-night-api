@@ -221,7 +221,6 @@ export class PostsController {
       whoCanSee,
       enableUrlMedia,
     } = body;
-    const { user } = req;
 
     const findOnePost = await this.postsService.findOneBy({ postId });
     if (!findOnePost)
@@ -243,12 +242,10 @@ export class PostsController {
       },
     );
 
-    console.log('Updated post', files);
-
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'POST',
       uploadableId: postId,
-      userId: user?.id,
+      userId: findOnePost?.userId,
       folder: 'posts',
       files,
     });

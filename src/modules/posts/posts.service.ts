@@ -91,19 +91,11 @@ export class PostsService {
          GROUP BY "com"."postId", "post"."id"
         ) AS "totalComment"`,
       )
-
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "post"."id"
@@ -116,15 +108,8 @@ export class PostsService {
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "post"."id"

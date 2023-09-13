@@ -29,17 +29,18 @@ export class CreateOrUpdateMembershipsDto {
   @Type(() => Number)
   pricePerMonthly?: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @IsPositive()
   @Min(1)
   @Type(() => Number)
   pricePerYearly?: number;
+  
 
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(currencyCodeArrays)
-  currency: CurrencyCode;
+  // @IsNotEmpty()
+  // @IsString()
+  // @IsIn(currencyCodeArrays)
+  // currency: CurrencyCode;
 
   @IsNotEmpty()
   @IsString()
@@ -48,4 +49,16 @@ export class CreateOrUpdateMembershipsDto {
   @IsOptional()
   @IsString()
   messageWelcome: string;
+}
+
+export class GetOneMembershipDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  membershipId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
 }
