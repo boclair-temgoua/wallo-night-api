@@ -164,10 +164,11 @@ export class TransactionsService {
       amount,
       campaignId,
       title,
-      description,
-      contributionId,
       userSendId,
+      description,
+      subscribeId,
       userReceiveId,
+      contributionId,
       userId,
       type,
       giftId,
@@ -182,6 +183,7 @@ export class TransactionsService {
     transaction.userId = userId;
     transaction.type = type;
     transaction.giftId = giftId;
+    transaction.subscribeId = subscribeId;
     transaction.contributionId = contributionId;
     transaction.description = description;
 

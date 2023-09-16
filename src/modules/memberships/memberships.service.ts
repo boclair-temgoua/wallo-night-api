@@ -145,6 +145,34 @@ export class MembershipsService {
           'symbol', "currency"."symbol"
         ) AS "currency"`,
       )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "membership"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('MEMBERSHIP')
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "membership"."id", "upl"."uploadableId"
+          ) AS "uploadsImage"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "membership"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('MEMBERSHIP')
+          AND "upl"."uploadType" IN ('FILE')
+          GROUP BY "membership"."id", "upl"."uploadableId"
+          ) AS "uploadsFile"`,
+      )
       .where('membership.deletedAt IS NULL')
       .leftJoin('membership.currency', 'currency');
 

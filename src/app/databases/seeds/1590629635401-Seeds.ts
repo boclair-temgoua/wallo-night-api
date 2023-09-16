@@ -1,6 +1,5 @@
-import { generateNumber } from '../../utils/commons/generate-random';
 // import { MigrationInterface, QueryRunner } from 'typeorm';
-import { Repository, MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 import { faker } from '@faker-js/faker';
 import { Country } from '../../../models/Country';
@@ -13,14 +12,13 @@ import {
   Profile,
   Follow,
   User,
-  Wallet,
   Comment,
+  Subscribe,
 } from '../../../models';
 import * as bcrypt from 'bcryptjs';
 import { getRandomElement } from '../../utils/array/get-random-element';
 import { colorsArrays } from '../../utils/commons/get-colors';
-import { ContributorRole } from '../../../modules/contributors/contributors.type';
-import { NextStep } from '../../../modules/users/users.type';
+import { addYearsFormateDDMMYYDate } from '../../utils/commons/formate-date';
 
 export class Seeds1590629635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
@@ -74,6 +72,20 @@ export class Seeds1590629635401 implements MigrationInterface {
           userId: user?.id,
           userCreatedId: user?.id,
           role: 'ADMIN',
+        })
+        .execute();
+
+      await driver
+        .createQueryBuilder()
+        .insert()
+        .into(Subscribe)
+        .values({
+          userId: user?.id,
+          subscriberId: user?.id,
+          expiredAt: addYearsFormateDDMMYYDate({
+            date: new Date(),
+            yearNumber: 50,
+          }),
         })
         .execute();
 

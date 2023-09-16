@@ -30,6 +30,7 @@ import {
 } from './index';
 import { Follow } from './Follow';
 import { Like } from './Like';
+import { Subscribe } from './Subscribe';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -73,6 +74,9 @@ export class User extends BaseDeleteEntity {
 
   @OneToMany(() => Campaign, (campaign) => campaign.user)
   campaigns?: Campaign[];
+
+  @OneToMany(() => Subscribe, (subscribe) => subscribe.user)
+  subscribes?: Subscribe[];
 
   @OneToMany(() => Post, (post) => post.user)
   posts?: Post[];

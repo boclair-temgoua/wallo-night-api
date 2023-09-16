@@ -38,11 +38,13 @@ import { config } from '../../../app/config/index';
 import { authCodeConfirmationJob, authPasswordResetJob } from '../users.job';
 import { WalletsService } from '../../wallets/wallets.service';
 import {
+  addYearsFormateDDMMYYDate,
   dateTimeNowUtc,
   generateLongUUID,
   generateNumber,
 } from '../../../app/utils/commons';
 import { JwtAuthGuard } from '../middleware';
+import { SubscribesService } from '../../subscribes/subscribes.service';
 import {
   expire_cookie_setting,
   validation_code_verification_cookie_setting,
@@ -56,6 +58,7 @@ export class AuthUserController {
     private readonly walletsService: WalletsService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
+    private readonly subscribesService: SubscribesService,
     private readonly contributorsService: ContributorsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
@@ -99,16 +102,27 @@ export class AuthUserController {
           : username
         : usernameGenerate,
     });
+    
     /** Create Contributor */
-    await this.contributorsService.createOne({
+    await this.subscribesService.createOne({
       userId: user?.id,
-      userCreatedId: user?.id,
-      role: 'ADMIN',
+      subscriberId: user?.id,
+      expiredAt: addYearsFormateDDMMYYDate({
+        date: new Date(),
+        yearNumber: 50,
+      }),
     });
 
     /** Create Wallet */
     await this.walletsService.createOne({
       userId: user?.id,
+    });
+
+    /** Create Subscribe */
+    await this.contributorsService.createOne({
+      userId: user?.id,
+      userCreatedId: user?.id,
+      role: 'ADMIN',
     });
     //const queue = 'user-register';
     //const connect = await amqplib.connect(

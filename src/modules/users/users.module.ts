@@ -6,6 +6,7 @@ import {
   ResetPassword,
   Contributor,
   Wallet,
+  Subscribe,
 } from '../../models';
 import { ProfilesService } from '../profiles/profiles.service';
 import { AuthUserController } from './auth/auth-user.controller';
@@ -17,6 +18,7 @@ import { ResetPasswordsService } from '../reset-passwords/reset-passwords.servic
 import { ContributorsUtil } from '../contributors/contributors.util';
 import { ContributorsService } from '../contributors/contributors.service';
 import { WalletsService } from '../wallets/wallets.service';
+import { SubscribesService } from '../subscribes/subscribes.service';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { WalletsService } from '../wallets/wallets.service';
       User,
       Wallet,
       Profile,
+      Subscribe,
       ResetPassword,
       Contributor,
     ]),
@@ -36,6 +39,7 @@ import { WalletsService } from '../wallets/wallets.service';
     CheckUserService,
     JwtAuthStrategy,
     ContributorsUtil,
+    SubscribesService,
     ContributorsService,
     ResetPasswordsService,
   ],

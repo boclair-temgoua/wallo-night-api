@@ -13,6 +13,7 @@ import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Contribution } from './Contribution';
 import { StatusType } from '../app/utils/pagination';
+import { Subscribe } from './Subscribe';
 
 @Entity('membership')
 export class Membership extends BaseDeleteEntity {
@@ -53,13 +54,11 @@ export class Membership extends BaseDeleteEntity {
   @JoinColumn()
   user?: Relation<User>;
 
-  @OneToMany(() => Transaction, (transaction) => transaction.membership, {
-    onDelete: 'CASCADE',
-  })
-  transactions?: Transaction[];
-
   @OneToMany(() => Contribution, (contribution) => contribution.membership, {
     onDelete: 'CASCADE',
   })
   contributions?: Contribution[];
+
+  @OneToMany(() => Subscribe, (subscribe) => subscribe.membership)
+  subscribes?: Subscribe[];
 }

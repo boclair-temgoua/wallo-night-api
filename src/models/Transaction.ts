@@ -7,15 +7,18 @@ import {
   ManyToOne,
   Relation,
 } from 'typeorm';
-import { OrderProduct } from './OrderProduct';
-import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Gift } from './Gift';
-import { Contribution } from './Contribution';
 import { TransactionType } from '../modules/transactions/transactions.type';
 import { Campaign } from './Campaign';
-import { Withdrawal } from './Withdrawal';
-import { Membership } from './Membership';
+import {
+  Withdrawal,
+  Subscribe,
+  Membership,
+  Contribution,
+  Gift,
+  User,
+  OrderProduct,
+} from './index';
 
 @Entity('transaction')
 export class Transaction extends BaseDeleteEntity {
@@ -99,10 +102,10 @@ export class Transaction extends BaseDeleteEntity {
   user?: Relation<User>;
 
   @Column({ type: 'uuid', nullable: true })
-  membershipId?: string;
-  @ManyToOne(() => Membership, (membership) => membership.transactions, {
+  subscribeId?: string;
+  @ManyToOne(() => Subscribe, (subscribe) => subscribe.transactions, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  membership?: Relation<Membership>;
+  subscribe?: Relation<Subscribe>;
 }

@@ -133,7 +133,17 @@ export class PostsService {
                AND "lk"."deletedAt" IS NULL
                AND "lk"."likeableId" = "post"."id"
                AND "lk"."userId" IN ('${likeUserId}'))
-              ) AS "isLike"`);
+              ) AS "isLike"`).addSelect(/*sql*/ `(
+                SELECT
+                    CAST(COUNT(DISTINCT sub) AS INT)
+                FROM "subscribe" "sub"
+                WHERE ("sub"."subscriberId" = "post"."userId"
+                 AND "sub"."expiredAt" >= now()::date
+                 AND "sub"."userId" IN ('${likeUserId}')
+                 AND "sub"."deletedAt" IS NULL)
+                ) AS "isValidSubscribe"`);
+    } else {
+      query = query.addSelect(/*sql*/ `null`, 'isValidSubscribe');
     }
 
     if (followerIds && followerIds.length > 0) {
@@ -303,7 +313,15 @@ export class PostsService {
                AND "lk"."likeableId" = "post"."id"
                AND "lk"."userId" IN ('${likeUserId}'))
                GROUP BY "lk"."likeableId", "post"."id"
-              ) AS "isLike"`);
+              ) AS "isLike"`).addSelect(/*sql*/ `(
+                SELECT
+                    CAST(COUNT(DISTINCT sub) AS INT)
+                FROM "subscribe" "sub"
+                WHERE ("sub"."subscriberId" = "user"."id"
+                 AND "sub"."expiredAt" >= now()::date
+                 AND "sub"."userId" IN ('${likeUserId}')
+                 AND "sub"."deletedAt" IS NULL)
+                ) AS "isValidSubscribe"`);
     }
 
     if (status) {
