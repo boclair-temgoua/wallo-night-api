@@ -20,63 +20,45 @@ export class UploadsUtil {
   }): Promise<any> {
     const { files, userId, model, uploadableId, folder } = options;
 
-    Promise.all([
-      files
-        .filter((lk: any) => lk?.fieldname === 'attachmentImages')
-        .map(async (file) => {
-          const nameFile = `${formateNowDateYYMMDD(
-            new Date(),
-          )}${generateLongUUID(8)}`;
+    for (const file of files) {
+      const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
+        8,
+      )}`;
+      const urlAWS = await awsS3ServiceAdapter({
+        name: nameFile,
+        mimeType: file?.mimetype,
+        folder: folder,
+        file: file.buffer,
+      });
+      const extension = mime.extension(file.mimetype);
+      const fileName = `${nameFile}.${extension}`;
 
-          const urlAWS = await awsS3ServiceAdapter({
-            name: nameFile,
-            mimeType: file?.mimetype,
-            folder: folder,
-            file: file.buffer,
-          });
-          const extension = mime.extension(file.mimetype);
-          const fileName = `${nameFile}.${extension}`;
+      if (file?.fieldname === 'attachmentImages') {
+        await this.uploadsService.createOne({
+          name: file?.originalname,
+          path: fileName,
+          status: 'success',
+          url: urlAWS.Location,
+          uploadType: 'IMAGE',
+          model: model,
+          userId: userId,
+          uploadableId: uploadableId,
+        });
+      }
 
-          await this.uploadsService.createOne({
-            name: file?.originalname,
-            path: fileName,
-            status: 'success',
-            url: urlAWS.Location,
-            uploadType: 'IMAGE',
-            model: model,
-            userId: userId,
-            uploadableId: uploadableId,
-          });
-        }),
-
-      files
-        .filter((lk: any) => lk?.fieldname === 'attachmentFiles')
-        .map(async (file) => {
-          const nameFile = `${formateNowDateYYMMDD(
-            new Date(),
-          )}${generateLongUUID(8)}`;
-
-          const urlAWS = await awsS3ServiceAdapter({
-            name: nameFile,
-            mimeType: file?.mimetype,
-            folder: folder,
-            file: file.buffer,
-          });
-          const extension = mime.extension(file.mimetype);
-          const fileName = `${nameFile}.${extension}`;
-
-          await this.uploadsService.createOne({
-            name: file?.originalname,
-            path: fileName,
-            status: 'success',
-            url: urlAWS.Location,
-            uploadType: 'FILE',
-            model: model,
-            userId: userId,
-            uploadableId: uploadableId,
-          });
-        }),
-    ]);
+      if (file?.fieldname === 'attachmentFiles') {
+        await this.uploadsService.createOne({
+          name: file?.originalname,
+          path: fileName,
+          status: 'success',
+          url: urlAWS.Location,
+          uploadType: 'FILE',
+          model: model,
+          userId: userId,
+          uploadableId: uploadableId,
+        });
+      }
+    }
 
     return 'ok';
   }

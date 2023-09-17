@@ -62,9 +62,9 @@ export class PostsController {
       userId: user?.id,
     });
 
-    followings.forEach((element) => {
-      userFollows.push(element?.followerId);
-    });
+    for (const element of followings) {
+      userFollows.push(element.followerId);
+    }
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });

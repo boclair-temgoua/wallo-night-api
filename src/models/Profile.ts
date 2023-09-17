@@ -6,9 +6,10 @@ import {
   JoinColumn,
   ManyToOne,
   Generated,
+  Relation,
 } from 'typeorm';
 
-import { User } from './User';
+import { User, Currency } from './index';
 import { BaseDeleteEntity } from '../app/databases/common';
 @Entity('profile')
 export class Profile extends BaseDeleteEntity {
@@ -40,9 +41,6 @@ export class Profile extends BaseDeleteEntity {
   birthday?: Date;
 
   @Column({ type: 'uuid', nullable: true })
-  currencyId?: string;
-
-  @Column({ type: 'uuid', nullable: true })
   countryId?: string;
 
   @Column({ nullable: true })
@@ -67,4 +65,10 @@ export class Profile extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   user?: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  currencyId?: string;
+  @ManyToOne(() => Currency, (currency) => currency.profiles)
+  @JoinColumn()
+  currency?: Relation<Currency>;
 }

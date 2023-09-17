@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Product } from './Product';
 import { BaseEntity } from '../app/databases/common';
-import { Gift } from './Gift';
+import { Gift, Profile } from './index';
 import { Contribution } from './Contribution';
 import { Membership } from './Membership';
 
@@ -24,6 +24,9 @@ export class Currency extends BaseEntity {
 
   @Column({ default: true, type: 'boolean' })
   isActive: boolean;
+
+  @OneToMany(() => Profile, (profile) => profile.currency)
+  profiles: Profile[];
 
   @OneToMany(() => Product, (product) => product.currency)
   products: Product[];
