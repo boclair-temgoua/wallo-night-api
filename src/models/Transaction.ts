@@ -34,6 +34,9 @@ export class Transaction extends BaseDeleteEntity {
   @Column({ nullable: true })
   description: string;
 
+  @Column({ nullable: true })
+  token: string;
+
   //   @Column({ type: 'uuid', nullable: true })
   //   orderProductId?: string;
   //   @ManyToOne(() => OrderProduct, (orderProduct) => orderProduct.transactions, {

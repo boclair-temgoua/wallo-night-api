@@ -34,6 +34,7 @@ import { LikesModule } from './modules/likes/likes.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { CommissionsModule } from './modules/commissions/commissions.module';
 import { SubscribesModule } from './modules/subscribes/subscribes.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { SubscribesModule } from './modules/subscribes/subscribes.module';
     MembershipsModule,
     FollowsModule,
     LikesModule,
+    PaymentsModule,
     UploadsModule,
     SubscribesModule,
     CommissionsModule,

@@ -17,6 +17,7 @@ import {
   WithPaginationResponse,
   withPagination,
 } from '../../app/utils/pagination/with-pagination';
+import { generateLongUUID } from '../../app/utils/commons';
 
 @Injectable()
 export class TransactionsService {
@@ -170,6 +171,7 @@ export class TransactionsService {
       userReceiveId,
       contributionId,
       userId,
+      token,
       type,
       giftId,
     } = options;
@@ -182,6 +184,7 @@ export class TransactionsService {
     transaction.amount = amount;
     transaction.userId = userId;
     transaction.type = type;
+    transaction.token = token;
     transaction.giftId = giftId;
     transaction.subscribeId = subscribeId;
     transaction.contributionId = contributionId;
