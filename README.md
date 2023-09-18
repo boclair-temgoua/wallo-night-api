@@ -38,6 +38,10 @@ npm run migration:generate --name="migration"
 npm run migration:run
 ```
 
+```typescript
+npm run db:seed
+```
+
 ## Installation
 
 ```typescript

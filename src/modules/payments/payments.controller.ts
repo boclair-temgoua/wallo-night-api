@@ -53,7 +53,6 @@ export class PaymentsController {
   @Post(`/stripe/subscribe`)
   async createOneStripeSubscribe(@Res() res, @Req() req, @Body() body) {
     const { amount, currency, membershipId, userId, paymentMethod } = body;
-    // const { user } = req;
 
     const newToken = generateLongUUID(30);
     const { paymentIntents } = await this.paymentsService.stripeMethod({
@@ -61,6 +60,7 @@ export class PaymentsController {
       currency: currency,
       amount,
       token: newToken,
+      description: `Subscription ${amount?.month} user ${userId}`,
     });
     if (!paymentIntents) {
       throw new HttpException(
@@ -69,6 +69,7 @@ export class PaymentsController {
       );
     }
 
+    console.log('paymentIntents =>',paymentIntents)
     await this.subscribesUtil.createOrUpdateOneSubscribe({
       userId,
       amount: { value: paymentIntents?.amount, month: amount?.value }, // Pas besoin de multiplier pas 100 stipe le fais deja
@@ -76,6 +77,6 @@ export class PaymentsController {
       type: 'CARD',
       token: newToken,
     });
-    return reply({ res, results: newToken });
+    return reply({ res, results: { token: newToken } });
   }
 }

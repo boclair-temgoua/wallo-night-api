@@ -15,7 +15,7 @@ export class Wallet extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({ default: false, unique: true })
+  @Column({ unique: true })
   accountId?: string;
 
   @Column({ type: 'float', default: 0 })

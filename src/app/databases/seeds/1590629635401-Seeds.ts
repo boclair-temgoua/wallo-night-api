@@ -14,23 +14,33 @@ import {
   User,
   Comment,
   Subscribe,
+  Wallet,
+  Currency,
 } from '../../../models';
 import * as bcrypt from 'bcryptjs';
 import { getRandomElement } from '../../utils/array/get-random-element';
 import { colorsArrays } from '../../utils/commons/get-colors';
-import { addYearsFormateDDMMYYDate } from '../../utils/commons/formate-date';
+import { addYearsFormateDDMMYYDate, formateNowDateYYMMDD } from '../../utils/commons/formate-date';
+import { generateNumber } from '../../../app/utils/commons';
 
 export class Seeds1590629635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
     const driver = AppSeedDataSource;
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
       const firstName = faker.person.firstName();
       const lastName = faker.person.lastName();
 
       const country = await driver
         .createQueryBuilder(Country, 'country')
         .select('country.id', 'id')
+        .orderBy('RANDOM()')
+        .limit(1)
+        .getRawOne();
+
+      const currency = await driver
+        .createQueryBuilder(Currency, 'currency')
+        .select('currency.id', 'id')
         .orderBy('RANDOM()')
         .limit(1)
         .getRawOne();
@@ -42,6 +52,7 @@ export class Seeds1590629635401 implements MigrationInterface {
         .values({
           color: getRandomElement(colorsArrays),
           countryId: country?.id,
+          currencyId: currency?.id,
           firstName: firstName,
           lastName: lastName,
           image: faker.image.url(),
@@ -89,18 +100,21 @@ export class Seeds1590629635401 implements MigrationInterface {
         })
         .execute();
 
-      // await driver
-      //   .createQueryBuilder()
-      //   .insert()
-      //   .into(Wallet)
-      //   .values({
-      //     userId: user?.id,
-      //   })
-      //   .execute();
+      await driver
+        .createQueryBuilder()
+        .insert()
+        .into(Wallet)
+        .values({
+          userId: user?.id,
+          accountId: `${formateNowDateYYMMDD(new Date())}${generateNumber(
+            10,
+          )}`,
+        })
+        .execute();
     }
     console.log('\x1b[32m%s\x1b[0m', '**** User seed finish ****');
 
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 300; i++) {
       const title = faker.lorem.sentence({ min: 5, max: 15 });
       const user = await driver
         .createQueryBuilder(User, 'user')
@@ -129,8 +143,7 @@ export class Seeds1590629635401 implements MigrationInterface {
     }
     console.log('\x1b[32m%s\x1b[0m', '**** Post seed finish ****');
 
-    for (let i = 0; i < 600; i++) {
-      const title = faker.lorem.sentence(2);
+    for (let i = 0; i < 700; i++) {
       const user = await driver
         .createQueryBuilder(User, 'user')
         .select('user.id', 'id')
@@ -188,32 +201,32 @@ export class Seeds1590629635401 implements MigrationInterface {
     }
     console.log('\x1b[32m%s\x1b[0m', '**** Comment reply seed finish ****');
 
-    for (let i = 0; i < 800; i++) {
-      const userFollower = await driver
-        .createQueryBuilder(User, 'user')
-        .select('user.id', 'id')
-        .orderBy('RANDOM()')
-        .limit(1)
-        .getRawOne();
+    // for (let i = 0; i < 800; i++) {
+    //   const userFollower = await driver
+    //     .createQueryBuilder(User, 'user')
+    //     .select('user.id', 'id')
+    //     .orderBy('RANDOM()')
+    //     .limit(1)
+    //     .getRawOne();
 
-      const user = await driver
-        .createQueryBuilder(User, 'user')
-        .select('user.id', 'id')
-        .orderBy('RANDOM()')
-        .limit(1)
-        .getRawOne();
+    //   const user = await driver
+    //     .createQueryBuilder(User, 'user')
+    //     .select('user.id', 'id')
+    //     .orderBy('RANDOM()')
+    //     .limit(1)
+    //     .getRawOne();
 
-      await driver
-        .createQueryBuilder()
-        .insert()
-        .into(Follow)
-        .values({
-          followerId: userFollower?.id,
-          userId: user?.id,
-        })
-        .execute();
-    }
-    console.log('\x1b[32m%s\x1b[0m', '**** Follow seed finish ****');
+    //   await driver
+    //     .createQueryBuilder()
+    //     .insert()
+    //     .into(Follow)
+    //     .values({
+    //       followerId: userFollower?.id,
+    //       userId: user?.id,
+    //     })
+    //     .execute();
+    // }
+    // console.log('\x1b[32m%s\x1b[0m', '**** Follow seed finish ****');
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {
