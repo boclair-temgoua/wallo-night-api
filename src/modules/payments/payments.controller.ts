@@ -22,6 +22,8 @@ import { PaymentsService } from './payments.service';
 import { SubscribesService } from '../subscribes/subscribes.service';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { generateLongUUID } from '../../app/utils/commons';
+import Stripe from 'stripe';
+import { config } from '../../app/config/index';
 
 @Controller('payments')
 export class PaymentsController {
@@ -32,23 +34,48 @@ export class PaymentsController {
 
   /** Create Like */
   @Post(`/paypal/subscribe`)
-  @UseGuards(JwtAuthGuard)
   async createOnePaypalSubscribe(@Res() res, @Req() req, @Body() body) {
     const { amount, currency, membershipId, userId, paymentMethod } = body;
-    const { user } = req;
-    console.log('body ===>', body);
-    // const { type, likeableId } = params;
 
-    console.log('body ===>', body);
     const newToken = generateLongUUID(30);
     await this.subscribesUtil.createOrUpdateOneSubscribe({
       userId,
-      amount: { ...amount },
+      amount: { value: amount?.value * 100, month: amount?.value },
       membershipId,
       type: 'PAYPAL',
       token: newToken,
     });
 
     return reply({ res, results: { toke: newToken } });
+  }
+
+  /** Create Like */
+  @Post(`/stripe/subscribe`)
+  async createOneStripeSubscribe(@Res() res, @Req() req, @Body() body) {
+    const { amount, currency, membershipId, userId, paymentMethod } = body;
+    // const { user } = req;
+
+    const newToken = generateLongUUID(30);
+    const { paymentIntents } = await this.paymentsService.stripeMethod({
+      paymentMethod,
+      currency: currency,
+      amount,
+      token: newToken,
+    });
+    if (!paymentIntents) {
+      throw new HttpException(
+        `Transaction not found please try again`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.subscribesUtil.createOrUpdateOneSubscribe({
+      userId,
+      amount: { value: paymentIntents?.amount, month: amount?.value }, // Pas besoin de multiplier pas 100 stipe le fais deja
+      membershipId,
+      type: 'CARD',
+      token: newToken,
+    });
+    return reply({ res, results: newToken });
   }
 }

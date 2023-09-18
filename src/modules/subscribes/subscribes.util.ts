@@ -83,7 +83,7 @@ export class SubscribesUtil {
         userSendId: userId,
         userReceiveId: findOneMembership?.userId,
         subscribeId: findOneSubscribe?.id,
-        amount: Number(amount?.value) * 100,
+        amount: Number(amount?.value),
         description: 'subscribe',
       });
     } else {

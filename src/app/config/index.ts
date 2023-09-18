@@ -4,6 +4,13 @@ dotenv.config();
 
 export const config = {
   /**
+   * Url site
+   */
+  url: {
+    client: process.env.NODE_CLIENT_URL,
+    dashboard: process.env.NODE_DASHBOARD_URL,
+  },
+  /**
    * Node environment
    */
   environment: process.env.NODE_ENV || 'development',
