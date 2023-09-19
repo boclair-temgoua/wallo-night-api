@@ -85,8 +85,10 @@ export class ProductsController {
     const {
       title,
       price,
+      urlRedirect,
       enableLimitSlot,
       urlMedia,
+      enableUrlRedirect,
       enableChooseQuantity,
       messageAfterPayment,
       description,
@@ -102,12 +104,14 @@ export class ProductsController {
       limitSlot: Number(limitSlot),
       urlMedia,
       description,
+      urlRedirect,
       messageAfterPayment,
       currencyId: user?.profile?.currencyId,
       discountId: isNotUndefined(discountId) ? discountId : null,
       enableDiscount: enableDiscount === 'true' ? true : false,
       enableLimitSlot: enableLimitSlot === 'true' ? true : false,
       enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
+      enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
       userId: user?.id,
     });
 
@@ -136,6 +140,8 @@ export class ProductsController {
     const {
       title,
       price,
+      urlRedirect,
+      enableUrlRedirect,
       enableLimitSlot,
       urlMedia,
       enableChooseQuantity,
@@ -164,6 +170,7 @@ export class ProductsController {
         price: Number(price),
         urlMedia,
         description,
+        urlRedirect,
         messageAfterPayment,
         limitSlot: Number(limitSlot),
         currencyId: user?.profile?.currencyId,
@@ -171,6 +178,7 @@ export class ProductsController {
         enableDiscount: enableDiscount === 'true' ? true : false,
         enableLimitSlot: enableLimitSlot === 'true' ? true : false,
         enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
+        enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
       },
     );
 

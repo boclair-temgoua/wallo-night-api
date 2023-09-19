@@ -40,6 +40,12 @@ export class Product extends BaseDeleteEntity {
   @Column({ nullable: true })
   urlMedia: string;
 
+  @Column({ nullable: true })
+  urlRedirect: string;
+
+  @Column({ type: 'boolean', default: false })
+  enableUrlRedirect: boolean;
+
   @Column({ type: 'bigint', default: 0 })
   price: number;
 

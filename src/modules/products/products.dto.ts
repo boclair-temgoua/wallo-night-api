@@ -25,6 +25,14 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
+  urlRedirect: string;
+
+  @IsOptional()
+  @IsString()
+  enableUrlRedirect: string;
+
+  @IsOptional()
+  @IsString()
   limitSlot: string;
 
   @IsOptional()

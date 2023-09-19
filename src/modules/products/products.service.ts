@@ -43,6 +43,8 @@ export class ProductsService {
       .addSelect('product.moreDescription', 'moreDescription')
       .addSelect('product.status', 'status')
       .addSelect('product.limitSlot', 'limitSlot')
+      .addSelect('product.urlRedirect', 'urlRedirect')
+      .addSelect('product.enableUrlRedirect', 'enableUrlRedirect')
       .addSelect('product.price', 'price')
       .addSelect('product.enableLimitSlot', 'enableLimitSlot')
       .addSelect('product.enableDiscount', 'enableDiscount')
@@ -199,6 +201,8 @@ export class ProductsService {
       .addSelect('product.description', 'description')
       .addSelect('product.moreDescription', 'moreDescription')
       .addSelect('product.limitSlot', 'limitSlot')
+      .addSelect('product.urlRedirect', 'urlRedirect')
+      .addSelect('product.enableUrlRedirect', 'enableUrlRedirect')
       .addSelect('product.status', 'status')
       .addSelect('product.price', 'price')
       .addSelect('product.enableLimitSlot', 'enableLimitSlot')
@@ -337,8 +341,10 @@ export class ProductsService {
       categoryId,
       discountId,
       urlMedia,
+      urlRedirect,
       enableLimitSlot,
       enableDiscount,
+      enableUrlRedirect,
       messageAfterPayment,
       enableChooseQuantity,
       userId,
@@ -348,6 +354,8 @@ export class ProductsService {
     product.title = title;
     product.price = price;
     product.sku = sku;
+    product.urlRedirect = urlRedirect;
+    product.enableUrlRedirect = enableUrlRedirect;
     product.subTitle = subTitle;
     product.moreDescription = moreDescription;
     product.limitSlot = limitSlot;
@@ -392,6 +400,8 @@ export class ProductsService {
       deletedAt,
       urlMedia,
       limitSlot,
+      urlRedirect,
+      enableUrlRedirect,
       enableLimitSlot,
       enableDiscount,
       messageAfterPayment,
@@ -417,6 +427,8 @@ export class ProductsService {
     product.discountId = discountId;
     product.currencyId = currencyId;
     product.limitSlot = limitSlot;
+    product.urlRedirect = urlRedirect;
+    product.enableUrlRedirect = enableUrlRedirect;
     product.enableLimitSlot = enableLimitSlot;
     product.enableDiscount = enableDiscount;
     product.enableChooseQuantity = enableChooseQuantity;
