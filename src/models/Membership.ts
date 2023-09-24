@@ -12,7 +12,7 @@ import { Transaction } from './Transaction';
 import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Contribution } from './Contribution';
-import { StatusType } from '../app/utils/pagination';
+import { ProductStatus } from '../app/utils/pagination';
 import { Subscribe } from './Subscribe';
 
 @Entity('membership')
@@ -24,7 +24,7 @@ export class Membership extends BaseDeleteEntity {
   title: string;
 
   @Column({ default: 'ACTIVE' })
-  status?: StatusType;
+  status?: ProductStatus;
 
   @Column({ type: 'text', nullable: true })
   description: string;

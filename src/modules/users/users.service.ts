@@ -190,6 +190,16 @@ export class UsersService {
       GROUP BY "fol"."followerId", "user"."id"
       ) AS "totalFollower"`,
       )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT sub) AS INT)
+      FROM "subscribe" "sub"
+      WHERE ("sub"."subscriberId" = "user"."id"
+      AND "sub"."expiredAt" >= now()::date
+      AND "sub"."deletedAt" IS NULL)
+      ) AS "totalSubscribe"`,
+      )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile');
 
@@ -298,6 +308,16 @@ export class UsersService {
       AND "fol"."deletedAt" IS NULL)
       GROUP BY "fol"."followerId", "user"."id"
       ) AS "totalFollower"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+      SELECT
+          CAST(COUNT(DISTINCT sub) AS INT)
+      FROM "subscribe" "sub"
+      WHERE ("sub"."subscriberId" = "user"."id"
+      AND "sub"."expiredAt" >= now()::date
+      AND "sub"."deletedAt" IS NULL)
+      ) AS "totalSubscribe"`,
       )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile')

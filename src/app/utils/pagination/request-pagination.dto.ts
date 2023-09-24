@@ -12,7 +12,8 @@ import {
 
 export type SortType = 'ASC' | 'DESC';
 
-export type StatusType = 'ACTIVE' | 'PENDING';
+export type ProductStatus = 'ACTIVE' | 'PENDING';
+
 export class RequestPaginationDto {
   @IsNotEmpty()
   @IsInt()

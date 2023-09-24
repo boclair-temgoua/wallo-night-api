@@ -69,7 +69,6 @@ export class PaymentsController {
       );
     }
 
-    console.log('paymentIntents =>',paymentIntents)
     await this.subscribesUtil.createOrUpdateOneSubscribe({
       userId,
       amount: { value: paymentIntents?.amount, month: amount?.value }, // Pas besoin de multiplier pas 100 stipe le fais deja

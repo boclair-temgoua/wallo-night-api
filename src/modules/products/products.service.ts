@@ -35,6 +35,8 @@ export class ProductsService {
       .addSelect('product.title', 'title')
       .addSelect('product.subTitle', 'subTitle')
       .addSelect('product.slug', 'slug')
+      .addSelect('product.whoCanSee', 'whoCanSee')
+      .addSelect('product.productType', 'productType')
       .addSelect('product.userId', 'userId')
       .addSelect('product.urlMedia', 'urlMedia')
       .addSelect('product.messageAfterPayment', 'messageAfterPayment')
@@ -196,6 +198,8 @@ export class ProductsService {
       .addSelect('product.slug', 'slug')
       .addSelect('product.userId', 'userId')
       .addSelect('product.urlMedia', 'urlMedia')
+      .addSelect('product.whoCanSee', 'whoCanSee')
+      .addSelect('product.productType', 'productType')
       .addSelect('product.messageAfterPayment', 'messageAfterPayment')
       .addSelect('product.sku', 'sku')
       .addSelect('product.description', 'description')
@@ -341,6 +345,8 @@ export class ProductsService {
       categoryId,
       discountId,
       urlMedia,
+      whoCanSee,
+      productType,
       urlRedirect,
       enableLimitSlot,
       enableDiscount,
@@ -354,6 +360,8 @@ export class ProductsService {
     product.title = title;
     product.price = price;
     product.sku = sku;
+    product.whoCanSee = whoCanSee;
+    product.productType = productType;
     product.urlRedirect = urlRedirect;
     product.enableUrlRedirect = enableUrlRedirect;
     product.subTitle = subTitle;
@@ -398,6 +406,8 @@ export class ProductsService {
       currencyId,
       categoryId,
       deletedAt,
+      whoCanSee,
+      productType,
       urlMedia,
       limitSlot,
       urlRedirect,
@@ -424,6 +434,8 @@ export class ProductsService {
     product.moreDescription = moreDescription;
     product.categoryId = categoryId;
     product.status = status;
+    product.whoCanSee = whoCanSee;
+    product.productType = productType;
     product.discountId = discountId;
     product.currencyId = currencyId;
     product.limitSlot = limitSlot;

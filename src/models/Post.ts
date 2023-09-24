@@ -17,7 +17,7 @@ import { PostType } from '../modules/posts/posts.type';
 import { Comment } from './Comment';
 import { Category } from './Category';
 import { PostCategory } from './PostCategory';
-import { StatusType } from '../app/utils/pagination';
+import { ProductStatus } from '../app/utils/pagination';
 
 @Entity('post')
 export class Post extends BaseDeleteEntity {
@@ -43,7 +43,7 @@ export class Post extends BaseDeleteEntity {
   type?: PostType;
 
   @Column({ default: 'ACTIVE' })
-  status?: StatusType;
+  status?: ProductStatus;
 
   @Column({ default: false })
   allowDownload?: boolean;

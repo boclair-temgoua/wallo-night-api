@@ -15,10 +15,11 @@ import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
-import { StatusProduct } from '../modules/products/products.dto';
 import { Discount } from './Discount';
 import { Cart, User } from './index';
-import { StatusType } from '../app/utils/pagination';
+import { ProductStatus } from '../app/utils/pagination';
+import { WhoCanSeeType } from '../app/utils/search-query';
+import { ProductType } from '../modules/products/products.dto';
 
 @Entity('product')
 export class Product extends BaseDeleteEntity {
@@ -71,7 +72,13 @@ export class Product extends BaseDeleteEntity {
   limitSlot: number;
 
   @Column({ default: 'ACTIVE' })
-  status?: StatusType;
+  status?:  ProductStatus;
+
+  @Column({ default: 'PHYSICAL' })
+  productType?: ProductType;
+
+  @Column({ default: 'PUBLIC' })
+  whoCanSee?: WhoCanSeeType;
 
   @Column({ type: 'uuid', nullable: true })
   categoryId: string;

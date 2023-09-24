@@ -60,13 +60,13 @@ export class SubscribesController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const follows = await this.subscribesService.findAll({
+    const subscribers = await this.subscribesService.findAll({
       search,
       pagination,
       subscriberId: user?.id,
     });
 
-    return reply({ res, results: follows });
+    return reply({ res, results: subscribers });
   }
 
   /** Get all Follows */

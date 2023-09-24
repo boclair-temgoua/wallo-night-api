@@ -1,16 +1,32 @@
 import {
   IsString,
   IsNotEmpty,
-  MaxLength,
   IsUUID,
   IsOptional,
-  IsArray,
-  IsInt,
-  IsBoolean,
+  IsIn,
 } from 'class-validator';
+import {
+  WhoCanSeeType,
+  whoCanSeeTypeArrays,
+} from '../../app/utils/search-query';
 
 export type StatusProduct = 'ACTIVE' | 'PENDING';
+
+export type ProductType = 'DIGITAL' | 'PHYSICAL';
+
+export const productTypeArrays = ['DIGITAL', 'PHYSICAL'];
+
 export class CreateOrUpdateProductsDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(whoCanSeeTypeArrays)
+  whoCanSee: WhoCanSeeType;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(productTypeArrays)
+  productType: ProductType;
+
   @IsNotEmpty()
   @IsString()
   title: string;
