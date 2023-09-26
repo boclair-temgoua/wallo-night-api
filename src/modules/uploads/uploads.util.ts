@@ -21,17 +21,20 @@ export class UploadsUtil {
     const { files, userId, model, uploadableId, folder } = options;
 
     for (const file of files) {
-      const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-        8,
-      )}`;
+      const extension = mime.extension(file.mimetype);
+      const nameFile = `${userId}-${formateNowDateYYMMDD(
+        new Date(),
+      )}${generateLongUUID(8)}`;
+      const fileName = `${`${nameFile}.${
+        extension === 'mpga' ? 'mp3' : extension
+      }`}`;
+      
       const urlAWS = await awsS3ServiceAdapter({
-        name: nameFile,
+        fileName: fileName,
         mimeType: file?.mimetype,
         folder: folder,
         file: file.buffer,
       });
-      const extension = mime.extension(file.mimetype);
-      const fileName = `${nameFile}.${extension}`;
 
       if (file?.fieldname === 'attachmentImages') {
         await this.uploadsService.createOne({

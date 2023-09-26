@@ -197,17 +197,19 @@ export class CommissionsController {
     let fileName;
 
     if (attachment) {
-      const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-        8,
-      )}`;
+      const extension = mime.extension(file.mimetype);
+      const nameFile = `${commissionId}-${formateNowDateYYMMDD(
+        new Date(),
+      )}${generateLongUUID(8)}`;
+      const fileName = `${`${nameFile}.${
+        extension === 'mpga' ? 'mp3' : extension
+      }`}`;
       await awsS3ServiceAdapter({
-        name: nameFile,
+        fileName: fileName,
         mimeType: file?.mimetype,
         folder: 'posts',
         file: file.buffer,
       });
-      const extension = mime.extension(file.mimetype);
-      fileName = `${nameFile}.${extension}`;
     }
 
     const findOneCommission = await this.commissionsService.findOneBy({

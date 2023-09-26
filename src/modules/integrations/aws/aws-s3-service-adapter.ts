@@ -1,16 +1,15 @@
 import { S3 } from 'aws-sdk';
 import { config } from '../../../app/config';
-import * as mime from 'mime-types';
 import { PutObjectCommandInput } from '@aws-sdk/client-s3';
 import axios from 'axios';
 
 export const awsS3ServiceAdapter = async (data: {
   file: PutObjectCommandInput['Body'];
-  name: string;
+  fileName: string;
   mimeType: string;
   folder: string;
 }): Promise<any> => {
-  const { file, name, mimeType, folder } = data;
+  const { file, fileName, mimeType, folder } = data;
 
   const awsClient = new S3({
     region: config.implementations.aws.region,
@@ -18,10 +17,9 @@ export const awsS3ServiceAdapter = async (data: {
     secretAccessKey: config.implementations.aws.secretKey,
   });
 
-  const extension = mime.extension(mimeType);
   const params = {
     Bucket: `${config.implementations.aws.bucket}/${folder}`,
-    Key: `${name}.${extension}`,
+    Key: fileName,
     Body: file,
     ACL: 'public-read',
     ContentType: mimeType,
