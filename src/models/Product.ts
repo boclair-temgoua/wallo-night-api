@@ -16,7 +16,7 @@ import { BaseDeleteEntity } from '../app/databases/common';
 import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
 import { Discount } from './Discount';
-import { Cart, User } from './index';
+import { Cart, Membership, User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
 import { WhoCanSeeType } from '../app/utils/search-query';
 import { ProductType } from '../modules/products/products.dto';
@@ -72,7 +72,7 @@ export class Product extends BaseDeleteEntity {
   limitSlot: number;
 
   @Column({ default: 'ACTIVE' })
-  status?:  ProductStatus;
+  status?: ProductStatus;
 
   @Column({ default: 'PHYSICAL' })
   productType?: ProductType;
@@ -85,6 +85,12 @@ export class Product extends BaseDeleteEntity {
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn()
   category: Relation<Category>;
+
+  @Column({ type: 'uuid', nullable: true })
+  membershipId?: string;
+  @ManyToOne(() => Membership, (membership) => membership.products)
+  @JoinColumn()
+  membership?: Relation<Membership>;
 
   // @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
   // @JoinColumn()

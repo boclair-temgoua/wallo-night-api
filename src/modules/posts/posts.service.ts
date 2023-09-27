@@ -54,6 +54,7 @@ export class PostsService {
       .addSelect('post.slug', 'slug')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
+      .addSelect('post.membershipId', 'membershipId')
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.enableUrlMedia', 'enableUrlMedia')
@@ -209,6 +210,7 @@ export class PostsService {
       .addSelect('post.slug', 'slug')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
+      .addSelect('post.membershipId', 'membershipId')
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.enableUrlMedia', 'enableUrlMedia')
@@ -361,6 +363,7 @@ export class PostsService {
       type,
       urlMedia,
       whoCanSee,
+      membershipId,
       enableUrlMedia,
       allowDownload,
       description,
@@ -372,6 +375,7 @@ export class PostsService {
     post.type = type;
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
+    post.membershipId = membershipId;
     post.allowDownload = allowDownload;
     post.enableUrlMedia = enableUrlMedia;
     post.slug = `${
@@ -399,6 +403,7 @@ export class PostsService {
       status,
       type,
       whoCanSee,
+      membershipId,
       allowDownload,
       enableUrlMedia,
       description,
@@ -421,6 +426,7 @@ export class PostsService {
     post.type = type;
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
+    post.membershipId = membershipId;
     post.allowDownload = allowDownload;
     post.status = status;
     post.description = description;

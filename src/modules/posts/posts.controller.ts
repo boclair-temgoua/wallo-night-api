@@ -145,13 +145,14 @@ export class PostsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
-    const { title, whoCanSee, allowDownload, description, type } = body;
+    const { title, whoCanSee, allowDownload,membershipId, description, type } = body;
 
     const post = await this.postsService.createOne({
       type,
       title,
       whoCanSee,
       description,
+      membershipId,
       userId: user?.id,
       allowDownload: allowDownload === 'true' ? true : false,
     });
@@ -219,6 +220,7 @@ export class PostsController {
       allowDownload,
       urlMedia,
       whoCanSee,
+      membershipId,
       enableUrlMedia,
     } = body;
 
@@ -237,6 +239,7 @@ export class PostsController {
         whoCanSee,
         urlMedia,
         description,
+        membershipId,
         allowDownload: allowDownload === 'true' ? true : false,
         enableUrlMedia: enableUrlMedia === 'true' ? true : false,
       },

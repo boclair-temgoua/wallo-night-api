@@ -21,6 +21,11 @@ export class CreateOrUpdatePostsGalleriesDto {
   @MaxLength(100)
   title: string;
 
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  membershipId: string;
+
   @IsNotEmpty()
   @IsString()
   @IsIn(whoCanSeeTypeArrays)
@@ -75,6 +80,11 @@ export class CreateOrUpdatePostsDto {
   @IsString()
   @MaxLength(200)
   title: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  membershipId: string;
 
   @IsOptional()
   @IsString()

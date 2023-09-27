@@ -14,6 +14,8 @@ import { BaseDeleteEntity } from '../app/databases/common';
 import { Contribution } from './Contribution';
 import { ProductStatus } from '../app/utils/pagination';
 import { Subscribe } from './Subscribe';
+import { Post } from './Post';
+import { Product } from './Product';
 
 @Entity('membership')
 export class Membership extends BaseDeleteEntity {
@@ -61,4 +63,10 @@ export class Membership extends BaseDeleteEntity {
 
   @OneToMany(() => Subscribe, (subscribe) => subscribe.membership)
   subscribes?: Subscribe[];
+
+  @OneToMany(() => Post, (post) => post.membership)
+  posts?: Post[];
+
+  @OneToMany(() => Product, (product) => product.membership)
+  products?: Product[];
 }
