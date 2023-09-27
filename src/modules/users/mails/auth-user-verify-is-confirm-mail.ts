@@ -1,7 +1,6 @@
 import { config } from '../../../app/config/index';
 
 import { User } from '../../../models/User';
-// import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
 
 export const authUserVerifyIsConfirmMail = async (options: { user: User }) => {
   const { user } = { ...options };
