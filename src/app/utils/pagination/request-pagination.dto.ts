@@ -22,11 +22,10 @@ export class RequestPaginationDto {
   @IsPositive()
   take: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
-  @Min(1)
+  @Min(0)
   @Type(() => Number)
-  @IsPositive()
   page: number;
 
   @IsNotEmpty()
