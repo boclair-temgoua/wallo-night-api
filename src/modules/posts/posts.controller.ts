@@ -36,6 +36,7 @@ import {
 import { FollowsService } from '../follows/follows.service';
 import { Cookies } from '../users/middleware/cookie.guard';
 import { UploadsUtil } from '../uploads/uploads.util';
+import { isNotUndefined } from '../../app/utils/commons/generate-random';
 
 @Controller('posts')
 export class PostsController {
@@ -145,7 +146,8 @@ export class PostsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
-    const { title, whoCanSee, allowDownload,membershipId, description, type } = body;
+    const { title, whoCanSee, allowDownload, membershipId, description, type } =
+      body;
 
     const post = await this.postsService.createOne({
       type,
@@ -179,7 +181,15 @@ export class PostsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
-    const { title, status, description, enableUrlMedia, urlMedia, type } = body;
+    const {
+      title,
+      status,
+      description,
+      membershipId,
+      enableUrlMedia,
+      urlMedia,
+      type,
+    } = body;
 
     const post = await this.postsService.createOne({
       type,
@@ -188,6 +198,7 @@ export class PostsController {
       urlMedia,
       userId: user?.id,
       description,
+      membershipId: isNotUndefined(membershipId) ? membershipId : null,
       enableUrlMedia: enableUrlMedia === 'true' ? true : false,
     });
 
@@ -239,7 +250,7 @@ export class PostsController {
         whoCanSee,
         urlMedia,
         description,
-        membershipId,
+        membershipId: isNotUndefined(membershipId) ? membershipId : null,
         allowDownload: allowDownload === 'true' ? true : false,
         enableUrlMedia: enableUrlMedia === 'true' ? true : false,
       },

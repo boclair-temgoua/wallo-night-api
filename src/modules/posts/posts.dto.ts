@@ -83,7 +83,6 @@ export class CreateOrUpdatePostsDto {
 
   @IsOptional()
   @IsString()
-  @IsUUID()
   membershipId: string;
 
   @IsOptional()
