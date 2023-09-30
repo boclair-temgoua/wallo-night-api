@@ -154,8 +154,8 @@ export class PostsController {
       title,
       whoCanSee,
       description,
-      membershipId,
       userId: user?.id,
+      membershipId: isNotUndefined(membershipId) ? membershipId : null,
       allowDownload: allowDownload === 'true' ? true : false,
     });
 
