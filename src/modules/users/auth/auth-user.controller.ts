@@ -45,6 +45,7 @@ import {
 } from '../../../app/utils/commons';
 import { JwtAuthGuard } from '../middleware';
 import { SubscribesService } from '../../subscribes/subscribes.service';
+import { CurrenciesService } from '../../currencies/currencies.service';
 import {
   expire_cookie_setting,
   validation_code_verification_cookie_setting,
@@ -58,6 +59,7 @@ export class AuthUserController {
     private readonly walletsService: WalletsService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
+    private readonly currenciesService: CurrenciesService,
     private readonly subscribesService: SubscribesService,
     private readonly contributorsService: ContributorsService,
     private readonly resetPasswordsService: ResetPasswordsService,
@@ -77,6 +79,9 @@ export class AuthUserController {
     const findOnUserByUsername = await this.usersService.findOneBy({
       username,
     });
+    const findOnCurrency = await this.currenciesService.findOneBy({
+      code: 'EUR',
+    });
     if (findOnUser)
       throw new HttpException(
         `Email ${email} already exists please change`,
@@ -88,6 +93,7 @@ export class AuthUserController {
       fullName: `${firstName} ${lastName}`,
       lastName,
       firstName,
+      countryId: findOnCurrency?.id,
     });
 
     /** Create User */
@@ -102,7 +108,7 @@ export class AuthUserController {
           : username
         : usernameGenerate,
     });
-    
+
     /** Create Contributor */
     await this.subscribesService.createOne({
       userId: user?.id,

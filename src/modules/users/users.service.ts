@@ -265,6 +265,7 @@ export class UsersService {
           'currency', jsonb_build_object(
             'symbol', "currency"."symbol",
             'name', "currency"."name",
+            'amount', "currency"."amount",
             'code', "currency"."code")
             
       ) AS "profile"`,
