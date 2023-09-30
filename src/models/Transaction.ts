@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { TransactionType } from '../modules/transactions/transactions.type';
-import { Campaign } from './Campaign';
 import {
   Withdrawal,
   Subscribe,
@@ -17,8 +16,9 @@ import {
   Contribution,
   Gift,
   User,
-  OrderProduct,
+  Campaign,
 } from './index';
+import { FilterQueryType } from '../app/utils/search-query';
 
 @Entity('transaction')
 export class Transaction extends BaseDeleteEntity {
@@ -36,6 +36,12 @@ export class Transaction extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   token: string;
+
+  @Column({ nullable: true })
+  currency: string;
+
+  @Column({ default: 'MEMBERSHIP' })
+  model?: FilterQueryType;
 
   //   @Column({ type: 'uuid', nullable: true })
   //   orderProductId?: string;

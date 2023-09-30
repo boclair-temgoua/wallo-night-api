@@ -8,6 +8,7 @@ import {
 } from '../../app/utils/commons/formate-date';
 import { FollowsService } from '../follows/follows.service';
 import { TransactionType } from '../transactions/transactions.type';
+import { FilterQueryType } from '../../app/utils/search-query';
 
 @Injectable()
 export class SubscribesUtil {
@@ -21,11 +22,14 @@ export class SubscribesUtil {
   async createOrUpdateOneSubscribe(options: {
     amount: { value: number; month: number };
     userId: string;
+    currency: string;
     type?: TransactionType;
+    model: FilterQueryType;
     membershipId: string;
     token: string;
   }): Promise<any> {
-    const { membershipId, type, userId, amount, token } = options;
+    const { membershipId, type, userId, amount, model, currency, token } =
+      options;
 
     const findOneMembership = await this.membershipsService.findOneBy({
       membershipId,
@@ -79,7 +83,9 @@ export class SubscribesUtil {
 
       await this.transactionsService.createOne({
         token: token,
+        currency: currency,
         userId: userId,
+        model: model,
         userSendId: userId,
         userReceiveId: findOneMembership?.userId,
         subscribeId: findOneSubscribe?.id,
@@ -99,7 +105,9 @@ export class SubscribesUtil {
 
       await this.transactionsService.createOne({
         type,
+        model: model,
         token: token,
+        currency: currency,
         userId: userId,
         userSendId: userId,
         userReceiveId: findOneMembership?.userId,

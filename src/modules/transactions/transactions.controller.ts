@@ -30,8 +30,9 @@ export class TransactionsController {
     @Res() res,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Query() filterTransactionQuery: FilterTransactionsDto,
+    @Query() query: FilterTransactionsDto,
   ) {
+    const { userId, campaignId, model, userSendId, userReceiveId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -39,6 +40,11 @@ export class TransactionsController {
 
     const transactions = await this.transactionsService.findAll({
       search,
+      userId,
+      model: model?.toLocaleUpperCase(),
+      campaignId,
+      userSendId,
+      userReceiveId,
       pagination,
     });
 

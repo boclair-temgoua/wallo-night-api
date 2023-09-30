@@ -159,7 +159,7 @@ export class SubscribesController {
         userReceiveId: findOneMembership?.userId,
         subscribeId: findOneSubscribe?.id,
         amount: Number(findOneMembership?.pricePerMonthly),
-        description: 'subscribe monthly'
+        description: 'subscribe monthly',
       });
     } else {
       const subscribe = await this.subscribesService.createOne({
@@ -178,7 +178,7 @@ export class SubscribesController {
         userReceiveId: findOneMembership?.userId,
         subscribeId: subscribe?.id,
         amount: Number(findOneMembership?.pricePerMonthly),
-        description: 'subscribe monthly'
+        description: 'subscribe monthly',
       });
     }
 

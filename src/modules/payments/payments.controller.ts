@@ -43,7 +43,9 @@ export class PaymentsController {
       amount: { value: amount?.value * 100, month: amount?.value },
       membershipId,
       type: 'PAYPAL',
+      currency: currency.toUpperCase(),
       token: newToken,
+      model: 'MEMBERSHIP',
     });
 
     return reply({ res, results: { toke: newToken } });
@@ -71,10 +73,12 @@ export class PaymentsController {
 
     await this.subscribesUtil.createOrUpdateOneSubscribe({
       userId,
+      currency: paymentIntents?.currency.toUpperCase(),
       amount: { value: paymentIntents?.amount, month: amount?.value }, // Pas besoin de multiplier pas 100 stipe le fais deja
       membershipId,
       type: 'CARD',
       token: newToken,
+      model: 'MEMBERSHIP',
     });
     return reply({ res, results: { token: newToken } });
   }

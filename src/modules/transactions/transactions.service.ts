@@ -33,6 +33,7 @@ export class TransactionsService {
       search,
       pagination,
       userId,
+      model,
       campaignId,
       userSendId,
       userReceiveId,
@@ -44,7 +45,9 @@ export class TransactionsService {
       .addSelect('transaction.amount', 'amount')
       .addSelect('transaction.type', 'type')
       .addSelect('transaction.title', 'title')
+      .addSelect('transaction.currency', 'currency')
       .addSelect('transaction.description', 'description')
+      .addSelect('transaction.model', 'model')
       .addSelect('transaction.campaignId', 'campaignId')
       .addSelect('transaction.contributionId', 'contributionId')
       .addSelect('transaction.giftId', 'giftId')
@@ -54,16 +57,15 @@ export class TransactionsService {
       .addSelect(
         /*sql*/ `jsonb_build_object(
       'id', "gift"."id",
-      'title', "donation"."title",
+      'title', "gift"."title",
       'amount', "gift"."amount"
   ) AS "gift"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-      'id', "campaign"."id",
-      'title', "campaign"."title",
-      'amount', "campaign"."amount"
-  ) AS "campaign"`,
+          'id', "campaign"."id",
+          'title', "campaign"."title"
+      ) AS "campaign"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -94,6 +96,10 @@ export class TransactionsService {
       .leftJoin('transaction.campaign', 'campaign')
       .leftJoin('userSend.profile', 'profileSend')
       .leftJoin('userReceive.profile', 'profileReceive');
+
+    if (model) {
+      query = query.andWhere('transaction.model = :model', { model });
+    }
 
     if (userId) {
       query = query.andWhere('transaction.userId = :userId', { userId });
@@ -163,8 +169,10 @@ export class TransactionsService {
   async createOne(options: CreateTransactionOptions): Promise<Transaction> {
     const {
       amount,
+      currency,
       campaignId,
       title,
+      model,
       userSendId,
       description,
       subscribeId,
@@ -178,6 +186,8 @@ export class TransactionsService {
 
     const transaction = new Transaction();
     transaction.title = title;
+    transaction.model = model;
+    transaction.currency = currency;
     transaction.campaignId = campaignId;
     transaction.userSendId = userSendId;
     transaction.userReceiveId = userReceiveId;

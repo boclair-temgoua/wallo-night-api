@@ -270,6 +270,12 @@ export class UsersService {
       ) AS "profile"`,
       )
       .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'accountId', "wallet"."accountId",
+          'amount', "wallet"."amount"
+      ) AS "wallet"`,
+      )
+      .addSelect(
         /*sql*/ `(
         SELECT jsonb_build_object(
         'name', "con"."role"
@@ -321,6 +327,7 @@ export class UsersService {
       )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile')
+      .leftJoin('user.wallet', 'wallet')
       .leftJoin('profile.currency', 'currency');
 
     if (followerId) {
