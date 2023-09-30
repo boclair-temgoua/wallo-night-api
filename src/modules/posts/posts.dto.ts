@@ -23,7 +23,6 @@ export class CreateOrUpdatePostsGalleriesDto {
 
   @IsOptional()
   @IsString()
-  @IsUUID()
   membershipId: string;
 
   @IsNotEmpty()
