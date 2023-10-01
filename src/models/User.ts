@@ -11,16 +11,14 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { NextStep } from '../modules/users/users.type';
 import {
   Post,
   Comment,
   Wallet,
   Transaction,
-  Cart,
   Contributor,
   Profile,
-  Product,
+  Event,
 } from './index';
 
 @Entity('user')
@@ -66,8 +64,8 @@ export class User extends BaseDeleteEntity {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[];
 
-  @OneToMany(() => Product, (product) => product.user)
-  products?: Product[];
+  @OneToMany(() => Event, (event) => event.user)
+  events?: Event[];
 
   @OneToMany(() => Transaction, (transaction) => transaction.user, {
     onDelete: 'CASCADE',
@@ -78,11 +76,6 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
-
-  @OneToMany(() => Cart, (cart) => cart.user, {
-    onDelete: 'CASCADE',
-  })
-  carts?: Cart[];
 
   async hashPassword(password: string) {
     this.password = await bcrypt.hashSync(

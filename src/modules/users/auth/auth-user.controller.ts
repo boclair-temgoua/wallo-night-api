@@ -30,7 +30,7 @@ import {
   UpdateResetPasswordUserDto,
 } from '../users.dto';
 import { ProfilesService } from '../../profiles/profiles.service';
-import { JwtPayloadType, NextStep } from '../users.type';
+import { JwtPayloadType } from '../users.type';
 import { CheckUserService } from '../middleware/check-user.service';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
@@ -63,12 +63,7 @@ export class AuthUserController {
 
   /** Register new user */
   @Post(`/register`)
-  async createOneRegister(
-    @Res() res,
-    @Req() req,
-    @Body() body: CreateRegisterUserDto,
-    @Headers('User-Agent') userAgent: string,
-  ) {
+  async createOneRegister(@Res() res, @Body() body: CreateRegisterUserDto) {
     const { email, password, firstName, lastName, username } = body;
 
     const findOnUser = await this.usersService.findOneBy({ email });
@@ -139,7 +134,6 @@ export class AuthUserController {
   @Post(`/login`)
   async createOneLogin(
     @Res() res,
-    @Req() req,
     @Body() createLoginUserDto: CreateLoginUserDto,
   ) {
     const { email, password } = createLoginUserDto;
@@ -257,18 +251,7 @@ export class AuthUserController {
     @Body() body: UpdateProfileDto,
     @Param('userId', ParseUUIDPipe) userId: string,
   ) {
-    const {
-      username,
-      fullName,
-      description,
-      birthday,
-      countryId,
-      image,
-      color,
-      url,
-      currencyId,
-      nextStep,
-    } = body;
+    const { username, fullName, image, color } = body;
 
     const findOnUser = await this.usersService.findOneBy({ userId });
     if (!findOnUser)
@@ -304,11 +287,7 @@ export class AuthUserController {
 
   /** Resend code user */
   @Get(`/resend/code/:userId`)
-  async resendCode(
-    @Res() res,
-    @Req() req,
-    @Param('userId', ParseUUIDPipe) userId: string,
-  ) {
+  async resendCode(@Res() res, @Param('userId', ParseUUIDPipe) userId: string) {
     const findOnUser = await this.usersService.findOneBy({ userId });
     if (!findOnUser)
       throw new HttpException(

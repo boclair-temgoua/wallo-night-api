@@ -26,7 +26,7 @@ export class Upload extends BaseDeleteEntity {
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
 
-  @Column({ default: 'PRODUCT' })
+  @Column({ default: 'EVENT' })
   model?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })

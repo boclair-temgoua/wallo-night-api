@@ -4,17 +4,12 @@ import {
   Column,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  Relation,
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Category } from './Category';
-import { OrderProduct } from './OrderProduct';
-import { Cart, User } from './index';
+import { User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
-import { WhoCanSeeType } from '../app/utils/search-query';
-import { ProductType } from '../modules/products/products.dto';
+import { CurrencyEvent } from '../modules/events/events.dto';
 
 @Entity('event')
 export class Event extends BaseDeleteEntity {
@@ -30,6 +25,9 @@ export class Event extends BaseDeleteEntity {
   @Column({ nullable: true })
   requirement: string;
 
+  @Column({ nullable: true })
+  urlMedia: string;
+
   @Column({ unique: true, nullable: true })
   slug: string;
 
@@ -43,7 +41,7 @@ export class Event extends BaseDeleteEntity {
   price: number;
 
   @Column({ default: 'EUR', nullable: true })
-  currency: 'EUR';
+  currency: CurrencyEvent;
 
   @Column({ type: 'text', nullable: true })
   description: string;
@@ -54,27 +52,9 @@ export class Event extends BaseDeleteEntity {
   @Column({ default: 'ACTIVE' })
   status?: ProductStatus;
 
-  @Column({ default: 'PHYSICAL' })
-  productType?: ProductType;
-
-  @Column({ default: 'PUBLIC' })
-  whoCanSee?: WhoCanSeeType;
-
-  @Column({ type: 'uuid', nullable: true })
-  categoryId: string;
-  @ManyToOne(() => Category, (category) => category.products)
-  @JoinColumn()
-  category: Relation<Category>;
-
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
-  @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.events, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
-
-  @OneToMany(() => Cart, (cart) => cart.product)
-  carts: Cart[];
-
-  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
-  orderProducts: OrderProduct[];
 }

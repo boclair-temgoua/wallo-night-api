@@ -12,7 +12,6 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
-import { NextStep, nextStepArrays } from './users.type';
 export class UpdateInfoUserDto {
   @IsNotEmpty()
   @IsString()
@@ -99,11 +98,6 @@ export class CreateLoginUserDto {
 }
 
 export class CreateRegisterUserDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(nextStepArrays)
-  nextStep: NextStep;
-
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
@@ -231,11 +225,6 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   secondAddress: string;
-
-  @IsOptional()
-  @IsString()
-  @IsIn(nextStepArrays)
-  nextStep: NextStep;
 
   @IsOptional()
   @IsString()

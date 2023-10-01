@@ -1,0 +1,86 @@
+import {
+  IsString,
+  IsNotEmpty,
+  IsUUID,
+  IsOptional,
+  IsIn,
+} from 'class-validator';
+
+export type StatusEvent = 'ACTIVE' | 'PENDING';
+
+export type CurrencyEvent = 'EUR' | 'CAD';
+
+export const EventTypeArrays = ['DIGITAL', 'PHYSICAL'];
+
+export class CreateOrUpdateEventsDto {
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsNotEmpty()
+  @IsString()
+  location: string;
+
+  @IsNotEmpty()
+  @IsString()
+  currency: CurrencyEvent;
+
+  @IsOptional()
+  @IsString()
+  requirement: string;
+
+  @IsOptional()
+  @IsString()
+  urlMedia: string;
+
+  @IsOptional()
+  @IsString()
+  price: string;
+
+  @IsOptional()
+  @IsString()
+  urlRedirect: string;
+
+  @IsOptional()
+  @IsString()
+  enableUrlRedirect: string;
+
+  @IsOptional()
+  @IsString()
+  messageAfterPayment: string;
+
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+}
+
+export class GetOneEventDto {
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  eventId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
+
+  @IsOptional()
+  @IsString()
+  eventSlug: string;
+}
+
+export class GetEventsDto {
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
+
+  @IsOptional()
+  @IsString()
+  typeIds: string;
+
+  @IsOptional()
+  @IsString()
+  status: string;
+}

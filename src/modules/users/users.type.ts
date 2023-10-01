@@ -1,19 +1,6 @@
 import { User } from '../../models/User';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
-export type NextStep =
-  | 'CONFIRM_EMAIL'
-  | 'SETTING_PROFILE'
-  | 'SETTING_INTEREST'
-  | 'COMPLETE_REGISTRATION';
-
-export const nextStepArrays = [
-  'CONFIRM_EMAIL',
-  'SETTING_PROFILE',
-  'SETTING_INTEREST',
-  'COMPLETE_REGISTRATION',
-];
-
 export type JwtPayloadType = {
   id: string;
   profileId: string;

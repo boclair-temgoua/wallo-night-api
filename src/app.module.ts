@@ -12,9 +12,8 @@ import { ContactUsModule } from './modules/contact-us/contact-us.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { ContributorsModule } from './modules/contributors/contributors.module';
-import { ProductsModule } from './modules/products/products.module';
+import { EventsModule } from './modules/events/events.module';
 import { CountriesModule } from './modules/countries/countries.module';
-import { CartsModule } from './modules/cats/cats.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
 import { PostsModule } from './modules/posts/posts.module';
@@ -36,8 +35,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     CountriesModule,
     TransactionsModule,
     ResetPasswordsModule,
-    ProductsModule,
-    CartsModule,
+    EventsModule,
     WalletsModule,
     PostsModule,
     CommentsModule,

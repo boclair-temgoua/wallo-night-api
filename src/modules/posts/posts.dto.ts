@@ -13,7 +13,6 @@ import {
   IsUUID,
 } from 'class-validator';
 import { PostType, postTypeArrays } from './posts.type';
-import { ProductStatus } from '../../app/utils/pagination';
 
 export class CreateOrUpdatePostsDto {
   @IsNotEmpty()
@@ -37,10 +36,6 @@ export class CreateOrUpdatePostsDto {
   @IsString()
   @IsIn(postTypeArrays)
   type: PostType;
-
-  @IsOptional()
-  @IsString()
-  status: ProductStatus;
 
   @IsOptional()
   @IsString()

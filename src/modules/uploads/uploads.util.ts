@@ -14,7 +14,7 @@ export class UploadsUtil {
     userId?: string;
     model: FilterQueryType;
     uploadableId: string;
-    folder: 'products' | 'commissions' | 'posts' | 'memberships';
+    folder: 'events' | 'commissions' | 'posts' | 'memberships';
     files: Array<Express.Multer.File>;
   }): Promise<any> {
     const { files, userId, model, uploadableId, folder } = options;

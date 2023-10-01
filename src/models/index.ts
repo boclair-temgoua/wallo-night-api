@@ -1,4 +1,3 @@
-export * from './Cart';
 export * from './Category';
 export * from './ClientOrder';
 export * from './ContactUs';
@@ -8,8 +7,7 @@ export * from './Post';
 export * from './Comment';
 export * from './Upload';
 export * from './Faq';
-export * from './OrderProduct';
-export * from './Product';
+export * from './Event';
 export * from './Profile';
 export * from './Project';
 export * from './ResetPassword';
