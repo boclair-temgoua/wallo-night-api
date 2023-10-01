@@ -23,6 +23,7 @@ export class CreateOrUpdateEventsDto {
 
   @IsNotEmpty()
   @IsString()
+  @IsIn(['EUR'])
   currency: CurrencyEvent;
 
   @IsOptional()

@@ -69,11 +69,11 @@ export class EventsService {
             'uploadableId', "upl"."uploadableId"
           )) 
           FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "Event"."id"
+          WHERE "upl"."uploadableId" = "event"."id"
           AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('Event')
+          AND "upl"."model" IN ('event')
           AND "upl"."uploadType" IN ('IMAGE')
-          GROUP BY "Event"."id", "upl"."uploadableId"
+          GROUP BY "event"."id", "upl"."uploadableId"
           ) AS "uploadsImage"`,
       )
       .addSelect(
@@ -90,11 +90,11 @@ export class EventsService {
             'uploadableId', "upl"."uploadableId"
           )) 
           FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "Event"."id"
+          WHERE "upl"."uploadableId" = "event"."id"
           AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('Event')
+          AND "upl"."model" IN ('event')
           AND "upl"."uploadType" IN ('FILE')
-          GROUP BY "Event"."id", "upl"."uploadableId"
+          GROUP BY "event"."id", "upl"."uploadableId"
           ) AS "uploadsFile"`,
       )
       .addSelect('event.createdAt', 'createdAt')
@@ -125,7 +125,7 @@ export class EventsService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const Events = await query
+    const events = await query
       .orderBy('event.createdAt', pagination?.sort)
       .limit(pagination.limit)
       .offset(pagination.offset)
@@ -134,7 +134,7 @@ export class EventsService {
     return withPagination({
       pagination,
       rowCount,
-      value: Events,
+      value: events,
     });
   }
 
@@ -184,7 +184,7 @@ export class EventsService {
         AND "upl"."deletedAt" IS NULL
         AND "upl"."model" IN ('Event')
         AND "upl"."uploadType" IN ('IMAGE')
-        GROUP BY "Event"."id", "upl"."uploadableId"
+        GROUP BY "event"."id", "upl"."uploadableId"
         ) AS "uploadsImage"`,
       )
       .addSelect(
@@ -201,11 +201,11 @@ export class EventsService {
           'uploadableId', "upl"."uploadableId"
         )) 
         FROM "upload" "upl"
-        WHERE "upl"."uploadableId" = "Event"."id"
+        WHERE "upl"."uploadableId" = "event"."id"
         AND "upl"."deletedAt" IS NULL
-        AND "upl"."model" IN ('Event')
+        AND "upl"."model" IN ('event')
         AND "upl"."uploadType" IN ('FILE')
-        GROUP BY "Event"."id", "upl"."uploadableId"
+        GROUP BY "event"."id", "upl"."uploadableId"
         ) AS "uploadsFile"`,
       )
       .addSelect('event.createdAt', 'createdAt')
