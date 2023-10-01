@@ -74,17 +74,6 @@ export class PostsService {
       .addSelect(
         /*sql*/ `(
         SELECT
-            CAST(COUNT(DISTINCT lik) AS INT)
-        FROM "like" "lik"
-        WHERE ("lik"."likeableId" = "post"."id"
-         AND "lik"."type" IN ('POST')
-         AND "lik"."deletedAt" IS NULL)
-         GROUP BY "lik"."likeableId", "lik"."type", "post"."id"
-        ) AS "totalLike"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-        SELECT
             CAST(COUNT(DISTINCT com) AS INT)
         FROM "comment" "com"
         WHERE ("com"."postId" = "post"."id"
@@ -124,34 +113,6 @@ export class PostsService {
       .where('post.deletedAt IS NULL')
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile');
-
-    if (likeUserId) {
-      query = query.addSelect(/*sql*/ `(
-              SELECT
-                  CAST(COUNT(DISTINCT lk) AS INT)
-              FROM "like" "lk"
-              WHERE ("lk"."type" IN ('POST')
-               AND "lk"."deletedAt" IS NULL
-               AND "lk"."likeableId" = "post"."id"
-               AND "lk"."userId" IN ('${likeUserId}'))
-              ) AS "isLike"`).addSelect(/*sql*/ `(
-                SELECT
-                    CAST(COUNT(DISTINCT sub) AS INT)
-                FROM "subscribe" "sub"
-                WHERE ("sub"."subscriberId" = "post"."userId"
-                 AND "sub"."expiredAt" >= now()::date
-                 AND "sub"."userId" IN ('${likeUserId}')
-                 AND "sub"."deletedAt" IS NULL)
-                ) AS "isValidSubscribe"`);
-    } else {
-      query = query.addSelect(/*sql*/ `null`, 'isValidSubscribe');
-    }
-
-    if (followerIds && followerIds.length > 0) {
-      query = query.andWhere('post.userId IN (:...followerIds)', {
-        followerIds,
-      });
-    }
 
     if (typeIds && typeIds.length > 0) {
       query = query.andWhere('post.type IN (:...typeIds)', { typeIds });
@@ -230,17 +191,6 @@ export class PostsService {
       .addSelect(
         /*sql*/ `(
         SELECT
-            CAST(COUNT(DISTINCT lik) AS INT)
-        FROM "like" "lik"
-        WHERE ("lik"."likeableId" = "post"."id"
-         AND "lik"."type" IN ('POST')
-         AND "lik"."deletedAt" IS NULL)
-         GROUP BY "lik"."likeableId", "lik"."type", "post"."id"
-        ) AS "totalLike"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-        SELECT
             CAST(COUNT(DISTINCT com) AS INT)
         FROM "comment" "com"
         WHERE ("com"."postId" = "post"."id"
@@ -290,41 +240,10 @@ export class PostsService {
           GROUP BY "post"."id", "upl"."uploadableId"
           ) AS "uploadsFile"`,
       )
-      .addSelect(
-        /*sql*/ `(
-        SELECT
-            CAST(COUNT(DISTINCT fol) AS INT)
-        FROM "follow" "fol"
-        WHERE ("fol"."followerId" = "post"."userId"
-         AND "fol"."deletedAt" IS NULL
-         AND "fol"."userId" IN ('5da9b770-0c1a-4039-9604-3e6ad11fb9a7'))
-        ) AS "isFollow"`,
-      )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile');
-
-    if (likeUserId) {
-      query = query.addSelect(/*sql*/ `(
-              SELECT
-                  CAST(COUNT(DISTINCT lk) AS INT)
-              FROM "like" "lk"
-              WHERE ("lk"."type" IN ('POST')
-               AND "lk"."deletedAt" IS NULL
-               AND "lk"."likeableId" = "post"."id"
-               AND "lk"."userId" IN ('${likeUserId}'))
-               GROUP BY "lk"."likeableId", "post"."id"
-              ) AS "isLike"`).addSelect(/*sql*/ `(
-                SELECT
-                    CAST(COUNT(DISTINCT sub) AS INT)
-                FROM "subscribe" "sub"
-                WHERE ("sub"."subscriberId" = "user"."id"
-                 AND "sub"."expiredAt" >= now()::date
-                 AND "sub"."userId" IN ('${likeUserId}')
-                 AND "sub"."deletedAt" IS NULL)
-                ) AS "isValidSubscribe"`);
-    }
 
     if (status) {
       query = query.andWhere('post.status = :status', { status });
@@ -363,7 +282,6 @@ export class PostsService {
       type,
       urlMedia,
       whoCanSee,
-      membershipId,
       enableUrlMedia,
       allowDownload,
       description,
@@ -375,7 +293,6 @@ export class PostsService {
     post.type = type;
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
-    post.membershipId = membershipId;
     post.allowDownload = allowDownload;
     post.enableUrlMedia = enableUrlMedia;
     post.slug = `${
@@ -403,7 +320,6 @@ export class PostsService {
       status,
       type,
       whoCanSee,
-      membershipId,
       allowDownload,
       enableUrlMedia,
       description,
@@ -426,7 +342,6 @@ export class PostsService {
     post.type = type;
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
-    post.membershipId = membershipId;
     post.allowDownload = allowDownload;
     post.status = status;
     post.description = description;

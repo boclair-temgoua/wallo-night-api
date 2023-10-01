@@ -33,11 +33,6 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
-  @IsUUID()
-  membershipId: string;
-
-  @IsOptional()
-  @IsString()
   discountId: string;
 
   @IsOptional()

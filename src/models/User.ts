@@ -11,26 +11,17 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Withdrawal } from './Withdrawal';
-import { Membership } from './Membership';
-import { WithdrawalUser } from './WithdrawalUser';
 import { NextStep } from '../modules/users/users.type';
 import {
   Post,
   Comment,
-  Campaign,
-  Gift,
   Wallet,
   Transaction,
   Cart,
   Contributor,
   Profile,
   Product,
-  Discount,
 } from './index';
-import { Follow } from './Follow';
-import { Like } from './Like';
-import { Subscribe } from './Subscribe';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -58,9 +49,6 @@ export class User extends BaseDeleteEntity {
   @Column({ nullable: true })
   password?: string;
 
-  @Column({ default: 'SETTING_PROFILE' })
-  nextStep?: NextStep;
-
   @Column({ type: 'uuid', nullable: true })
   profileId?: string;
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
@@ -72,20 +60,11 @@ export class User extends BaseDeleteEntity {
   })
   wallet?: Wallet;
 
-  @OneToMany(() => Campaign, (campaign) => campaign.user)
-  campaigns?: Campaign[];
-
-  @OneToMany(() => Subscribe, (subscribe) => subscribe.user)
-  subscribes?: Subscribe[];
-
   @OneToMany(() => Post, (post) => post.user)
   posts?: Post[];
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[];
-
-  @OneToMany(() => Discount, (discount) => discount.user)
-  discounts?: Discount[];
 
   @OneToMany(() => Product, (product) => product.user)
   products?: Product[];
@@ -100,40 +79,10 @@ export class User extends BaseDeleteEntity {
   })
   contributors?: Contributor[];
 
-  @OneToMany(() => Gift, (gift) => gift.user, {
-    onDelete: 'CASCADE',
-  })
-  gifts?: Gift[];
-
-  @OneToMany(() => Like, (like) => like.user, {
-    onDelete: 'CASCADE',
-  })
-  likes?: Like[];
-
-  @OneToMany(() => Withdrawal, (withdrawal) => withdrawal.user, {
-    onDelete: 'CASCADE',
-  })
-  withdrawals?: Withdrawal[];
-
-  @OneToMany(() => Follow, (follow) => follow.user, {
-    onDelete: 'CASCADE',
-  })
-  follows?: Follow[];
-
-  @OneToMany(() => WithdrawalUser, (withdrawalUser) => withdrawalUser.user, {
-    onDelete: 'CASCADE',
-  })
-  withdrawalUsers?: WithdrawalUser[];
-
   @OneToMany(() => Cart, (cart) => cart.user, {
     onDelete: 'CASCADE',
   })
   carts?: Cart[];
-
-  @OneToMany(() => Membership, (membership) => membership.user, {
-    onDelete: 'CASCADE',
-  })
-  memberships?: Membership[];
 
   async hashPassword(password: string) {
     this.password = await bcrypt.hashSync(

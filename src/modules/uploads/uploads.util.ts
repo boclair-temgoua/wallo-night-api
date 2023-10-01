@@ -1,7 +1,6 @@
 import { generateLongUUID } from '../../app/utils/commons/generate-random';
 import { formateNowDateYYMMDD } from '../../app/utils/commons/formate-date';
 import { Injectable } from '@nestjs/common';
-import { GetCommissionsSelections } from '../commissions/commissions.type';
 import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
 import * as mime from 'mime-types';
 import { UploadsService } from './uploads.service';
@@ -28,7 +27,7 @@ export class UploadsUtil {
       const fileName = `${`${nameFile}.${
         extension === 'mpga' ? 'mp3' : extension
       }`}`;
-      
+
       const urlAWS = await awsS3ServiceAdapter({
         fileName: fileName,
         mimeType: file?.mimetype,

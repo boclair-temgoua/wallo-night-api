@@ -11,8 +11,6 @@ import {
 
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Product } from './Product';
-import { Post } from './Post';
-import { PostCategory } from './PostCategory';
 
 @Entity('category')
 export class Category extends BaseDeleteEntity {
@@ -38,9 +36,4 @@ export class Category extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   products?: Product[];
-
-  @OneToMany(() => PostCategory, (postCategory) => postCategory.category, {
-    onDelete: 'CASCADE',
-  })
-  postCategories?: PostCategory[];
 }

@@ -6,17 +6,7 @@ import { Country } from '../../../models/Country';
 import { AppSeedDataSource } from '../orm/orm-config-seed';
 
 import * as Slug from 'slug';
-import {
-  Contributor,
-  Post,
-  Profile,
-  Follow,
-  User,
-  Comment,
-  Subscribe,
-  Wallet,
-  Currency,
-} from '../../../models';
+
 import * as bcrypt from 'bcryptjs';
 import { getRandomElement } from '../../utils/array/get-random-element';
 import { colorsArrays } from '../../utils/commons/get-colors';

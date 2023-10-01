@@ -42,7 +42,6 @@ export class TransactionsController {
       search,
       userId,
       model: model?.toLocaleUpperCase(),
-      campaignId,
       userSendId,
       userReceiveId,
       pagination,

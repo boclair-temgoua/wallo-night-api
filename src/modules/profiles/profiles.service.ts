@@ -46,17 +46,10 @@ export class ProfilesService {
       fullName,
       firstName,
       lastName,
-      currencyId,
-      countryId,
-      url,
       image,
       phone,
       firstAddress,
       secondAddress,
-      birthday,
-      enableCommission,
-      enableShop,
-      enableGallery,
     } = options;
 
     const profile = new Profile();
@@ -67,14 +60,7 @@ export class ProfilesService {
     profile.lastName = lastName;
     profile.firstAddress = firstAddress;
     profile.secondAddress = secondAddress;
-    profile.birthday = birthday;
     profile.color = getRandomElement(colorsArrays);
-    profile.currencyId = currencyId;
-    profile.enableShop = enableShop;
-    profile.enableGallery = enableGallery;
-    profile.enableCommission = enableCommission;
-    profile.countryId = countryId;
-    profile.url = url;
 
     const query = this.driver.save(profile);
 
@@ -94,19 +80,11 @@ export class ProfilesService {
       fullName,
       firstName,
       lastName,
-      currencyId,
-      countryId,
       image,
-      url,
       phone,
       firstAddress,
-      description,
       secondAddress,
-      birthday,
       color,
-      enableCommission,
-      enableShop,
-      enableGallery,
       deletedAt,
     } = options;
 
@@ -122,21 +100,13 @@ export class ProfilesService {
     if (errorFind) throw new NotFoundException(errorFind);
 
     profile.image = image;
-    profile.url = url;
     profile.phone = phone;
     profile.color = color;
     profile.firstName = firstName;
     profile.lastName = lastName;
-    profile.description = description;
     profile.firstAddress = firstAddress;
     profile.secondAddress = secondAddress;
-    profile.birthday = birthday;
-    profile.countryId = countryId;
     profile.fullName = fullName;
-    profile.enableShop = enableShop;
-    profile.enableGallery = enableGallery;
-    profile.enableCommission = enableCommission;
-    profile.currencyId = currencyId;
     profile.deletedAt = deletedAt;
 
     const query = this.driver.save(profile);

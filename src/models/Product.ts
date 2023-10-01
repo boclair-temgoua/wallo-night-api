@@ -2,21 +2,16 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  Index,
-  OneToOne,
-  ManyToMany,
   JoinColumn,
   ManyToOne,
   OneToMany,
   Relation,
 } from 'typeorm';
 
-import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
-import { Discount } from './Discount';
-import { Cart, Membership, User } from './index';
+import { Cart, User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
 import { WhoCanSeeType } from '../app/utils/search-query';
 import { ProductType } from '../modules/products/products.dto';
@@ -85,32 +80,6 @@ export class Product extends BaseDeleteEntity {
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn()
   category: Relation<Category>;
-
-  @Column({ type: 'uuid', nullable: true })
-  membershipId?: string;
-  @ManyToOne(() => Membership, (membership) => membership.products)
-  @JoinColumn()
-  membership?: Relation<Membership>;
-
-  // @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
-  // @JoinColumn()
-  // user: User;
-
-  // @ManyToOne(() => ImageUpload, (imageUpload) => imageUpload.product)
-  // @JoinColumn()
-  // imageUpload: ImageUpload;
-
-  @Column({ type: 'uuid', nullable: true })
-  discountId: string;
-  @ManyToOne(() => Discount, (discount) => discount.products)
-  @JoinColumn()
-  discount: Discount;
-
-  @Column({ type: 'uuid', nullable: true })
-  currencyId: string;
-  @ManyToOne(() => Currency, (currency) => currency.products)
-  @JoinColumn()
-  currency: Currency;
 
   // @OneToMany(() => ImageUpload, (imageUpload) => imageUpload.product, { onDelete: 'CASCADE' })
   // imageUploads: ImageUpload[];

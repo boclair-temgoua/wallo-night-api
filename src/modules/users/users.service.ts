@@ -38,7 +38,6 @@ export class UsersService {
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
       .addSelect('user.createdAt', 'createdAt')
-      .addSelect('user.nextStep', 'nextStep')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -153,7 +152,6 @@ export class UsersService {
       .select('user.id', 'id')
       .addSelect('user.username', 'username')
       .addSelect('user.profileId', 'profileId')
-      .addSelect('user.nextStep', 'nextStep')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -170,50 +168,8 @@ export class UsersService {
           'url', "profile"."url"
       ) AS "profile"`,
       )
-      .addSelect(
-        /*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT fol) AS INT)
-      FROM "follow" "fol"
-      WHERE ("fol"."userId" = "user"."id"
-      AND "fol"."deletedAt" IS NULL)
-      GROUP BY "fol"."userId", "user"."id"
-      ) AS "totalFollowing"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT fol) AS INT)
-      FROM "follow" "fol"
-      WHERE ("fol"."followerId" = "user"."id"
-      AND "fol"."deletedAt" IS NULL)
-      GROUP BY "fol"."followerId", "user"."id"
-      ) AS "totalFollower"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT sub) AS INT)
-      FROM "subscribe" "sub"
-      WHERE ("sub"."subscriberId" = "user"."id"
-      AND "sub"."expiredAt" >= now()::date
-      AND "sub"."deletedAt" IS NULL)
-      ) AS "totalSubscribe"`,
-      )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile');
-
-    if (followerId) {
-      query = query.addSelect(/*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT fol) AS INT)
-      FROM "follow" "fol"
-      WHERE ("fol"."followerId" = "user"."id"
-       AND "fol"."deletedAt" IS NULL
-       AND "fol"."userId" IN ('${followerId}'))
-       GROUP BY "fol"."userId", "user"."id"
-      ) AS "isFollow"`);
-    }
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });
@@ -247,7 +203,6 @@ export class UsersService {
       .addSelect('user.username', 'username')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
-      .addSelect('user.nextStep', 'nextStep')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -260,13 +215,7 @@ export class UsersService {
           'enableCommission', "profile"."enableCommission",
           'image', "profile"."image",
           'color', "profile"."color",
-          'countryId', "profile"."countryId",
-          'url', "profile"."url",
-          'currency', jsonb_build_object(
-            'symbol', "currency"."symbol",
-            'name', "currency"."name",
-            'amount', "currency"."amount",
-            'code', "currency"."code")
+          'countryId', "profile"."countryId"
             
       ) AS "profile"`,
       )
@@ -286,62 +235,10 @@ export class UsersService {
         AND "con"."type" IN ('ORGANIZATION')
         ) AS "role"`,
       )
-      .addSelect(
-        /*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT fol) AS INT)
-      FROM "follow" "fol"
-      WHERE ("fol"."userId" = "user"."id"
-      AND "fol"."deletedAt" IS NULL)
-      GROUP BY "fol"."userId", "user"."id"
-      ) AS "totalFollowing"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT pro) AS INT)
-      FROM "product" "pro"
-      WHERE ("pro"."userId" = "user"."id"
-      AND "pro"."deletedAt" IS NULL)
-      GROUP BY "pro"."userId", "user"."id"
-      ) AS "totalProduct"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT fol) AS INT)
-      FROM "follow" "fol"
-      WHERE ("fol"."followerId" = "user"."id"
-      AND "fol"."deletedAt" IS NULL)
-      GROUP BY "fol"."followerId", "user"."id"
-      ) AS "totalFollower"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-      SELECT
-          CAST(COUNT(DISTINCT sub) AS INT)
-      FROM "subscribe" "sub"
-      WHERE ("sub"."subscriberId" = "user"."id"
-      AND "sub"."expiredAt" >= now()::date
-      AND "sub"."deletedAt" IS NULL)
-      ) AS "totalSubscribe"`,
-      )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile')
       .leftJoin('user.wallet', 'wallet')
       .leftJoin('profile.currency', 'currency');
-
-    if (followerId) {
-      query = query.addSelect(/*sql*/ `(
-        SELECT
-            CAST(COUNT(DISTINCT fol) AS INT)
-        FROM "follow" "fol"
-        WHERE ("fol"."followerId" = "user"."id"
-         AND "fol"."deletedAt" IS NULL
-         AND "fol"."userId" IN ('${followerId}'))
-         GROUP BY "fol"."userId", "user"."id"
-        ) AS "isFollow"`);
-    }
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });
@@ -359,7 +256,7 @@ export class UsersService {
 
   /** Create one User to the database. */
   async createOne(options: CreateUserOptions): Promise<User> {
-    const { email, username, password, profileId, nextStep } = options;
+    const { email, username, password, profileId } = options;
 
     const user = new User();
     user.token = generateLongUUID(50);
@@ -367,7 +264,6 @@ export class UsersService {
     user.hashPassword(password);
     user.username = username;
     user.profileId = profileId;
-    user.nextStep = nextStep;
 
     const query = this.driver.save(user);
 
@@ -390,7 +286,6 @@ export class UsersService {
       accessToken,
       refreshToken,
       deletedAt,
-      nextStep,
       confirmedAt,
     } = options;
 
@@ -415,7 +310,6 @@ export class UsersService {
       user.hashPassword(password);
     }
     user.accessToken = accessToken;
-    user.nextStep = nextStep;
     user.refreshToken = refreshToken;
     user.deletedAt = deletedAt;
     user.confirmedAt = confirmedAt;

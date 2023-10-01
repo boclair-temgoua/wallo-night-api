@@ -35,7 +35,6 @@ import {
 } from './products.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { UploadsUtil } from '../uploads/uploads.util';
-import { DiscountsService } from '../discounts/discounts.service';
 import { isNotUndefined } from '../../app/utils/commons/generate-random';
 
 @Controller('products')
@@ -43,7 +42,6 @@ export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
     private readonly uploadsUtil: UploadsUtil,
-    private readonly discountsService: DiscountsService,
   ) {}
 
   /** Get all Products */
@@ -95,7 +93,6 @@ export class ProductsController {
       messageAfterPayment,
       description,
       limitSlot,
-      membershipId,
       enableDiscount,
       discountId,
     } = body;
@@ -110,10 +107,7 @@ export class ProductsController {
       urlRedirect,
       whoCanSee,
       productType,
-      membershipId,
       messageAfterPayment,
-      currencyId: user?.profile?.currencyId,
-      discountId: isNotUndefined(discountId) ? discountId : null,
       enableDiscount: enableDiscount === 'true' ? true : false,
       enableLimitSlot: enableLimitSlot === 'true' ? true : false,
       enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
@@ -156,7 +150,6 @@ export class ProductsController {
       messageAfterPayment,
       description,
       limitSlot,
-      membershipId,
       discountId,
       enableDiscount,
     } = body;
@@ -182,11 +175,8 @@ export class ProductsController {
         urlRedirect,
         whoCanSee,
         productType,
-        membershipId,
         messageAfterPayment,
         limitSlot: Number(limitSlot),
-        currencyId: user?.profile?.currencyId,
-        discountId: isNotUndefined(discountId) ? discountId : null,
         enableDiscount: enableDiscount === 'true' ? true : false,
         enableLimitSlot: enableLimitSlot === 'true' ? true : false,
         enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,

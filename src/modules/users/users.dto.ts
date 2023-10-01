@@ -259,17 +259,3 @@ export class GetOneUserDto {
   @IsString()
   username: string;
 }
-
-export class UpdateEnableProfileDto {
-  @IsOptional()
-  @IsString()
-  enableGallery: string;
-
-  @IsOptional()
-  @IsString()
-  enableShop: string;
-
-  @IsOptional()
-  @IsString()
-  enableCommission: string;
-}

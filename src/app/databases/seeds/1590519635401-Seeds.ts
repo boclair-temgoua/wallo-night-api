@@ -4,7 +4,6 @@ import { Repository, MigrationInterface, QueryRunner } from 'typeorm';
 
 import { faker } from '@faker-js/faker';
 import { useCatch } from '../../utils/use-catch';
-import { Currency } from '../../../models/Currency';
 import { Country } from '../../../models/Country';
 import { AppSeedDataSource } from '../orm/orm-config-seed';
 
@@ -15,31 +14,6 @@ export class Seeds1590519635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
     const driver = AppSeedDataSource;
     const title = faker.lorem.sentence(5);
-
-    await driver
-      .createQueryBuilder()
-      .insert()
-      .into(Currency)
-      .values([
-        { name: 'Euro', code: 'EUR', symbol: '€', amount: 1 },
-        { name: 'US Dollar', code: 'USD', symbol: '$', amount: 1.1348 },
-        { name: 'Canadian Dollar', code: 'CAD', symbol: '$', amount: 1.4211 },
-        { name: 'Pound Sterling', code: 'GBP', symbol: '£', amount: 0.83633 },
-        {
-          name: 'Franc CFA - AC',
-          code: 'XAF',
-          symbol: 'Fcfa',
-          amount: 655.95,
-        },
-        {
-          name: 'Franc CFA - AO',
-          code: 'XOF',
-          symbol: 'Fcfa',
-          amount: 655.95,
-        },
-      ])
-      .execute();
-    console.log('\x1b[32m%s\x1b[0m', '**** Currencies seed finish ****');
 
     for (let i = 0; i < 100; i++) {
       await driver

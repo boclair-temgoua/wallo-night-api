@@ -15,10 +15,7 @@ import { WhoCanSeeType } from '../app/utils/search-query';
 import { User } from './User';
 import { PostType } from '../modules/posts/posts.type';
 import { Comment } from './Comment';
-import { Category } from './Category';
-import { PostCategory } from './PostCategory';
 import { ProductStatus } from '../app/utils/pagination';
-import { Membership } from './Membership';
 
 @Entity('post')
 export class Post extends BaseDeleteEntity {
@@ -60,15 +57,6 @@ export class Post extends BaseDeleteEntity {
   @JoinColumn()
   user?: Relation<User>;
 
-  @Column({ type: 'uuid', nullable: true })
-  membershipId?: string;
-  @ManyToOne(() => Membership, (membership) => membership.posts)
-  @JoinColumn()
-  membership?: Relation<Membership>;
-
   @OneToMany(() => Comment, (comment) => comment.post)
   comments?: Comment[];
-
-  @OneToMany(() => PostCategory, (postCategory) => postCategory.post)
-  postCategories?: PostCategory[];
 }

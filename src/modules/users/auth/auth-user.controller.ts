@@ -44,8 +44,6 @@ import {
   generateNumber,
 } from '../../../app/utils/commons';
 import { JwtAuthGuard } from '../middleware';
-import { SubscribesService } from '../../subscribes/subscribes.service';
-import { CurrenciesService } from '../../currencies/currencies.service';
 import {
   expire_cookie_setting,
   validation_code_verification_cookie_setting,
@@ -59,8 +57,6 @@ export class AuthUserController {
     private readonly walletsService: WalletsService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
-    private readonly currenciesService: CurrenciesService,
-    private readonly subscribesService: SubscribesService,
     private readonly contributorsService: ContributorsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
@@ -79,9 +75,6 @@ export class AuthUserController {
     const findOnUserByUsername = await this.usersService.findOneBy({
       username,
     });
-    const findOnCurrency = await this.currenciesService.findOneBy({
-      code: 'EUR',
-    });
     if (findOnUser)
       throw new HttpException(
         `Email ${email} already exists please change`,
@@ -93,7 +86,6 @@ export class AuthUserController {
       fullName: `${firstName} ${lastName}`,
       lastName,
       firstName,
-      countryId: findOnCurrency?.id,
     });
 
     /** Create User */
@@ -107,16 +99,6 @@ export class AuthUserController {
           ? usernameGenerate
           : username
         : usernameGenerate,
-    });
-
-    /** Create Contributor */
-    await this.subscribesService.createOne({
-      userId: user?.id,
-      subscriberId: user?.id,
-      expiredAt: addYearsFormateDDMMYYDate({
-        date: new Date(),
-        yearNumber: 50,
-      }),
     });
 
     /** Create Wallet */
@@ -181,7 +163,6 @@ export class AuthUserController {
       results: {
         accessToken: `Bearer ${refreshToken}`,
         id: findOnUser.id,
-        nextStep: findOnUser?.nextStep,
       },
     });
   }
@@ -311,17 +292,12 @@ export class AuthUserController {
       { profileId: findOnUser?.profileId },
       {
         fullName,
-        description,
-        countryId,
-        birthday,
-        currencyId,
         image,
         color,
-        url,
       },
     );
 
-    await this.usersService.updateOne({ userId }, { nextStep, username });
+    await this.usersService.updateOne({ userId }, { username });
 
     return reply({ res, results: 'Profile updated successfully' });
   }
@@ -365,41 +341,5 @@ export class AuthUserController {
     /** End send information to Job */
 
     return reply({ res, results: 'Email send successfully' });
-  }
-
-  /** Resend code user */
-  @Post(`/valid/code`)
-  @UseGuards(JwtAuthGuard)
-  async validCode(
-    @Res() res,
-    @Req() req,
-    @Body('code') code: string,
-    @Body('nextStep') nextStep: NextStep,
-  ) {
-    if (!req.cookies['x-code-verification'])
-      throw new HttpException(
-        `Code ${code} not valid or expired`,
-        HttpStatus.NOT_FOUND,
-      );
-
-    const payload = await this.checkUserService.verifyTokenCookie(
-      req.cookies['x-code-verification'],
-    );
-
-    if (Number(payload?.code) !== Number(code)) {
-      throw new HttpException(
-        `Code ${code} not valid or expired`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    await this.usersService.updateOne(
-      { userId: payload?.userId },
-      { nextStep, confirmedAt: dateTimeNowUtc() },
-    );
-
-    res.clearCookie('x-code-verification', expire_cookie_setting);
-
-    return reply({ res, results: 'Email confirmed successfully' });
   }
 }

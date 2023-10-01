@@ -1,4 +1,3 @@
-import { StatusCommission } from './../modules/commissions/commissions.dto';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,15 +5,19 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  Relation,
 } from 'typeorm';
 
-import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
+import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
 import { Cart, User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
-@Entity('commission')
-export class Commission extends BaseDeleteEntity {
+import { WhoCanSeeType } from '../app/utils/search-query';
+import { ProductType } from '../modules/products/products.dto';
+
+@Entity('event')
+export class Event extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -22,22 +25,28 @@ export class Commission extends BaseDeleteEntity {
   title: string;
 
   @Column({ nullable: true })
-  image: string;
+  location: string;
 
   @Column({ nullable: true })
-  urlMedia: string;
+  requirement: string;
+
+  @Column({ unique: true, nullable: true })
+  slug: string;
+
+  @Column({ nullable: true })
+  urlRedirect: string;
+
+  @Column({ type: 'boolean', default: false })
+  enableUrlRedirect: boolean;
 
   @Column({ type: 'bigint', default: 0 })
   price: number;
 
+  @Column({ default: 'EUR', nullable: true })
+  currency: 'EUR';
+
   @Column({ type: 'text', nullable: true })
   description: string;
-
-  @Column({ type: 'boolean', default: false })
-  enableLimitSlot: boolean;
-
-  @Column({ type: 'bigint', default: 0 })
-  limitSlot: number;
 
   @Column({ type: 'text', nullable: true })
   messageAfterPayment: string;
@@ -45,11 +54,17 @@ export class Commission extends BaseDeleteEntity {
   @Column({ default: 'ACTIVE' })
   status?: ProductStatus;
 
+  @Column({ default: 'PHYSICAL' })
+  productType?: ProductType;
+
+  @Column({ default: 'PUBLIC' })
+  whoCanSee?: WhoCanSeeType;
+
   @Column({ type: 'uuid', nullable: true })
-  currencyId: string;
-  @ManyToOne(() => Currency, (currency) => currency.products)
+  categoryId: string;
+  @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn()
-  currency: Currency;
+  category: Relation<Category>;
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;

@@ -15,35 +15,6 @@ import {
 import { PostType, postTypeArrays } from './posts.type';
 import { ProductStatus } from '../../app/utils/pagination';
 
-export class CreateOrUpdatePostsGalleriesDto {
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  title: string;
-
-  @IsOptional()
-  @IsString()
-  membershipId: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(whoCanSeeTypeArrays)
-  whoCanSee: WhoCanSeeType;
-
-  @IsOptional()
-  @IsString()
-  allowDownload: string;
-
-  @IsOptional()
-  @IsString()
-  description: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(postTypeArrays)
-  type: PostType;
-}
-
 export class CreateOrUpdatePostsDto {
   @IsNotEmpty()
   @IsString()
@@ -79,10 +50,6 @@ export class CreateOrUpdatePostsDto {
   @IsString()
   @MaxLength(200)
   title: string;
-
-  @IsOptional()
-  @IsString()
-  membershipId: string;
 
   @IsOptional()
   @IsString()

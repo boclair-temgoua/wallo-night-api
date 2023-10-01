@@ -1,15 +1,6 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToOne,
-  JoinColumn,
-  ManyToOne,
-  Generated,
-  Relation,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
 
-import { User, Currency } from './index';
+import { User } from './index';
 import { BaseDeleteEntity } from '../app/databases/common';
 @Entity('profile')
 export class Profile extends BaseDeleteEntity {
@@ -25,9 +16,6 @@ export class Profile extends BaseDeleteEntity {
   @Column({ nullable: true })
   lastName?: string;
 
-  @Column({ type: 'text', nullable: true })
-  description?: string;
-
   @Column({ nullable: true })
   phone?: string;
 
@@ -38,37 +26,13 @@ export class Profile extends BaseDeleteEntity {
   secondAddress?: string;
 
   @Column({ nullable: true })
-  birthday?: Date;
-
-  @Column({ type: 'uuid', nullable: true })
-  countryId?: string;
-
-  @Column({ nullable: true })
   image?: string;
 
   @Column({ nullable: true })
   color?: string;
 
-  @Column({ type: 'boolean', default: false })
-  enableCommission: boolean;
-
-  @Column({ type: 'boolean', default: false })
-  enableShop: boolean;
-
-  @Column({ type: 'boolean', default: false })
-  enableGallery: boolean;
-
-  @Column({ nullable: true })
-  url?: string;
-
   @OneToOne(() => User, (user) => user.profile, {
     onDelete: 'CASCADE',
   })
   user?: User;
-
-  @Column({ type: 'uuid', nullable: true })
-  currencyId?: string;
-  @ManyToOne(() => Currency, (currency) => currency.profiles)
-  @JoinColumn()
-  currency?: Relation<Currency>;
 }

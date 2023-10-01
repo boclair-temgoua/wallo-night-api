@@ -217,13 +217,6 @@ export class ProductsService {
       .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-            'symbol', "currency"."symbol",
-            'name', "currency"."name",
-            'code', "currency"."code"
-        ) AS "currency"`,
-      )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
               'firstName', "profile"."firstName",
               'lastName', "profile"."lastName",
@@ -343,14 +336,11 @@ export class ProductsService {
       moreDescription,
       limitSlot,
       status,
-      currencyId,
       categoryId,
-      discountId,
       urlMedia,
       whoCanSee,
       productType,
       urlRedirect,
-      membershipId,
       enableLimitSlot,
       enableDiscount,
       enableUrlRedirect,
@@ -372,9 +362,6 @@ export class ProductsService {
     product.limitSlot = limitSlot;
     product.categoryId = categoryId;
     product.status = status;
-    product.membershipId = membershipId;
-    product.discountId = discountId;
-    product.currencyId = currencyId;
     product.enableLimitSlot = enableLimitSlot;
     product.enableDiscount = enableDiscount;
     product.enableChooseQuantity = enableChooseQuantity;
@@ -406,8 +393,6 @@ export class ProductsService {
       description,
       moreDescription,
       status,
-      discountId,
-      currencyId,
       categoryId,
       deletedAt,
       whoCanSee,
@@ -415,7 +400,6 @@ export class ProductsService {
       urlMedia,
       limitSlot,
       urlRedirect,
-      membershipId,
       enableUrlRedirect,
       enableLimitSlot,
       enableDiscount,
@@ -441,11 +425,8 @@ export class ProductsService {
     product.status = status;
     product.whoCanSee = whoCanSee;
     product.productType = productType;
-    product.discountId = discountId;
-    product.currencyId = currencyId;
     product.limitSlot = limitSlot;
     product.urlRedirect = urlRedirect;
-    product.membershipId = membershipId;
     product.enableUrlRedirect = enableUrlRedirect;
     product.enableLimitSlot = enableLimitSlot;
     product.enableDiscount = enableDiscount;

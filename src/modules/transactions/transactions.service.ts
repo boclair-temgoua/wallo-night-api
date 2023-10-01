@@ -29,15 +29,8 @@ export class TransactionsService {
   async findAll(
     selections: GetTransactionsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const {
-      search,
-      pagination,
-      userId,
-      model,
-      campaignId,
-      userSendId,
-      userReceiveId,
-    } = selections;
+    const { search, pagination, userId, model, userSendId, userReceiveId } =
+      selections;
 
     let query = this.driver
       .createQueryBuilder('transaction')
@@ -54,13 +47,6 @@ export class TransactionsService {
       .addSelect('transaction.userSendId', 'userSendId')
       .addSelect('transaction.userReceiveId', 'userReceiveId')
       .addSelect('transaction.userId', 'userId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-      'id', "gift"."id",
-      'title', "gift"."title",
-      'amount', "gift"."amount"
-  ) AS "gift"`,
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "campaign"."id",
@@ -117,12 +103,6 @@ export class TransactionsService {
       });
     }
 
-    if (campaignId) {
-      query = query.andWhere('transaction.campaignId = :campaignId', {
-        campaignId,
-      });
-    }
-
     if (search) {
       query = query.andWhere('transaction.title ::text ILIKE :search', {
         search: `%${search}%`,
@@ -170,34 +150,24 @@ export class TransactionsService {
     const {
       amount,
       currency,
-      campaignId,
       title,
       model,
       userSendId,
       description,
-      subscribeId,
       userReceiveId,
-      contributionId,
       userId,
       token,
-      type,
-      giftId,
     } = options;
 
     const transaction = new Transaction();
     transaction.title = title;
     transaction.model = model;
     transaction.currency = currency;
-    transaction.campaignId = campaignId;
     transaction.userSendId = userSendId;
     transaction.userReceiveId = userReceiveId;
     transaction.amount = amount;
     transaction.userId = userId;
-    transaction.type = type;
     transaction.token = token;
-    transaction.giftId = giftId;
-    transaction.subscribeId = subscribeId;
-    transaction.contributionId = contributionId;
     transaction.description = description;
 
     const query = this.driver.save(transaction);

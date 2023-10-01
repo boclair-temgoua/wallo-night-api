@@ -5,7 +5,6 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { Currency } from '../../../models';
 import { config } from '../../../app/config';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -72,27 +71,3 @@ export class IsAValidateNowConstraint implements ValidatorConstraintInterface {
 }
 
 /** **************************************************************************************************************** */
-
-export const validationAmount = (options: {
-  amount: number;
-  currency: Currency;
-}) => {
-  const { amount, currency } = options;
-
-  const amountConvert = Number(amount) / currency?.amount;
-
-  if (
-    amountConvert < config.datasite.amount.minAmount ||
-    amountConvert > config.datasite.amount.maxAmount
-  )
-    throw new HttpException(
-      `The amount must be between ${
-        config.datasite.amount.minAmount * currency?.amount
-      } ${currency?.code} and ${
-        config.datasite.amount.maxAmount * currency?.amount
-      } ${currency?.code}`,
-      HttpStatus.NOT_FOUND,
-    );
-
-  return { amountConvert };
-};

@@ -15,26 +15,11 @@ import { ContributorsModule } from './modules/contributors/contributors.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CountriesModule } from './modules/countries/countries.module';
 import { CartsModule } from './modules/cats/cats.module';
-import { DiscountsModule } from './modules/discounts/discounts.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
-import { CampaignsModule } from './modules/campaigns/campaigns.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
-import { MediaModule } from './modules/media/media.module';
-import { GiftsModule } from './modules/gifts/gifts.module';
-import { CurrenciesModule } from './modules/currencies/currencies.module';
-import { ContributionsModule } from './modules/contributions/contributions.module';
-import { WithdrawalsModule } from './modules/withdrawals/withdrawals.module';
-import { WithdrawalUsersModule } from './modules/withdrawal-users/withdrawal-users.module';
 import { PostsModule } from './modules/posts/posts.module';
-import { MembershipsModule } from './modules/memberships/memberships.module';
 import { CommentsModule } from './modules/comments/comments.module';
-import { PostCategoriesModule } from './modules/post-categories/post-categories.module';
-import { FollowsModule } from './modules/follows/follows.module';
-import { LikesModule } from './modules/likes/likes.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
-import { CommissionsModule } from './modules/commissions/commissions.module';
-import { SubscribesModule } from './modules/subscribes/subscribes.module';
-import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -52,26 +37,11 @@ import { PaymentsModule } from './modules/payments/payments.module';
     TransactionsModule,
     ResetPasswordsModule,
     ProductsModule,
-    DiscountsModule,
-    CampaignsModule,
     CartsModule,
     WalletsModule,
-    MediaModule,
-    GiftsModule,
     PostsModule,
     CommentsModule,
-    CurrenciesModule,
-    WithdrawalsModule,
-    MembershipsModule,
-    FollowsModule,
-    LikesModule,
-    PaymentsModule,
     UploadsModule,
-    SubscribesModule,
-    CommissionsModule,
-    PostCategoriesModule,
-    WithdrawalUsersModule,
-    ContributionsModule,
     ContactUsModule,
   ],
 })

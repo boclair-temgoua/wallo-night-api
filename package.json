@@ -28,8 +28,6 @@
     "start": "nest start",
     "dev": "nest start --watch",
     "start:listener": "nest start --watch --config listener.json",
-    "docker:dev:start": "docker-compose --file docker-compose.yml --compatibility up --no-recreate",
-    "docker:dev:rebuild": "docker-compose --file docker-compose.yml --compatibility up --build",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "test": "jest",
