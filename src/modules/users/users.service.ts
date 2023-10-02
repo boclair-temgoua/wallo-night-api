@@ -37,6 +37,7 @@ export class UsersService {
       .addSelect('user.email', 'email')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
+      .addSelect('user.organizationId', 'organizationId')
       .addSelect('user.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -152,6 +153,7 @@ export class UsersService {
       .select('user.id', 'id')
       .addSelect('user.username', 'username')
       .addSelect('user.profileId', 'profileId')
+      .addSelect('user.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -203,6 +205,7 @@ export class UsersService {
       .addSelect('user.username', 'username')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
+      .addSelect('user.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -256,7 +259,7 @@ export class UsersService {
 
   /** Create one User to the database. */
   async createOne(options: CreateUserOptions): Promise<User> {
-    const { email, username, password, profileId } = options;
+    const { email, username, password, profileId, organizationId } = options;
 
     const user = new User();
     user.token = generateLongUUID(50);
@@ -264,6 +267,7 @@ export class UsersService {
     user.hashPassword(password);
     user.username = username;
     user.profileId = profileId;
+    user.organizationId = organizationId;
 
     const query = this.driver.save(user);
 

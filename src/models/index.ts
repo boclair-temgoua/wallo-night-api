@@ -8,6 +8,7 @@ export * from './Comment';
 export * from './Upload';
 export * from './Faq';
 export * from './Event';
+export * from './Organization';
 export * from './Profile';
 export * from './Project';
 export * from './ResetPassword';

@@ -84,14 +84,11 @@ export class ContributorsService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const [error, users] = await useCatch(
-      query
-        .orderBy('contributor.createdAt', pagination?.sort)
-        .limit(pagination.limit)
-        .offset(pagination.offset)
-        .getRawMany(),
-    );
-    if (error) throw new NotFoundException(error);
+    const users = await query
+      .orderBy('contributor.createdAt', pagination?.sort)
+      .limit(pagination.limit)
+      .offset(pagination.offset)
+      .getRawMany();
 
     return withPagination({
       pagination,
@@ -123,7 +120,7 @@ export class ContributorsService {
   }
 
   async findOneBy(selections: GetOneContributorSelections): Promise<any> {
-    const { type, userId, contributorId } = selections;
+    const { type, userId, contributorId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
@@ -159,6 +156,12 @@ export class ContributorsService {
 
     if (contributorId) {
       query = query.andWhere('contributor.id = :id', { id: contributorId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('contributor.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     const [error, result] = await useCatch(query.getRawOne());

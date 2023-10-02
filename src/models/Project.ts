@@ -35,4 +35,7 @@ export class Project extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
 }

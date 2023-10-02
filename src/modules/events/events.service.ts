@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from '../../models/Event';
 import { Repository, Brackets } from 'typeorm';
@@ -27,7 +22,7 @@ export class EventsService {
   ) {}
 
   async findAll(selections: GetEventsSelections): Promise<any> {
-    const { search, pagination, status, userId } = selections;
+    const { search, pagination, status, userId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('event')
@@ -44,6 +39,7 @@ export class EventsService {
       .addSelect('event.messageAfterPayment', 'messageAfterPayment')
       .addSelect('event.status', 'status')
       .addSelect('event.userId', 'userId')
+      .addSelect('event.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
@@ -58,20 +54,13 @@ export class EventsService {
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "event"."id"
           AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('event')
+          AND "upl"."model" IN ('EVENT')
           AND "upl"."uploadType" IN ('IMAGE')
           GROUP BY "event"."id", "upl"."uploadableId"
           ) AS "uploadsImage"`,
@@ -79,20 +68,13 @@ export class EventsService {
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "event"."id"
           AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('event')
+          AND "upl"."model" IN ('EVENT')
           AND "upl"."uploadType" IN ('FILE')
           GROUP BY "event"."id", "upl"."uploadableId"
           ) AS "uploadsFile"`,
@@ -104,6 +86,12 @@ export class EventsService {
 
     if (userId) {
       query = query.andWhere('event.userId = :userId', { userId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('event.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (status) {
@@ -139,7 +127,7 @@ export class EventsService {
   }
 
   async findOneBy(selections: GetOneEventsSelections): Promise<Event> {
-    const { eventId, eventSlug, userId } = selections;
+    const { eventId, eventSlug, userId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('event')
       .select('event.id', 'id')
@@ -152,6 +140,7 @@ export class EventsService {
       .addSelect('event.price', 'price')
       .addSelect('event.currency', 'currency')
       .addSelect('event.description', 'description')
+      .addSelect('event.organizationId', 'organizationId')
       .addSelect('event.messageAfterPayment', 'messageAfterPayment')
       .addSelect('event.status', 'status')
       .addSelect('event.userId', 'userId')
@@ -168,45 +157,31 @@ export class EventsService {
       )
       .addSelect(
         /*sql*/ `(
-        SELECT array_agg(jsonb_build_object(
-          'id', "upl"."id",
-          'name', "upl"."name",
-          'path', "upl"."path",
-          'status', "upl"."status",
-          'url', "upl"."url",
-          'userId', "upl"."userId",
-          'model', "upl"."model",
-          'uploadType', "upl"."uploadType",
-          'uploadableId', "upl"."uploadableId"
-        )) 
-        FROM "upload" "upl"
-        WHERE "upl"."uploadableId" = "Event"."id"
-        AND "upl"."deletedAt" IS NULL
-        AND "upl"."model" IN ('Event')
-        AND "upl"."uploadType" IN ('IMAGE')
-        GROUP BY "event"."id", "upl"."uploadableId"
-        ) AS "uploadsImage"`,
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "event"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('EVENT')
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "event"."id", "upl"."uploadableId"
+          ) AS "uploadsImage"`,
       )
       .addSelect(
         /*sql*/ `(
-        SELECT array_agg(jsonb_build_object(
-          'id', "upl"."id",
-          'name', "upl"."name",
-          'path', "upl"."path",
-          'status', "upl"."status",
-          'url', "upl"."url",
-          'userId', "upl"."userId",
-          'model', "upl"."model",
-          'uploadType', "upl"."uploadType",
-          'uploadableId', "upl"."uploadableId"
-        )) 
-        FROM "upload" "upl"
-        WHERE "upl"."uploadableId" = "event"."id"
-        AND "upl"."deletedAt" IS NULL
-        AND "upl"."model" IN ('event')
-        AND "upl"."uploadType" IN ('FILE')
-        GROUP BY "event"."id", "upl"."uploadableId"
-        ) AS "uploadsFile"`,
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "event"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('EVENT')
+          AND "upl"."uploadType" IN ('FILE')
+          GROUP BY "event"."id", "upl"."uploadableId"
+          ) AS "uploadsFile"`,
       )
       .addSelect('event.createdAt', 'createdAt')
       .where('event.deletedAt IS NULL')
@@ -221,13 +196,19 @@ export class EventsService {
       query = query.andWhere('event.userId = :userId', { userId });
     }
 
+    if (organizationId) {
+      query = query.andWhere('event.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     if (eventSlug) {
       query = query.andWhere('event.slug = :slug', { slug: eventSlug });
     }
 
-    const Events = await query.getRawOne();
+    const events = await query.getRawOne();
 
-    return Events;
+    return events;
   }
 
   /** Create one Events to the database. */
@@ -244,6 +225,7 @@ export class EventsService {
       expiredAt,
       currency,
       description,
+      organizationId,
       messageAfterPayment,
       status,
       userId,
@@ -255,6 +237,7 @@ export class EventsService {
     event.urlMedia = urlMedia;
     event.requirement = requirement;
     event.urlRedirect = urlRedirect;
+    event.organizationId = organizationId;
     event.enableUrlRedirect = enableUrlRedirect;
     event.price = price;
     event.dateEvent = dateEvent;

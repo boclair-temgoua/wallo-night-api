@@ -44,6 +44,7 @@ import {
   generateNumber,
 } from '../../../app/utils/commons';
 import { JwtAuthGuard } from '../middleware';
+import { OrganizationsService } from '../../organizations/organizations.service';
 import {
   expire_cookie_setting,
   validation_code_verification_cookie_setting,
@@ -58,6 +59,7 @@ export class AuthUserController {
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
     private readonly contributorsService: ContributorsService,
+    private readonly organizationsService: OrganizationsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
 
@@ -83,6 +85,11 @@ export class AuthUserController {
       firstName,
     });
 
+    /** Create Organization */
+    const organization = await this.organizationsService.createOne({
+      name: `${firstName} ${lastName}`,
+    });
+
     /** Create User */
     const usernameGenerate = `${generateLongUUID(8)}`.toLowerCase();
     const user = await this.usersService.createOne({
@@ -94,6 +101,7 @@ export class AuthUserController {
           ? usernameGenerate
           : username
         : usernameGenerate,
+      organizationId: organization?.id,
     });
 
     /** Create Wallet */
@@ -106,7 +114,15 @@ export class AuthUserController {
       userId: user?.id,
       userCreatedId: user?.id,
       role: 'ADMIN',
+      organizationId: organization?.id,
     });
+
+    /** Update Organization */
+    await this.organizationsService.updateOne(
+      { organizationId: organization?.id },
+      { userId: user?.id },
+    );
+
     //const queue = 'user-register';
     //const connect = await amqplib.connect(
     //  config.implementations.amqp.link,
@@ -119,6 +135,7 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: user.id,
       profileId: user.profileId,
+      organizationId: user.organizationId,
     };
 
     const refreshToken =
@@ -144,6 +161,7 @@ export class AuthUserController {
 
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
+      organizationId: findOnUser.organizationId,
       profileId: findOnUser.profileId,
     };
 
@@ -179,6 +197,7 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       profileId: findOnUser.profileId,
+      organizationId: findOnUser.organizationId,
     };
 
     if (!findOnUser)

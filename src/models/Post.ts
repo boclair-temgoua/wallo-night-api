@@ -57,6 +57,9 @@ export class Post extends BaseDeleteEntity {
   @JoinColumn()
   user?: Relation<User>;
 
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
   @OneToMany(() => Comment, (comment) => comment.post)
   comments?: Comment[];
 }

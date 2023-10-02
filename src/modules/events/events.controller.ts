@@ -53,7 +53,7 @@ export class EventsController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { userId, status } = query;
+    const { userId, status, organizationId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -63,6 +63,7 @@ export class EventsController {
       search,
       pagination,
       userId,
+      organizationId,
       status: status?.toUpperCase(),
     });
 
@@ -88,12 +89,13 @@ export class EventsController {
       price,
       urlMedia,
       currency,
+      dateEvent,
       description,
       messageAfterPayment,
     } = body;
     const { user } = req;
 
-    const Event = await this.eventsService.createOne({
+    const event = await this.eventsService.createOne({
       title,
       price: Number(price),
       description,
@@ -103,23 +105,25 @@ export class EventsController {
       location,
       requirement,
       currency,
+      dateEvent,
       messageAfterPayment,
+      organizationId: user?.organizationId,
       enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
     });
 
     // await this.uploadsUtil.saveOrUpdateAws({
-    //   uploadableId: Event?.id,
-    //   model: 'Event',
-    //   userId: Event?.userId,
+    //   uploadableId: event?.id,
+    //   model: 'EVENT',
+    //   userId: event?.userId,
     //   folder: 'events',
     //   files,
     // });
 
-    return reply({ res, results: Event });
+    return reply({ res, results: event });
   }
 
   /** Post one Events */
-  @Put(`/:EventId`)
+  @Put(`/:eventId`)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
@@ -169,13 +173,13 @@ export class EventsController {
       },
     );
 
-    // await this.uploadsUtil.saveOrUpdateAws({
-    //   userId: user?.id,
-    //   uploadableId: EventId,
-    //   model: 'Event',
-    //   folder: 'Events',
-    //   files,
-    // });
+    await this.uploadsUtil.saveOrUpdateAws({
+      userId: user?.id,
+      uploadableId: eventId,
+      model: 'EVENT',
+      folder: 'events',
+      files,
+    });
 
     return reply({ res, results: 'event updated successfully' });
   }

@@ -63,4 +63,7 @@ export class Event extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.events, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
 }

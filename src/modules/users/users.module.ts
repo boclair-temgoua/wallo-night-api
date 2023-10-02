@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   User,
   Profile,
+  Organization,
   ResetPassword,
   Contributor,
   Wallet,
@@ -17,6 +18,7 @@ import { ResetPasswordsService } from '../reset-passwords/reset-passwords.servic
 import { ContributorsUtil } from '../contributors/contributors.util';
 import { ContributorsService } from '../contributors/contributors.service';
 import { WalletsService } from '../wallets/wallets.service';
+import { OrganizationsService } from '../organizations/organizations.service';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { WalletsService } from '../wallets/wallets.service';
       User,
       Wallet,
       Profile,
+      Organization,
       ResetPassword,
       Contributor,
     ]),
@@ -36,6 +39,7 @@ import { WalletsService } from '../wallets/wallets.service';
     CheckUserService,
     JwtAuthStrategy,
     ContributorsUtil,
+    OrganizationsService,
     ContributorsService,
     ResetPasswordsService,
   ],

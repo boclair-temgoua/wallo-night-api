@@ -19,6 +19,7 @@ import { WalletsModule } from './modules/wallets/wallets.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { OrganizationsModule } from './modules/organizations/organizations.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     ContributorsModule,
     CategoriesModule,
     CountriesModule,
+    OrganizationsModule,
     TransactionsModule,
     ResetPasswordsModule,
     EventsModule,

@@ -4,6 +4,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 export type JwtPayloadType = {
   id: string;
   profileId: string;
+  organizationId: string;
 };
 
 export type GetUsersSelections = {
@@ -34,6 +35,7 @@ export type GetOnUserPublic = {
   confirmedAt: Date;
   email: string;
   profileId: string;
+  organizationId: string;
   profile: {
     id: string;
     url: string;

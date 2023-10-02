@@ -282,6 +282,7 @@ export class PostsService {
       type,
       urlMedia,
       whoCanSee,
+      organizationId,
       enableUrlMedia,
       allowDownload,
       description,
@@ -293,6 +294,7 @@ export class PostsService {
     post.type = type;
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
+    post.organizationId = organizationId;
     post.allowDownload = allowDownload;
     post.enableUrlMedia = enableUrlMedia;
     post.slug = `${

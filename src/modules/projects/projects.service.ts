@@ -99,12 +99,14 @@ export class ProjectsService {
 
   /** Create one Project to the database. */
   async createOne(options: CreateProjectOptions): Promise<Project> {
-    const { userId, userCreatedId, title, image, description } = options;
+    const { userId, userCreatedId, title, image, organizationId, description } =
+      options;
 
     const project = new Project();
     project.userId = userId;
     project.title = title;
     project.image = image;
+    project.organizationId = organizationId;
     project.slug = `${Slug(title)}-${generateNumber(4)}`;
     project.userCreatedId = userCreatedId;
     project.description = description;

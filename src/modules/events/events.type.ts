@@ -7,12 +7,14 @@ export type GetEventsSelections = {
   pagination?: PaginationType;
   status?: string;
   userId?: Event['userId'];
+  organizationId?: Event['organizationId'];
 };
 
 export type GetOneEventsSelections = {
   eventId?: Event['id'];
   userId?: Event['userId'];
   eventSlug?: Event['slug'];
+  organizationId?: Event['organizationId'];
 };
 
 export type UpdateEventsSelections = {

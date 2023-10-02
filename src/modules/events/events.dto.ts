@@ -78,6 +78,11 @@ export class GetEventsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
+  organizationId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
   userId: string;
 
   @IsOptional()
