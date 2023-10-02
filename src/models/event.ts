@@ -40,6 +40,12 @@ export class Event extends BaseDeleteEntity {
   @Column({ type: 'bigint', default: 0 })
   price: number;
 
+  @Column({ nullable: true, type: 'timestamptz' })
+  expiredAt: Date;
+
+  @Column({ nullable: true, type: 'timestamptz' })
+  dateEvent: Date;
+
   @Column({ default: 'EUR', nullable: true })
   currency: CurrencyEvent;
 

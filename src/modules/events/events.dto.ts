@@ -34,6 +34,9 @@ export class CreateOrUpdateEventsDto {
   @IsString()
   urlMedia: string;
 
+  @IsNotEmpty()
+  dateEvent: Date;
+
   @IsOptional()
   @IsString()
   price: string;

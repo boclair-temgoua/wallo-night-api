@@ -240,6 +240,8 @@ export class EventsService {
       urlRedirect,
       enableUrlRedirect,
       price,
+      dateEvent,
+      expiredAt,
       currency,
       description,
       messageAfterPayment,
@@ -255,6 +257,8 @@ export class EventsService {
     event.urlRedirect = urlRedirect;
     event.enableUrlRedirect = enableUrlRedirect;
     event.price = price;
+    event.dateEvent = dateEvent;
+    event.expiredAt = expiredAt;
     event.currency = currency;
     event.messageAfterPayment = messageAfterPayment;
     event.status = status;
@@ -284,6 +288,8 @@ export class EventsService {
       urlRedirect,
       enableUrlRedirect,
       price,
+      dateEvent,
+      expiredAt,
       currency,
       description,
       messageAfterPayment,
@@ -307,6 +313,8 @@ export class EventsService {
     event.urlRedirect = urlRedirect;
     event.enableUrlRedirect = enableUrlRedirect;
     event.price = price;
+    event.dateEvent = dateEvent;
+    event.expiredAt = expiredAt;
     event.currency = currency;
     event.messageAfterPayment = messageAfterPayment;
     event.status = status;
