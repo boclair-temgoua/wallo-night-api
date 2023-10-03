@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Event } from '../../models/Event';
 import { Repository, Brackets } from 'typeorm';
 import * as Slug from 'slug';
 import { useCatch } from '../../app/utils/use-catch';
@@ -13,6 +12,7 @@ import {
   UpdateEventsOptions,
   UpdateEventsSelections,
 } from './events.type';
+import { Event } from '../../models';
 
 @Injectable()
 export class EventsService {

@@ -1,5 +1,4 @@
-import { Category } from '../../models/Category';
-import { Event } from '../../models/Event';
+import { Event } from '../../models';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetEventsSelections = {
