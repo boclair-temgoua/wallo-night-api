@@ -37,7 +37,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { UploadsUtil } from '../uploads/uploads.util';
 
 @Controller('events')
-export class EventsController {
+export class OurEventsController {
   constructor(
     private readonly ourEventsService: OurEventsService,
     private readonly uploadsUtil: UploadsUtil,
@@ -111,13 +111,13 @@ export class EventsController {
       enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
     });
 
-    // await this.uploadsUtil.saveOrUpdateAws({
-    //   uploadableId: event?.id,
-    //   model: 'EVENT',
-    //   userId: event?.userId,
-    //   folder: 'events',
-    //   files,
-    // });
+    await this.uploadsUtil.saveOrUpdateAws({
+      uploadableId: event?.id,
+      model: 'EVENT',
+      userId: event?.userId,
+      folder: 'events',
+      files,
+    });
 
     return reply({ res, results: event });
   }

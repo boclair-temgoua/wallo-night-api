@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OurEvent, Upload } from '../../models';
-import { EventsController } from './our-events.controller';
+import { OurEventsController } from './our-events.controller';
 import { OurEventsService } from './our-events.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { UploadsUtil } from '../uploads/uploads.util';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OurEvent, Upload])],
-  controllers: [EventsController],
+  controllers: [OurEventsController],
   providers: [OurEventsService, UploadsService, UploadsUtil],
 })
 export class OurEventsModule {}
