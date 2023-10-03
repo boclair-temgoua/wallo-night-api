@@ -11,7 +11,7 @@ import { Organization, User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
 import { CurrencyEvent } from '../modules/events/events.dto';
 
-@Entity('event')
+@Entity('even')
 export class Event extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
