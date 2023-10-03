@@ -30,7 +30,7 @@ export class ContributorsService {
   async findAll(
     selections: GetContributorsSelections,
   ): Promise<GetContributorsSelections | any> {
-    const { userId, search, pagination } = selections;
+    const { userId, search, pagination, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
@@ -57,6 +57,12 @@ export class ContributorsService {
 
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('contributor.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (search) {
@@ -173,13 +179,14 @@ export class ContributorsService {
 
   /** Create one Contributor to the database. */
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
-    const { userId, role, userCreatedId, type } = options;
+    const { userId, role, userCreatedId, organizationId, type } = options;
 
     const contributor = new Contributor();
     contributor.userId = userId;
     contributor.type = type;
     contributor.role = role;
     contributor.userCreatedId = userCreatedId;
+    contributor.organizationId = organizationId;
     const query = this.driver.save(contributor);
 
     const [error, result] = await useCatch(query);

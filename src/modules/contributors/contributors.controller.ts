@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  NotFoundException,
   Body,
   Param,
   ParseUUIDPipe,
@@ -11,24 +10,17 @@ import {
   Res,
   Req,
   Get,
-  Query,
   HttpStatus,
   HttpException,
-  ParseBoolPipe,
+  Query,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { JwtPayloadType } from './../users/users.type';
 import { generateLongUUID } from './../../app/utils/commons/generate-random';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
-  FilterQueryType,
   PasswordBodyDto,
   SearchQueryDto,
 } from '../../app/utils/search-query/search-query.dto';
-import {
-  addPagination,
-  PaginationType,
-} from '../../app/utils/pagination/with-pagination';
 import * as amqplib from 'amqplib';
 import { ProfilesService } from '../profiles/profiles.service';
 import { CheckUserService } from '../users/middleware/check-user.service';
@@ -37,11 +29,13 @@ import { ContributorsService } from './contributors.service';
 import { JwtAuthGuard } from '../users/middleware';
 import { ContributorRole } from './contributors.type';
 import {
-  CreateOneContributorOrganizationDto,
   CreateOneNewUserContributorsDto,
+  GetContributorsDto,
   UpdateRoleContributorDto,
 } from './contributors.dto';
 import { config } from '../../app/config/index';
+import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
+import { PaginationType, addPagination } from '../../app/utils/pagination';
 
 @Controller('contributors')
 export class ContributorsController {
@@ -52,23 +46,51 @@ export class ContributorsController {
     private readonly contributorsService: ContributorsService,
   ) {}
 
-  @Post(`/new-user`)
+  /** Get all Contributors */
+  @Get(`/`)
+  @UseGuards(JwtAuthGuard)
+  async findAll(
+    @Res() res,
+    @Req() req,
+    @Query() query: GetContributorsDto,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { organizationId } = query;
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const contributors = await this.contributorsService.findAll({
+      search,
+      pagination,
+      organizationId,
+    });
+
+    return reply({ res, results: contributors });
+  }
+
+  @Post(`/`)
   @UseGuards(JwtAuthGuard)
   async createOneNewUser(
     @Res() res,
     @Req() req,
     @Body() body: CreateOneNewUserContributorsDto,
   ) {
-    const { email, role, fullName } = body;
+    const { email, role, firstName, lastName } = body;
 
     const { user } = req;
 
+    const username = `${firstName}.${lastName}`.toLocaleLowerCase();
     await this.contributorsService.canCheckPermissionContributor({
       userId: user?.id,
     });
-
     const findOneUser = await this.usersService.findOneBy({
       email,
+    });
+    const findOnUserByUsername = await this.usersService.findOneBy({
+      username: username,
     });
     if (findOneUser)
       throw new HttpException(
@@ -78,16 +100,24 @@ export class ContributorsController {
 
     /** Create Profile */
     const profile = await this.profilesService.createOne({
-      fullName,
+      fullName: `${firstName} ${lastName}`,
+      lastName,
+      firstName,
     });
 
     /** Create User */
+    const usernameGenerate = `${generateLongUUID(8)}`.toLowerCase();
     const userSave = await this.usersService.createOne({
       email,
-      profileId: profile?.id,
       password: generateLongUUID(8),
+      profileId: profile?.id,
+      username: username
+        ? findOnUserByUsername
+          ? usernameGenerate
+          : username
+        : usernameGenerate,
       token: generateLongUUID(30),
-      username: `${fullName}`.toLowerCase(),
+      organizationId: user?.organizationId,
     });
 
     /** Create Contributor */
@@ -95,6 +125,7 @@ export class ContributorsController {
       userId: userSave?.id,
       userCreatedId: user?.id,
       role: role as ContributorRole,
+      organizationId: userSave?.organizationId,
     });
 
     /** Update User */
@@ -108,8 +139,8 @@ export class ContributorsController {
       { accessToken: await this.checkUserService.createJwtTokens(jwtPayload) },
     );
     /** Send notification to Contributor */
-    const queue = 'user-contributor-create';
-    const connect = await amqplib.connect(config.implementations.amqp.link);
+    // const queue = 'user-contributor-create';
+    // const connect = await amqplib.connect(config.implementations.amqp.link);
     // const channel = await connect.createChannel();
     // await channel.assertQueue(queue, { durable: false });
     // await channel.sendToQueue(

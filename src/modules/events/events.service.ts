@@ -52,6 +52,12 @@ export class EventsService {
           ) AS "profile"`,
       )
       .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'name', "organization"."name",
+              'image', "organization"."image"
+          ) AS "organization"`,
+      )
+      .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
@@ -82,7 +88,8 @@ export class EventsService {
       .addSelect('event.createdAt', 'createdAt')
       .where('event.deletedAt IS NULL')
       .leftJoin('event.user', 'user')
-      .leftJoin('user.profile', 'profile');
+      .leftJoin('user.profile', 'profile')
+      .leftJoin('event.organization', 'organization');
 
     if (userId) {
       query = query.andWhere('event.userId = :userId', { userId });
@@ -156,6 +163,12 @@ export class EventsService {
         ) AS "profile"`,
       )
       .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'name', "organization"."name",
+              'image', "organization"."image"
+          ) AS "organization"`,
+      )
+      .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
@@ -186,7 +199,8 @@ export class EventsService {
       .addSelect('event.createdAt', 'createdAt')
       .where('event.deletedAt IS NULL')
       .leftJoin('event.user', 'user')
-      .leftJoin('user.profile', 'profile');
+      .leftJoin('user.profile', 'profile')
+      .leftJoin('event.organization', 'organization');
 
     if (eventId) {
       query = query.andWhere('event.id = :id', { id: eventId });

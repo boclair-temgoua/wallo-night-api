@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Organization } from '../../models/Organization';
 import { getRandomElement } from '../../app/utils/array/get-random-element';
@@ -34,24 +29,10 @@ export class OrganizationsService {
       .addSelect('organization.name', 'name')
       .addSelect('organization.color', 'color')
       .addSelect('organization.image', 'image')
-      .addSelect('organization.userId', 'userId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-                'firstName', "profile"."firstName",
-                'lastName', "profile"."lastName",
-                'fullName', "profile"."fullName",
-                'image', "profile"."image",
-                'color', "profile"."color",
-                'userId', "user"."id",
-                'username', "user"."username"
-            ) AS "profileOwner"`,
-      )
-      .where('organization.deletedAt IS NULL')
-      .leftJoin('organization.user', 'user')
-      .leftJoin('user.profile', 'profile');
+      .addSelect('organization.userId', 'userId');
 
     if (organizationId) {
-      query = query.andWhere('organization.id = :id', { id: organizationId });
+      query = query.where('organization.id = :id', { id: organizationId });
     }
 
     const organization = await query.getRawOne();

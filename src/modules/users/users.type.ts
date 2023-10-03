@@ -10,7 +10,8 @@ export type JwtPayloadType = {
 export type GetUsersSelections = {
   search?: string;
   pagination?: PaginationType;
-  userId?: ['userId'];
+  userId?: User['id'];
+  organizationId?: User['organizationId'];
 };
 
 export type GetOneUserSelections = {

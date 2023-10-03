@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, Generated } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Generated,
+  OneToMany,
+} from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
+import { Event } from './Event';
 
 @Entity('organization')
 export class Organization extends BaseEntity {
@@ -23,4 +30,7 @@ export class Organization extends BaseEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
+
+  @OneToMany(() => Event, (event) => event.organization)
+  events?: Event[];
 }

@@ -8,6 +8,13 @@ import {
 import { ContributorRole, contributorRoleArrays } from './contributors.type';
 import { MaxLength, IsEmail } from 'class-validator';
 
+export class GetContributorsDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  organizationId: string;
+}
+
 export class CreateOneContributorOrganizationDto {
   @IsNotEmpty()
   @IsString()
@@ -31,7 +38,12 @@ export class CreateOneNewUserContributorsDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
-  fullName: string;
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50)
+  lastName: string;
 
   @IsOptional()
   @IsString()

@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { User } from './index';
+import { Organization, User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
 import { CurrencyEvent } from '../modules/events/events.dto';
 
@@ -66,4 +66,9 @@ export class Event extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.events, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Organization;
 }

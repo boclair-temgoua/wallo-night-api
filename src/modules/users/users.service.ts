@@ -30,7 +30,7 @@ export class UsersService {
   ) {}
 
   async findAll(selections: GetUsersSelections): Promise<any> {
-    const { search, pagination, userId } = selections;
+    const { search, pagination, userId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('user')
       .select('user.id', 'id')
@@ -67,6 +67,12 @@ export class UsersService {
       )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile');
+
+    if (organizationId) {
+      query = query.andWhere('user.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
 
     if (userId) {
       query = query.addSelect(/*sql*/ `(
