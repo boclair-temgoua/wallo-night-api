@@ -12,7 +12,7 @@ import { ContactUsModule } from './modules/contact-us/contact-us.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { ContributorsModule } from './modules/contributors/contributors.module';
-import { EventsModule } from './modules/events/events.module';
+import { OurEventsModule } from './modules/events/our-events.module';
 import { CountriesModule } from './modules/countries/countries.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
@@ -37,7 +37,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
     OrganizationsModule,
     TransactionsModule,
     ResetPasswordsModule,
-    EventsModule,
+    OurEventsModule,
     WalletsModule,
     PostsModule,
     CommentsModule,

@@ -6,22 +6,22 @@ import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { generateNumber } from '../../app/utils/commons';
 import {
-  CreateEventsOptions,
-  GetOneEventsSelections,
-  GetEventsSelections,
-  UpdateEventsOptions,
-  UpdateEventsSelections,
-} from './events.type';
-import { Event } from '../../models';
+  CreateOurEventsOptions,
+  GetOneOurEventsSelections,
+  GetOurEventsSelections,
+  UpdateOurEventsOptions,
+  UpdateOurEventsSelections,
+} from './our-events.type';
+import { OurEvent } from '../../models';
 
 @Injectable()
-export class EventsService {
+export class OurEventsService {
   constructor(
-    @InjectRepository(Event)
-    private driver: Repository<Event>,
+    @InjectRepository(OurEvent)
+    private driver: Repository<OurEvent>,
   ) {}
 
-  async findAll(selections: GetEventsSelections): Promise<any> {
+  async findAll(selections: GetOurEventsSelections): Promise<any> {
     const { search, pagination, status, userId, organizationId } = selections;
 
     let query = this.driver
@@ -133,7 +133,7 @@ export class EventsService {
     });
   }
 
-  async findOneBy(selections: GetOneEventsSelections): Promise<Event> {
+  async findOneBy(selections: GetOneOurEventsSelections): Promise<OurEvent> {
     const { eventId, eventSlug, userId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('event')
@@ -225,8 +225,8 @@ export class EventsService {
     return events;
   }
 
-  /** Create one Events to the database. */
-  async createOne(options: CreateEventsOptions): Promise<Event> {
+  /** Create one OurEvents to the database. */
+  async createOne(options: CreateOurEventsOptions): Promise<OurEvent> {
     const {
       title,
       location,
@@ -245,7 +245,7 @@ export class EventsService {
       userId,
     } = options;
 
-    const event = new Event();
+    const event = new OurEvent();
     event.title = title;
     event.location = location;
     event.urlMedia = urlMedia;
@@ -271,11 +271,11 @@ export class EventsService {
     return result;
   }
 
-  /** Update one Events to the database. */
+  /** Update one OurEvents to the database. */
   async updateOne(
-    selections: UpdateEventsSelections,
-    options: UpdateEventsOptions,
-  ): Promise<Event> {
+    selections: UpdateOurEventsSelections,
+    options: UpdateOurEventsOptions,
+  ): Promise<OurEvent> {
     const { eventId } = selections;
     const {
       title,

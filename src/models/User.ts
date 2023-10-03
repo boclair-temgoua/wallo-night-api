@@ -18,7 +18,7 @@ import {
   Transaction,
   Contributor,
   Profile,
-  Event,
+  OurEvent,
 } from './index';
 
 @Entity('user')
@@ -67,8 +67,8 @@ export class User extends BaseDeleteEntity {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[];
 
-  @OneToMany(() => Event, (event) => event.user)
-  events?: Event[];
+  @OneToMany(() => OurEvent, (ourEvent) => ourEvent.user)
+  ourEvents?: OurEvent[];
 
   @OneToMany(() => Transaction, (transaction) => transaction.user, {
     onDelete: 'CASCADE',

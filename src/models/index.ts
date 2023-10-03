@@ -7,7 +7,7 @@ export * from './Post';
 export * from './Comment';
 export * from './Upload';
 export * from './Faq';
-export * from './Event';
+export * from './OurEvent';
 export * from './Organization';
 export * from './Profile';
 export * from './Project';

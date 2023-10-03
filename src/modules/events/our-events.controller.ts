@@ -17,7 +17,7 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { EventsService } from './events.service';
+import { OurEventsService } from './our-events.service';
 import {
   PasswordBodyDto,
   SearchQueryDto,
@@ -29,27 +29,27 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 import {
-  CreateOrUpdateEventsDto,
-  GetOneEventDto,
-  GetEventsDto,
-} from './events.dto';
+  CreateOrUpdateOurEventsDto,
+  GetOneOurEventDto,
+  GetOurEventsDto,
+} from './our-events.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { UploadsUtil } from '../uploads/uploads.util';
 
 @Controller('events')
 export class EventsController {
   constructor(
-    private readonly eventsService: EventsService,
+    private readonly ourEventsService: OurEventsService,
     private readonly uploadsUtil: UploadsUtil,
   ) {}
 
-  /** Get all Events */
+  /** Get all OurEvents */
   @Get(`/`)
   @UseGuards(JwtAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,
-    @Query() query: GetEventsDto,
+    @Query() query: GetOurEventsDto,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
@@ -59,7 +59,7 @@ export class EventsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const Events = await this.eventsService.findAll({
+    const Events = await this.ourEventsService.findAll({
       search,
       pagination,
       userId,
@@ -70,14 +70,14 @@ export class EventsController {
     return reply({ res, results: Events });
   }
 
-  /** Post one Events */
+  /** Post one OurEvents */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateEventsDto,
+    @Body() body: CreateOrUpdateOurEventsDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const {
@@ -95,7 +95,7 @@ export class EventsController {
     } = body;
     const { user } = req;
 
-    const event = await this.eventsService.createOne({
+    const event = await this.ourEventsService.createOne({
       title,
       price: Number(price),
       description,
@@ -122,14 +122,14 @@ export class EventsController {
     return reply({ res, results: event });
   }
 
-  /** Post one Events */
+  /** Post one OurEvents */
   @Put(`/:eventId`)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateEventsDto,
+    @Body() body: CreateOrUpdateOurEventsDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('eventId', ParseUUIDPipe) eventId: string,
   ) {
@@ -147,7 +147,7 @@ export class EventsController {
     } = body;
     const { user } = req;
 
-    const findOneEvent = await this.eventsService.findOneBy({
+    const findOneEvent = await this.ourEventsService.findOneBy({
       eventId,
     });
     if (!findOneEvent)
@@ -156,7 +156,7 @@ export class EventsController {
         HttpStatus.NOT_FOUND,
       );
 
-    await this.eventsService.updateOne(
+    await this.ourEventsService.updateOne(
       { eventId },
       {
         title,
@@ -184,12 +184,12 @@ export class EventsController {
     return reply({ res, results: 'event updated successfully' });
   }
 
-  /** Get one Events */
+  /** Get one OurEvents */
   @Get(`/view`)
-  async getOne(@Res() res, @Query() query: GetOneEventDto) {
+  async getOne(@Res() res, @Query() query: GetOneOurEventDto) {
     const { eventId, eventSlug, userId } = query;
 
-    const findOneEvent = await this.eventsService.findOneBy({
+    const findOneEvent = await this.ourEventsService.findOneBy({
       eventId,
       userId,
       eventSlug,
@@ -203,7 +203,7 @@ export class EventsController {
     return reply({ res, results: findOneEvent });
   }
 
-  /** Delete one Events */
+  /** Delete one OurEvents */
   @Delete(`/:eventId`)
   @UseGuards(JwtAuthGuard)
   async deleteOne(
@@ -211,7 +211,10 @@ export class EventsController {
     @Req() req,
     @Param('eventId', ParseUUIDPipe) eventId: string,
   ) {
-    await this.eventsService.updateOne({ eventId }, { deletedAt: new Date() });
+    await this.ourEventsService.updateOne(
+      { eventId },
+      { deletedAt: new Date() },
+    );
 
     return reply({ res, results: 'Event deleted successfully' });
   }

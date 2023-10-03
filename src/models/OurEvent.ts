@@ -9,10 +9,10 @@ import {
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Organization, User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
-import { CurrencyEvent } from '../modules/events/events.dto';
+import { CurrencyEvent } from '../modules/events/our-events.dto';
 
-@Entity('even')
-export class Event extends BaseDeleteEntity {
+@Entity('our_event')
+export class OurEvent extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -60,15 +60,15 @@ export class Event extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
-  @ManyToOne(() => User, (user) => user.events, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.ourEvents, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
-  // @ManyToOne(() => Organization, (organization) => organization.events, {
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn()
-  // organization?: Organization;
+  @ManyToOne(() => Organization, (organization) => organization.ourEvents, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Organization;
 }

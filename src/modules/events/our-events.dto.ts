@@ -12,7 +12,7 @@ export type CurrencyEvent = 'EUR' | 'CAD';
 
 export const EventTypeArrays = ['DIGITAL', 'PHYSICAL'];
 
-export class CreateOrUpdateEventsDto {
+export class CreateOrUpdateOurEventsDto {
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -58,7 +58,7 @@ export class CreateOrUpdateEventsDto {
   description: string;
 }
 
-export class GetOneEventDto {
+export class GetOneOurEventDto {
   @IsOptional()
   @IsString()
   @IsUUID()
@@ -74,7 +74,7 @@ export class GetOneEventDto {
   eventSlug: string;
 }
 
-export class GetEventsDto {
+export class GetOurEventsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
