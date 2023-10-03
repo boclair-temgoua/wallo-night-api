@@ -18,10 +18,7 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { OurEventsService } from './our-events.service';
-import {
-  PasswordBodyDto,
-  SearchQueryDto,
-} from '../../app/utils/search-query/search-query.dto';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
