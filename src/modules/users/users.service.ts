@@ -34,36 +34,32 @@ export class UsersService {
     let query = this.driver
       .createQueryBuilder('user')
       .select('user.id', 'id')
+      .addSelect('user.createdAt', 'createdAt')
       .addSelect('user.email', 'email')
+      .addSelect('user.username', 'username')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
       .addSelect('user.organizationId', 'organizationId')
-      .addSelect('user.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-          'id', "profile"."id",
-          'userId', "user"."id",
-          'firstName', "profile"."firstName",
-          'lastName', "profile"."lastName",
-          'fullName', "profile"."fullName",
-          'enableShop', "profile"."enableShop",
-          'enableGallery', "profile"."enableGallery",
-          'enableCommission', "profile"."enableCommission",
-          'image', "profile"."image",
-          'color', "profile"."color",
-          'countryId', "profile"."countryId",
-          'url', "profile"."url"
-      ) AS "profile"`,
+        'id', "profile"."id",
+        'userId', "user"."id",
+        'firstName', "profile"."firstName",
+        'lastName', "profile"."lastName",
+        'fullName', "profile"."fullName",
+        'image', "profile"."image",
+        'color', "profile"."color"
+    ) AS "profile"`,
       )
       .addSelect(
         /*sql*/ `(
-        SELECT jsonb_build_object(
-        'name', "con"."role"
-        )
-        FROM "contributor" "con"
-        WHERE "user"."id" = "con"."userId"
-        AND "con"."type" IN ('ORGANIZATION')
-        ) AS "role"`,
+      SELECT jsonb_build_object(
+      'name', "con"."role"
+      )
+      FROM "contributor" "con"
+      WHERE "user"."id" = "con"."userId"
+      AND "con"."type" IN ('ORGANIZATION')
+      ) AS "role"`,
       )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile');
@@ -72,18 +68,6 @@ export class UsersService {
       query = query.andWhere('user.organizationId = :organizationId', {
         organizationId,
       });
-    }
-
-    if (userId) {
-      query = query.addSelect(/*sql*/ `(
-        SELECT
-            CAST(COUNT(DISTINCT fol) AS INT)
-        FROM "follow" "fol"
-        WHERE ("fol"."followerId" = "user"."id"
-         AND "fol"."deletedAt" IS NULL
-         AND "fol"."userId" IN ('${userId}'))
-         GROUP BY "fol"."followerId", "user"."id"
-        ) AS "isFollow"`);
     }
 
     if (search) {
@@ -150,54 +134,6 @@ export class UsersService {
   }
 
   /** FindOne one User to the database. */
-  async findOnePublicBy(
-    selections: GetOneUserSelections,
-  ): Promise<GetOnUserPublic> {
-    const { userId, email, username, followerId } = selections;
-    let query = this.driver
-      .createQueryBuilder('user')
-      .select('user.id', 'id')
-      .addSelect('user.username', 'username')
-      .addSelect('user.profileId', 'profileId')
-      .addSelect('user.organizationId', 'organizationId')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "profile"."id",
-          'userId', "user"."id",
-          'firstName', "profile"."firstName",
-          'lastName', "profile"."lastName",
-          'fullName', "profile"."fullName",
-          'enableShop', "profile"."enableShop",
-          'enableGallery', "profile"."enableGallery",
-          'enableCommission', "profile"."enableCommission",
-          'image', "profile"."image",
-          'color', "profile"."color",
-          'countryId', "profile"."countryId",
-          'url', "profile"."url"
-      ) AS "profile"`,
-      )
-      .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile');
-
-    if (userId) {
-      query = query.andWhere('user.id = :id', { id: userId });
-    }
-
-    if (username) {
-      query = query.andWhere('user.username = :username', { username });
-    }
-
-    if (email) {
-      query = query.andWhere('user.email = :email', { email });
-    }
-
-    const [error, result] = await useCatch(query.getRawOne());
-    if (error) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-
-    return result;
-  }
-
-  /** FindOne one User to the database. */
   async findOneInfoBy(
     selections: GetOneUserSelections,
   ): Promise<GetOnUserPublic> {
@@ -219,20 +155,9 @@ export class UsersService {
           'firstName', "profile"."firstName",
           'lastName', "profile"."lastName",
           'fullName', "profile"."fullName",
-          'enableShop', "profile"."enableShop",
-          'enableGallery', "profile"."enableGallery",
-          'enableCommission', "profile"."enableCommission",
           'image', "profile"."image",
-          'color', "profile"."color",
-          'countryId', "profile"."countryId"
-            
+          'color', "profile"."color"
       ) AS "profile"`,
-      )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'accountId', "wallet"."accountId",
-          'amount', "wallet"."amount"
-      ) AS "wallet"`,
       )
       .addSelect(
         /*sql*/ `(
@@ -245,9 +170,7 @@ export class UsersService {
         ) AS "role"`,
       )
       .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile')
-      .leftJoin('user.wallet', 'wallet')
-      .leftJoin('profile.currency', 'currency');
+      .leftJoin('user.profile', 'profile');
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });

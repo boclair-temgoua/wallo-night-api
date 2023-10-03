@@ -88,32 +88,6 @@ export class UsersController {
     });
   }
 
-  @Get(`/view`)
-  async getOneByIdUserPublic(
-    @Res() res,
-    @Query() query: GetOneUserDto,
-    @Cookies('x-cookies-login') user: any,
-  ) {
-    const { userId, username } = query;
-
-    const findOneUser = await this.usersService.findOnePublicBy({
-      userId,
-      username,
-      followerId: user?.id,
-    });
-
-    if (!findOneUser)
-      throw new HttpException(
-        `User ${userId || username} not valid please change`,
-        HttpStatus.NOT_FOUND,
-      );
-
-    return reply({
-      res,
-      results: findOneUser,
-    });
-  }
-
   @Get(`/profile/show/:profileId`)
   @UseGuards(JwtAuthGuard)
   async getOneByProfileId(

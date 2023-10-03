@@ -6,7 +6,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
-import { Event } from './Event';
+import { Event } from './index';
 
 @Entity('organization')
 export class Organization extends BaseEntity {
