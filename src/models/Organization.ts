@@ -6,7 +6,6 @@ import {
   OneToMany,
 } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
-import { Event } from './index';
 
 @Entity('organization')
 export class Organization extends BaseEntity {
@@ -31,6 +30,6 @@ export class Organization extends BaseEntity {
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
 
-  @OneToMany(() => Event, (event) => event.organization)
-  events?: Event[];
+  // @OneToMany(() => Event, (event) => event.organization)
+  // events?: Event[];
 }
