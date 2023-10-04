@@ -81,7 +81,7 @@ export class SubscribesUtil {
         },
       );
 
-      await this.transactionsService.createOne({
+      const transaction = await this.transactionsService.createOne({
         token: token,
         currency: currency,
         userId: userId,
@@ -89,9 +89,10 @@ export class SubscribesUtil {
         userSendId: userId,
         userReceiveId: findOneMembership?.userId,
         subscribeId: findOneSubscribe?.id,
-        amount: Number(amount?.value),
+        amount: amount?.value,
         description: 'subscribe',
       });
+      return { transaction };
     } else {
       const subscribe = await this.subscribesService.createOne({
         membershipId,
@@ -103,7 +104,7 @@ export class SubscribesUtil {
         }),
       });
 
-      await this.transactionsService.createOne({
+      const transaction = await this.transactionsService.createOne({
         type,
         model: model,
         token: token,
@@ -112,11 +113,11 @@ export class SubscribesUtil {
         userSendId: userId,
         userReceiveId: findOneMembership?.userId,
         subscribeId: subscribe?.id,
-        amount: Number(amount?.value) * 100,
+        amount: amount?.value,
         description: 'subscribe',
       });
-    }
 
-    return 'ok';
+      return { transaction };
+    }
   }
 }

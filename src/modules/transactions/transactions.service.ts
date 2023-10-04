@@ -54,6 +54,7 @@ export class TransactionsService {
       .addSelect('transaction.userSendId', 'userSendId')
       .addSelect('transaction.userReceiveId', 'userReceiveId')
       .addSelect('transaction.userId', 'userId')
+      .addSelect('transaction.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
       'id', "gift"."id",
@@ -71,7 +72,10 @@ export class TransactionsService {
         /*sql*/ `jsonb_build_object(
         'id', "profileSend"."id",
         'userId', "userSend"."id",
+        'email', "userSend"."email",
         'fullName', "profileSend"."fullName",
+        'firstName', "profileSend"."firstName",
+        'lastName', "profileSend"."lastName",
         'image', "profileSend"."image",
         'color', "profileSend"."color",
         'countryId', "profileSend"."countryId",
@@ -82,7 +86,10 @@ export class TransactionsService {
         /*sql*/ `jsonb_build_object(
         'id', "profileReceive"."id",
         'userId', "userReceive"."id",
+        'email', "userReceive"."email",
         'fullName', "profileReceive"."fullName",
+        'firstName', "profileReceive"."firstName",
+        'lastName', "profileReceive"."lastName",
         'image', "profileReceive"."image",
         'color', "profileReceive"."color",
         'countryId', "profileReceive"."countryId",

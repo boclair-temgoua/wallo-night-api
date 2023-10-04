@@ -24,44 +24,54 @@ import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { generateLongUUID } from '../../app/utils/commons';
 import Stripe from 'stripe';
 import { config } from '../../app/config/index';
+import { WalletsService } from '../wallets/wallets.service';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(
     private readonly paymentsService: PaymentsService,
+    private readonly walletsService: WalletsService,
     private readonly subscribesUtil: SubscribesUtil,
   ) {}
 
   /** Create Like */
   @Post(`/paypal/subscribe`)
   async createOnePaypalSubscribe(@Res() res, @Req() req, @Body() body) {
-    const { amount, currency, membershipId, userId, paymentMethod } = body;
+    const { amount, currency, membershipId, userId, reference, paymentMethod } =
+      body;
 
-    const newToken = generateLongUUID(30);
-    await this.subscribesUtil.createOrUpdateOneSubscribe({
-      userId,
-      amount: { value: amount?.value * 100, month: amount?.value },
-      membershipId,
-      type: 'PAYPAL',
-      currency: currency.toUpperCase(),
-      token: newToken,
-      model: 'MEMBERSHIP',
-    });
+    const { transaction } =
+      await this.subscribesUtil.createOrUpdateOneSubscribe({
+        userId,
+        amount: { value: amount?.value * 100, month: amount?.value },
+        membershipId,
+        type: 'PAYPAL',
+        currency: currency.toUpperCase(),
+        token: reference,
+        model: 'MEMBERSHIP',
+      });
 
-    return reply({ res, results: { toke: newToken } });
+    if (transaction?.token) {
+      await this.walletsService.incrementOne({
+        userId: transaction?.userReceiveId,
+        amount: transaction?.amount,
+      });
+    }
+
+    return reply({ res, results: reference });
   }
 
   /** Create Like */
   @Post(`/stripe/subscribe`)
   async createOneStripeSubscribe(@Res() res, @Req() req, @Body() body) {
-    const { amount, currency, membershipId, userId, paymentMethod } = body;
+    const { amount, currency, membershipId, userId, reference, paymentMethod } =
+      body;
 
-    const newToken = generateLongUUID(30);
     const { paymentIntents } = await this.paymentsService.stripeMethod({
       paymentMethod,
       currency: currency,
       amount,
-      token: newToken,
+      token: reference,
       description: `Subscription ${amount?.month} user ${userId}`,
     });
     if (!paymentIntents) {
@@ -71,15 +81,24 @@ export class PaymentsController {
       );
     }
 
-    await this.subscribesUtil.createOrUpdateOneSubscribe({
-      userId,
-      currency: paymentIntents?.currency.toUpperCase(),
-      amount: { value: paymentIntents?.amount, month: amount?.value }, // Pas besoin de multiplier pas 100 stipe le fais deja
-      membershipId,
-      type: 'CARD',
-      token: newToken,
-      model: 'MEMBERSHIP',
-    });
-    return reply({ res, results: { token: newToken } });
+    const { transaction } =
+      await this.subscribesUtil.createOrUpdateOneSubscribe({
+        userId,
+        currency: paymentIntents?.currency.toUpperCase(),
+        amount: { value: paymentIntents?.amount, month: amount?.value }, // Pas besoin de multiplier pas 100 stipe le fais deja
+        membershipId,
+        type: 'CARD',
+        token: reference,
+        model: 'MEMBERSHIP',
+      });
+
+    if (transaction?.token) {
+      await this.walletsService.incrementOne({
+        userId: transaction?.userReceiveId,
+        amount: transaction?.amount,
+      });
+    }
+    
+    return reply({ res, results: reference });
   }
 }

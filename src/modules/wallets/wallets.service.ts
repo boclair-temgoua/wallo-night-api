@@ -5,13 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Brackets } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Wallet } from '../../models/Wallet';
 import { useCatch } from '../../app/utils/use-catch';
 import {
   CreateWalletOptions,
   GetOneWalletSelections,
-  GetWalletsSelections,
   UpdateWalletOptions,
   UpdateWalletSelections,
 } from './wallets.type';
