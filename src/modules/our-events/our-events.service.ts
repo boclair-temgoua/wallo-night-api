@@ -29,8 +29,10 @@ export class OurEventsService {
       .select('event.id', 'id')
       .addSelect('event.title', 'title')
       .addSelect('event.location', 'location')
+      .addSelect('event.address', 'address')
       .addSelect('event.requirement', 'requirement')
       .addSelect('event.slug', 'slug')
+      .addSelect('event.dateEvent', 'dateEvent')
       .addSelect('event.urlRedirect', 'urlRedirect')
       .addSelect('event.enableUrlRedirect', 'enableUrlRedirect')
       .addSelect('event.price', 'price')
@@ -140,8 +142,10 @@ export class OurEventsService {
       .select('event.id', 'id')
       .addSelect('event.title', 'title')
       .addSelect('event.location', 'location')
+      .addSelect('event.address', 'address')
       .addSelect('event.requirement', 'requirement')
       .addSelect('event.slug', 'slug')
+      .addSelect('event.dateEvent', 'dateEvent')
       .addSelect('event.urlRedirect', 'urlRedirect')
       .addSelect('event.enableUrlRedirect', 'enableUrlRedirect')
       .addSelect('event.price', 'price')
@@ -238,6 +242,7 @@ export class OurEventsService {
       dateEvent,
       expiredAt,
       currency,
+      address,
       description,
       organizationId,
       messageAfterPayment,
@@ -248,6 +253,7 @@ export class OurEventsService {
     const event = new OurEvent();
     event.title = title;
     event.location = location;
+    event.address = address;
     event.urlMedia = urlMedia;
     event.requirement = requirement;
     event.urlRedirect = urlRedirect;
@@ -288,6 +294,7 @@ export class OurEventsService {
       dateEvent,
       expiredAt,
       currency,
+      address,
       description,
       messageAfterPayment,
       status,
@@ -306,6 +313,7 @@ export class OurEventsService {
     event.title = title;
     event.location = location;
     event.urlMedia = urlMedia;
+    event.address = address;
     event.requirement = requirement;
     event.urlRedirect = urlRedirect;
     event.enableUrlRedirect = enableUrlRedirect;

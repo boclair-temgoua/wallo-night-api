@@ -18,7 +18,7 @@ export class UploadsService {
   ) {}
 
   async findAll(selections: GetUploadsSelections): Promise<any> {
-    const { model, uploadableId, uploadType } = selections;
+    const { model, uploadableId, organizationId, uploadType } = selections;
 
     let query = this.driver
       .createQueryBuilder('upload')
@@ -27,8 +27,8 @@ export class UploadsService {
       .addSelect('upload.name', 'name')
       .addSelect('upload.path', 'path')
       .addSelect('upload.status', 'status')
-      .addSelect('upload.userId', 'userId')
       .addSelect('upload.model', 'model')
+      .addSelect('upload.organizationId', 'organizationId')
       .addSelect('upload.uploadType', 'uploadType')
       .addSelect('upload.uploadableId', 'uploadableId')
       .where('upload.deletedAt IS NULL');
@@ -36,6 +36,12 @@ export class UploadsService {
     if (uploadableId) {
       query = query.andWhere('upload.uploadableId = :uploadableId', {
         uploadableId,
+      });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('upload.organizationId = :organizationId', {
+        organizationId,
       });
     }
 
@@ -57,18 +63,26 @@ export class UploadsService {
 
   /** Create one Upload to the database. */
   async createOne(options: CreateUploadOptions): Promise<Upload> {
-    const { name, status, uploadType, url, path, model, userId, uploadableId } =
-      options;
+    const {
+      name,
+      status,
+      uploadType,
+      url,
+      path,
+      model,
+      organizationId,
+      uploadableId,
+    } = options;
 
     const upload = new Upload();
     upload.url = url;
     upload.path = path;
     upload.name = name;
     upload.status = status;
-    upload.userId = userId;
     upload.model = model;
     upload.uploadType = uploadType;
     upload.uploadableId = uploadableId;
+    upload.organizationId = organizationId;
 
     const query = this.driver.save(upload);
 

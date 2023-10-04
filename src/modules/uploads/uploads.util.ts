@@ -11,17 +11,17 @@ export class UploadsUtil {
   constructor(private readonly uploadsService: UploadsService) {} // private driver: Repository<Commission>, // @InjectRepository(Commission)
 
   async saveOrUpdateAws(options: {
-    userId?: string;
+    organizationId?: string;
     model: FilterQueryType;
     uploadableId: string;
-    folder: 'events' | 'commissions' | 'posts' | 'memberships';
+    folder: 'events' | 'posts';
     files: Array<Express.Multer.File>;
   }): Promise<any> {
-    const { files, userId, model, uploadableId, folder } = options;
+    const { files, organizationId, model, uploadableId, folder } = options;
 
     for (const file of files) {
       const extension = mime.extension(file.mimetype);
-      const nameFile = `${userId}-${formateNowDateYYMMDD(
+      const nameFile = `${organizationId}-${formateNowDateYYMMDD(
         new Date(),
       )}${generateLongUUID(8)}`;
       const fileName = `${`${nameFile}.${
@@ -43,7 +43,7 @@ export class UploadsUtil {
           url: urlAWS.Location,
           uploadType: 'IMAGE',
           model: model,
-          userId: userId,
+          organizationId: organizationId,
           uploadableId: uploadableId,
         });
       }
@@ -56,7 +56,7 @@ export class UploadsUtil {
           url: urlAWS.Location,
           uploadType: 'FILE',
           model: model,
-          userId: userId,
+          organizationId: organizationId,
           uploadableId: uploadableId,
         });
       }

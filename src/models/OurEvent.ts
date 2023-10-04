@@ -9,7 +9,7 @@ import {
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Organization, User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
-import { CurrencyEvent } from '../modules/events/our-events.dto';
+import { CurrencyEvent } from '../modules/our-events/our-events.dto';
 
 @Entity('our_event')
 export class OurEvent extends BaseDeleteEntity {
@@ -18,6 +18,9 @@ export class OurEvent extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   title: string;
+
+  @Column({ nullable: true })
+  address: string;
 
   @Column({ nullable: true })
   location: string;

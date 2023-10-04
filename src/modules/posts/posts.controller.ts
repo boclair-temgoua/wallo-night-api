@@ -53,7 +53,7 @@ export class PostsController {
     @Query() searchQuery: SearchQueryDto,
     @Cookies('x-cookies-login') user: any,
   ) {
-    const { type, userId, typeIds, status } = query;
+    const { type, userId, status } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -66,7 +66,6 @@ export class PostsController {
       userId,
       status: status?.toUpperCase(),
       likeUserId: user?.id,
-      typeIds: typeIds ? (String(typeIds).split(',') as []) : null,
     });
 
     return reply({ res, results: posts });
@@ -123,7 +122,7 @@ export class PostsController {
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'POST',
       uploadableId: post?.id,
-      userId: post?.userId,
+      organizationId: post?.organizationId,
       folder: 'posts',
       files,
     });
@@ -173,7 +172,7 @@ export class PostsController {
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'POST',
       uploadableId: postId,
-      userId: findOnePost?.userId,
+      organizationId: findOnePost?.organizationId,
       folder: 'posts',
       files,
     });

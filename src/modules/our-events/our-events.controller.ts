@@ -84,6 +84,7 @@ export class OurEventsController {
       urlRedirect,
       enableUrlRedirect,
       price,
+      address,
       urlMedia,
       currency,
       dateEvent,
@@ -98,6 +99,7 @@ export class OurEventsController {
       description,
       urlRedirect,
       urlMedia,
+      address,
       userId: user?.id,
       location,
       requirement,
@@ -111,7 +113,7 @@ export class OurEventsController {
     await this.uploadsUtil.saveOrUpdateAws({
       uploadableId: event?.id,
       model: 'EVENT',
-      userId: event?.userId,
+      organizationId: event?.organizationId,
       folder: 'events',
       files,
     });
@@ -138,6 +140,7 @@ export class OurEventsController {
       enableUrlRedirect,
       price,
       urlMedia,
+      address,
       currency,
       description,
       messageAfterPayment,
@@ -161,6 +164,7 @@ export class OurEventsController {
         description,
         urlRedirect,
         urlMedia,
+        address,
         userId: user?.id,
         location,
         requirement,
@@ -171,7 +175,7 @@ export class OurEventsController {
     );
 
     await this.uploadsUtil.saveOrUpdateAws({
-      userId: user?.id,
+      organizationId: user?.organizationId,
       uploadableId: eventId,
       model: 'EVENT',
       folder: 'events',
@@ -182,14 +186,15 @@ export class OurEventsController {
   }
 
   /** Get one OurEvents */
-  @Get(`/view`)
+  @Get(`/show`)
   async getOne(@Res() res, @Query() query: GetOneOurEventDto) {
-    const { eventId, eventSlug, userId } = query;
+    const { eventId, eventSlug, userId, organizationId } = query;
 
     const findOneEvent = await this.ourEventsService.findOneBy({
       eventId,
       userId,
       eventSlug,
+      organizationId,
     });
     if (!findOneEvent)
       throw new HttpException(

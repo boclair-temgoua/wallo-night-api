@@ -4,7 +4,7 @@ export type GetUploadsSelections = {
   search?: string;
   uploadType?: string;
   model?: string;
-  userId?: Upload['userId'];
+  organizationId?: Upload['organizationId'];
   uploadableId?: Upload['uploadableId'];
 };
 

@@ -25,10 +25,10 @@ export class UploadsController {
   /** Get all uploads */
   @Get(`/`)
   async findAll(@Res() res, @Query() query: UploadsDto) {
-    const { model, userId, uploadableId, uploadType } = query;
+    const { model, organizationId, uploadableId, uploadType } = query;
 
     const uploads = await this.uploadsService.findAll({
-      userId,
+      organizationId,
       uploadableId,
       model: model?.toUpperCase(),
       uploadType: uploadType.toUpperCase(),
@@ -40,12 +40,12 @@ export class UploadsController {
   @Put(`/update`)
   @UseGuards(JwtAuthGuard)
   async deleteAndUpdate(@Res() res, @Req() req, @Query() query: UploadsDto) {
-    const { model, userId, uploadableId } = query;
+    const { model, organizationId, uploadableId } = query;
     const newFileLists = req?.body?.newFileLists;
     const newImageLists = req?.body?.newImageLists;
 
     const uploads = await this.uploadsService.findAll({
-      userId,
+      organizationId,
       uploadableId,
       model: model?.toUpperCase(),
     });

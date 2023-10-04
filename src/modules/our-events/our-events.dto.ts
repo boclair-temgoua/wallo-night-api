@@ -19,6 +19,10 @@ export class CreateOrUpdateOurEventsDto {
 
   @IsNotEmpty()
   @IsString()
+  address: string;
+
+  @IsNotEmpty()
+  @IsString()
   location: string;
 
   @IsNotEmpty()
@@ -63,6 +67,11 @@ export class GetOneOurEventDto {
   @IsString()
   @IsUUID()
   eventId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  organizationId: string;
 
   @IsOptional()
   @IsString()

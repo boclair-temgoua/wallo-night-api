@@ -35,16 +35,7 @@ export class PostsService {
   async findAll(
     selections: GetPostsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const {
-      search,
-      pagination,
-      userId,
-      type,
-      status,
-      likeUserId,
-      followerIds,
-      typeIds,
-    } = selections;
+    const { search, pagination, userId, type, status } = selections;
 
     let query = this.driver
       .createQueryBuilder('post')
@@ -54,7 +45,6 @@ export class PostsService {
       .addSelect('post.slug', 'slug')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
-      .addSelect('post.membershipId', 'membershipId')
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.enableUrlMedia', 'enableUrlMedia')
@@ -114,10 +104,6 @@ export class PostsService {
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile');
 
-    if (typeIds && typeIds.length > 0) {
-      query = query.andWhere('post.type IN (:...typeIds)', { typeIds });
-    }
-
     if (userId) {
       query = query.andWhere('post.userId = :userId', { userId });
     }
@@ -171,7 +157,6 @@ export class PostsService {
       .addSelect('post.slug', 'slug')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
-      .addSelect('post.membershipId', 'membershipId')
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.enableUrlMedia', 'enableUrlMedia')
@@ -282,7 +267,6 @@ export class PostsService {
       type,
       urlMedia,
       whoCanSee,
-      organizationId,
       enableUrlMedia,
       allowDownload,
       description,
@@ -294,7 +278,6 @@ export class PostsService {
     post.type = type;
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
-    post.organizationId = organizationId;
     post.allowDownload = allowDownload;
     post.enableUrlMedia = enableUrlMedia;
     post.slug = `${
