@@ -1,29 +1,15 @@
 import {
   Controller,
   Post,
-  NotFoundException,
   Body,
-  Param,
-  ParseUUIDPipe,
-  Delete,
-  UseGuards,
-  Put,
   Res,
   Req,
-  Get,
-  Query,
   HttpStatus,
   HttpException,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
-import axios from 'axios';
 import { PaymentsService } from './payments.service';
-import { SubscribesService } from '../subscribes/subscribes.service';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
-import { generateLongUUID } from '../../app/utils/commons';
-import Stripe from 'stripe';
-import { config } from '../../app/config/index';
 import { WalletsService } from '../wallets/wallets.service';
 
 @Controller('payments')
@@ -49,6 +35,7 @@ export class PaymentsController {
         currency: currency.toUpperCase(),
         token: reference,
         model: 'MEMBERSHIP',
+        description:`Subscription ${amount?.month} month`
       });
 
     if (transaction?.token) {
@@ -72,7 +59,7 @@ export class PaymentsController {
       currency: currency,
       amount,
       token: reference,
-      description: `Subscription ${amount?.month} user ${userId}`,
+      description: `Subscription ${amount?.month} month`,
     });
     if (!paymentIntents) {
       throw new HttpException(
@@ -90,6 +77,7 @@ export class PaymentsController {
         type: 'CARD',
         token: reference,
         model: 'MEMBERSHIP',
+        description: paymentIntents?.description
       });
 
     if (transaction?.token) {
@@ -98,7 +86,7 @@ export class PaymentsController {
         amount: transaction?.amount,
       });
     }
-    
+
     return reply({ res, results: reference });
   }
 }

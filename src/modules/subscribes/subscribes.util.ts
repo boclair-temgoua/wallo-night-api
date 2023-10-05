@@ -26,10 +26,19 @@ export class SubscribesUtil {
     type?: TransactionType;
     model: FilterQueryType;
     membershipId: string;
+    description: string;
     token: string;
   }): Promise<any> {
-    const { membershipId, type, userId, amount, model, currency, token } =
-      options;
+    const {
+      membershipId,
+      description,
+      type,
+      userId,
+      amount,
+      model,
+      currency,
+      token,
+    } = options;
 
     const findOneMembership = await this.membershipsService.findOneBy({
       membershipId,
@@ -90,7 +99,7 @@ export class SubscribesUtil {
         userReceiveId: findOneMembership?.userId,
         subscribeId: findOneSubscribe?.id,
         amount: amount?.value,
-        description: 'subscribe',
+        description: description,
       });
       return { transaction };
     } else {
@@ -114,7 +123,7 @@ export class SubscribesUtil {
         userReceiveId: findOneMembership?.userId,
         subscribeId: subscribe?.id,
         amount: amount?.value,
-        description: 'subscribe',
+        description: description,
       });
 
       return { transaction };
