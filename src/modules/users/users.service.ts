@@ -154,6 +154,7 @@ export class UsersService {
       .addSelect('user.username', 'username')
       .addSelect('user.profileId', 'profileId')
       .addSelect('user.nextStep', 'nextStep')
+      .addSelect('user.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -247,6 +248,7 @@ export class UsersService {
       .addSelect('user.username', 'username')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
+      .addSelect('user.organizationId', 'organizationId')
       .addSelect('user.nextStep', 'nextStep')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -359,7 +361,8 @@ export class UsersService {
 
   /** Create one User to the database. */
   async createOne(options: CreateUserOptions): Promise<User> {
-    const { email, username, password, profileId, nextStep } = options;
+    const { email, username, password, profileId, organizationId, nextStep } =
+      options;
 
     const user = new User();
     user.token = generateLongUUID(50);
@@ -367,6 +370,7 @@ export class UsersService {
     user.hashPassword(password);
     user.username = username;
     user.profileId = profileId;
+    user.organizationId = organizationId;
     user.nextStep = nextStep;
 
     const query = this.driver.save(user);
@@ -387,6 +391,7 @@ export class UsersService {
       email,
       username,
       password,
+      organizationId,
       accessToken,
       refreshToken,
       deletedAt,
@@ -418,6 +423,7 @@ export class UsersService {
     user.nextStep = nextStep;
     user.refreshToken = refreshToken;
     user.deletedAt = deletedAt;
+    user.organizationId = organizationId;
     user.confirmedAt = confirmedAt;
 
     const query = this.driver.save(user);

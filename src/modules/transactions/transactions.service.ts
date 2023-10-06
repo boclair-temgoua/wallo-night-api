@@ -185,6 +185,7 @@ export class TransactionsService {
       subscribeId,
       userReceiveId,
       contributionId,
+      organizationId,
       userId,
       token,
       type,
@@ -203,6 +204,7 @@ export class TransactionsService {
     transaction.type = type;
     transaction.token = token;
     transaction.giftId = giftId;
+    transaction.organizationId = organizationId;
     transaction.subscribeId = subscribeId;
     transaction.contributionId = contributionId;
     transaction.description = description;

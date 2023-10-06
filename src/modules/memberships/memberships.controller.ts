@@ -21,6 +21,7 @@ import { MembershipsService } from './memberships.service';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import {
   CreateOrUpdateMembershipsDto,
+  GetMembershipDto,
   GetOneMembershipDto,
 } from './memberships.dto';
 import { JwtAuthGuard } from '../users/middleware';
@@ -42,13 +43,14 @@ export class MembershipsController {
   ) {}
 
   @Get(`/`)
-  async findAllByOrganizationId(
+  async findAll(
     @Res() res,
     @Req() req,
     @Query() searchQuery: SearchQueryDto,
-    @Query('userId', ParseUUIDPipe) userId: string,
+    @Query() query: GetMembershipDto,
     @Query() requestPaginationDto: RequestPaginationDto,
   ) {
+    const { userId, organizationId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -57,6 +59,7 @@ export class MembershipsController {
     const memberships = await this.membershipsService.findAll({
       search,
       userId,
+      organizationId,
       pagination,
     });
 
@@ -98,6 +101,7 @@ export class MembershipsController {
       userId: membership?.userId,
       folder: 'memberships',
       files,
+      organizationId: membership?.organizationId,
     });
 
     return reply({ res, results: 'membership created successfully' });
@@ -150,6 +154,7 @@ export class MembershipsController {
       userId: findOneMembership?.userId,
       folder: 'memberships',
       files,
+      organizationId: findOneMembership?.organizationId,
     });
 
     return reply({ res, results: 'membership updated successfully' });
@@ -158,11 +163,12 @@ export class MembershipsController {
   /** Get one Memberships */
   @Get(`/view`)
   async getOne(@Res() res, @Req() req, @Query() query: GetOneMembershipDto) {
-    const { membershipId, userId } = query;
+    const { membershipId, userId, organizationId } = query;
 
     const findOneMembership = await this.membershipsService.findOneBy({
       membershipId,
       userId,
+      organizationId,
     });
     if (!findOneMembership)
       throw new HttpException(

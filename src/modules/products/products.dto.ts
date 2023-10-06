@@ -105,6 +105,11 @@ export class GetProductsDto {
 
   @IsOptional()
   @IsString()
+  @IsUUID()
+  organizationId: string;
+
+  @IsOptional()
+  @IsString()
   typeIds: string;
 
   @IsOptional()

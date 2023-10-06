@@ -41,6 +41,9 @@ export class Membership extends BaseDeleteEntity {
   pricePerYearly: number;
 
   @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
   currencyId?: string;
   @ManyToOne(() => Currency, (currency) => currency.memberships, {
     onDelete: 'CASCADE',

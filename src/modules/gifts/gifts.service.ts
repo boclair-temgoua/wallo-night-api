@@ -155,6 +155,7 @@ export class GiftsService {
       currencyId,
       expiredAt,
       userId,
+      organizationId,
     } = options;
 
     const gift = new Gift();
@@ -165,6 +166,7 @@ export class GiftsService {
     gift.image = image;
     gift.currencyId = currencyId;
     gift.description = description;
+    gift.organizationId = organizationId;
     gift.expiredAt = expiredAt;
 
     const query = this.driver.save(gift);

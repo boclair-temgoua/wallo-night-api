@@ -43,6 +43,9 @@ export class Transaction extends BaseDeleteEntity {
   @Column({ default: 'MEMBERSHIP' })
   model?: FilterQueryType;
 
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
   //   @Column({ type: 'uuid', nullable: true })
   //   orderProductId?: string;
   //   @ManyToOne(() => OrderProduct, (orderProduct) => orderProduct.transactions, {

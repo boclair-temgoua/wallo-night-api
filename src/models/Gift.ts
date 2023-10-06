@@ -37,6 +37,9 @@ export class Gift extends BaseDeleteEntity {
   amount: number;
 
   @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
   currencyId?: string;
   @ManyToOne(() => Currency, (currency) => currency.gifts, {
     onDelete: 'CASCADE',

@@ -56,7 +56,7 @@ export class ProductsController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { userId, status } = query;
+    const { userId, organizationId, status } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -66,6 +66,7 @@ export class ProductsController {
       search,
       pagination,
       userId,
+      organizationId,
       status: status?.toUpperCase(),
     });
 
@@ -127,6 +128,7 @@ export class ProductsController {
       userId: product?.userId,
       folder: 'products',
       files,
+      organizationId: product?.organizationId,
     });
 
     return reply({ res, results: product });
@@ -200,6 +202,7 @@ export class ProductsController {
       model: 'PRODUCT',
       folder: 'products',
       files,
+      organizationId: user?.organizationId,
     });
 
     return reply({ res, results: 'Product updated successfully' });

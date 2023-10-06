@@ -15,10 +15,12 @@ export class UploadsUtil {
     userId?: string;
     model: FilterQueryType;
     uploadableId: string;
+    organizationId: string;
     folder: 'products' | 'commissions' | 'posts' | 'memberships';
     files: Array<Express.Multer.File>;
   }): Promise<any> {
-    const { files, userId, model, uploadableId, folder } = options;
+    const { files, userId, organizationId, model, uploadableId, folder } =
+      options;
 
     for (const file of files) {
       const extension = mime.extension(file.mimetype);
@@ -28,7 +30,7 @@ export class UploadsUtil {
       const fileName = `${`${nameFile}.${
         extension === 'mpga' ? 'mp3' : extension
       }`}`;
-      
+
       const urlAWS = await awsS3ServiceAdapter({
         fileName: fileName,
         mimeType: file?.mimetype,
@@ -45,6 +47,7 @@ export class UploadsUtil {
           uploadType: 'IMAGE',
           model: model,
           userId: userId,
+          organizationId: organizationId,
           uploadableId: uploadableId,
         });
       }
@@ -58,6 +61,7 @@ export class UploadsUtil {
           uploadType: 'FILE',
           model: model,
           userId: userId,
+          organizationId: organizationId,
           uploadableId: uploadableId,
         });
       }

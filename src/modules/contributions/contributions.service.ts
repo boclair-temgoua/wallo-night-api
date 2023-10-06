@@ -191,6 +191,7 @@ export class ContributionsService {
       currencyId,
       giftId,
       amountConvert,
+      organizationId,
     } = options;
 
     const contribution = new Contribution();
@@ -200,6 +201,7 @@ export class ContributionsService {
     contribution.giftId = giftId;
     contribution.currencyId = currencyId;
     contribution.campaignId = campaignId;
+    contribution.organizationId = organizationId;
     contribution.amountConvert = amountConvert;
     const query = this.driver.save(contribution);
 

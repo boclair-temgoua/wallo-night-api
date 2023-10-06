@@ -20,12 +20,14 @@ export type GetContributorsSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: Contributor['userId'];
+  organizationId?: Contributor['organizationId'];
 };
 
 export type GetOneContributorSelections = {
   type?: Contributor['type'];
   userId?: Contributor['userId'];
   contributorId?: Contributor['id'];
+  organizationId?: Contributor['organizationId'];
 };
 
 export type UpdateContributorSelections = {

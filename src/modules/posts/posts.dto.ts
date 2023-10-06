@@ -102,6 +102,11 @@ export class GetOnePostDto {
 
   @IsOptional()
   @IsString()
+  @IsUUID()
+  organizationId: string;
+
+  @IsOptional()
+  @IsString()
   postSlug: string;
 
   @IsOptional()

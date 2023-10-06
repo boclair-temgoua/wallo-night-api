@@ -57,8 +57,17 @@ export class UploadsService {
 
   /** Create one Upload to the database. */
   async createOne(options: CreateUploadOptions): Promise<Upload> {
-    const { name, status, uploadType, url, path, model, userId, uploadableId } =
-      options;
+    const {
+      name,
+      status,
+      uploadType,
+      url,
+      path,
+      model,
+      userId,
+      organizationId,
+      uploadableId,
+    } = options;
 
     const upload = new Upload();
     upload.url = url;
@@ -67,6 +76,7 @@ export class UploadsService {
     upload.status = status;
     upload.userId = userId;
     upload.model = model;
+    upload.organizationId = organizationId;
     upload.uploadType = uploadType;
     upload.uploadableId = uploadableId;
 

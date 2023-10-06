@@ -14,6 +14,7 @@ export type GetPostsSelections = {
   likeUserId?: Post['userId'];
   followerIds?: string[];
   typeIds?: [];
+  organizationId?: Post['organizationId'];
 };
 
 export type GetOnePostSelections = {
@@ -23,6 +24,7 @@ export type GetOnePostSelections = {
   postSlug?: string;
   userId?: Post['userId'];
   likeUserId?: Post['userId'];
+  organizationId?: Post['organizationId'];
 };
 
 export type UpdatePostSelections = {

@@ -103,7 +103,7 @@ export class ContributorsService {
   async findAllNotPaginate(
     selections: GetContributorsSelections,
   ): Promise<GetContributorsSelections | any> {
-    const { userId } = selections;
+    const { userId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
@@ -112,6 +112,12 @@ export class ContributorsService {
 
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
+    }
+
+    if (userId) {
+      query = query.andWhere('contributor.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     const [error, contributors] = await useCatch(
@@ -123,7 +129,7 @@ export class ContributorsService {
   }
 
   async findOneBy(selections: GetOneContributorSelections): Promise<any> {
-    const { type, userId, contributorId } = selections;
+    const { type, userId, contributorId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
@@ -131,6 +137,7 @@ export class ContributorsService {
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
+      .addSelect('contributor.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
@@ -161,6 +168,12 @@ export class ContributorsService {
       query = query.andWhere('contributor.id = :id', { id: contributorId });
     }
 
+    if (contributorId) {
+      query = query.andWhere('contributor.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     const [error, result] = await useCatch(query.getRawOne());
     if (error)
       throw new HttpException('contributor not found', HttpStatus.NOT_FOUND);
@@ -170,12 +183,13 @@ export class ContributorsService {
 
   /** Create one Contributor to the database. */
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
-    const { userId, role, userCreatedId, type } = options;
+    const { userId, role, userCreatedId, organizationId, type } = options;
 
     const contributor = new Contributor();
     contributor.userId = userId;
     contributor.type = type;
     contributor.role = role;
+    contributor.organizationId = organizationId;
     contributor.userCreatedId = userCreatedId;
     const query = this.driver.save(contributor);
 

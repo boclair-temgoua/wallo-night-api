@@ -5,11 +5,13 @@ export type GetMembershipsSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: Membership['userId'];
+  organizationId?: Membership['organizationId'];
 };
 
 export type GetOneMembershipsSelections = {
   membershipId: Membership['id'];
   userId?: Membership['userId'];
+  organizationId?: Membership['organizationId'];
 };
 
 export type UpdateMembershipsSelections = {

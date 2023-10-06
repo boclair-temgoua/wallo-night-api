@@ -6,6 +6,7 @@ import {
   ResetPassword,
   Contributor,
   Wallet,
+  Organization,
   Currency,
   Subscribe,
 } from '../../models';
@@ -21,6 +22,7 @@ import { ContributorsService } from '../contributors/contributors.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { SubscribesService } from '../subscribes/subscribes.service';
 import { CurrenciesService } from '../currencies/currencies.service';
+import { OrganizationsService } from '../organizations/organizations.service';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { CurrenciesService } from '../currencies/currencies.service';
       Profile,
       Subscribe,
       Currency,
+      Organization,
       ResetPassword,
       Contributor,
     ]),
@@ -45,6 +48,7 @@ import { CurrenciesService } from '../currencies/currencies.service';
     CurrenciesService,
     SubscribesService,
     ContributorsService,
+    OrganizationsService,
     ResetPasswordsService,
   ],
 })

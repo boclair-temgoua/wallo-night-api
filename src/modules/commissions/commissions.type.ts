@@ -7,11 +7,13 @@ export type GetCommissionsSelections = {
   status?: string;
   pagination?: PaginationType;
   userId?: Commission['userId'];
+  organizationId?: Commission['organizationId'];
 };
 
 export type GetOneCommissionsSelections = {
   commissionId?: Commission['id'];
   userId?: Commission['userId'];
+  organizationId?: Commission['organizationId'];
 };
 
 export type UpdateCommissionsSelections = {

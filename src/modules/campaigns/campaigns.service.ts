@@ -131,7 +131,8 @@ export class CampaignsService {
 
   /** Create one Campaign to the database. */
   async createOne(options: CreateCampaignOptions): Promise<Campaign> {
-    const { title, expiredAt, description, userId, image } = options;
+    const { title, expiredAt, description, userId, organizationId, image } =
+      options;
 
     const campaign = new Campaign();
     campaign.title = title;
@@ -139,6 +140,7 @@ export class CampaignsService {
     campaign.image = image;
     campaign.expiredAt = expiredAt;
     campaign.description = description;
+    campaign.organizationId = organizationId;
 
     const query = this.driver.save(campaign);
 

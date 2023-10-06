@@ -27,6 +27,9 @@ export class Discount extends BaseDeleteEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   expiredAt: Date;
 
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
   @Column({ default: false })
   enableExpiredAt: boolean;
 

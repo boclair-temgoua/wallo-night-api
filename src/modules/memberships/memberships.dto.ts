@@ -13,7 +13,10 @@ import {
   MinDate,
   IsIn,
 } from 'class-validator';
-import { CurrencyCode, currencyCodeArrays } from '../currencies/currencies.type';
+import {
+  CurrencyCode,
+  currencyCodeArrays,
+} from '../currencies/currencies.type';
 
 export class CreateOrUpdateMembershipsDto {
   @IsNotEmpty()
@@ -35,7 +38,6 @@ export class CreateOrUpdateMembershipsDto {
   @Min(1)
   @Type(() => Number)
   pricePerYearly?: number;
-  
 
   // @IsNotEmpty()
   // @IsString()
@@ -61,4 +63,21 @@ export class GetOneMembershipDto {
   @IsString()
   @IsUUID()
   userId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  organizationId: string;
+}
+
+export class GetMembershipDto {
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  organizationId: string;
 }

@@ -36,6 +36,9 @@ export class Campaign extends BaseDeleteEntity {
   description: string;
 
   @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @ManyToOne(() => User, (user) => user.campaigns, {
     onDelete: 'CASCADE',

@@ -46,6 +46,7 @@ import {
 import { JwtAuthGuard } from '../middleware';
 import { SubscribesService } from '../../subscribes/subscribes.service';
 import { CurrenciesService } from '../../currencies/currencies.service';
+import { OrganizationsService } from '../../organizations/organizations.service';
 import {
   expire_cookie_setting,
   validation_code_verification_cookie_setting,
@@ -61,6 +62,7 @@ export class AuthUserController {
     private readonly checkUserService: CheckUserService,
     private readonly currenciesService: CurrenciesService,
     private readonly subscribesService: SubscribesService,
+    private readonly organizationsService: OrganizationsService,
     private readonly contributorsService: ContributorsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
@@ -96,6 +98,11 @@ export class AuthUserController {
       countryId: findOnCurrency?.id,
     });
 
+    /** Create Organization */
+    const organization = await this.organizationsService.createOne({
+      name: `${firstName} ${lastName}`,
+    });
+
     /** Create User */
     const usernameGenerate = `${generateLongUUID(8)}`.toLowerCase();
     const user = await this.usersService.createOne({
@@ -107,6 +114,7 @@ export class AuthUserController {
           ? usernameGenerate
           : username
         : usernameGenerate,
+      organizationId: organization?.id,
     });
 
     /** Create Contributor */

@@ -30,6 +30,9 @@ export class Contributor extends BaseDeleteEntity {
   role?: ContributorRole;
 
   @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;
   @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'userCreatedId', referencedColumnName: 'id' }])

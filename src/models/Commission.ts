@@ -46,6 +46,9 @@ export class Commission extends BaseDeleteEntity {
   status?: ProductStatus;
 
   @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
   currencyId: string;
   @ManyToOne(() => Currency, (currency) => currency.products)
   @JoinColumn()

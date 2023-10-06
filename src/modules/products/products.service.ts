@@ -27,7 +27,7 @@ export class ProductsService {
   ) {}
 
   async findAll(selections: GetProductsSelections): Promise<any> {
-    const { search, pagination, status, userId } = selections;
+    const { search, pagination, status, userId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('product')
@@ -157,6 +157,12 @@ export class ProductsService {
       query = query.andWhere('product.userId = :userId', { userId });
     }
 
+    if (organizationId) {
+      query = query.andWhere('product.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     if (status) {
       query = query.andWhere('product.status = :status', { status });
     }
@@ -190,7 +196,7 @@ export class ProductsService {
   }
 
   async findOneBy(selections: GetOneProductsSelections): Promise<Product> {
-    const { productId, productSlug, userId } = selections;
+    const { productId, productSlug, userId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('product')
       .select('product.id', 'id')
@@ -323,6 +329,12 @@ export class ProductsService {
       query = query.andWhere('product.userId = :userId', { userId });
     }
 
+    if (organizationId) {
+      query = query.andWhere('product.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     if (productSlug) {
       query = query.andWhere('product.slug = :slug', { slug: productSlug });
     }
@@ -353,6 +365,7 @@ export class ProductsService {
       membershipId,
       enableLimitSlot,
       enableDiscount,
+      organizationId,
       enableUrlRedirect,
       messageAfterPayment,
       enableChooseQuantity,
@@ -375,6 +388,7 @@ export class ProductsService {
     product.membershipId = membershipId;
     product.discountId = discountId;
     product.currencyId = currencyId;
+    product.organizationId = organizationId;
     product.enableLimitSlot = enableLimitSlot;
     product.enableDiscount = enableDiscount;
     product.enableChooseQuantity = enableChooseQuantity;

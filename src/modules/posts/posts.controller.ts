@@ -117,12 +117,13 @@ export class PostsController {
     @Query() query: GetOnePostDto,
     @Cookies('x-cookies-login') user: any,
   ) {
-    const { postId, userId, type, postSlug } = query;
+    const { postId, userId, organizationId, type, postSlug } = query;
 
     const findOnePost = await this.postsService.findOneBy({
       postId,
       postSlug,
       userId,
+      organizationId,
       likeUserId: user?.id,
       type: type?.toUpperCase(),
     });
@@ -155,6 +156,7 @@ export class PostsController {
       whoCanSee,
       description,
       userId: user?.id,
+      organizationId: user?.organizationId,
       membershipId: isNotUndefined(membershipId) ? membershipId : null,
       allowDownload: allowDownload === 'true' ? true : false,
     });
@@ -163,6 +165,7 @@ export class PostsController {
       model: 'POST',
       uploadableId: post?.id,
       userId: post?.userId,
+      organizationId: post?.userId,
       folder: 'posts',
       files,
     });
@@ -185,9 +188,11 @@ export class PostsController {
       title,
       status,
       description,
+      allowDownload,
+      urlMedia,
+      whoCanSee,
       membershipId,
       enableUrlMedia,
-      urlMedia,
       type,
     } = body;
 
@@ -196,8 +201,11 @@ export class PostsController {
       title,
       status,
       urlMedia,
-      userId: user?.id,
+      whoCanSee,
       description,
+      userId: user?.id,
+      organizationId: user?.organizationId,
+      allowDownload: allowDownload === 'true' ? true : false,
       membershipId: isNotUndefined(membershipId) ? membershipId : null,
       enableUrlMedia: enableUrlMedia === 'true' ? true : false,
     });
@@ -208,6 +216,7 @@ export class PostsController {
       userId: post?.userId,
       folder: 'posts',
       files,
+      organizationId: post?.organizationId,
     });
 
     return reply({ res, results: 'post save successfully' });
@@ -247,11 +256,11 @@ export class PostsController {
       {
         title,
         status,
-        whoCanSee,
         urlMedia,
+        whoCanSee,
         description,
-        membershipId: isNotUndefined(membershipId) ? membershipId : null,
         allowDownload: allowDownload === 'true' ? true : false,
+        membershipId: isNotUndefined(membershipId) ? membershipId : null,
         enableUrlMedia: enableUrlMedia === 'true' ? true : false,
       },
     );
@@ -262,6 +271,7 @@ export class PostsController {
       userId: findOnePost?.userId,
       folder: 'posts',
       files,
+      organizationId: findOnePost?.organizationId,
     });
 
     return reply({ res, results: 'post updated successfully' });
@@ -289,45 +299,4 @@ export class PostsController {
 
     return reply({ res, results: post });
   }
-
-  /** Create Image AWS */
-  // @Post(`/upload`)
-  // @UseInterceptors(FileInterceptor('image'))
-  // async createOneFileAws(
-  //   @Res() res,
-  //   @Req() req,
-  //   @UploadedFile() file: Express.Multer.File,
-  // ) {
-  //   const nameFile = `${formateNowDateYYMMDD(new Date())}${generateLongUUID(
-  //     8,
-  //   )}`;
-  //   const response = await awsS3ServiceAdapter({
-  //     name: nameFile,
-  //     mimeType: file?.mimetype,
-  //     folder: 'posts',
-  //     file: file.buffer,
-  //   });
-
-  //   console.log('response =======>', response);
-
-  //   return reply({ res, results: { urlFile: response.Location } });
-  // }
-
-  /** Get on file gallery */
-  // @Get(`/gallery/:fileName`)
-  // async getOneFilePostGallery(@Res() res, @Param('fileName') fileName: string) {
-  //   try {
-  //     const { fileBuffer, contentType } = await getFileToAws({
-  //       folder: 'posts',
-  //       fileName,
-  //     });
-  //     res.status(200);
-  //     res.contentType(contentType);
-  //     res.set('Cross-Origin-Resource-Policy', 'cross-origin');
-  //     res.send(fileBuffer);
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).send("Erreur lors de la récupération de l'image.");
-  //   }
-  // }
 }

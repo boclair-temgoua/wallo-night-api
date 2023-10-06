@@ -74,6 +74,9 @@ export class Product extends BaseDeleteEntity {
   @Column({ default: 'ACTIVE' })
   status?: ProductStatus;
 
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
   @Column({ default: 'PHYSICAL' })
   productType?: ProductType;
 

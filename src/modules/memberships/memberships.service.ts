@@ -25,7 +25,7 @@ export class MembershipsService {
   ) {}
 
   async findAll(selections: GetMembershipsSelections): Promise<any> {
-    const { search, pagination, userId } = selections;
+    const { search, pagination, userId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('membership')
@@ -93,6 +93,12 @@ export class MembershipsService {
       });
     }
 
+    if (organizationId) {
+      query = query.andWhere('membership.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     if (search) {
       query = query.andWhere(
         new Brackets((qb) => {
@@ -127,7 +133,7 @@ export class MembershipsService {
   async findOneBy(
     selections: GetOneMembershipsSelections,
   ): Promise<Membership> {
-    const { membershipId,userId } = selections;
+    const { membershipId, userId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('membership')
       .select('membership.id', 'id')
@@ -180,6 +186,12 @@ export class MembershipsService {
       query = query.andWhere('membership.id = :id', { id: membershipId });
     }
 
+    if (organizationId) {
+      query = query.andWhere('membership.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     if (userId) {
       query = query.andWhere('membership.userId = :userId', { userId });
     }
@@ -202,6 +214,7 @@ export class MembershipsService {
       pricePerYearly,
       currencyId,
       userId,
+      organizationId,
     } = options;
 
     const membership = new Membership();
@@ -214,6 +227,7 @@ export class MembershipsService {
     membership.currencyId = currencyId;
     membership.userId = userId;
     membership.currencyId = currencyId;
+    membership.organizationId = organizationId;
 
     const query = this.driver.save(membership);
 

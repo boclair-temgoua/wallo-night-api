@@ -62,6 +62,9 @@ export class User extends BaseDeleteEntity {
   nextStep?: NextStep;
 
   @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
   profileId?: string;
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
   @JoinColumn()

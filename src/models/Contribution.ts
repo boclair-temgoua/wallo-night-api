@@ -32,6 +32,9 @@ export class Contribution extends BaseDeleteEntity {
   type?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
   currencyId?: string;
   @ManyToOne(() => Currency, (currency) => currency.contributions, {
     onDelete: 'CASCADE',

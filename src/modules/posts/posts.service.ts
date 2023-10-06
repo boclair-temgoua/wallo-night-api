@@ -44,6 +44,7 @@ export class PostsService {
       likeUserId,
       followerIds,
       typeIds,
+      organizationId,
     } = selections;
 
     let query = this.driver
@@ -157,6 +158,12 @@ export class PostsService {
       query = query.andWhere('post.type IN (:...typeIds)', { typeIds });
     }
 
+    if (organizationId) {
+      query = query.andWhere('post.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     if (userId) {
       query = query.andWhere('post.userId = :userId', { userId });
     }
@@ -201,7 +208,15 @@ export class PostsService {
   }
 
   async findOneBy(selections: GetOnePostSelections): Promise<Post> {
-    const { postId, userId, postSlug, likeUserId, type, status } = selections;
+    const {
+      postId,
+      userId,
+      organizationId,
+      postSlug,
+      likeUserId,
+      type,
+      status,
+    } = selections;
     let query = this.driver
       .createQueryBuilder('post')
       .select('post.title', 'title')
@@ -251,15 +266,8 @@ export class PostsService {
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "post"."id"
@@ -272,15 +280,8 @@ export class PostsService {
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "post"."id"
@@ -330,6 +331,12 @@ export class PostsService {
       query = query.andWhere('post.status = :status', { status });
     }
 
+    if (organizationId) {
+      query = query.andWhere('post.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     if (userId) {
       query = query.andWhere('post.userId = :userId', { userId });
     }
@@ -367,6 +374,7 @@ export class PostsService {
       enableUrlMedia,
       allowDownload,
       description,
+      organizationId,
     } = options;
 
     const post = new Post();
@@ -382,6 +390,7 @@ export class PostsService {
       title ? `${Slug(title)}-${generateNumber(4)}` : generateLongUUID(10)
     }`;
     post.status = status;
+    post.organizationId = organizationId;
     post.description = description;
 
     const query = this.driver.save(post);

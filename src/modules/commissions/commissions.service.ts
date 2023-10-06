@@ -26,7 +26,7 @@ export class CommissionsService {
   ) {}
 
   async findAll(selections: GetCommissionsSelections): Promise<any> {
-    const { search, pagination, status, userId } = selections;
+    const { search, pagination, status, userId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('commission')
@@ -102,6 +102,12 @@ export class CommissionsService {
       query = query.andWhere('commission.status = :status', { status });
     }
 
+    if (organizationId) {
+      query = query.andWhere('commission.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     if (search) {
       query = query.andWhere(
         new Brackets((qb) => {
@@ -136,7 +142,7 @@ export class CommissionsService {
   async findOneBy(
     selections: GetOneCommissionsSelections,
   ): Promise<Commission> {
-    const { commissionId, userId } = selections;
+    const { commissionId, userId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('commission')
       .select('commission.id', 'id')
@@ -183,6 +189,12 @@ export class CommissionsService {
       query = query.andWhere('commission.userId = :userId', { userId });
     }
 
+    if (organizationId) {
+      query = query.andWhere('commission.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     const [error, result] = await useCatch(query.getRawOne());
     if (error)
       throw new HttpException('commission not found', HttpStatus.NOT_FOUND);
@@ -204,6 +216,7 @@ export class CommissionsService {
       limitSlot,
       enableLimitSlot,
       userId,
+      organizationId,
     } = options;
 
     const commission = new Commission();
@@ -218,6 +231,7 @@ export class CommissionsService {
     commission.urlMedia = urlMedia;
     commission.description = description;
     commission.userId = userId;
+    commission.organizationId = organizationId;
 
     const query = this.driver.save(commission);
 

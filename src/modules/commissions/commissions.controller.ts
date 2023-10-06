@@ -108,6 +108,7 @@ export class CommissionsController {
       messageAfterPayment,
       currencyId: user?.profile?.currencyId,
       userId: user?.id,
+      organizationId: user?.organizationId,
       limitSlot: Number(limitSlot),
       enableLimitSlot: enableLimitSlot === 'true' ? true : false,
     });
@@ -118,6 +119,7 @@ export class CommissionsController {
       userId: commission?.userId,
       folder: 'commissions',
       files,
+      organizationId: commission?.organizationId,
     });
 
     return reply({ res, results: 'commission' });
@@ -148,6 +150,7 @@ export class CommissionsController {
     const findOneCommission = await this.commissionsService.findOneBy({
       commissionId,
       userId: user?.id,
+      organizationId: user?.organizationId,
     });
     if (!findOneCommission)
       throw new HttpException(
@@ -175,6 +178,7 @@ export class CommissionsController {
       userId: user?.id,
       folder: 'commissions',
       files,
+      organizationId: user?.organizationId,
     });
 
     return reply({ res, results: 'commission updated successfully' });
