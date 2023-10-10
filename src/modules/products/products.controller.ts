@@ -48,7 +48,6 @@ export class ProductsController {
 
   /** Get all Products */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,

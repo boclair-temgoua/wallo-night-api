@@ -74,15 +74,8 @@ export class ProductsService {
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "product"."id"
@@ -95,15 +88,8 @@ export class ProductsService {
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "product"."id"
@@ -242,15 +228,8 @@ export class ProductsService {
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "product"."id"
@@ -263,15 +242,8 @@ export class ProductsService {
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
-            'id', "upl"."id",
             'name', "upl"."name",
-            'path', "upl"."path",
-            'status', "upl"."status",
-            'url', "upl"."url",
-            'userId', "upl"."userId",
-            'model', "upl"."model",
-            'uploadType', "upl"."uploadType",
-            'uploadableId', "upl"."uploadableId"
+            'path', "upl"."path"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "product"."id"
