@@ -201,7 +201,7 @@ export class UpdateProfileDto {
   @IsUUID()
   countryId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsUUID()
   currencyId: string;
