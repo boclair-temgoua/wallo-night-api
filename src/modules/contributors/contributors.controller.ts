@@ -78,7 +78,7 @@ export class ContributorsController {
     @Req() req,
     @Body() body: CreateOneNewUserContributorsDto,
   ) {
-    const { email, role, firstName, lastName } = body;
+    const { email, role, firstName, permission, lastName } = body;
 
     const { user } = req;
 
@@ -109,6 +109,7 @@ export class ContributorsController {
     const usernameGenerate = `${generateLongUUID(8)}`.toLowerCase();
     const userSave = await this.usersService.createOne({
       email,
+      permission,
       password: generateLongUUID(8),
       profileId: profile?.id,
       username: username

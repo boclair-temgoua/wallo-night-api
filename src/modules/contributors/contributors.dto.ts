@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { ContributorRole, contributorRoleArrays } from './contributors.type';
 import { MaxLength, IsEmail } from 'class-validator';
+import { UserPermission, userPermissionArrays } from '../users/users.dto';
 
 export class GetContributorsDto {
   @IsNotEmpty()
@@ -54,6 +55,11 @@ export class CreateOneNewUserContributorsDto {
   @MaxLength(50)
   @IsEmail()
   email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(userPermissionArrays)
+  permission: UserPermission;
 
   @IsNotEmpty()
   @IsString()

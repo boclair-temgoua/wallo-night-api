@@ -43,7 +43,6 @@ export class OurEventsController {
 
   /** Get all OurEvents */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,

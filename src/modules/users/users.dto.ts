@@ -12,6 +12,11 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
+
+export type UserPermission = 'ADMIN' | 'USER';
+
+export const userPermissionArrays = ['ADMIN', 'MODERATOR'];
+
 export class UpdateInfoUserDto {
   @IsNotEmpty()
   @IsString()
@@ -200,11 +205,6 @@ export class UpdateProfileDto {
   @IsString()
   @IsUUID()
   countryId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  currencyId: string;
 
   @IsOptional()
   @IsString()
