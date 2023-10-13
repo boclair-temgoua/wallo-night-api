@@ -56,7 +56,7 @@ export class OurEventsController {
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const Events = await this.ourEventsService.findAll({
+    const events = await this.ourEventsService.findAll({
       search,
       pagination,
       userId,
@@ -64,7 +64,7 @@ export class OurEventsController {
       status: status?.toUpperCase(),
     });
 
-    return reply({ res, results: Events });
+    return reply({ res, results: events });
   }
 
   /** Post one OurEvents */
