@@ -12,6 +12,7 @@ export type GetTransactionsSelections = {
   userId?: Transaction['userId'];
   userSendId?: Transaction['userSendId'];
   userReceiveId?: Transaction['userReceiveId'];
+  organizationId?: Transaction['organizationId'];
 };
 
 export type GetOneTransactionSelections = {

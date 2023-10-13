@@ -29,59 +29,43 @@ export class TransactionsService {
   async findAll(
     selections: GetTransactionsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, userId, model, userSendId, userReceiveId } =
-      selections;
+    const {
+      search,
+      pagination,
+      userId,
+      model,
+      userSendId,
+      userReceiveId,
+      organizationId,
+    } = selections;
 
     let query = this.driver
       .createQueryBuilder('transaction')
       .select('transaction.id', 'id')
       .addSelect('transaction.amount', 'amount')
-      .addSelect('transaction.type', 'type')
       .addSelect('transaction.title', 'title')
-      .addSelect('transaction.currency', 'currency')
       .addSelect('transaction.description', 'description')
+      .addSelect('transaction.token', 'token')
+      .addSelect('transaction.currency', 'currency')
+      .addSelect('transaction.type', 'type')
+      .addSelect('transaction.ourEventId', 'ourEventId')
+      .addSelect('transaction.organizationId', 'organizationId')
       .addSelect('transaction.model', 'model')
-      .addSelect('transaction.campaignId', 'campaignId')
-      .addSelect('transaction.contributionId', 'contributionId')
-      .addSelect('transaction.giftId', 'giftId')
-      .addSelect('transaction.userSendId', 'userSendId')
-      .addSelect('transaction.userReceiveId', 'userReceiveId')
       .addSelect('transaction.userId', 'userId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-          'id', "campaign"."id",
-          'title', "campaign"."title"
-      ) AS "campaign"`,
-      )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-        'id', "profileSend"."id",
-        'userId', "userSend"."id",
-        'fullName', "profileSend"."fullName",
-        'image', "profileSend"."image",
-        'color', "profileSend"."color",
-        'countryId', "profileSend"."countryId",
-        'url', "profileSend"."url"
-    ) AS "profileSend"`,
-      )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-        'id', "profileReceive"."id",
-        'userId', "userReceive"."id",
-        'fullName', "profileReceive"."fullName",
-        'image', "profileReceive"."image",
-        'color', "profileReceive"."color",
-        'countryId', "profileReceive"."countryId",
-        'url', "profileReceive"."url"
-    ) AS "profileReceive"`,
+          'id', "profileSend"."id",
+          'userId', "userSend"."id",
+          'email', "userSend"."email",
+          'firstName', "profileSend"."firstName",
+          'lastName', "profileSend"."lastName",
+          'image', "profileSend"."image",
+          'color', "profileSend"."color"
+      ) AS "profileSend"`,
       )
       .where('transaction.deletedAt IS NULL')
       .leftJoin('transaction.userSend', 'userSend')
-      .leftJoin('transaction.userReceive', 'userReceive')
-      .leftJoin('transaction.gift', 'gift')
-      .leftJoin('transaction.campaign', 'campaign')
-      .leftJoin('userSend.profile', 'profileSend')
-      .leftJoin('userReceive.profile', 'profileReceive');
+      .leftJoin('userSend.profile', 'profileSend');
 
     if (model) {
       query = query.andWhere('transaction.model = :model', { model });
@@ -94,6 +78,12 @@ export class TransactionsService {
     if (userReceiveId) {
       query = query.andWhere('transaction.userReceiveId = :userReceiveId', {
         userReceiveId,
+      });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('transaction.organizationId = :organizationId', {
+        organizationId,
       });
     }
 

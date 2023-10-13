@@ -6,6 +6,7 @@ import {
   Res,
   Get,
   Query,
+  Req,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { JwtAuthGuard } from '../users/middleware';
@@ -28,10 +29,12 @@ export class TransactionsController {
   @UseGuards(JwtAuthGuard)
   async findAll(
     @Res() res,
+    @Req() req,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: FilterTransactionsDto,
   ) {
+    const { user } = req;
     const { userId, campaignId, model, userSendId, userReceiveId } = query;
     const { search } = searchQuery;
 
@@ -43,7 +46,7 @@ export class TransactionsController {
       userId,
       model: model?.toLocaleUpperCase(),
       userSendId,
-      userReceiveId,
+      organizationId: user?.organizationId,
       pagination,
     });
 
