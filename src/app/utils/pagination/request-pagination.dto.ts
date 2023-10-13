@@ -12,7 +12,7 @@ import {
 
 export type SortType = 'ASC' | 'DESC';
 
-export type ProductStatus = 'ACTIVE' | 'PENDING';
+export type StatusType = 'ACTIVE' | 'PENDING' | 'COMPLETED';
 
 export class RequestPaginationDto {
   @IsNotEmpty()

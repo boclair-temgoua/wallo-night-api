@@ -11,6 +11,7 @@ export * from './OurEvent';
 export * from './Organization';
 export * from './Profile';
 export * from './Project';
+export * from './OrderEvent';
 export * from './ResetPassword';
 export * from './Testimonial';
 export * from './Transaction';

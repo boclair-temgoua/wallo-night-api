@@ -3,10 +3,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Generated,
+  OneToOne,
   OneToMany,
 } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
 import { OurEvent } from './OurEvent';
+import { Wallet } from './Wallet';
+import { User } from './User';
 
 @Entity('organization')
 export class Organization extends BaseEntity {
@@ -33,4 +36,14 @@ export class Organization extends BaseEntity {
 
   @OneToMany(() => OurEvent, (ourEvent) => ourEvent.organization)
   ourEvents?: OurEvent[];
+
+  @OneToOne(() => Wallet, (wallet) => wallet.organization, {
+    onDelete: 'CASCADE',
+  })
+  wallet?: Wallet;
+
+  @OneToOne(() => User, (user) => user.organization, {
+    onDelete: 'CASCADE',
+  })
+  user?: User;
 }

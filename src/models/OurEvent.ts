@@ -4,12 +4,14 @@ import {
   Column,
   JoinColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Organization, User } from './index';
-import { ProductStatus } from '../app/utils/pagination';
+import { StatusType } from '../app/utils/pagination';
 import { CurrencyEvent } from '../modules/our-events/our-events.dto';
+import { OrderEvent } from './OrderEvent';
 
 @Entity('our_event')
 export class OurEvent extends BaseDeleteEntity {
@@ -59,7 +61,12 @@ export class OurEvent extends BaseDeleteEntity {
   messageAfterPayment: string;
 
   @Column({ default: 'ACTIVE' })
-  status?: ProductStatus;
+  status?: StatusType;
+
+  @OneToMany(() => OrderEvent, (orderEvents) => orderEvents.ourEvent, {
+    onDelete: 'CASCADE',
+  })
+  orderEvents?: OrderEvent[];
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;

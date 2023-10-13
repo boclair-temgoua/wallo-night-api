@@ -20,6 +20,8 @@ import { PostsModule } from './modules/posts/posts.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { OrderEventsModule } from './modules/order-events/order-events.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
     OurEventsModule,
     WalletsModule,
     PostsModule,
+    OrderEventsModule,
+    PaymentsModule,
     CommentsModule,
     UploadsModule,
     ContactUsModule,

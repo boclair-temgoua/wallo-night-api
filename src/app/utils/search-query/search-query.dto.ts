@@ -34,7 +34,12 @@ export class PasswordBodyDto {
   password: string;
 }
 
-export type FilterQueryType = 'ORGANIZATION' | 'POST' | 'EVENT' | 'COMMENT';
+export type FilterQueryType =
+  | 'ORGANIZATION'
+  | 'POST'
+  | 'EVENT'
+  | 'ORDER-EVENT'
+  | 'COMMENT';
 
 export const filterQueryTypeArrays = [
   'ORGANIZATION',

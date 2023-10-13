@@ -171,7 +171,15 @@ export class UsersService {
         AND "con"."type" IN ('ORGANIZATION')
         ) AS "role"`,
       )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'accountId', "wallet"."accountId",
+          'amount', "wallet"."amount"
+      ) AS "wallet"`,
+      )
       .where('user.deletedAt IS NULL')
+      .leftJoin('user.organization', 'organization')
+      .leftJoin('organization.wallet', 'wallet')
       .leftJoin('user.profile', 'profile');
 
     if (userId) {

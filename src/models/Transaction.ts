@@ -32,6 +32,15 @@ export class Transaction extends BaseDeleteEntity {
   @Column({ nullable: true })
   currency: string;
 
+  @Column({ default: 'CARD' })
+  type?: TransactionType;
+
+  @Column({ type: 'uuid', nullable: true })
+  ourEventId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
   @Column({ default: 'MEMBERSHIP' })
   model?: FilterQueryType;
 

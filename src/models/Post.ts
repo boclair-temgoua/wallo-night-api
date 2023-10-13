@@ -15,7 +15,7 @@ import { WhoCanSeeType } from '../app/utils/search-query';
 import { User } from './User';
 import { PostType } from '../modules/posts/posts.type';
 import { Comment } from './Comment';
-import { ProductStatus } from '../app/utils/pagination';
+import { StatusType } from '../app/utils/pagination';
 
 @Entity('post')
 export class Post extends BaseDeleteEntity {
@@ -41,7 +41,7 @@ export class Post extends BaseDeleteEntity {
   type?: PostType;
 
   @Column({ default: 'ACTIVE' })
-  status?: ProductStatus;
+  status?: StatusType;
 
   @Column({ default: false })
   allowDownload?: boolean;

@@ -5,13 +5,13 @@ export type GetWalletsSelections = {
 };
 
 export type GetOneWalletSelections = {
-  userId?: Wallet['userId'];
+  organizationId?: Wallet['organizationId'];
   walletId?: Wallet['id'];
 };
 
 export type UpdateWalletSelections = {
   walletId?: Wallet['id'];
-  userId?: Wallet['userId'];
+  organizationId?: Wallet['organizationId'];
 };
 
 export type CreateWalletOptions = Partial<Wallet>;

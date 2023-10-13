@@ -157,6 +157,9 @@ export class TransactionsService {
       userReceiveId,
       userId,
       token,
+      type,
+      ourEventId,
+      organizationId,
     } = options;
 
     const transaction = new Transaction();
@@ -168,7 +171,10 @@ export class TransactionsService {
     transaction.amount = amount;
     transaction.userId = userId;
     transaction.token = token;
+    transaction.type = type;
+    transaction.ourEventId = ourEventId;
     transaction.description = description;
+    transaction.organizationId = organizationId;
 
     const query = this.driver.save(transaction);
 

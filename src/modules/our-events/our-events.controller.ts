@@ -32,6 +32,7 @@ import {
 } from './our-events.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { UploadsUtil } from '../uploads/uploads.util';
+import { generateNumber } from '../../app/utils/commons/generate-random';
 
 @Controller('events')
 export class OurEventsController {

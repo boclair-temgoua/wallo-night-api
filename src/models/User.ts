@@ -19,7 +19,9 @@ import {
   Contributor,
   Profile,
   OurEvent,
+  Organization,
 } from './index';
+import { OrderEvent } from './OrderEvent';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -52,17 +54,17 @@ export class User extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.user, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Organization;
 
   @Column({ type: 'uuid', nullable: true })
   profileId?: string;
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
   @JoinColumn()
   profile?: Profile;
-
-  @OneToOne(() => Wallet, (wallet) => wallet.user, {
-    onDelete: 'CASCADE',
-  })
-  wallet?: Wallet;
 
   @OneToMany(() => Post, (post) => post.user)
   posts?: Post[];
@@ -72,6 +74,9 @@ export class User extends BaseDeleteEntity {
 
   @OneToMany(() => OurEvent, (ourEvent) => ourEvent.user)
   ourEvents?: OurEvent[];
+
+  @OneToMany(() => OrderEvent, (orderEvent) => orderEvent.user)
+  orderEvents?: OrderEvent[];
 
   @OneToMany(() => Transaction, (transaction) => transaction.user, {
     onDelete: 'CASCADE',
