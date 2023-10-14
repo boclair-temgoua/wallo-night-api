@@ -42,8 +42,6 @@ export class Organization extends BaseEntity {
   })
   wallet?: Wallet;
 
-  @OneToOne(() => User, (user) => user.organization, {
-    onDelete: 'CASCADE',
-  })
-  user?: User;
+  @OneToMany(() => User, (user) => user.organization)
+  users?: User[];
 }
