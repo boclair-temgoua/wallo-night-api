@@ -119,7 +119,7 @@ export class AuthUserController {
 
     /** Create Wallet */
     await this.walletsService.createOne({
-      organizationId: user?.id,
+      organizationId: user?.organizationId,
     });
 
     /** Create Subscribe */
