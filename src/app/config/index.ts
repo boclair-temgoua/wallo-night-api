@@ -172,6 +172,16 @@ export const config = {
       email: process.env.AWS_SMTP_EMAIL,
     },
     /**
+     * Google auth
+     */
+    auth: {
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        clientCallBack: process.env.GOOGLE_CLIENT_CALLBACK,
+      },
+    },
+    /**
      * Mailtrap
      */
     mailjet: {

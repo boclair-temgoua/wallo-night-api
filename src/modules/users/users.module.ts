@@ -19,6 +19,7 @@ import { ContributorsUtil } from '../contributors/contributors.util';
 import { ContributorsService } from '../contributors/contributors.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { OrganizationsService } from '../organizations/organizations.service';
+import { GoogleAuthStrategy } from './middleware/google/google-auth.strategy';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { OrganizationsService } from '../organizations/organizations.service';
     ProfilesService,
     CheckUserService,
     JwtAuthStrategy,
+    GoogleAuthStrategy,
     ContributorsUtil,
     OrganizationsService,
     ContributorsService,

@@ -50,6 +50,7 @@ import {
   validation_code_verification_cookie_setting,
   validation_login_cookie_setting,
 } from '../../../app/utils/cookies';
+import { GoogleAuthGuard } from '../middleware/google/google-auth.guard';
 
 @Controller()
 export class AuthUserController {
@@ -62,6 +63,18 @@ export class AuthUserController {
     private readonly organizationsService: OrganizationsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
+
+  @Get('/google/login')
+  @UseGuards(GoogleAuthGuard)
+  async googleLogin() {
+    return { msg: 'Google Authentication' };
+  }
+
+  @Get('google/redirect')
+  @UseGuards(GoogleAuthGuard)
+  async googleRedirect(@Req() req, @Res() res) {
+    return res.redirect('http://localhost:3001/dashboard');
+  }
 
   /** Register new user */
   @Post(`/register`)
