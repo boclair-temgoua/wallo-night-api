@@ -52,11 +52,10 @@ export class ContributorsController {
   async findAll(
     @Res() res,
     @Req() req,
-    @Query() query: GetContributorsDto,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { organizationId } = query;
+    const { user } = req;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -65,7 +64,7 @@ export class ContributorsController {
     const contributors = await this.contributorsService.findAll({
       search,
       pagination,
-      organizationId,
+      organizationId: user?.organizationId,
     });
 
     return reply({ res, results: contributors });
