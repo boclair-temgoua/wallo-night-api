@@ -117,12 +117,11 @@ export class PostsController {
     @Query() query: GetOnePostDto,
     @Cookies('x-cookies-login') user: any,
   ) {
-    const { postId, userId, organizationId, type, postSlug } = query;
+    const { postId, organizationId, type, postSlug } = query;
 
     const findOnePost = await this.postsService.findOneBy({
       postId,
       postSlug,
-      userId,
       organizationId,
       likeUserId: user?.id,
       type: type?.toUpperCase(),

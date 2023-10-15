@@ -98,11 +98,6 @@ export class GetOnePostDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
   organizationId: string;
 
   @IsOptional()

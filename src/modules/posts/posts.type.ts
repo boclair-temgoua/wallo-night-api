@@ -21,7 +21,6 @@ export type GetOnePostSelections = {
   type?: string;
   status?: string;
   postSlug?: string;
-  userId?: Post['userId'];
   likeUserId?: Post['userId'];
   organizationId?: Post['organizationId'];
 };

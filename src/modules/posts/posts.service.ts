@@ -204,15 +204,8 @@ export class PostsService {
   }
 
   async findOneBy(selections: GetOnePostSelections): Promise<Post> {
-    const {
-      postId,
-      userId,
-      organizationId,
-      postSlug,
-      likeUserId,
-      type,
-      status,
-    } = selections;
+    const { postId, organizationId, postSlug, likeUserId, type, status } =
+      selections;
     let query = this.driver
       .createQueryBuilder('post')
       .select('post.title', 'title')
@@ -225,6 +218,7 @@ export class PostsService {
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.enableUrlMedia', 'enableUrlMedia')
+      .addSelect('post.organizationId', 'organizationId')
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.createdAt', 'createdAt')
       .addSelect(
@@ -332,10 +326,6 @@ export class PostsService {
       query = query.andWhere('post.organizationId = :organizationId', {
         organizationId,
       });
-    }
-
-    if (userId) {
-      query = query.andWhere('post.userId = :userId', { userId });
     }
 
     if (type) {
