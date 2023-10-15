@@ -11,6 +11,7 @@ import { reply } from '../../app/utils/reply';
 import { PaymentsService } from './payments.service';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { WalletsService } from '../wallets/wallets.service';
+import { CreateSubscribePaymentsDto } from './payments.dto';
 
 @Controller('payments')
 export class PaymentsController {
@@ -22,17 +23,23 @@ export class PaymentsController {
 
   /** Create Like */
   @Post(`/paypal/subscribe`)
-  async createOnePaypalSubscribe(@Res() res, @Req() req, @Body() body) {
-    const { amount, currency, membershipId, userId, reference, paymentMethod } =
-      body;
+  async createOnePaypalSubscribe(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateSubscribePaymentsDto,
+  ) {
+    const { amount, membershipId, userId, reference, paymentMethod } = body;
 
     const { transaction } =
       await this.subscribesUtil.createOrUpdateOneSubscribe({
         userId,
-        amount: { value: amount?.value * 100, month: amount?.value },
+        amount: {
+          currency: amount?.currency.toUpperCase(),
+          value: amount?.value * 100,
+          month: amount?.month,
+        },
         membershipId,
         type: 'PAYPAL',
-        currency: currency.toUpperCase(),
         token: reference,
         model: 'MEMBERSHIP',
         description: `Subscription ${amount?.month} month`,
@@ -50,13 +57,16 @@ export class PaymentsController {
 
   /** Create Like */
   @Post(`/stripe/subscribe`)
-  async createOneStripeSubscribe(@Res() res, @Req() req, @Body() body) {
-    const { amount, currency, membershipId, userId, reference, paymentMethod } =
-      body;
+  async createOneStripeSubscribe(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateSubscribePaymentsDto,
+  ) {
+    const { amount, membershipId, userId, reference, paymentMethod } = body;
 
     const { paymentIntents } = await this.paymentsService.stripeMethod({
       paymentMethod,
-      currency: currency,
+      currency: amount?.currency.toUpperCase(),
       amount,
       token: reference,
       description: `Subscription ${amount?.month} month`,
@@ -68,23 +78,28 @@ export class PaymentsController {
       );
     }
 
-    const { transaction } =
-      await this.subscribesUtil.createOrUpdateOneSubscribe({
-        userId,
-        currency: paymentIntents?.currency.toUpperCase(),
-        amount: { value: paymentIntents?.amount, month: amount?.value }, // Pas besoin de multiplier pas 100 stipe le fais deja
-        membershipId,
-        type: 'CARD',
-        token: reference,
-        model: 'MEMBERSHIP',
-        description: paymentIntents?.description,
-      });
+    if (paymentIntents) {
+      const { transaction } =
+        await this.subscribesUtil.createOrUpdateOneSubscribe({
+          userId,
+          amount: {
+            currency: paymentIntents?.currency.toUpperCase(),
+            value: amount?.value * 100,
+            month: amount?.month,
+          }, // Pas besoin de multiplier pas 100 stipe le fais deja
+          membershipId,
+          type: 'CARD',
+          token: reference,
+          model: 'MEMBERSHIP',
+          description: paymentIntents?.description,
+        });
 
-    if (transaction?.token) {
-      await this.walletsService.incrementOne({
-        organizationId: transaction?.organizationId,
-        amount: transaction?.amount,
-      });
+      if (transaction?.token) {
+        await this.walletsService.incrementOne({
+          organizationId: transaction?.organizationId,
+          amount: transaction?.amount,
+        });
+      }
     }
 
     return reply({ res, results: reference });

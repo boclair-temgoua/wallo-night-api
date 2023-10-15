@@ -281,16 +281,6 @@ export class PostsService {
           GROUP BY "post"."id", "upl"."uploadableId"
           ) AS "uploadsFile"`,
       )
-      .addSelect(
-        /*sql*/ `(
-        SELECT
-            CAST(COUNT(DISTINCT fol) AS INT)
-        FROM "follow" "fol"
-        WHERE ("fol"."followerId" = "post"."userId"
-         AND "fol"."deletedAt" IS NULL
-         AND "fol"."userId" IN ('5da9b770-0c1a-4039-9604-3e6ad11fb9a7'))
-        ) AS "isFollow"`,
-      )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
       .leftJoin('post.organization', 'organization')

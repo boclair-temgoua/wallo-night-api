@@ -1,7 +1,7 @@
 import { config } from '../../../app/config/index';
 
 import { User } from '../../../models/User';
-import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
+import { NodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
 
 export const authCodeConfirmationMail = async (options: { user: any }) => {
   const { user } = options;
@@ -77,9 +77,9 @@ export const authCodeConfirmationMail = async (options: { user: any }) => {
   <td style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
   <p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; line-height: 1.5em; margin-top: 0; text-align: left; font-size: 14px;">
   If you’re having trouble clicking the "Confirm your account" button, copy and paste the URL below into your web browser: <span class="break-all" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; word-break: break-all;">
-  <a href="${config.datasite.urlClient}/confirm-account?token=${
-    user?.token
-  }" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3869d4;">
+  <a href="${
+    config.datasite.urlClient
+  }/confirm-account?token=${user?.token}" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3869d4;">
   ${config.datasite.urlClient}/confirm-account?token=${user?.token}
   </a></span></p>
   

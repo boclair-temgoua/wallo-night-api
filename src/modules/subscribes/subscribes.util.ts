@@ -20,25 +20,16 @@ export class SubscribesUtil {
   ) {}
 
   async createOrUpdateOneSubscribe(options: {
-    amount: { value: number; month: number };
+    amount: { value: number; month: number; currency: string };
     userId: string;
-    currency: string;
     type?: TransactionType;
     model: FilterQueryType;
     membershipId: string;
     description: string;
     token: string;
   }): Promise<any> {
-    const {
-      membershipId,
-      description,
-      type,
-      userId,
-      amount,
-      model,
-      currency,
-      token,
-    } = options;
+    const { membershipId, description, type, userId, amount, model, token } =
+      options;
 
     const findOneMembership = await this.membershipsService.findOneBy({
       membershipId,
@@ -93,7 +84,7 @@ export class SubscribesUtil {
 
       const transaction = await this.transactionsService.createOne({
         token: token,
-        currency: currency,
+        currency: amount?.currency,
         model: model,
         userSendId: userId,
         subscribeId: findOneSubscribe?.id,
@@ -103,6 +94,7 @@ export class SubscribesUtil {
       });
       return { transaction };
     } else {
+      console.log('amount =======>', amount);
       const subscribe = await this.subscribesService.createOne({
         membershipId,
         userId: userId,
@@ -118,7 +110,7 @@ export class SubscribesUtil {
         type,
         model: model,
         token: token,
-        currency: currency,
+        currency: amount?.currency,
         userSendId: userId,
         organizationId: findOneMembership?.organizationId,
         subscribeId: subscribe?.id,

@@ -35,7 +35,11 @@ import { CheckUserService } from '../middleware/check-user.service';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
 import { config } from '../../../app/config/index';
-import { authCodeConfirmationJob, authPasswordResetJob } from '../users.job';
+import {
+  authCodeConfirmationJob,
+  authPasswordResetJob,
+  authRegisterJob,
+} from '../users.job';
 import { WalletsService } from '../../wallets/wallets.service';
 import {
   addYearsFormateDDMMYYDate,
@@ -145,14 +149,13 @@ export class AuthUserController {
       { organizationId: organization?.id },
       { userId: user?.id },
     );
-    //const queue = 'user-register';
-    //const connect = await amqplib.connect(
-    //  config.implementations.amqp.link,
-    //);
-    //const channel = await connect.createChannel();
-    //await channel.assertQueue(queue, { durable: false });
-    //await channel.sendToQueue(queue, Buffer.from(JSON.stringify(results)));
-    //await authRegisterJob({ channel, queue });
+
+    const queue = 'user-register';
+    const connect = await amqplib.connect(config.implementations.amqp.link);
+    const channel = await connect.createChannel();
+    await channel.assertQueue(queue, { durable: false });
+    await channel.sendToQueue(queue, Buffer.from(JSON.stringify(user)));
+    await authRegisterJob({ channel, queue });
 
     const jwtPayload: JwtPayloadType = {
       id: user.id,
