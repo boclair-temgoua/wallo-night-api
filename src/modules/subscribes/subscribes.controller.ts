@@ -163,6 +163,7 @@ export class SubscribesController {
     } else {
       const subscribe = await this.subscribesService.createOne({
         userId: user?.id,
+        organizationId: user?.organizationId,
         subscriberId: findOneMembership?.userId,
         membershipId,
         expiredAt: addMonthsFormateDDMMYYDate({

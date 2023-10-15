@@ -10,7 +10,7 @@ import {
 import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/index';
 import { Membership } from './Membership';
-import { Transaction } from '.';
+import { Organization, Transaction } from '.';
 
 @Entity('subscribe')
 export class Subscribe extends BaseDeleteEntity {
@@ -39,6 +39,14 @@ export class Subscribe extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.subscribes, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: Relation<User>;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.subscribes, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Relation<Organization>;
 
   @OneToMany(() => Transaction, (transaction) => transaction.subscribe, {
     onDelete: 'CASCADE',

@@ -5,12 +5,14 @@ export type GetSubscribesSelections = {
   search?: string;
   userId?: Subscribe['userId'];
   subscriberId?: Subscribe['subscriberId'];
+  organizationId?: Subscribe['organizationId'];
   pagination?: PaginationType;
 };
 
 export type GetOneSubscribeSelections = {
   subscribeId?: Subscribe['id'];
   userId?: Subscribe['userId'];
+  organizationId?: Subscribe['organizationId'];
   subscriberId?: Subscribe['subscriberId'];
 };
 

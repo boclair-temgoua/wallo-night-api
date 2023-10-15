@@ -115,7 +115,7 @@ export class SubscribesService {
   }
 
   async findAllNotPaginate(selections: GetSubscribesSelections): Promise<any> {
-    const { userId, subscriberId } = selections;
+    const { userId, organizationId, subscriberId } = selections;
 
     let query = this.driver
       .createQueryBuilder('subscribe')
@@ -126,6 +126,12 @@ export class SubscribesService {
 
     if (userId) {
       query = query.andWhere('subscribe.userId = :userId', { userId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('subscribe.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (subscriberId) {
@@ -141,13 +147,19 @@ export class SubscribesService {
   }
 
   async findOneBy(selections: GetOneSubscribeSelections): Promise<Subscribe> {
-    const { subscribeId, subscriberId, userId } = selections;
+    const { subscribeId, subscriberId, userId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('subscribe')
       .where('subscribe.deletedAt IS NULL');
 
     if (userId) {
       query = query.andWhere('subscribe.userId = :userId', { userId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('subscribe.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (subscriberId) {
@@ -171,13 +183,15 @@ export class SubscribesService {
 
   /** Create one Subscribe to the database. */
   async createOne(options: CreateSubscribeOptions): Promise<Subscribe> {
-    const { userId, subscriberId, expiredAt, membershipId } = options;
+    const { userId, organizationId, subscriberId, expiredAt, membershipId } =
+      options;
 
     const subscribe = new Subscribe();
     subscribe.userId = userId;
     subscribe.expiredAt = expiredAt;
     subscribe.subscriberId = subscriberId;
     subscribe.membershipId = membershipId;
+    subscribe.organizationId = organizationId;
 
     const query = this.driver.save(subscribe);
 

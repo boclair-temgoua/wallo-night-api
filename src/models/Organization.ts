@@ -13,6 +13,7 @@ import { User } from './User';
 import { Transaction } from './Transaction';
 import { Post } from './Post';
 import { Product } from './Product';
+import { Subscribe } from './Subscribe';
 
 @Entity('organization')
 export class Organization extends BaseEntity {
@@ -58,4 +59,7 @@ export class Organization extends BaseEntity {
 
   @OneToMany(() => Product, (product) => product.organization)
   products?: Product[];
+
+  @OneToMany(() => Subscribe, (subscribe) => subscribe.organization)
+  subscribes?: Subscribe[];
 }

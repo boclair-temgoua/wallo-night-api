@@ -76,6 +76,7 @@ export class SubscribesUtil {
         {
           membershipId,
           userId: userId,
+          organizationId: findOneMembership.organizationId,
           subscriberId: findOneMembership?.userId,
           expiredAt:
             dateExpired > dateNow
@@ -105,6 +106,7 @@ export class SubscribesUtil {
       const subscribe = await this.subscribesService.createOne({
         membershipId,
         userId: userId,
+        organizationId: findOneMembership.organizationId,
         subscriberId: findOneMembership?.userId,
         expiredAt: addMonthsFormateDDMMYYDate({
           date: new Date(),
