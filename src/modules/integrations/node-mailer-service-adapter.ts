@@ -32,6 +32,6 @@ export const NodeMailServiceAdapter = async (options: {
   };
 
   const response = await resend.emails.send({ ...mailOptions });
-  console.log('data ====>', response);
+  console.log('response email send ====>', response);
   return response;
 };
