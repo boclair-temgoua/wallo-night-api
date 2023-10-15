@@ -123,7 +123,7 @@ export class GetGalleriesDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userId: string;
+  organizationId: string;
 
   @IsOptional()
   @IsString()

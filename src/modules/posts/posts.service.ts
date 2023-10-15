@@ -38,7 +38,6 @@ export class PostsService {
     const {
       search,
       pagination,
-      userId,
       type,
       status,
       likeUserId,
@@ -163,10 +162,6 @@ export class PostsService {
       query = query.andWhere('post.organizationId = :organizationId', {
         organizationId,
       });
-    }
-
-    if (userId) {
-      query = query.andWhere('post.userId = :userId', { userId });
     }
 
     if (status) {

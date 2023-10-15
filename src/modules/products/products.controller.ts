@@ -55,7 +55,7 @@ export class ProductsController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { userId, organizationId, status } = query;
+    const { organizationId, status } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -64,7 +64,6 @@ export class ProductsController {
     const products = await this.productsService.findAll({
       search,
       pagination,
-      userId,
       organizationId,
       status: status?.toUpperCase(),
     });
@@ -118,6 +117,7 @@ export class ProductsController {
       enableLimitSlot: enableLimitSlot === 'true' ? true : false,
       enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
       enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
+      organizationId: user?.organizationId,
       userId: user?.id,
     });
 
@@ -165,7 +165,7 @@ export class ProductsController {
 
     const findOneProduct = await this.productsService.findOneBy({
       productId,
-      userId: user?.id,
+      organizationId: user?.organizationId,
     });
     if (!findOneProduct)
       throw new HttpException(
@@ -210,12 +210,12 @@ export class ProductsController {
   /** Get one Products */
   @Get(`/view`)
   async getOne(@Res() res, @Query() query: GetOneProductDto) {
-    const { productId, productSlug, userId } = query;
+    const { productId, productSlug, organizationId } = query;
 
     const findOneProduct = await this.productsService.findOneBy({
       productId,
-      userId,
       productSlug,
+      organizationId,
     });
     if (!findOneProduct)
       throw new HttpException(

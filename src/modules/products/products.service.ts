@@ -27,7 +27,7 @@ export class ProductsService {
   ) {}
 
   async findAll(selections: GetProductsSelections): Promise<any> {
-    const { search, pagination, status, userId, organizationId } = selections;
+    const { search, pagination, status, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('product')
@@ -140,10 +140,6 @@ export class ProductsService {
       .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
 
-    if (userId) {
-      query = query.andWhere('product.userId = :userId', { userId });
-    }
-
     if (organizationId) {
       query = query.andWhere('product.organizationId = :organizationId', {
         organizationId,
@@ -183,7 +179,7 @@ export class ProductsService {
   }
 
   async findOneBy(selections: GetOneProductsSelections): Promise<Product> {
-    const { productId, productSlug, userId, organizationId } = selections;
+    const { productId, productSlug, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('product')
       .select('product.id', 'id')
@@ -297,10 +293,6 @@ export class ProductsService {
 
     if (productId) {
       query = query.andWhere('product.id = :id', { id: productId });
-    }
-
-    if (userId) {
-      query = query.andWhere('product.userId = :userId', { userId });
     }
 
     if (organizationId) {

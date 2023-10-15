@@ -10,7 +10,6 @@ export type GetPostsSelections = {
   pagination?: PaginationType;
   type?: PostType;
   status?: string;
-  userId?: Post['userId'];
   likeUserId?: Post['userId'];
   followerIds?: string[];
   typeIds?: [];

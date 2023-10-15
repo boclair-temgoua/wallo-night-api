@@ -90,7 +90,7 @@ export class GetOneProductDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userId: string;
+  organizationId: string;
 
   @IsOptional()
   @IsString()

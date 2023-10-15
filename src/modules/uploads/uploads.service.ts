@@ -22,15 +22,6 @@ export class UploadsService {
 
     let query = this.driver
       .createQueryBuilder('upload')
-      .select('upload.id', 'id')
-      .addSelect('upload.url', 'url')
-      .addSelect('upload.name', 'name')
-      .addSelect('upload.path', 'path')
-      .addSelect('upload.status', 'status')
-      .addSelect('upload.userId', 'userId')
-      .addSelect('upload.model', 'model')
-      .addSelect('upload.uploadType', 'uploadType')
-      .addSelect('upload.uploadableId', 'uploadableId')
       .where('upload.deletedAt IS NULL');
 
     if (uploadableId) {
@@ -48,7 +39,7 @@ export class UploadsService {
     }
 
     const [errors, results] = await useCatch(
-      query.orderBy('upload.createdAt', 'ASC').getRawMany(),
+      query.orderBy('upload.createdAt', 'ASC').getMany(),
     );
     if (errors) throw new NotFoundException(errors);
 
