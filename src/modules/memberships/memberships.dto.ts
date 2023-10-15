@@ -62,11 +62,6 @@ export class GetOneMembershipDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
   organizationId: string;
 }
 

@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  NotFoundException,
   Body,
   Param,
   ParseUUIDPipe,
@@ -11,24 +10,13 @@ import {
   Res,
   Req,
   Get,
-  Query,
   HttpStatus,
   HttpException,
-  ParseBoolPipe,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { JwtPayloadType } from './../users/users.type';
 import { generateLongUUID } from './../../app/utils/commons/generate-random';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import {
-  FilterQueryType,
-  PasswordBodyDto,
-  SearchQueryDto,
-} from '../../app/utils/search-query/search-query.dto';
-import {
-  addPagination,
-  PaginationType,
-} from '../../app/utils/pagination/with-pagination';
+import { PasswordBodyDto } from '../../app/utils/search-query/search-query.dto';
 import * as amqplib from 'amqplib';
 import { ProfilesService } from '../profiles/profiles.service';
 import { CheckUserService } from '../users/middleware/check-user.service';
@@ -37,7 +25,6 @@ import { ContributorsService } from './contributors.service';
 import { JwtAuthGuard } from '../users/middleware';
 import { ContributorRole } from './contributors.type';
 import {
-  CreateOneContributorOrganizationDto,
   CreateOneNewUserContributorsDto,
   UpdateRoleContributorDto,
 } from './contributors.dto';
@@ -100,6 +87,7 @@ export class ContributorsController {
     /** Update User */
     const jwtPayload: JwtPayloadType = {
       id: userSave?.id,
+      organizationId: userSave?.organizationId,
       profileId: profile?.id,
     };
     await this.usersService.updateOne(

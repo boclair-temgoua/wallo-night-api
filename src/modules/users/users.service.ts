@@ -115,7 +115,7 @@ export class UsersService {
   }
 
   async findOneBy(selections: GetOneUserSelections): Promise<User> {
-    const { userId, email, token, username } = selections;
+    const { userId, email, token, username, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('user')
       .where('user.deletedAt IS NULL')
@@ -123,6 +123,12 @@ export class UsersService {
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('user.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (email) {
@@ -329,8 +335,10 @@ export class UsersService {
       ) AS "totalSubscribe"`,
       )
       .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile')
-      .leftJoin('user.wallet', 'wallet')
+      .leftJoin('user.organization', 'organization')
+      .leftJoin('organization.wallet', 'wallet')
+      .leftJoin('organization.user', 'userOrg')
+      .leftJoin('userOrg.profile', 'profile')
       .leftJoin('profile.currency', 'currency');
 
     if (followerId) {

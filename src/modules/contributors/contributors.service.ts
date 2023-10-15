@@ -18,7 +18,6 @@ import {
 } from './contributors.type';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { FilterQueryType } from '../../app/utils/search-query/search-query.dto';
 
 @Injectable()
 export class ContributorsService {
@@ -191,6 +190,7 @@ export class ContributorsService {
     contributor.role = role;
     contributor.organizationId = organizationId;
     contributor.userCreatedId = userCreatedId;
+
     const query = this.driver.save(contributor);
 
     const [error, result] = await useCatch(query);
@@ -215,13 +215,13 @@ export class ContributorsService {
       });
     }
 
-    const [errorFind, findItem] = await useCatch(findQuery.getOne());
+    const [errorFind, contributor] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    findItem.role = role;
-    findItem.deletedAt = deletedAt;
+    contributor.role = role;
+    contributor.deletedAt = deletedAt;
 
-    const query = this.driver.save(findItem);
+    const query = this.driver.save(contributor);
     const [errorUp, result] = await useCatch(query);
     if (errorUp) throw new NotFoundException(errorUp);
 

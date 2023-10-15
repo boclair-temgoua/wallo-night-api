@@ -17,6 +17,7 @@ import {
   Gift,
   User,
   Campaign,
+  Organization,
 } from './index';
 import { FilterQueryType } from '../app/utils/search-query';
 
@@ -42,17 +43,6 @@ export class Transaction extends BaseDeleteEntity {
 
   @Column({ default: 'MEMBERSHIP' })
   model?: FilterQueryType;
-
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-
-  //   @Column({ type: 'uuid', nullable: true })
-  //   orderProductId?: string;
-  //   @ManyToOne(() => OrderProduct, (orderProduct) => orderProduct.transactions, {
-  //     onDelete: 'CASCADE',
-  //   })
-  //   @JoinColumn()
-  //   orderProduct?: OrderProduct;
 
   @Column({ type: 'uuid', nullable: true })
   contributionId?: string;
@@ -98,20 +88,10 @@ export class Transaction extends BaseDeleteEntity {
   userSend?: Relation<User>;
 
   @Column({ type: 'uuid', nullable: true })
-  userReceiveId?: string;
-  @ManyToOne(() => User, (user) => user.transactions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'userReceiveId', referencedColumnName: 'id' })
-  userReceive?: Relation<User>;
-
-  @Column({ type: 'uuid', nullable: true })
-  userId?: string;
-  @ManyToOne(() => User, (user) => user.transactions, {
-    onDelete: 'CASCADE',
-  })
+  organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.transactions)
   @JoinColumn()
-  user?: Relation<User>;
+  organization?: Relation<Organization>;
 
   @Column({ type: 'uuid', nullable: true })
   subscribeId?: string;

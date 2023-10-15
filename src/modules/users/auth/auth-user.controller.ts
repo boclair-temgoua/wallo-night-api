@@ -95,7 +95,7 @@ export class AuthUserController {
       fullName: `${firstName} ${lastName}`,
       lastName,
       firstName,
-      countryId: findOnCurrency?.id,
+      currencyId: findOnCurrency?.id,
     });
 
     /** Create Organization */
@@ -129,7 +129,7 @@ export class AuthUserController {
 
     /** Create Wallet */
     await this.walletsService.createOne({
-      userId: user?.id,
+      organizationId: user?.organizationId,
     });
 
     /** Create Subscribe */
@@ -137,7 +137,14 @@ export class AuthUserController {
       userId: user?.id,
       userCreatedId: user?.id,
       role: 'ADMIN',
+      organizationId: organization?.id,
     });
+
+    /** Update Organization */
+    await this.organizationsService.updateOne(
+      { organizationId: organization?.id },
+      { userId: user?.id },
+    );
     //const queue = 'user-register';
     //const connect = await amqplib.connect(
     //  config.implementations.amqp.link,
@@ -150,6 +157,7 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: user.id,
       profileId: user.profileId,
+      organizationId: user.organizationId,
     };
 
     const refreshToken =
@@ -157,7 +165,10 @@ export class AuthUserController {
 
     return reply({
       res,
-      results: { accessToken: `Bearer ${refreshToken}`, id: user.id },
+      results: {
+        accessToken: `Bearer ${refreshToken}`,
+        organizationId: user.organizationId,
+      },
     });
   }
 
@@ -176,6 +187,7 @@ export class AuthUserController {
 
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
+      organizationId: findOnUser.organizationId,
       profileId: findOnUser.profileId,
     };
 
@@ -188,7 +200,7 @@ export class AuthUserController {
       res,
       results: {
         accessToken: `Bearer ${refreshToken}`,
-        id: findOnUser.id,
+        organizationId: findOnUser.organizationId,
         nextStep: findOnUser?.nextStep,
       },
     });
@@ -211,6 +223,7 @@ export class AuthUserController {
 
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
+      organizationId: findOnUser.organizationId,
       profileId: findOnUser.profileId,
     };
 

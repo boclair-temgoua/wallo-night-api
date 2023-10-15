@@ -92,6 +92,7 @@ export class MembershipsController {
       pricePerYearly: Number(pricePerYearly),
       pricePerMonthly: Number(pricePerMonthly),
       userId: user?.id,
+      organizationId: user?.organizationId,
       currencyId: user?.profile?.currencyId,
     });
 
@@ -163,11 +164,10 @@ export class MembershipsController {
   /** Get one Memberships */
   @Get(`/view`)
   async getOne(@Res() res, @Req() req, @Query() query: GetOneMembershipDto) {
-    const { membershipId, userId, organizationId } = query;
+    const { membershipId, organizationId } = query;
 
     const findOneMembership = await this.membershipsService.findOneBy({
       membershipId,
-      userId,
       organizationId,
     });
     if (!findOneMembership)

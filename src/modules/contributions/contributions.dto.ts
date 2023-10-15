@@ -9,8 +9,14 @@ import {
   IsInt,
   IsIn,
 } from 'class-validator';
-import { CurrencyCode, currencyCodeArrays } from '../currencies/currencies.type';
-import { TransactionType, transactionTypeArrays } from '../transactions/transactions.type';
+import {
+  CurrencyCode,
+  currencyCodeArrays,
+} from '../currencies/currencies.type';
+import {
+  TransactionType,
+  transactionTypeArrays,
+} from '../transactions/transactions.type';
 
 export class SearchContributionDto {
   @IsOptional()
@@ -90,7 +96,7 @@ export class CreateOneContributionDonationDto {
   @IsNotEmpty()
   @IsString()
   @IsUUID()
-  userId: string;
+  organizationId: string;
 
   @IsNotEmpty()
   @IsString()

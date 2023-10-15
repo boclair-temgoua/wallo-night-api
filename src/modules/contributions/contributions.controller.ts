@@ -97,60 +97,59 @@ export class ContributionsController {
       infoPaymentMethod,
     } = body;
 
-    const findOneCampaign = await this.campaignsService.findOneBy({
-      campaignId,
-    });
-    if (!findOneCampaign)
-      throw new HttpException(
-        `Campaign ${campaignId} don't exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
+    // const findOneCampaign = await this.campaignsService.findOneBy({
+    //   campaignId,
+    // });
+    // if (!findOneCampaign)
+    //   throw new HttpException(
+    //     `Campaign ${campaignId} don't exists please change`,
+    //     HttpStatus.NOT_FOUND,
+    //   );
 
-    const findOneCurrency = await this.currenciesService.findOneBy({
-      code: currency,
-    });
-    const { amountConvert } = validationAmount({
-      amount: amount,
-      currency: findOneCurrency,
-    });
+    // const findOneCurrency = await this.currenciesService.findOneBy({
+    //   code: currency,
+    // });
+    // const { amountConvert } = validationAmount({
+    //   amount: amount,
+    //   currency: findOneCurrency,
+    // });
 
-    /** Create payment stripe */
-    meanOfPayment === 'CARD' && infoPaymentMethod?.id
-      ? await this.bullingService.stripeMethod({
-          amount: amountConvert * 100,
-          currency: 'EUR',
-          fullName: 'Inconnu',
-          email: 'email@inconnu.com',
-          description: `Contribution campaign ${findOneCampaign?.title}`,
-          infoPaymentMethod: infoPaymentMethod,
-        })
-      : null;
+    // /** Create payment stripe */
+    // meanOfPayment === 'CARD' && infoPaymentMethod?.id
+    //   ? await this.bullingService.stripeMethod({
+    //       amount: amountConvert * 100,
+    //       currency: 'EUR',
+    //       fullName: 'Inconnu',
+    //       email: 'email@inconnu.com',
+    //       description: `Contribution campaign ${findOneCampaign?.title}`,
+    //       infoPaymentMethod: infoPaymentMethod,
+    //     })
+    //   : null;
 
-    /** create contribution */
-    const contribution = await this.contributionsService.createOne({
-      amount: amount * 100,
-      campaignId,
-      amountConvert: amountConvert * 100,
-      currencyId: findOneCurrency?.id,
-      type: 'CAMPAIGN',
-    });
+    // /** create contribution */
+    // const contribution = await this.contributionsService.createOne({
+    //   amount: amount * 100,
+    //   campaignId,
+    //   amountConvert: amountConvert * 100,
+    //   currencyId: findOneCurrency?.id,
+    //   type: 'CAMPAIGN',
+    // });
 
-    /** Create transaction */
-    await this.transactionsService.createOne({
-      contributionId: contribution?.id,
-      description: `Contribution campaign ${findOneCampaign?.title}`,
-      amount: contribution?.amount,
-      userId: findOneCampaign?.userId,
-      userReceiveId: findOneCampaign?.userId,
-      userSendId: userSendId,
-      campaignId: findOneCampaign?.id,
-    });
+    // /** Create transaction */
+    // await this.transactionsService.createOne({
+    //   contributionId: contribution?.id,
+    //   description: `Contribution campaign ${findOneCampaign?.title}`,
+    //   amount: contribution?.amount,
+    //   userSendId: userSendId,
+    //   campaignId: findOneCampaign?.id,
+    //   organizationId: findOneCampaign?.organizationId,
+    // });
 
-    /** Update wallet */
-    await this.walletsService.incrementOne({
-      userId: findOneCampaign?.userId,
-      amount: contribution?.amountConvert,
-    });
+    // /** Update wallet */
+    // await this.walletsService.incrementOne({
+    //   organizationId: findOneCampaign?.organizationId,
+    //   amount: contribution?.amountConvert,
+    // });
 
     return reply({ res, results: 'contribution save successfully' });
   }
@@ -164,58 +163,58 @@ export class ContributionsController {
   ) {
     const { giftId, userSendId, meanOfPayment, infoPaymentMethod } = body;
 
-    const findOneGift = await this.giftsService.findOneBy({
-      giftId,
-    });
-    if (!findOneGift)
-      throw new HttpException(
-        `Gift ${giftId} don't exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
+    // const findOneGift = await this.giftsService.findOneBy({
+    //   giftId,
+    // });
+    // if (!findOneGift)
+    //   throw new HttpException(
+    //     `Gift ${giftId} don't exists please change`,
+    //     HttpStatus.NOT_FOUND,
+    //   );
 
-    const { amountConvert } = validationAmount({
-      amount: findOneGift?.amount / 100,
-      currency: findOneGift?.currency,
-    });
+    // const { amountConvert } = validationAmount({
+    //   amount: findOneGift?.amount / 100,
+    //   currency: findOneGift?.currency,
+    // });
 
-    /** Create payment stripe */
-    meanOfPayment === 'CARD' && infoPaymentMethod?.id
-      ? await this.bullingService.stripeMethod({
-          amount: amountConvert * 100,
-          currency: 'EUR',
-          fullName: 'Inconnu',
-          email: 'email@inconnu.com',
-          description: `Contribution gift ${findOneGift?.title}`,
-          infoPaymentMethod: infoPaymentMethod,
-        })
-      : null;
+    // /** Create payment stripe */
+    // meanOfPayment === 'CARD' && infoPaymentMethod?.id
+    //   ? await this.bullingService.stripeMethod({
+    //       amount: amountConvert * 100,
+    //       currency: 'EUR',
+    //       fullName: 'Inconnu',
+    //       email: 'email@inconnu.com',
+    //       description: `Contribution gift ${findOneGift?.title}`,
+    //       infoPaymentMethod: infoPaymentMethod,
+    //     })
+    //   : null;
 
-    /** create contribution */
-    const contribution = await this.contributionsService.createOne({
-      amount: Number(findOneGift?.amount),
-      giftId: findOneGift?.id,
-      currencyId: findOneGift?.currencyId,
-      amountConvert: amountConvert * 100,
-      type: 'GIFT',
-    });
+    // /** create contribution */
+    // const contribution = await this.contributionsService.createOne({
+    //   amount: Number(findOneGift?.amount),
+    //   giftId: findOneGift?.id,
+    //   currencyId: findOneGift?.currencyId,
+    //   amountConvert: amountConvert * 100,
+    //   type: 'GIFT',
+    // });
 
-    /** create transaction */
-    await this.transactionsService.createOne({
-      contributionId: contribution?.id,
-      description: `Contribution gift ${findOneGift?.title}`,
-      amount: contribution?.amount,
-      userId: findOneGift?.userId,
-      userReceiveId: findOneGift?.userId,
-      userSendId: userSendId,
-      giftId: findOneGift?.id,
-      type: meanOfPayment,
-    });
+    // /** create transaction */
+    // await this.transactionsService.createOne({
+    //   contributionId: contribution?.id,
+    //   description: `Contribution gift ${findOneGift?.title}`,
+    //   amount: contribution?.amount,
+    //   userId: findOneGift?.userId,
+    //   userReceiveId: findOneGift?.userId,
+    //   userSendId: userSendId,
+    //   giftId: findOneGift?.id,
+    //   type: meanOfPayment,
+    // });
 
-    /** Update wallet */
-    await this.walletsService.incrementOne({
-      userId: findOneGift?.userId,
-      amount: contribution?.amountConvert,
-    });
+    // /** Update wallet */
+    // await this.walletsService.incrementOne({
+    //   organizationId: findOneGift?.organizationId,
+    //   amount: contribution?.amountConvert,
+    // });
 
     return reply({ res, results: 'contribution save successfully' });
   }
@@ -228,68 +227,67 @@ export class ContributionsController {
     @Body() body: CreateOneContributionDonationDto,
   ) {
     const {
-      userId,
       amount,
       currency,
       userSendId,
       meanOfPayment,
       infoPaymentMethod,
+      organizationId,
     } = body;
 
-    const findOneUser = await this.usersService.findOneBy({
-      userId,
-    });
-    if (!findOneUser)
-      throw new HttpException(
-        `User ${userId} don't exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
+    // const findOneUser = await this.usersService.findOneBy({
+    //   organizationId,
+    // });
+    // if (!findOneUser)
+    //   throw new HttpException(
+    //     `User ${organizationId} don't exists please change`,
+    //     HttpStatus.NOT_FOUND,
+    //   );
 
-    const findOneCurrency = await this.currenciesService.findOneBy({
-      code: currency,
-    });
-    const { amountConvert } = validationAmount({
-      amount: amount,
-      currency: findOneCurrency,
-    });
+    // const findOneCurrency = await this.currenciesService.findOneBy({
+    //   code: currency,
+    // });
+    // const { amountConvert } = validationAmount({
+    //   amount: amount,
+    //   currency: findOneCurrency,
+    // });
 
-    /** Create payment stripe */
-    meanOfPayment === 'CARD' && infoPaymentMethod?.id
-      ? await this.bullingService.stripeMethod({
-          amount: amountConvert * 100,
-          currency: 'EUR',
-          fullName: 'Inconnu',
-          email: 'email@inconnu.com',
-          description: `Donation ${amount} ${currency}`,
-          infoPaymentMethod: infoPaymentMethod,
-        })
-      : null;
+    // /** Create payment stripe */
+    // meanOfPayment === 'CARD' && infoPaymentMethod?.id
+    //   ? await this.bullingService.stripeMethod({
+    //       amount: amountConvert * 100,
+    //       currency: 'EUR',
+    //       fullName: 'Inconnu',
+    //       email: 'email@inconnu.com',
+    //       description: `Donation ${amount} ${currency}`,
+    //       infoPaymentMethod: infoPaymentMethod,
+    //     })
+    //   : null;
 
-    /** Create contribution */
-    const contribution = await this.contributionsService.createOne({
-      amount: amount * 100,
-      userId: findOneUser?.id,
-      amountConvert: amountConvert * 100,
-      currencyId: findOneCurrency?.id,
-      type: 'DONATION',
-    });
+    // /** Create contribution */
+    // const contribution = await this.contributionsService.createOne({
+    //   amount: amount * 100,
+    //   userId: findOneUser?.id,
+    //   amountConvert: amountConvert * 100,
+    //   currencyId: findOneCurrency?.id,
+    //   type: 'DONATION',
+    // });
 
-    /** Create transaction */
-    await this.transactionsService.createOne({
-      contributionId: contribution?.id,
-      description: `Donation ${amount} ${currency}`,
-      amount: contribution?.amount,
-      userId: userId,
-      userReceiveId: findOneUser?.id,
-      userSendId: userSendId ?? null,
-      type: meanOfPayment,
-    });
+    // /** Create transaction */
+    // await this.transactionsService.createOne({
+    //   contributionId: contribution?.id,
+    //   description: `Donation ${amount} ${currency}`,
+    //   amount: contribution?.amount,
+    //   organizationId: organizationId,
+    //   userSendId: userSendId ?? null,
+    //   type: meanOfPayment,
+    // });
 
-    /** Update wallet */
-    await this.walletsService.incrementOne({
-      userId: userId,
-      amount: contribution?.amountConvert,
-    });
+    // /** Update wallet */
+    // await this.walletsService.incrementOne({
+    //   organizationId: organizationId,
+    //   amount: contribution?.amountConvert,
+    // });
 
     return reply({ res, results: 'contribution save successfully' });
   }

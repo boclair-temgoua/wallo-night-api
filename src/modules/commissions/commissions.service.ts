@@ -94,10 +94,6 @@ export class CommissionsService {
       .leftJoin('commission.user', 'user')
       .leftJoin('user.profile', 'profile');
 
-    if (userId) {
-      query = query.andWhere('commission.userId = :userId', { userId });
-    }
-
     if (status) {
       query = query.andWhere('commission.status = :status', { status });
     }

@@ -123,7 +123,8 @@ export class PostsService {
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
-      .leftJoin('post.user', 'user')
+      .leftJoin('post.organization', 'organization')
+      .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
 
     if (likeUserId) {
@@ -303,7 +304,8 @@ export class PostsService {
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
-      .leftJoin('post.user', 'user')
+      .leftJoin('post.organization', 'organization')
+      .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
 
     if (likeUserId) {

@@ -32,11 +32,10 @@ export class TransactionsService {
     const {
       search,
       pagination,
-      userId,
       model,
       campaignId,
       userSendId,
-      userReceiveId,
+      organizationId,
     } = selections;
 
     let query = this.driver
@@ -52,8 +51,7 @@ export class TransactionsService {
       .addSelect('transaction.contributionId', 'contributionId')
       .addSelect('transaction.giftId', 'giftId')
       .addSelect('transaction.userSendId', 'userSendId')
-      .addSelect('transaction.userReceiveId', 'userReceiveId')
-      .addSelect('transaction.userId', 'userId')
+      .addSelect('transaction.organizationId', 'organizationId')
       .addSelect('transaction.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -82,45 +80,25 @@ export class TransactionsService {
         'url', "profileSend"."url"
     ) AS "profileSend"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-        'id', "profileReceive"."id",
-        'userId', "userReceive"."id",
-        'email', "userReceive"."email",
-        'fullName', "profileReceive"."fullName",
-        'firstName', "profileReceive"."firstName",
-        'lastName', "profileReceive"."lastName",
-        'image', "profileReceive"."image",
-        'color', "profileReceive"."color",
-        'countryId', "profileReceive"."countryId",
-        'url', "profileReceive"."url"
-    ) AS "profileReceive"`,
-      )
       .where('transaction.deletedAt IS NULL')
       .leftJoin('transaction.userSend', 'userSend')
-      .leftJoin('transaction.userReceive', 'userReceive')
       .leftJoin('transaction.gift', 'gift')
       .leftJoin('transaction.campaign', 'campaign')
-      .leftJoin('userSend.profile', 'profileSend')
-      .leftJoin('userReceive.profile', 'profileReceive');
+      .leftJoin('userSend.profile', 'profileSend');
 
     if (model) {
       query = query.andWhere('transaction.model = :model', { model });
     }
 
-    if (userId) {
-      query = query.andWhere('transaction.userId = :userId', { userId });
-    }
-
-    if (userReceiveId) {
-      query = query.andWhere('transaction.userReceiveId = :userReceiveId', {
-        userReceiveId,
-      });
-    }
-
     if (userSendId) {
       query = query.andWhere('transaction.userSendId = :userSendId', {
         userSendId,
+      });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('transaction.organizationId = :organizationId', {
+        organizationId,
       });
     }
 
@@ -183,10 +161,8 @@ export class TransactionsService {
       userSendId,
       description,
       subscribeId,
-      userReceiveId,
       contributionId,
       organizationId,
-      userId,
       token,
       type,
       giftId,
@@ -198,9 +174,7 @@ export class TransactionsService {
     transaction.currency = currency;
     transaction.campaignId = campaignId;
     transaction.userSendId = userSendId;
-    transaction.userReceiveId = userReceiveId;
     transaction.amount = amount;
-    transaction.userId = userId;
     transaction.type = type;
     transaction.token = token;
     transaction.giftId = giftId;

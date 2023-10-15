@@ -93,13 +93,12 @@ export class SubscribesUtil {
       const transaction = await this.transactionsService.createOne({
         token: token,
         currency: currency,
-        userId: userId,
         model: model,
         userSendId: userId,
-        userReceiveId: findOneMembership?.userId,
         subscribeId: findOneSubscribe?.id,
         amount: amount?.value,
         description: description,
+        organizationId: findOneMembership?.organizationId,
       });
       return { transaction };
     } else {
@@ -118,9 +117,8 @@ export class SubscribesUtil {
         model: model,
         token: token,
         currency: currency,
-        userId: userId,
         userSendId: userId,
-        userReceiveId: findOneMembership?.userId,
+        organizationId: findOneMembership?.organizationId,
         subscribeId: subscribe?.id,
         amount: amount?.value,
         description: description,

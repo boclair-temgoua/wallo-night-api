@@ -17,6 +17,7 @@ export const nextStepArrays = [
 export type JwtPayloadType = {
   id: string;
   profileId: string;
+  organizationId: string;
 };
 
 export type GetUsersSelections = {
@@ -31,6 +32,7 @@ export type GetOneUserSelections = {
   token?: User['token'];
   followerId?: User['id'];
   username?: User['username'];
+  organizationId?: User['organizationId'];
 };
 
 export type UpdateUserSelections = {

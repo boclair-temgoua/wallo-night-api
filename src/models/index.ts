@@ -16,6 +16,7 @@ export * from './Subscribe';
 export * from './Organization';
 export * from './Post';
 export * from './Follow';
+export * from './Organization';
 export * from './Comment';
 export * from './Upload';
 export * from './Campaign';

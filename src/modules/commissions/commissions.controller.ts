@@ -63,7 +63,7 @@ export class CommissionsController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { userId, status } = query;
+    const { organizationId, status } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -71,7 +71,7 @@ export class CommissionsController {
 
     const commissions = await this.commissionsService.findAll({
       search,
-      userId,
+      organizationId,
       pagination,
       status: status?.toUpperCase(),
     });
@@ -260,19 +260,13 @@ export class CommissionsController {
   }
 
   /** Delete one Commissions */
-  @Delete(`/delete/:commissionId`)
+  @Delete(`/:commissionId`)
   @UseGuards(JwtAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,
-    @Body() body: PasswordBodyDto,
     @Param('commissionId', ParseUUIDPipe) commissionId: string,
   ) {
-    const { user } = req;
-    const { password } = body;
-    if (!user?.checkIfPasswordMatch(password))
-      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
-
     await this.commissionsService.updateOne(
       { commissionId },
       { deletedAt: new Date() },

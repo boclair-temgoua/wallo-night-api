@@ -133,7 +133,7 @@ export class MembershipsService {
   async findOneBy(
     selections: GetOneMembershipsSelections,
   ): Promise<Membership> {
-    const { membershipId, userId, organizationId } = selections;
+    const { membershipId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('membership')
       .select('membership.id', 'id')
@@ -190,10 +190,6 @@ export class MembershipsService {
       query = query.andWhere('membership.organizationId = :organizationId', {
         organizationId,
       });
-    }
-
-    if (userId) {
-      query = query.andWhere('membership.userId = :userId', { userId });
     }
 
     const [error, result] = await useCatch(query.getRawOne());

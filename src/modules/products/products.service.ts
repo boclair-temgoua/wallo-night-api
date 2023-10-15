@@ -136,7 +136,8 @@ export class ProductsService {
       .leftJoin('product.category', 'category')
       .leftJoin('product.currency', 'currency')
       .leftJoin('product.discount', 'discount')
-      .leftJoin('product.user', 'user')
+      .leftJoin('product.organization', 'organization')
+      .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
 
     if (userId) {
@@ -290,7 +291,8 @@ export class ProductsService {
       .leftJoin('product.category', 'category')
       .leftJoin('product.currency', 'currency')
       .leftJoin('product.discount', 'discount')
-      .leftJoin('product.user', 'user')
+      .leftJoin('product.organization', 'organization')
+      .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
 
     if (productId) {

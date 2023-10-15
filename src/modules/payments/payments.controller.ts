@@ -35,12 +35,12 @@ export class PaymentsController {
         currency: currency.toUpperCase(),
         token: reference,
         model: 'MEMBERSHIP',
-        description:`Subscription ${amount?.month} month`
+        description: `Subscription ${amount?.month} month`,
       });
 
     if (transaction?.token) {
       await this.walletsService.incrementOne({
-        userId: transaction?.userReceiveId,
+        organizationId: transaction?.organizationId,
         amount: transaction?.amount,
       });
     }
@@ -77,12 +77,12 @@ export class PaymentsController {
         type: 'CARD',
         token: reference,
         model: 'MEMBERSHIP',
-        description: paymentIntents?.description
+        description: paymentIntents?.description,
       });
 
     if (transaction?.token) {
       await this.walletsService.incrementOne({
-        userId: transaction?.userReceiveId,
+        organizationId: transaction?.organizationId,
         amount: transaction?.amount,
       });
     }

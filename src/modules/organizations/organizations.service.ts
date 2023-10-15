@@ -29,7 +29,9 @@ export class OrganizationsService {
       .addSelect('organization.name', 'name')
       .addSelect('organization.color', 'color')
       .addSelect('organization.image', 'image')
-      .addSelect('organization.userId', 'userId');
+      .addSelect('organization.userId', 'userId')
+      .addSelect('organization.firstAddress', 'firstAddress')
+      .addSelect('organization.secondAddress', 'secondAddress');
 
     if (organizationId) {
       query = query.where('organization.id = :id', { id: organizationId });

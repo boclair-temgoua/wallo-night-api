@@ -4,8 +4,15 @@ import {
   Column,
   Generated,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
+import { Wallet } from './Wallet';
+import { User } from './User';
+import { Transaction } from './Transaction';
+import { Post } from './Post';
+import { Product } from './Product';
 
 @Entity('organization')
 export class Organization extends BaseEntity {
@@ -27,6 +34,28 @@ export class Organization extends BaseEntity {
   @Column({ nullable: true })
   image?: string;
 
+  @OneToOne(() => Wallet, (wallet) => wallet.organization, {
+    onDelete: 'CASCADE',
+  })
+  wallet?: Wallet;
+
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
+  @OneToOne(() => User, (user) => user.organization, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
+  user?: User;
+
+  @OneToMany(() => User, (user) => user.organization)
+  users?: User[];
+
+  @OneToMany(() => Post, (post) => post.organization)
+  posts?: Post[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.organization)
+  transactions?: Transaction[];
+
+  @OneToMany(() => Product, (product) => product.organization)
+  products?: Product[];
 }

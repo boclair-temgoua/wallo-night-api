@@ -36,7 +36,7 @@ export class DiscountsController {
     const { user } = req;
 
     const discounts = await this.discountsService.findAllNotPaginate({
-      userId: user?.id,
+      organizationId: user?.organizationId,
     });
 
     return reply({ res, results: discounts });
@@ -59,7 +59,7 @@ export class DiscountsController {
     const discounts = await this.discountsService.findAll({
       search,
       pagination,
-      userId: user?.id,
+      organizationId: user?.organizationId,
     });
 
     return reply({ res, results: discounts });
@@ -75,7 +75,11 @@ export class DiscountsController {
   ) {
     const { user } = req;
 
-    await this.discountsService.createOne({ ...body, userId: user?.id });
+    await this.discountsService.createOne({
+      ...body,
+      userId: user?.id,
+      organizationId: user?.organizationId,
+    });
 
     return reply({ res, results: 'discount created successfully' });
   }

@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
 import { User } from './User';
+import { Organization } from './Organization';
 
 @Entity('wallet')
 export class Wallet extends BaseEntity {
@@ -22,8 +23,10 @@ export class Wallet extends BaseEntity {
   amount: number;
 
   @Column({ type: 'uuid', nullable: true })
-  userId?: string;
-  @OneToOne(() => User, (user) => user.wallet, { onDelete: 'CASCADE' })
+  organizationId?: string;
+  @OneToOne(() => Organization, (organization) => organization.wallet, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
-  user?: Relation<User>;
+  organization?: Relation<Organization>;
 }

@@ -26,7 +26,7 @@ export class DiscountsService {
   ) {}
 
   async findAll(selections: GetDiscountsSelections): Promise<any> {
-    const { search, pagination, userId } = selections;
+    const { search, pagination, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('discount')
@@ -53,8 +53,10 @@ export class DiscountsService {
       )
       .where('discount.deletedAt IS NULL');
 
-    if (userId) {
-      query = query.andWhere('discount.userId = :userId', { userId });
+    if (organizationId) {
+      query = query.andWhere('discount.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (search) {
@@ -89,7 +91,7 @@ export class DiscountsService {
   }
 
   async findAllNotPaginate(selections: GetDiscountsSelections): Promise<any> {
-    const { search, userId } = selections;
+    const { search, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('discount')
@@ -116,8 +118,10 @@ export class DiscountsService {
       )
       .where('discount.deletedAt IS NULL');
 
-    if (userId) {
-      query = query.andWhere('discount.userId = :userId', { userId });
+    if (organizationId) {
+      query = query.andWhere('discount.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (search) {
@@ -164,6 +168,7 @@ export class DiscountsService {
       expiredAt,
       startedAt,
       description,
+      organizationId,
       enableExpiredAt,
     } = options;
 
@@ -174,6 +179,7 @@ export class DiscountsService {
     discount.percent = percent;
     discount.startedAt = startedAt;
     discount.expiredAt = expiredAt;
+    discount.organizationId = organizationId;
     discount.enableExpiredAt = enableExpiredAt;
 
     const query = this.driver.save(discount);

@@ -27,6 +27,7 @@ import {
   Profile,
   Product,
   Discount,
+  Organization,
 } from './index';
 import { Follow } from './Follow';
 import { Like } from './Like';
@@ -55,6 +56,9 @@ export class User extends BaseDeleteEntity {
   @Column({ nullable: true })
   token?: string;
 
+  @Column({ default: 'USER', nullable: true })
+  permission?: string;
+
   @Column({ nullable: true })
   password?: string;
 
@@ -63,17 +67,17 @@ export class User extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.users, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Organization;
 
   @Column({ type: 'uuid', nullable: true })
   profileId?: string;
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
   @JoinColumn()
   profile?: Profile;
-
-  @OneToOne(() => Wallet, (wallet) => wallet.user, {
-    onDelete: 'CASCADE',
-  })
-  wallet?: Wallet;
 
   @OneToMany(() => Campaign, (campaign) => campaign.user)
   campaigns?: Campaign[];
@@ -93,7 +97,7 @@ export class User extends BaseDeleteEntity {
   @OneToMany(() => Product, (product) => product.user)
   products?: Product[];
 
-  @OneToMany(() => Transaction, (transaction) => transaction.user, {
+  @OneToMany(() => Transaction, (transaction) => transaction.userSend, {
     onDelete: 'CASCADE',
   })
   transactions?: Transaction[];

@@ -24,15 +24,17 @@ export class WalletsService {
   ) {}
 
   async findOneBy(selections: GetOneWalletSelections): Promise<Wallet> {
-    const { userId, walletId } = selections;
+    const { walletId, organizationId } = selections;
     let query = this.driver.createQueryBuilder('wallet');
 
     if (walletId) {
       query = query.where('wallet.id = :id', { id: walletId });
     }
 
-    if (userId) {
-      query = query.where('wallet.userId = :userId', { userId });
+    if (organizationId) {
+      query = query.where('wallet.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     const [error, result] = await useCatch(query.getOne());
@@ -44,14 +46,14 @@ export class WalletsService {
 
   /** Create one Wallet to the database. */
   async createOne(options: CreateWalletOptions): Promise<Wallet> {
-    const { accountId, amount, userId } = options;
+    const { organizationId, amount } = options;
 
     const wallet = new Wallet();
     wallet.accountId = `${formateNowDateYYMMDD(new Date())}${generateNumber(
       10,
     )}`;
     wallet.amount = amount;
-    wallet.userId = userId;
+    wallet.organizationId = organizationId;
 
     const query = this.driver.save(wallet);
 
@@ -66,7 +68,7 @@ export class WalletsService {
     selections: UpdateWalletSelections,
     options: UpdateWalletOptions,
   ): Promise<Wallet> {
-    const { walletId, userId } = selections;
+    const { walletId, organizationId } = selections;
     const { amount } = options;
 
     let findQuery = this.driver.createQueryBuilder('wallet');
@@ -77,8 +79,10 @@ export class WalletsService {
       });
     }
 
-    if (userId) {
-      findQuery = findQuery.where('wallet.userId = :userId', { userId });
+    if (organizationId) {
+      findQuery = findQuery.where('wallet.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     const [errorFind, wallet] = await useCatch(findQuery.getOne());
@@ -96,22 +100,22 @@ export class WalletsService {
 
   /** IncrementOne one Wallet to the database. */
   async incrementOne(options: {
-    userId: string;
+    organizationId: string;
     amount: number;
   }): Promise<Wallet> {
-    const { userId, amount } = options;
+    const { organizationId, amount } = options;
 
     const findOneWallet = await this.findOneBy({
-      userId,
+      organizationId,
     });
     if (!findOneWallet)
       throw new HttpException('Wallet not found', HttpStatus.NOT_FOUND);
 
     const wallet = await this.updateOne(
-      { userId: findOneWallet?.userId },
+      { organizationId: findOneWallet?.organizationId },
       { amount: findOneWallet?.amount + amount },
     );
-    
+
     return wallet;
   }
 }

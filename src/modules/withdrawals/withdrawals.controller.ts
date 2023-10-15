@@ -64,7 +64,7 @@ export class WithdrawalsController {
     const { title, amount, description, withdrawalUserId } = body;
 
     const findOneWallet = await this.walletsService.findOneBy({
-      userId: user?.id,
+      organizationId: user?.organizationId,
     });
     if (!findOneWallet)
       throw new HttpException(

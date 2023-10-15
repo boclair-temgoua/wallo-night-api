@@ -16,7 +16,7 @@ export class FilterTransactionsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userId: string;
+  organizationId: string;
 
   @IsOptional()
   @IsString()

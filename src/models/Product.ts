@@ -13,13 +13,12 @@ import {
 
 import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Category } from './Category';
 import { OrderProduct } from './OrderProduct';
 import { Discount } from './Discount';
-import { Cart, Membership, User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
 import { WhoCanSeeType } from '../app/utils/search-query';
 import { ProductType } from '../modules/products/products.dto';
+import { Cart, Category, User, Membership, Organization } from './index';
 
 @Entity('product')
 export class Product extends BaseDeleteEntity {
@@ -74,9 +73,6 @@ export class Product extends BaseDeleteEntity {
   @Column({ default: 'ACTIVE' })
   status?: ProductStatus;
 
-  @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
-
   @Column({ default: 'PHYSICAL' })
   productType?: ProductType;
 
@@ -95,14 +91,6 @@ export class Product extends BaseDeleteEntity {
   @JoinColumn()
   membership?: Relation<Membership>;
 
-  // @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
-  // @JoinColumn()
-  // user: User;
-
-  // @ManyToOne(() => ImageUpload, (imageUpload) => imageUpload.product)
-  // @JoinColumn()
-  // imageUpload: ImageUpload;
-
   @Column({ type: 'uuid', nullable: true })
   discountId: string;
   @ManyToOne(() => Discount, (discount) => discount.products)
@@ -115,20 +103,19 @@ export class Product extends BaseDeleteEntity {
   @JoinColumn()
   currency: Currency;
 
-  // @OneToMany(() => ImageUpload, (imageUpload) => imageUpload.product, { onDelete: 'CASCADE' })
-  // imageUploads: ImageUpload[];
-
-  // @OneToMany(() => Comment, (comment) => comment.product, { onDelete: 'CASCADE' })
-  // comments: Comment[];
-
-  // @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product, { onDelete: 'CASCADE' })
-  // orderProducts: OrderProduct[];
-
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.products, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Organization;
 
   @OneToMany(() => Cart, (cart) => cart.product)
   carts: Cart[];
