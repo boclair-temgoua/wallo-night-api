@@ -13,10 +13,6 @@ import {
   MinDate,
   IsIn,
 } from 'class-validator';
-import {
-  CurrencyCode,
-  currencyCodeArrays,
-} from '../currencies/currencies.type';
 
 export class CreateOrUpdateMembershipsDto {
   @IsNotEmpty()

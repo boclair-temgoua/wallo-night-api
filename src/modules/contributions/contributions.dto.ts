@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import {
   CurrencyCode,
-  currencyCodeArrays,
+  currenciesCodeArrays,
 } from '../currencies/currencies.type';
 import {
   TransactionType,
@@ -38,7 +38,7 @@ export class SearchContributionDto {
 export class CreateOneContributionDto {
   @IsNotEmpty()
   @IsString()
-  @IsIn(currencyCodeArrays)
+  @IsIn(currenciesCodeArrays)
   currency: CurrencyCode;
 
   @IsNotEmpty()
@@ -100,7 +100,7 @@ export class CreateOneContributionDonationDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsIn(currencyCodeArrays)
+  @IsIn(currenciesCodeArrays)
   currency: CurrencyCode;
 
   @IsNotEmpty()

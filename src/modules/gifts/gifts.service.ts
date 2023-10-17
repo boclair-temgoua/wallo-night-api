@@ -194,7 +194,7 @@ export class GiftsService {
       deletedAt,
     } = options;
 
-    let findQuery = this.driver.createQueryBuilder('Gift');
+    let findQuery = this.driver.createQueryBuilder('gift');
 
     if (giftId) {
       findQuery = findQuery.where('gift.id = :id', { id: giftId });

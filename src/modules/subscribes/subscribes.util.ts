@@ -9,10 +9,13 @@ import {
 import { FollowsService } from '../follows/follows.service';
 import { TransactionType } from '../transactions/transactions.type';
 import { FilterQueryType } from '../../app/utils/search-query';
+import { AmountModel } from '../wallets/wallets.type';
+import { TransactionsUtil } from '../transactions/transactions.util';
 
 @Injectable()
 export class SubscribesUtil {
   constructor(
+    private readonly transactionsUtil: TransactionsUtil,
     private readonly followsService: FollowsService,
     private readonly subscribesService: SubscribesService,
     private readonly membershipsService: MembershipsService,
@@ -20,16 +23,25 @@ export class SubscribesUtil {
   ) {}
 
   async createOrUpdateOneSubscribe(options: {
-    amount: { value: number; month: number; currency: string };
+    amount: AmountModel;
     userId: string;
     type?: TransactionType;
     model: FilterQueryType;
     membershipId: string;
     description: string;
     token: string;
+    amountValueConvert: number;
   }): Promise<any> {
-    const { membershipId, description, type, userId, amount, model, token } =
-      options;
+    const {
+      membershipId,
+      amountValueConvert,
+      description,
+      type,
+      userId,
+      amount,
+      model,
+      token,
+    } = options;
 
     const findOneMembership = await this.membershipsService.findOneBy({
       membershipId,
@@ -90,11 +102,12 @@ export class SubscribesUtil {
         subscribeId: findOneSubscribe?.id,
         amount: amount?.value,
         description: description,
+        amountConvert: amountValueConvert,
         organizationId: findOneMembership?.organizationId,
       });
+
       return { transaction };
     } else {
-      console.log('amount =======>', amount);
       const subscribe = await this.subscribesService.createOne({
         membershipId,
         userId: userId,
@@ -115,9 +128,9 @@ export class SubscribesUtil {
         organizationId: findOneMembership?.organizationId,
         subscribeId: subscribe?.id,
         amount: amount?.value,
+        amountConvert: amountValueConvert,
         description: description,
       });
-
       return { transaction };
     }
   }

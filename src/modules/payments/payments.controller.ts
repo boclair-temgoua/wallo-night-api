@@ -12,12 +12,14 @@ import { PaymentsService } from './payments.service';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { WalletsService } from '../wallets/wallets.service';
 import { CreateSubscribePaymentsDto } from './payments.dto';
+import { TransactionsUtil } from '../transactions/transactions.util';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(
     private readonly paymentsService: PaymentsService,
     private readonly walletsService: WalletsService,
+    private readonly transactionsUtil: TransactionsUtil,
     private readonly subscribesUtil: SubscribesUtil,
   ) {}
 
@@ -29,6 +31,12 @@ export class PaymentsController {
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const { amount, membershipId, userId, reference, paymentMethod } = body;
+
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: amount?.currency,
+        value: amount?.value,
+      });
 
     const { transaction } =
       await this.subscribesUtil.createOrUpdateOneSubscribe({
@@ -43,12 +51,13 @@ export class PaymentsController {
         token: reference,
         model: 'MEMBERSHIP',
         description: `Subscription ${amount?.month} month`,
+        amountValueConvert: amountValueConvert * 100,
       });
 
     if (transaction?.token) {
       await this.walletsService.incrementOne({
+        amount: transaction?.amountConvert,
         organizationId: transaction?.organizationId,
-        amount: transaction?.amount,
       });
     }
 
@@ -63,6 +72,12 @@ export class PaymentsController {
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const { amount, membershipId, userId, reference, paymentMethod } = body;
+
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: amount?.currency,
+        value: amount?.value,
+      });
 
     const { paymentIntents } = await this.paymentsService.stripeMethod({
       paymentMethod,
@@ -92,12 +107,13 @@ export class PaymentsController {
           token: reference,
           model: 'MEMBERSHIP',
           description: paymentIntents?.description,
+          amountValueConvert: amountValueConvert * 100,
         });
 
       if (transaction?.token) {
         await this.walletsService.incrementOne({
+          amount: transaction?.amountConvert,
           organizationId: transaction?.organizationId,
-          amount: transaction?.amount,
         });
       }
     }

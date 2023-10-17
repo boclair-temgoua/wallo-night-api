@@ -26,8 +26,11 @@ export class Transaction extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({ type: 'bigint', nullable: true })
+  @Column({ type: 'float', nullable: true })
   amount: number;
+
+  @Column({ type: 'float', nullable: true })
+  amountConvert: number;
 
   @Column({ nullable: true })
   title: string;

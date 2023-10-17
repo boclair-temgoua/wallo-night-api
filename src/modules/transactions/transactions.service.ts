@@ -52,6 +52,7 @@ export class TransactionsService {
       .addSelect('transaction.giftId', 'giftId')
       .addSelect('transaction.userSendId', 'userSendId')
       .addSelect('transaction.organizationId', 'organizationId')
+      .addSelect('transaction.amountConvert', 'amountConvert')
       .addSelect('transaction.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -163,6 +164,7 @@ export class TransactionsService {
       subscribeId,
       contributionId,
       organizationId,
+      amountConvert,
       token,
       type,
       giftId,
@@ -178,6 +180,7 @@ export class TransactionsService {
     transaction.type = type;
     transaction.token = token;
     transaction.giftId = giftId;
+    transaction.amountConvert = amountConvert;
     transaction.organizationId = organizationId;
     transaction.subscribeId = subscribeId;
     transaction.contributionId = contributionId;

@@ -27,7 +27,7 @@ export class Commission extends BaseDeleteEntity {
   @Column({ nullable: true })
   urlMedia: string;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ type: 'float', default: 0 })
   price: number;
 
   @Column({ type: 'text', nullable: true })

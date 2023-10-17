@@ -13,7 +13,10 @@ import {
   MinDate,
   IsIn,
 } from 'class-validator';
-import { CurrencyCode, currencyCodeArrays } from '../currencies/currencies.type';
+import {
+  CurrencyCode,
+  currenciesCodeArrays,
+} from '../currencies/currencies.type';
 
 export class CreateOrUpdateGiftsDto {
   @IsNotEmpty()
@@ -31,7 +34,7 @@ export class CreateOrUpdateGiftsDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsIn(currencyCodeArrays)
+  @IsIn(currenciesCodeArrays)
   currency: CurrencyCode;
 
   @IsNotEmpty()

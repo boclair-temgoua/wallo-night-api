@@ -1,5 +1,11 @@
 import { Wallet } from '../../models/Wallet';
 
+export type AmountModel = {
+  value: number;
+  currency: string;
+  month?: number;
+};
+
 export type GetWalletsSelections = {
   search?: string;
 };

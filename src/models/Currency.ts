@@ -22,9 +22,6 @@ export class Currency extends BaseEntity {
   @Column({ type: 'float', default: 0 })
   amount: number;
 
-  @Column({ default: true, type: 'boolean' })
-  isActive: boolean;
-
   @OneToMany(() => Profile, (profile) => profile.currency)
   profiles: Profile[];
 

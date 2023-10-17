@@ -116,6 +116,27 @@ export class UsersController {
     });
   }
 
+  // @Get(`/statistic/:userId`)
+  // async getOneByIdUserStatistic(
+  //   @Res() res,
+  //   @Param('userId', ParseUUIDPipe) userId: string,
+  // ) {
+  //   const findOneUser = await this.usersService.findOneStatistic({
+  //     userId,
+  //   });
+
+  //   if (!findOneUser)
+  //     throw new HttpException(
+  //       `User ${userId} not valid please change`,
+  //       HttpStatus.NOT_FOUND,
+  //     );
+
+  //   return reply({
+  //     res,
+  //     results: findOneUser,
+  //   });
+  // }
+
   @Get(`/profile/show/:profileId`)
   @UseGuards(JwtAuthGuard)
   async getOneByProfileId(

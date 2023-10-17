@@ -1,4 +1,5 @@
 import { IsString, IsOptional } from 'class-validator';
+import { AmountModel } from '../wallets/wallets.type';
 
 export class CreateSubscribePaymentsDto {
   @IsOptional()
@@ -17,5 +18,5 @@ export class CreateSubscribePaymentsDto {
   paymentMethod: any;
 
   @IsOptional()
-  amount: { value: number; month: number; currency: string };
+  amount: AmountModel;
 }

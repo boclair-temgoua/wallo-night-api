@@ -12,9 +12,12 @@ import {
   Membership,
   Transaction,
   Wallet,
+  Currency,
 } from '../../models';
 import { SubscribesService } from '../subscribes/subscribes.service';
 import { WalletsService } from '../wallets/wallets.service';
+import { CurrenciesService } from '../currencies/currencies.service';
+import { TransactionsUtil } from '../transactions/transactions.util';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -22,6 +25,7 @@ import { WalletsService } from '../wallets/wallets.service';
       Follow,
       Membership,
       Wallet,
+      Currency,
       Transaction,
     ]),
   ],
@@ -33,6 +37,8 @@ import { WalletsService } from '../wallets/wallets.service';
     FollowsService,
     SubscribesUtil,
     WalletsService,
+    TransactionsUtil,
+    CurrenciesService,
     MembershipsService,
     TransactionsService,
   ],

@@ -1,5 +1,4 @@
 import { generateNumber } from '../../utils/commons/generate-random';
-// import { MigrationInterface, QueryRunner } from 'typeorm';
 import { Repository, MigrationInterface, QueryRunner } from 'typeorm';
 
 import { faker } from '@faker-js/faker';
@@ -10,32 +9,62 @@ import { AppSeedDataSource } from '../orm/orm-config-seed';
 
 import { Faq } from '../../../models/Faq';
 import * as Slug from 'slug';
+import { getValueCurrencyLiveApi } from '../../../modules/integrations/taux-live';
+import { CurrencySymbolMap } from '../../../modules/currencies/currencies.type';
 
 export class Seeds1590519635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
     const driver = AppSeedDataSource;
     const title = faker.lorem.sentence(5);
 
+    const { rates } = await getValueCurrencyLiveApi();
+
     await driver
       .createQueryBuilder()
       .insert()
       .into(Currency)
       .values([
-        { name: 'Euro', code: 'EUR', symbol: '€', amount: 1 },
-        { name: 'US Dollar', code: 'USD', symbol: '$', amount: 1.1348 },
-        { name: 'Canadian Dollar', code: 'CAD', symbol: '$', amount: 1.4211 },
-        { name: 'Pound Sterling', code: 'GBP', symbol: '£', amount: 0.83633 },
         {
-          name: 'Franc CFA - AC',
-          code: 'XAF',
-          symbol: 'Fcfa',
-          amount: 655.95,
+          code: 'EUR',
+          amount: Number(rates[`EUR`]),
+          name: CurrencySymbolMap['EUR']?.name,
+          symbol: CurrencySymbolMap['EUR']?.symbol,
         },
         {
-          name: 'Franc CFA - AO',
+          code: 'USD',
+          amount: Number(rates[`USD`]),
+          name: CurrencySymbolMap['USD']?.name,
+          symbol: CurrencySymbolMap['USD']?.symbol,
+        },
+        {
+          code: 'CHF',
+          amount: Number(rates[`CHF`]),
+          name: CurrencySymbolMap['CHF']?.name,
+          symbol: CurrencySymbolMap['CHF']?.symbol,
+        },
+        {
+          code: 'CAD',
+          amount: Number(rates[`CAD`]),
+          name: CurrencySymbolMap['CAD']?.name,
+          symbol: CurrencySymbolMap['CAD']?.symbol,
+        },
+        {
+          code: 'GBP',
+          amount: Number(rates[`GBP`]),
+          name: CurrencySymbolMap['GBP']?.name,
+          symbol: CurrencySymbolMap['GBP']?.symbol,
+        },
+        {
+          code: 'XAF',
+          amount: Number(rates[`XAF`]),
+          name: CurrencySymbolMap['XAF']?.name,
+          symbol: CurrencySymbolMap['XOF']?.symbol,
+        },
+        {
           code: 'XOF',
-          symbol: 'Fcfa',
-          amount: 655.95,
+          amount: Number(rates[`XOF`]),
+          name: CurrencySymbolMap['XOF']?.name,
+          symbol: CurrencySymbolMap['XOF']?.symbol,
         },
       ])
       .execute();
