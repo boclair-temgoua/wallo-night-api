@@ -81,7 +81,7 @@ export class OrderEventsUtil {
         {
           text: `${new Date(
             findOneOrderEvent?.event?.dateEvent,
-          ).toLocaleDateString('fr-FR')} - ${findOneOrderEvent?.event
+          ).toLocaleDateString('it-IT')} - ${findOneOrderEvent?.event
             ?.location} - ${findOneOrderEvent?.event?.address}`,
           alignment: 'center',
           style: 'policyText',
