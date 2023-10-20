@@ -53,6 +53,7 @@ export class TransactionsService {
       .addSelect('transaction.model', 'model')
       .addSelect('transaction.quantity', 'quantity')
       .addSelect('transaction.userId', 'userId')
+      .addSelect('transaction.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profileSend"."id",

@@ -36,7 +36,9 @@ export class PaymentsController {
         currency: amount?.currency.toUpperCase(),
         token: reference,
         model: 'EVENT',
-        description: `Pagamento di ${amount?.quantity} evento`,
+        description: `PAYPAL pagamento di ${amount?.quantity} ${
+          amount?.quantity >= 2 ? 'eventi' : 'evento'
+        }`,
       },
     );
 
@@ -63,7 +65,9 @@ export class PaymentsController {
       paymentMethod,
       amount,
       token: reference,
-      description: `Pagamento di ${amount?.quantity} evento`,
+      description: `CARD pagamento di ${amount?.quantity} ${
+        amount?.quantity >= 2 ? 'eventi' : 'evento'
+      }`,
     });
     if (!paymentIntents) {
       throw new HttpException(
