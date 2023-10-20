@@ -64,7 +64,7 @@ export class OrderEventsUtil {
         },
         '\n',
         {
-          qr: `${config.url.client}/events/${orderEvent?.id}/validate`,
+          qr: orderEvent?.id,
           fit: '400',
           foreground: 'black',
           alignment: 'center',
