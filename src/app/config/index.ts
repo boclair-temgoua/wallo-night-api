@@ -172,6 +172,13 @@ export const config = {
       email: process.env.AWS_SMTP_EMAIL,
     },
     /**
+     * Resent smtp
+     */
+    resendSMTP: {
+      apiKey: process.env.RESEND_SMTP_API_KEY,
+      email: process.env.RESEND_SMTP_EMAIL,
+    },
+    /**
      * Google auth
      */
     auth: {

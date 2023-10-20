@@ -51,6 +51,7 @@ export class TransactionsService {
       .addSelect('transaction.ourEventId', 'ourEventId')
       .addSelect('transaction.organizationId', 'organizationId')
       .addSelect('transaction.model', 'model')
+      .addSelect('transaction.quantity', 'quantity')
       .addSelect('transaction.userId', 'userId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -148,6 +149,7 @@ export class TransactionsService {
       userId,
       token,
       type,
+      quantity,
       ourEventId,
       organizationId,
     } = options;
@@ -162,6 +164,7 @@ export class TransactionsService {
     transaction.userId = userId;
     transaction.token = token;
     transaction.type = type;
+    transaction.quantity = quantity;
     transaction.ourEventId = ourEventId;
     transaction.description = description;
     transaction.organizationId = organizationId;

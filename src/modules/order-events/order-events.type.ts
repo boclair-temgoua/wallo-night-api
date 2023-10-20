@@ -4,6 +4,7 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 export type GetOrderEventsSelections = {
   search?: string;
   userId?: OrderEvent['userId'];
+  organizationId?: OrderEvent['organizationId'];
   pagination?: PaginationType;
 };
 

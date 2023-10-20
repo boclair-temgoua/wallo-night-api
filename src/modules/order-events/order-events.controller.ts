@@ -24,7 +24,10 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import { CreateOrUpdateOderEventsDto } from './order-events.dto';
+import {
+  CreateOrUpdateOderEventsDto,
+  GetOderEventsDto,
+} from './order-events.dto';
 
 @Controller('order-events')
 export class OrderEventsController {
@@ -34,20 +37,24 @@ export class OrderEventsController {
   @Get(`/`)
   async findAllOrderEvents(
     @Res() res,
+    @Query() query: GetOderEventsDto,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
+    const { organizationId, userId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const OrderEvents = await this.orderEventsService.findAll({
+    const orderEvents = await this.orderEventsService.findAll({
       search,
+      organizationId,
+      userId,
       pagination,
     });
 
-    return reply({ res, results: OrderEvents });
+    return reply({ res, results: orderEvents });
   }
 
   /** OrderEvent one OurEvents */

@@ -32,19 +32,63 @@ export class OrderEventsService {
   async findAll(
     selections: GetOrderEventsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, userId } = selections;
+    const { search, pagination, userId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('orderEvent')
       .select('orderEvent.id', 'id')
       .addSelect('orderEvent.code', 'code')
       .addSelect('orderEvent.status', 'status')
-      .addSelect('orderEvent.expiredAt', 'expiredAt')
       .addSelect('orderEvent.transactionId', 'transactionId')
-      .where('orderEvent.deletedAt IS NULL');
+      .addSelect('orderEvent.title', 'title')
+      .addSelect('orderEvent.currency', 'currency')
+      .addSelect('orderEvent.priceEvent', 'priceEvent')
+      .addSelect('orderEvent.imageEvent', 'imageEvent')
+      .addSelect('orderEvent.createdAt', 'createdAt')
+      .addSelect(
+        /*sql*/ `(
+        SELECT array_agg(jsonb_build_object(
+          'name', "upl"."name",
+          'path', "upl"."path"
+        )) 
+        FROM "upload" "upl"
+        WHERE "upl"."uploadableId" = "orderEvent"."id"
+        AND "upl"."deletedAt" IS NULL
+        AND "upl"."model" IN ('ORDER-EVENT')
+        AND "upl"."uploadType" IN ('FILE')
+        GROUP BY "orderEvent"."id", "upl"."uploadableId"
+        ) AS "uploadsFile"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'id', "event"."id",
+          'slug', "event"."slug",
+          'title', "event"."title",
+          'location', "event"."location",
+          'currency', "event"."currency",
+          'price', "event"."price",
+          'address', "event"."address",
+          'dateEvent', "event"."dateEvent"
+      ) AS "event"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+        'id', "transaction"."id",
+        'token', "transaction"."token"
+    ) AS "transaction"`,
+      )
+      .where('orderEvent.deletedAt IS NULL')
+      .leftJoin('orderEvent.ourEvent', 'event')
+      .leftJoin('orderEvent.transaction', 'transaction');
 
     if (userId) {
       query = query.andWhere('orderEvent.userId = :userId', { userId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('orderEvent.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (search) {
@@ -58,8 +102,8 @@ export class OrderEventsService {
 
     const orderEvents = await query
       .orderBy('orderEvent.createdAt', pagination?.sort)
-      .take(pagination.take)
-      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .offset(pagination.offset)
       .getRawMany();
 
     return withPagination({
@@ -77,34 +121,46 @@ export class OrderEventsService {
       .addSelect('orderEvent.code', 'code')
       .addSelect('orderEvent.status', 'status')
       .addSelect('orderEvent.transactionId', 'transactionId')
+      .addSelect('orderEvent.title', 'title')
+      .addSelect('orderEvent.currency', 'currency')
+      .addSelect('orderEvent.priceEvent', 'priceEvent')
+      .addSelect('orderEvent.imageEvent', 'imageEvent')
       .addSelect('orderEvent.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `(
-          SELECT array_agg(jsonb_build_object(
-            'name', "upl"."name",
-            'path', "upl"."path"
-          )) 
-          FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "orderEvent"."id"
-          AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('ORDER-EVENT')
-          AND "upl"."uploadType" IN ('FILE')
-          GROUP BY "orderEvent"."id", "upl"."uploadableId"
-          ) AS "uploadsFile"`,
+      SELECT array_agg(jsonb_build_object(
+        'name', "upl"."name",
+        'path', "upl"."path"
+      )) 
+      FROM "upload" "upl"
+      WHERE "upl"."uploadableId" = "orderEvent"."id"
+      AND "upl"."deletedAt" IS NULL
+      AND "upl"."model" IN ('ORDER-EVENT')
+      AND "upl"."uploadType" IN ('FILE')
+      GROUP BY "orderEvent"."id", "upl"."uploadableId"
+      ) AS "uploadsFile"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-            'id', "event"."id",
-            'title', "event"."title",
-            'location', "event"."location",
-            'currency', "event"."currency",
-            'price', "event"."price",
-            'address', "event"."address",
-            'dateEvent', "event"."dateEvent"
-        ) AS "event"`,
+        'id', "event"."id",
+        'slug', "event"."slug",
+        'title', "event"."title",
+        'location', "event"."location",
+        'currency', "event"."currency",
+        'price', "event"."price",
+        'address', "event"."address",
+        'dateEvent', "event"."dateEvent"
+    ) AS "event"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+        'id', "transaction"."id",
+        'token', "transaction"."token"
+    ) AS "transaction"`,
       )
       .where('orderEvent.deletedAt IS NULL')
-      .leftJoin('orderEvent.ourEvent', 'event');
+      .leftJoin('orderEvent.ourEvent', 'event')
+      .leftJoin('orderEvent.transaction', 'transaction');
 
     if (orderEventId) {
       query = query.andWhere('orderEvent.id = :id', {
@@ -127,8 +183,12 @@ export class OrderEventsService {
   async createOne(options: CreateOrderEventOptions): Promise<OrderEvent> {
     const {
       userId,
+      title,
+      priceEvent,
       transactionId,
       ourEventId,
+      imageEvent,
+      currency,
       organizationId,
       userConfirmedId,
     } = options;
@@ -136,6 +196,11 @@ export class OrderEventsService {
     const orderEvent = new OrderEvent();
     orderEvent.userId = userId;
     orderEvent.code = generateNumber(16);
+    orderEvent.title = title;
+    orderEvent.title = title;
+    orderEvent.currency = currency;
+    orderEvent.priceEvent = priceEvent;
+    orderEvent.imageEvent = imageEvent;
     orderEvent.organizationId = organizationId;
     orderEvent.transactionId = transactionId;
     orderEvent.ourEventId = ourEventId;

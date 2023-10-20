@@ -28,6 +28,11 @@ export class OrderEventsUtil {
       transactionId: transaction?.id,
       organizationId: transaction?.organizationId,
       ourEventId: transaction?.ourEventId,
+      currency: transaction?.currency,
+      priceEvent: Number(
+        Number(transaction?.amount) / Number(transaction?.quantity),
+      ),
+      title: transaction?.title,
     });
 
     const printer = new PdfPrinter({

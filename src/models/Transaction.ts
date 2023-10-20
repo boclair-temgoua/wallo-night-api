@@ -6,10 +6,11 @@ import {
   JoinColumn,
   ManyToOne,
   Relation,
+  OneToMany,
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { TransactionType } from '../modules/transactions/transactions.type';
-import { User } from './index';
+import { OrderEvent, User } from './index';
 import { FilterQueryType } from '../app/utils/search-query';
 
 @Entity('transaction')
@@ -17,7 +18,7 @@ export class Transaction extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({ type: 'bigint', nullable: true })
+  @Column({ type: 'float', nullable: true })
   amount: number;
 
   @Column({ nullable: true })
@@ -25,6 +26,9 @@ export class Transaction extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   description: string;
+
+  @Column({ nullable: true })
+  quantity: number;
 
   @Column({ nullable: true })
   token: string;
@@ -51,6 +55,9 @@ export class Transaction extends BaseDeleteEntity {
   })
   @JoinColumn({ name: 'userSendId', referencedColumnName: 'id' })
   userSend?: Relation<User>;
+
+  @OneToMany(() => OrderEvent, (orderEvents) => orderEvents.transaction)
+  orderEvents?: OrderEvent[];
 
   @Column({ type: 'uuid', nullable: true })
   userReceiveId?: string;

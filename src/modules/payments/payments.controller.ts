@@ -11,7 +11,6 @@ import { reply } from '../../app/utils/reply';
 import { PaymentsService } from './payments.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { OurEventsUtil } from '../our-events/our-events.util';
-import { OrderEventsService } from '../order-events/order-events.service';
 import { OrderEventsUtil } from '../order-events/order-events.util';
 
 @Controller('payments')
@@ -21,7 +20,6 @@ export class PaymentsController {
     private readonly walletsService: WalletsService,
     private readonly ourEventsUtil: OurEventsUtil,
     private readonly orderEventsUtil: OrderEventsUtil,
-    private readonly orderEventsService: OrderEventsService,
   ) {}
 
   /** Create Payment */
@@ -32,13 +30,13 @@ export class PaymentsController {
     const { transaction } = await this.ourEventsUtil.createOrUpdateOneSubscribe(
       {
         userId,
-        amount: { value: amount?.value * 100 },
+        amount: { value: amount?.value * 100, quantity: amount?.quantity },
         eventId,
         type: 'PAYPAL',
         currency: amount?.currency.toUpperCase(),
         token: reference,
         model: 'EVENT',
-        description: `Pagamento di un evento`,
+        description: `Pagamento di ${amount?.quantity} evento`,
       },
     );
 
@@ -65,7 +63,7 @@ export class PaymentsController {
       paymentMethod,
       amount,
       token: reference,
-      description: `Pagamento di un evento`,
+      description: `Pagamento di ${amount?.quantity} evento`,
     });
     if (!paymentIntents) {
       throw new HttpException(
@@ -78,7 +76,10 @@ export class PaymentsController {
       {
         userId,
         currency: paymentIntents?.currency.toUpperCase(),
-        amount: { value: paymentIntents?.amount }, // Pas besoin de multiplier pas 100 stipe le fais deja
+        amount: {
+          value: paymentIntents?.amount,
+          quantity: Number(amount?.quantity),
+        }, // Pas besoin de multiplier pas 100 stipe le fais deja
         eventId,
         type: 'CARD',
         token: reference,

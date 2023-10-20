@@ -16,3 +16,15 @@ export class CreateOrUpdateOderEventsDto {
   @IsString()
   status: StatusType;
 }
+
+export class GetOderEventsDto {
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  organizationId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
+}

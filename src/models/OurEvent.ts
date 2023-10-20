@@ -42,7 +42,7 @@ export class OurEvent extends BaseDeleteEntity {
   @Column({ type: 'boolean', default: false })
   enableUrlRedirect: boolean;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ type: 'float', default: 0 })
   price: number;
 
   @Column({ nullable: true, type: 'timestamptz' })

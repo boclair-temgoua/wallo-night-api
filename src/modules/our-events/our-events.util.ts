@@ -12,7 +12,7 @@ export class OurEventsUtil {
   ) {}
 
   async createOrUpdateOneSubscribe(options: {
-    amount: { value: number };
+    amount: { value: number; quantity: number };
     userId: string;
     currency: string;
     type?: TransactionType;
@@ -48,6 +48,7 @@ export class OurEventsUtil {
       model: model,
       type,
       userSendId: userId,
+      quantity: amount?.quantity,
       organizationId: findOneOrEvent?.organizationId,
       ourEventId: findOneOrEvent?.id,
       amount: amount?.value,

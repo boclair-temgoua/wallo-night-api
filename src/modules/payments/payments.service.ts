@@ -9,7 +9,7 @@ import Stripe from 'stripe';
 import { config } from '../../app/config/index';
 
 const stripe = new Stripe(String(config.implementations.stripe.key), {
-  apiVersion: '2023-08-16',
+  apiVersion: '2023-10-16',
 });
 
 @Injectable()

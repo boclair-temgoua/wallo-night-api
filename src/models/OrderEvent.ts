@@ -9,6 +9,7 @@ import { StatusType } from '../app/utils/pagination';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { User } from './User';
 import { OurEvent } from './OurEvent';
+import { Transaction } from './Transaction';
 
 @Entity('order_event')
 export class OrderEvent extends BaseDeleteEntity {
@@ -22,7 +23,16 @@ export class OrderEvent extends BaseDeleteEntity {
   status?: StatusType;
 
   @Column({ nullable: true })
-  transactionId?: string;
+  title?: string;
+
+  @Column({ nullable: true })
+  currency?: string;
+
+  @Column({ type: 'float', nullable: true })
+  priceEvent?: number;
+
+  @Column({ nullable: true })
+  imageEvent?: string;
 
   @Column({ nullable: true })
   userConfirmedId?: string;
@@ -43,4 +53,12 @@ export class OrderEvent extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.orderEvents, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  transactionId?: string;
+  @ManyToOne(() => Transaction, (transaction) => transaction.orderEvents, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  transaction?: Transaction;
 }

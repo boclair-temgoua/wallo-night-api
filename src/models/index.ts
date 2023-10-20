@@ -1,5 +1,4 @@
 export * from './Category';
-export * from './ClientOrder';
 export * from './ContactUs';
 export * from './Contributor';
 export * from './Country';
