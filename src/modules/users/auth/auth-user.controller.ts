@@ -186,8 +186,9 @@ export class AuthUserController {
     return reply({
       res,
       results: {
-        accessToken: `Bearer ${refreshToken}`,
         id: findOnUser.id,
+        permission: findOnUser.permission,
+        accessToken: `Bearer ${refreshToken}`,
       },
     });
   }
