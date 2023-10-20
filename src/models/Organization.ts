@@ -7,9 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
-import { OurEvent } from './OurEvent';
-import { Wallet } from './Wallet';
-import { User } from './User';
+import { OurEvent, OrderEvent, Wallet, User } from './index';
 
 @Entity('organization')
 export class Organization extends BaseEntity {
@@ -36,6 +34,9 @@ export class Organization extends BaseEntity {
 
   @OneToMany(() => OurEvent, (ourEvent) => ourEvent.organization)
   ourEvents?: OurEvent[];
+
+  @OneToMany(() => OrderEvent, (orderEvent) => orderEvent.organization)
+  orderEvents?: OrderEvent[];
 
   @OneToOne(() => Wallet, (wallet) => wallet.organization, {
     onDelete: 'CASCADE',

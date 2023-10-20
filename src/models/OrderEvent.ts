@@ -7,9 +7,7 @@ import {
 } from 'typeorm';
 import { StatusType } from '../app/utils/pagination';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { User } from './User';
-import { OurEvent } from './OurEvent';
-import { Transaction } from './Transaction';
+import { OurEvent, Transaction, User, Organization } from './index';
 
 @Entity('order_event')
 export class OrderEvent extends BaseDeleteEntity {
@@ -38,9 +36,6 @@ export class OrderEvent extends BaseDeleteEntity {
   userConfirmedId?: string;
 
   @Column({ nullable: true })
-  organizationId?: string;
-
-  @Column({ nullable: true })
   ourEventId?: string;
   @ManyToOne(() => OurEvent, (ourEvent) => ourEvent.orderEvents, {
     onDelete: 'CASCADE',
@@ -53,6 +48,14 @@ export class OrderEvent extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.orderEvents, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.orderEvents, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Organization;
 
   @Column({ type: 'uuid', nullable: true })
   transactionId?: string;

@@ -77,9 +77,16 @@ export class OrderEventsService {
         'token', "transaction"."token"
     ) AS "transaction"`,
       )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'name', "organization"."name",
+              'image', "organization"."image"
+          ) AS "organization"`,
+      )
       .where('orderEvent.deletedAt IS NULL')
       .leftJoin('orderEvent.ourEvent', 'event')
-      .leftJoin('orderEvent.transaction', 'transaction');
+      .leftJoin('orderEvent.transaction', 'transaction')
+      .leftJoin('orderEvent.organization', 'organization');
 
     if (userId) {
       query = query.andWhere('orderEvent.userId = :userId', { userId });
@@ -113,7 +120,7 @@ export class OrderEventsService {
     });
   }
 
-  async findOneBy(selections: GetOneOrderEventSelections): Promise<OrderEvent> {
+  async findOneBy(selections: GetOneOrderEventSelections): Promise<any> {
     const { orderEventId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('orderEvent')
@@ -154,13 +161,20 @@ export class OrderEventsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-        'id', "transaction"."id",
-        'token', "transaction"."token"
-    ) AS "transaction"`,
+      'id', "transaction"."id",
+      'token', "transaction"."token"
+  ) AS "transaction"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'name', "organization"."name",
+            'image', "organization"."image"
+        ) AS "organization"`,
       )
       .where('orderEvent.deletedAt IS NULL')
       .leftJoin('orderEvent.ourEvent', 'event')
-      .leftJoin('orderEvent.transaction', 'transaction');
+      .leftJoin('orderEvent.transaction', 'transaction')
+      .leftJoin('orderEvent.organization', 'organization');
 
     if (orderEventId) {
       query = query.andWhere('orderEvent.id = :id', {

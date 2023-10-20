@@ -1,4 +1,7 @@
-import { formateNowDateYYMMDD } from './../../app/utils/commons/formate-date';
+import {
+  formateDDMMYYDate,
+  formateNowDateYYMMDD,
+} from './../../app/utils/commons/formate-date';
 import { Injectable } from '@nestjs/common';
 import { OrderEventsService } from './order-events.service';
 import * as fs from 'fs';
@@ -35,6 +38,13 @@ export class OrderEventsUtil {
       title: transaction?.title,
     });
 
+    const findOneOrderEvent = await this.orderEventsService.findOneBy({
+      orderEventId: orderEvent?.id,
+    });
+    if (!findOneOrderEvent) {
+      false;
+    }
+
     const printer = new PdfPrinter({
       Helvetica: {
         normal: 'Helvetica',
@@ -47,23 +57,46 @@ export class OrderEventsUtil {
     const docDefinition = {
       content: [
         {
-          columns: [
-            {
-              qr: `${config.url.client}/events/${orderEvent?.id}/validate`,
-              fit: '100',
-              alignment: 'center',
-              margin: [0, 0, 0, 30],
-            },
-          ],
+          text: `${findOneOrderEvent?.organization?.name}`,
+          alignment: 'center',
+          style: { fontSize: 30, bold: true },
+          margin: [0, 0, 0, 30],
+        },
+        '\n',
+        {
+          qr: `${config.url.client}/events/${orderEvent?.id}/validate`,
+          fit: '400',
+          foreground: 'black',
+          alignment: 'center',
+          margin: [0, 0, 0, 20],
+        },
+        '\n',
+        {
+          text: `${orderEvent?.code}`,
+          alignment: 'center',
+          style: 'policyText',
+          margin: [0, 0, 0, 10],
+        },
+        '\n',
+        {
+          text: `${new Date(
+            findOneOrderEvent?.event?.dateEvent,
+          ).toLocaleDateString('fr-FR')} - ${findOneOrderEvent?.event
+            ?.location} - ${findOneOrderEvent?.event?.address}`,
+          alignment: 'center',
+          style: 'policyText',
+          margin: [0, 0, 0, 8],
         },
       ],
       styles: {
         policyText: {
-          fontSize: 9,
+          fontSize: 20,
+          bold: true,
         },
       },
       defaultStyle: {
-        columnGap: 20,
+        columnGap: 30,
+        bold: true,
         font: 'Helvetica',
       },
     };
