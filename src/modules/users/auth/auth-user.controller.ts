@@ -202,9 +202,11 @@ export class AuthUserController {
     return reply({
       res,
       results: {
+        id: findOnUser.id,
+        nextStep: findOnUser?.nextStep,
+        permission: findOnUser.permission,
         accessToken: `Bearer ${refreshToken}`,
         organizationId: findOnUser.organizationId,
-        nextStep: findOnUser?.nextStep,
       },
     });
   }

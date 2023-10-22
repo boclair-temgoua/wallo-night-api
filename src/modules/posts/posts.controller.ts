@@ -90,7 +90,7 @@ export class PostsController {
     @Query() searchQuery: SearchQueryDto,
     @Cookies('x-cookies-login') user: any,
   ) {
-    const { type, organizationId, typeIds, status } = query;
+    const { type, organizationId, typeIds, status, userVisitorId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -102,7 +102,7 @@ export class PostsController {
       type,
       organizationId,
       status: status?.toUpperCase(),
-      likeUserId: user?.id,
+      likeUserId: userVisitorId,
       typeIds: typeIds ? (String(typeIds).split(',') as []) : null,
     });
 

@@ -148,7 +148,7 @@ export const authUserVerifyIsConfirmMail = async (options: { user: User }) => {
 
   await NodeMailServiceAdapter({
     to: [`${user.email}`],
-    subject: `${config.datasite.name} - Confirm your account`,
+    subject: `${config.datasite.name} - Confirm Your Email`,
     html: output,
   });
 };

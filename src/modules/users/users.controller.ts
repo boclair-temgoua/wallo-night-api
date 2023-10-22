@@ -96,12 +96,12 @@ export class UsersController {
     @Query() query: GetOneUserDto,
     @Cookies('x-cookies-login') user: any,
   ) {
-    const { userId, username } = query;
+    const { userId, username, userVisitorId } = query;
 
     const findOneUser = await this.usersService.findOnePublicBy({
       userId,
       username,
-      followerId: user?.id,
+      followerId: userVisitorId,
     });
 
     if (!findOneUser)

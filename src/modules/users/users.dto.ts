@@ -257,6 +257,11 @@ export class GetOneUserDto {
 
   @IsOptional()
   @IsString()
+  @IsUUID()
+  userVisitorId: string;
+
+  @IsOptional()
+  @IsString()
   username: string;
 }
 

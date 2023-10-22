@@ -122,6 +122,11 @@ export class GetGalleriesDto {
 
   @IsOptional()
   @IsString()
+  @IsUUID()
+  userVisitorId: string;
+
+  @IsOptional()
+  @IsString()
   typeIds: string;
 
   @IsOptional()
