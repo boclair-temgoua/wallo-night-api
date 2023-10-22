@@ -18,9 +18,9 @@ export type PaginationType = {
 export const addPagination = (options: PaginationType) => {
   let pagination: any = {};
   const { page, take, sort } = options;
-  const takePage = page ? Number(page) : 0;
+  const takePage = Number(page);
   const currentTake = Number(take);
-  const takeSkip = takePage * currentTake;
+  const takeSkip = (Number(page) - 1) * currentTake;
   const pageTakeSkip = {
     page: takePage <= 0 ? 1 : takePage,
     take: currentTake,
@@ -39,7 +39,7 @@ export const addPagination = (options: PaginationType) => {
 export const withPagination = async (options: WithPaginationResponse) => {
   const { rowCount, value, pagination } = options;
 
-  const n_pages = Math.ceil(Number(rowCount) / Number(pagination?.take) - 1);
+  const n_pages = Math.ceil(Number(rowCount) / Number(pagination.take));
 
   const next_page =
     pagination?.page && pagination?.page < n_pages

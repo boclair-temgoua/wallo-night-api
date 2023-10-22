@@ -24,7 +24,7 @@ export class RequestPaginationDto {
 
   @IsOptional()
   @IsInt()
-  @Min(0)
+  @Min(1)
   @Type(() => Number)
   page: number;
 
