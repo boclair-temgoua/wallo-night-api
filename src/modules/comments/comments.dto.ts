@@ -32,9 +32,8 @@ export class CommentsDto {
   @IsUUID()
   commentId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @IsUUID()
   userVisitorId: string;
 
   @IsOptional()
