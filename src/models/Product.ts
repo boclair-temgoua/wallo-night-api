@@ -11,14 +11,21 @@ import {
   Relation,
 } from 'typeorm';
 
-import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { OrderProduct } from './OrderProduct';
 import { Discount } from './Discount';
 import { ProductStatus } from '../app/utils/pagination';
 import { WhoCanSeeType } from '../app/utils/search-query';
 import { ProductType } from '../modules/products/products.dto';
-import { Cart, Category, User, Membership, Organization } from './index';
+import {
+  Cart,
+  Category,
+  User,
+  Membership,
+  Organization,
+  Currency,
+  Comment,
+} from './index';
 
 @Entity('product')
 export class Product extends BaseDeleteEntity {
@@ -119,6 +126,9 @@ export class Product extends BaseDeleteEntity {
 
   @OneToMany(() => Cart, (cart) => cart.product)
   carts: Cart[];
+
+  @OneToMany(() => Comment, (comment) => comment.product)
+  comments?: Comment[];
 
   @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
   orderProducts: OrderProduct[];

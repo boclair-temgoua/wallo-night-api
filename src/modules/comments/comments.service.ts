@@ -26,8 +26,15 @@ export class CommentsService {
   ) {}
 
   async findAll(selections: GetCommentsSelections): Promise<any> {
-    const { search, pagination, postId, parentId, userId, likeUserId } =
-      selections;
+    const {
+      search,
+      pagination,
+      postId,
+      parentId,
+      productId,
+      userId,
+      likeUserId,
+    } = selections;
 
     let query = this.driver
       .createQueryBuilder('comment')
@@ -35,6 +42,7 @@ export class CommentsService {
       .addSelect('comment.createdAt', 'createdAt')
       .addSelect('comment.description', 'description')
       .addSelect('comment.postId', 'postId')
+      .addSelect('comment.productId', 'productId')
       .addSelect('comment.userId', 'userId')
       .addSelect('comment.parentId', 'parentId')
       .addSelect(
@@ -76,6 +84,10 @@ export class CommentsService {
 
     if (postId) {
       query = query.andWhere('comment.postId = :postId', { postId });
+    }
+
+    if (productId) {
+      query = query.andWhere('comment.productId = :productId', { productId });
     }
 
     if (parentId) {
@@ -140,12 +152,13 @@ export class CommentsService {
 
   /** Create one Comment to the database. */
   async createOne(options: CreateCommentOptions): Promise<Comment> {
-    const { description, postId, parentId, userId } = options;
+    const { description, postId, productId, parentId, userId } = options;
 
     const comment = new Comment();
     comment.postId = postId;
     comment.userId = userId;
     comment.parentId = parentId;
+    comment.productId = productId;
     comment.description = description;
 
     const query = this.driver.save(comment);

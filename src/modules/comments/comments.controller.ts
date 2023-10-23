@@ -23,18 +23,15 @@ import { JwtAuthGuard } from '../users/middleware';
 import { CommentsService } from './comments.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { isEmpty } from '../../app/utils/commons/is-empty';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import { PostsService } from '../posts/posts.service';
 
 @Controller('comments')
 export class CommentsController {
-  constructor(
-    private readonly commentsService: CommentsService,
-    private readonly postsService: PostsService,
-  ) {}
+  constructor(private readonly commentsService: CommentsService) {}
 
   /** Get all Comments */
   @Get(`/`)
@@ -45,27 +42,17 @@ export class CommentsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { postId, userVisitorId } = query;
+    const { postId, productId, userVisitorId } = query;
     const { search } = searchQuery;
-
-    if (postId) {
-      const findOnePost = await this.postsService.findOneBy({
-        postId,
-      });
-      if (!findOnePost)
-        throw new HttpException(
-          `This post ${postId} dons't exist please change`,
-          HttpStatus.NOT_FOUND,
-        );
-    }
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const comments = await this.commentsService.findAll({
       search,
-      pagination,
       postId,
+      productId,
+      pagination,
       likeUserId: userVisitorId,
     });
 
@@ -114,23 +101,13 @@ export class CommentsController {
     @Body() body: CreateOrUpdateCommentsDto,
   ) {
     const { user } = req;
-    const { description, postId } = body;
-
-    if (postId) {
-      const findOnePost = await this.postsService.findOneBy({
-        postId,
-      });
-      if (!findOnePost)
-        throw new HttpException(
-          `This post ${postId} dons't exist please change`,
-          HttpStatus.NOT_FOUND,
-        );
-    }
-
+    const { description, postId, productId } = body;
+    
     const comment = await this.commentsService.createOne({
-      postId,
-      userId: user?.id,
+      postId: isEmpty(postId) ? null : postId,
+      productId: isEmpty(productId) ? null : productId,
       description,
+      userId: user?.id,
     });
 
     return reply({ res, results: comment });

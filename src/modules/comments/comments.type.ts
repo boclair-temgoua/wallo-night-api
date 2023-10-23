@@ -7,6 +7,7 @@ export type GetCommentsSelections = {
   likeUserId?: Comment['userId'];
   postId?: Comment['postId'];
   parentId?: Comment['parentId'];
+  productId?: Comment['productId'];
   pagination?: PaginationType;
 };
 

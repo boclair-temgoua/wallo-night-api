@@ -17,8 +17,11 @@ export class CreateOrUpdateCommentsDto {
 
   @IsOptional()
   @IsString()
-  @IsUUID()
   postId: string;
+
+  @IsOptional()
+  @IsString()
+  productId: string;
 }
 
 export class CommentsDto {
@@ -27,6 +30,11 @@ export class CommentsDto {
   @IsUUID()
   postId: string;
 
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  productId: string;
+  
   @IsOptional()
   @IsString()
   @IsUUID()
