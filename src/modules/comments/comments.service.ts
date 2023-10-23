@@ -47,6 +47,7 @@ export class CommentsService {
       .addSelect('comment.parentId', 'parentId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
+              'username', "user"."username",
               'fullName', "profile"."fullName",
               'firstName', "profile"."firstName",
               'lastName', "profile"."lastName",
