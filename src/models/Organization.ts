@@ -8,12 +8,15 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
-import { Wallet } from './Wallet';
-import { User } from './User';
-import { Transaction } from './Transaction';
-import { Post } from './Post';
-import { Product } from './Product';
-import { Subscribe } from './Subscribe';
+import {
+  Wallet,
+  Membership,
+  Subscribe,
+  Product,
+  User,
+  Transaction,
+  Post,
+} from './index';
 
 @Entity('organization')
 export class Organization extends BaseEntity {
@@ -62,4 +65,7 @@ export class Organization extends BaseEntity {
 
   @OneToMany(() => Subscribe, (subscribe) => subscribe.organization)
   subscribes?: Subscribe[];
+
+  @OneToMany(() => Membership, (membership) => membership.organization)
+  memberships?: Membership[];
 }

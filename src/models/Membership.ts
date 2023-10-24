@@ -7,15 +7,17 @@ import {
   Relation,
   OneToMany,
 } from 'typeorm';
-import { User } from './User';
-import { Transaction } from './Transaction';
-import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Contribution } from './Contribution';
 import { ProductStatus } from '../app/utils/pagination';
-import { Subscribe } from './Subscribe';
-import { Post } from './Post';
-import { Product } from './Product';
+import {
+  Contribution,
+  Subscribe,
+  Product,
+  User,
+  Organization,
+  Currency,
+  Post,
+} from './index';
 
 @Entity('membership')
 export class Membership extends BaseDeleteEntity {
@@ -42,6 +44,11 @@ export class Membership extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.memberships, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Organization;
 
   @Column({ type: 'uuid', nullable: true })
   currencyId?: string;

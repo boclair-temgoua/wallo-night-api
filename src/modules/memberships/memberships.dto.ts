@@ -28,6 +28,13 @@ export class CreateOrUpdateMembershipsDto {
   @Type(() => Number)
   price?: number;
 
+  @IsNotEmpty()
+  @IsInt()
+  @IsPositive()
+  @Min(1)
+  @Type(() => Number)
+  month?: number;
+
   // @IsNotEmpty()
   // @IsString()
   // @IsIn(currencyCodeArrays)

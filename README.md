@@ -31,7 +31,6 @@
 ```typescript
 npm run migration:generate --name="migration"
 ```
-
 ## Generate run
 
 ```typescript

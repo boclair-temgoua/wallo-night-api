@@ -168,6 +168,17 @@ export class MembershipsService {
           ) AS "uploadsImage"`,
       )
       .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'fullName', "profile"."fullName",
+              'firstName', "profile"."firstName",
+              'lastName', "profile"."lastName",
+              'image', "profile"."image",
+              'color', "profile"."color",
+              'userId', "user"."id",
+              'username', "user"."username"
+          ) AS "profile"`,
+      )
+      .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
@@ -182,6 +193,9 @@ export class MembershipsService {
           ) AS "uploadsFile"`,
       )
       .where('membership.deletedAt IS NULL')
+      .leftJoin('membership.organization', 'organization')
+      .leftJoin('organization.user', 'user')
+      .leftJoin('user.profile', 'profile')
       .leftJoin('membership.currency', 'currency');
 
     if (membershipId) {
