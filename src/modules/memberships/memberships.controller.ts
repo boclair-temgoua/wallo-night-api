@@ -77,20 +77,13 @@ export class MembershipsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
-    const {
-      title,
-      description,
-      messageWelcome,
-      pricePerMonthly,
-      pricePerYearly,
-    } = body;
+    const { title, description, messageWelcome, price } = body;
 
     const membership = await this.membershipsService.createOne({
       title,
       description,
       messageWelcome,
-      pricePerYearly: Number(pricePerYearly),
-      pricePerMonthly: Number(pricePerMonthly),
+      price: Number(price),
       userId: user?.id,
       organizationId: user?.organizationId,
       currencyId: user?.profile?.currencyId,
@@ -119,13 +112,7 @@ export class MembershipsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('membershipId', ParseUUIDPipe) membershipId: string,
   ) {
-    const {
-      title,
-      description,
-      messageWelcome,
-      pricePerMonthly,
-      pricePerYearly,
-    } = body;
+    const { title, description, messageWelcome, price } = body;
     const { user } = req;
 
     const findOneMembership = await this.membershipsService.findOneBy({
@@ -143,8 +130,7 @@ export class MembershipsController {
         title,
         description,
         messageWelcome,
-        pricePerYearly: Number(pricePerYearly),
-        pricePerMonthly: Number(pricePerMonthly),
+        price: Number(price),
         currencyId: user?.profile?.currencyId,
       },
     );

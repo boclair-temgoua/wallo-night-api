@@ -156,7 +156,7 @@ export class SubscribesController {
         organizationId: user?.organizationId,
         userSendId: user?.id,
         subscribeId: findOneSubscribe?.id,
-        amount: Number(findOneMembership?.pricePerMonthly),
+        amount: Number(findOneMembership?.price),
         description: 'subscribe monthly',
       });
     } else {
@@ -175,7 +175,7 @@ export class SubscribesController {
         organizationId: user?.organizationId,
         userSendId: user?.id,
         subscribeId: subscribe?.id,
-        amount: Number(findOneMembership?.pricePerMonthly),
+        amount: Number(findOneMembership?.price),
         description: 'subscribe monthly',
       });
     }

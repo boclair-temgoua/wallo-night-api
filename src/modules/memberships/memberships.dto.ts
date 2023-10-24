@@ -26,14 +26,7 @@ export class CreateOrUpdateMembershipsDto {
   @IsPositive()
   @Min(1)
   @Type(() => Number)
-  pricePerMonthly?: number;
-
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  @Min(1)
-  @Type(() => Number)
-  pricePerYearly?: number;
+  price?: number;
 
   // @IsNotEmpty()
   // @IsString()

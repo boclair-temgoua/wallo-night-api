@@ -32,10 +32,10 @@ export class MembershipsService {
       .select('membership.id', 'id')
       .addSelect('membership.title', 'title')
       .addSelect('membership.status', 'status')
+      .addSelect('membership.month', 'month')
       .addSelect('membership.description', 'description')
       .addSelect('membership.organizationId', 'organizationId')
-      .addSelect('membership.pricePerMonthly', 'pricePerMonthly')
-      .addSelect('membership.pricePerYearly', 'pricePerYearly')
+      .addSelect('membership.price', 'price')
       .addSelect('membership.messageWelcome', 'messageWelcome')
       .addSelect('membership.currencyId', 'currencyId')
       .addSelect('membership.userId', 'userId')
@@ -140,10 +140,10 @@ export class MembershipsService {
       .select('membership.id', 'id')
       .addSelect('membership.title', 'title')
       .addSelect('membership.status', 'status')
+      .addSelect('membership.month', 'month')
       .addSelect('membership.description', 'description')
       .addSelect('membership.organizationId', 'organizationId')
-      .addSelect('membership.pricePerMonthly', 'pricePerMonthly')
-      .addSelect('membership.pricePerYearly', 'pricePerYearly')
+      .addSelect('membership.price', 'price')
       .addSelect('membership.messageWelcome', 'messageWelcome')
       .addSelect('membership.currencyId', 'currencyId')
       .addSelect('membership.userId', 'userId')
@@ -206,10 +206,10 @@ export class MembershipsService {
     const {
       title,
       status,
+      month,
       description,
       messageWelcome,
-      pricePerMonthly,
-      pricePerYearly,
+      price,
       currencyId,
       userId,
       organizationId,
@@ -217,11 +217,10 @@ export class MembershipsService {
 
     const membership = new Membership();
     membership.title = title;
-    membership.title = title;
+    membership.month = month;
     membership.description = description;
     membership.messageWelcome = messageWelcome;
-    membership.pricePerYearly = pricePerYearly;
-    membership.pricePerMonthly = pricePerMonthly;
+    membership.price = price;
     membership.currencyId = currencyId;
     membership.userId = userId;
     membership.currencyId = currencyId;
@@ -243,11 +242,11 @@ export class MembershipsService {
     const { membershipId } = selections;
     const {
       title,
+      month,
       status,
       description,
       messageWelcome,
-      pricePerYearly,
-      pricePerMonthly,
+      price,
       currencyId,
       userId,
       deletedAt,
@@ -263,11 +262,11 @@ export class MembershipsService {
     if (errorFind) throw new NotFoundException(errorFind);
 
     membership.title = title;
+    membership.month = month;
     membership.status = status;
     membership.description = description;
     membership.messageWelcome = messageWelcome;
-    membership.pricePerYearly = pricePerYearly;
-    membership.pricePerMonthly = pricePerMonthly;
+    membership.price = price;
     membership.currencyId = currencyId;
     membership.userId = userId;
     membership.deletedAt = deletedAt;

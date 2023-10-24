@@ -32,13 +32,13 @@ export class Membership extends BaseDeleteEntity {
   description: string;
 
   @Column({ type: 'float', nullable: true })
-  pricePerMonthly: number;
+  price: number;
+
+  @Column({ type: 'bigint', nullable: true })
+  month: number;
 
   @Column({ type: 'text', nullable: true })
   messageWelcome: string;
-
-  @Column({ type: 'float', nullable: true })
-  pricePerYearly: number;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
