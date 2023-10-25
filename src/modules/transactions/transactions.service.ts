@@ -17,7 +17,8 @@ import {
   WithPaginationResponse,
   withPagination,
 } from '../../app/utils/pagination/with-pagination';
-import { generateLongUUID } from '../../app/utils/commons';
+import { colorsArrays } from '../../app/utils/commons'
+import { getRandomElement } from '../../app/utils/array/get-random-element';
 
 @Injectable()
 export class TransactionsService {
@@ -50,6 +51,9 @@ export class TransactionsService {
       .addSelect('transaction.campaignId', 'campaignId')
       .addSelect('transaction.contributionId', 'contributionId')
       .addSelect('transaction.giftId', 'giftId')
+      .addSelect('transaction.email', 'email')
+      .addSelect('transaction.color', 'color')
+      .addSelect('transaction.fullName', 'fullName')
       .addSelect('transaction.userSendId', 'userSendId')
       .addSelect('transaction.organizationId', 'organizationId')
       .addSelect('transaction.amountConvert', 'amountConvert')
@@ -168,6 +172,8 @@ export class TransactionsService {
       token,
       type,
       giftId,
+      fullName,
+      email,
     } = options;
 
     const transaction = new Transaction();
@@ -180,6 +186,9 @@ export class TransactionsService {
     transaction.type = type;
     transaction.token = token;
     transaction.giftId = giftId;
+    transaction.fullName = fullName;
+    transaction.email = email;
+    transaction.color = getRandomElement(colorsArrays);
     transaction.amountConvert = amountConvert;
     transaction.organizationId = organizationId;
     transaction.subscribeId = subscribeId;
