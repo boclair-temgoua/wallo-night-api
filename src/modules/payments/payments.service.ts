@@ -7,6 +7,7 @@ import {
 
 import Stripe from 'stripe';
 import { config } from '../../app/config/index';
+import { AmountModel } from '../wallets/wallets.type';
 
 const stripe = new Stripe(String(config.implementations.stripe.key), {
   apiVersion: '2023-10-16',
@@ -19,12 +20,13 @@ export class PaymentsService {
   /** Stripe billing */
   async stripeMethod(options: {
     description?: string;
-    amount: any;
+    amountDetail: AmountModel;
     token: string;
     currency: string;
     paymentMethod: any;
   }): Promise<any> {
-    const { token, description, amount, currency, paymentMethod } = options;
+    const { token, description, amountDetail, currency, paymentMethod } =
+      options;
 
     const params: Stripe.CustomerCreateParams = {
       description: description,
@@ -33,7 +35,7 @@ export class PaymentsService {
     };
     const customer: Stripe.Customer = await stripe.customers.create(params);
     const paymentIntents = await stripe.paymentIntents.create({
-      amount: Number(amount?.value) * 100, // 25
+      amount: Number(amountDetail?.value) * 100, // 25
       currency: currency,
       description: customer?.description,
       payment_method: paymentMethod?.id,

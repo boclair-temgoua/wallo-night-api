@@ -3,6 +3,7 @@ import { Wallet } from '../../models/Wallet';
 export type AmountModel = {
   value: number;
   currency: string;
+  description?: string;
   month?: number;
 };
 
