@@ -25,7 +25,7 @@ export class PaymentsController {
     private readonly transactionsService: TransactionsService,
   ) {}
 
-  /** Create Like */
+  /** Create subscribe */
   @Post(`/paypal/subscribe`)
   async createOnePaypalSubscribe(
     @Res() res,
@@ -118,6 +118,43 @@ export class PaymentsController {
           organizationId: transaction?.organizationId,
         });
       }
+    }
+
+    return reply({ res, results: reference });
+  }
+
+  /** Create Donation */
+  @Post(`/paypal/donation`)
+  async createOnePaypalDonation(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateSubscribePaymentsDto,
+  ) {
+    const { amount, organizationId, userId, reference, paymentMethod } = body;
+
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: amount?.currency,
+        value: amount?.value,
+      });
+
+    const transaction = await this.transactionsService.createOne({
+      userSendId: userId,
+      amount: amount?.value * 100,
+      currency: amount?.currency.toUpperCase(),
+      organizationId: organizationId,
+      type: 'PAYPAL',
+      token: reference,
+      model: 'DONATION',
+      description: amount?.description,
+      amountConvert: amountValueConvert * 100,
+    });
+
+    if (transaction?.token) {
+      await this.walletsService.incrementOne({
+        amount: transaction?.amountConvert,
+        organizationId: transaction?.organizationId,
+      });
     }
 
     return reply({ res, results: reference });
