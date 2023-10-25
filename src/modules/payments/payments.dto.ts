@@ -1,4 +1,4 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsNotEmpty } from 'class-validator';
 import { AmountModel } from '../wallets/wallets.type';
 
 export class CreateSubscribePaymentsDto {
@@ -9,6 +9,10 @@ export class CreateSubscribePaymentsDto {
   @IsOptional()
   @IsString()
   userId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  organizationId: string;
 
   @IsOptional()
   @IsString()

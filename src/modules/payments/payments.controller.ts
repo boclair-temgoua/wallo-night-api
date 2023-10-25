@@ -13,6 +13,7 @@ import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { WalletsService } from '../wallets/wallets.service';
 import { CreateSubscribePaymentsDto } from './payments.dto';
 import { TransactionsUtil } from '../transactions/transactions.util';
+import { TransactionsService } from '../transactions/transactions.service';
 
 @Controller('payments')
 export class PaymentsController {
@@ -21,6 +22,7 @@ export class PaymentsController {
     private readonly walletsService: WalletsService,
     private readonly transactionsUtil: TransactionsUtil,
     private readonly subscribesUtil: SubscribesUtil,
+    private readonly transactionsService: TransactionsService,
   ) {}
 
   /** Create Like */
@@ -64,7 +66,7 @@ export class PaymentsController {
     return reply({ res, results: reference });
   }
 
-  /** Create Like */
+  /** Create subscribe */
   @Post(`/stripe/subscribe`)
   async createOneStripeSubscribe(
     @Res() res,
@@ -82,7 +84,7 @@ export class PaymentsController {
     const { paymentIntents } = await this.paymentsService.stripeMethod({
       paymentMethod,
       currency: amount?.currency.toUpperCase(),
-      amount,
+      amountDetail: amount,
       token: reference,
       description: `Subscription ${amount?.month} month`,
     });
@@ -109,6 +111,59 @@ export class PaymentsController {
           description: paymentIntents?.description,
           amountValueConvert: amountValueConvert * 100,
         });
+
+      if (transaction?.token) {
+        await this.walletsService.incrementOne({
+          amount: transaction?.amountConvert,
+          organizationId: transaction?.organizationId,
+        });
+      }
+    }
+
+    return reply({ res, results: reference });
+  }
+
+  /** Create Donation */
+  @Post(`/stripe/donation`)
+  async createOneStripeDonation(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateSubscribePaymentsDto,
+  ) {
+    const { amount, organizationId, userId, reference, paymentMethod } = body;
+
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: amount?.currency,
+        value: amount?.value,
+      });
+
+    const { paymentIntents } = await this.paymentsService.stripeMethod({
+      paymentMethod,
+      currency: amount?.currency.toUpperCase(),
+      amountDetail: amount,
+      token: reference,
+      description: amount?.description,
+    });
+    if (!paymentIntents) {
+      throw new HttpException(
+        `Transaction not found please try again`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (paymentIntents) {
+      const transaction = await this.transactionsService.createOne({
+        userSendId: userId,
+        amount: amount?.value * 100,
+        currency: paymentIntents?.currency.toUpperCase(),
+        organizationId: organizationId,
+        type: 'CARD',
+        token: reference,
+        model: 'DONATION',
+        description: paymentIntents?.description,
+        amountConvert: amountValueConvert * 100,
+      });
 
       if (transaction?.token) {
         await this.walletsService.incrementOne({

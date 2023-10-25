@@ -174,7 +174,12 @@ export class UsersService {
           'image', "profile"."image",
           'color', "profile"."color",
           'countryId', "profile"."countryId",
-          'url', "profile"."url"
+          'url', "profile"."url",
+          'currency', jsonb_build_object(
+            'symbol', "currency"."symbol",
+            'name', "currency"."name",
+            'amount', "currency"."amount",
+            'code', "currency"."code")
       ) AS "profile"`,
       )
       .addSelect(
@@ -208,7 +213,8 @@ export class UsersService {
       ) AS "totalSubscribe"`,
       )
       .where('user.deletedAt IS NULL')
-      .leftJoin('user.profile', 'profile');
+      .leftJoin('user.profile', 'profile')
+      .leftJoin('profile.currency', 'currency');
 
     if (followerId) {
       query = query.addSelect(/*sql*/ `(
