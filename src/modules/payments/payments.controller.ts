@@ -146,6 +146,7 @@ export class PaymentsController {
       type: 'PAYPAL',
       token: reference,
       model: 'DONATION',
+      fullName: 'Somebody',
       description: amount?.description,
       amountConvert: amountValueConvert * 100,
     });
@@ -168,6 +169,7 @@ export class PaymentsController {
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const { amount, organizationId, userId, reference, paymentMethod } = body;
+    const { billing_details } = paymentMethod;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -198,6 +200,8 @@ export class PaymentsController {
         type: 'CARD',
         token: reference,
         model: 'DONATION',
+        email: billing_details?.email,
+        fullName: billing_details?.name ?? 'Somebody',
         description: paymentIntents?.description,
         amountConvert: amountValueConvert * 100,
       });

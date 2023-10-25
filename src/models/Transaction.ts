@@ -39,6 +39,15 @@ export class Transaction extends BaseDeleteEntity {
   description: string;
 
   @Column({ nullable: true })
+  fullName: string;
+
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ nullable: true })
+  color: string;
+
+  @Column({ nullable: true })
   token: string;
 
   @Column({ nullable: true })
