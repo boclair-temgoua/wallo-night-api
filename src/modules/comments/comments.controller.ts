@@ -42,7 +42,7 @@ export class CommentsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { postId, productId, userVisitorId } = query;
+    const { postId, productId, userVisitorId, modelIds } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -54,6 +54,7 @@ export class CommentsController {
       productId,
       pagination,
       likeUserId: userVisitorId,
+      modelIds: modelIds ? (String(modelIds).split(',') as []) : null,
     });
 
     return reply({ res, results: comments });
@@ -67,7 +68,7 @@ export class CommentsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { commentId, userVisitorId } = query;
+    const { commentId, userVisitorId, modelIds } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -87,6 +88,7 @@ export class CommentsController {
       pagination,
       likeUserId: userVisitorId,
       parentId: findOneComment?.id,
+      modelIds: modelIds ? (String(modelIds).split(',') as []) : null,
     });
 
     return reply({ res, results: comments });
@@ -101,12 +103,14 @@ export class CommentsController {
     @Body() body: CreateOrUpdateCommentsDto,
   ) {
     const { user } = req;
-    const { description, postId, productId } = body;
-    
+    const { description, postId, productId, organizationId, model } = body;
+
     const comment = await this.commentsService.createOne({
       postId: isEmpty(postId) ? null : postId,
       productId: isEmpty(productId) ? null : productId,
       description,
+      model,
+      organizationId: organizationId,
       userId: user?.id,
     });
 
@@ -123,7 +127,7 @@ export class CommentsController {
     @Body('parentId', ParseUUIDPipe) parentId: string,
   ) {
     const { user } = req;
-    const { description } = body;
+    const { description, model } = body;
 
     const findOneComment = await this.commentsService.findOneBy({
       commentId: parentId,
@@ -138,6 +142,7 @@ export class CommentsController {
       postId: findOneComment?.postId,
       parentId: parentId,
       userId: user?.id,
+      model,
       description,
     });
 

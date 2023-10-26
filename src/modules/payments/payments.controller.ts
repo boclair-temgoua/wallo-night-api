@@ -14,6 +14,7 @@ import { WalletsService } from '../wallets/wallets.service';
 import { CreateSubscribePaymentsDto } from './payments.dto';
 import { TransactionsUtil } from '../transactions/transactions.util';
 import { TransactionsService } from '../transactions/transactions.service';
+import { CommentsService } from '../comments/comments.service';
 
 @Controller('payments')
 export class PaymentsController {
@@ -22,6 +23,7 @@ export class PaymentsController {
     private readonly walletsService: WalletsService,
     private readonly transactionsUtil: TransactionsUtil,
     private readonly subscribesUtil: SubscribesUtil,
+    private readonly commentsService: CommentsService,
     private readonly transactionsService: TransactionsService,
   ) {}
 
@@ -147,13 +149,22 @@ export class PaymentsController {
       token: reference,
       model: 'DONATION',
       fullName: 'Somebody',
-      description: amount?.description,
+      description: amount?.description ?? 'bought un pot',
       amountConvert: amountValueConvert * 100,
     });
 
     if (transaction?.token) {
       await this.walletsService.incrementOne({
         amount: transaction?.amountConvert,
+        organizationId: transaction?.organizationId,
+      });
+
+      await this.commentsService.createOne({
+        model: transaction?.model,
+        color: transaction?.color,
+        email: transaction?.email,
+        fullName: transaction?.fullName,
+        description: transaction?.description,
         organizationId: transaction?.organizationId,
       });
     }
@@ -182,7 +193,7 @@ export class PaymentsController {
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
       token: reference,
-      description: amount?.description,
+      description: amount?.description ?? 'bought un pot',
     });
     if (!paymentIntents) {
       throw new HttpException(
@@ -209,6 +220,15 @@ export class PaymentsController {
       if (transaction?.token) {
         await this.walletsService.incrementOne({
           amount: transaction?.amountConvert,
+          organizationId: transaction?.organizationId,
+        });
+
+        await this.commentsService.createOne({
+          model: transaction?.model,
+          color: transaction?.color,
+          email: transaction?.email,
+          fullName: transaction?.fullName,
+          description: transaction?.description,
           organizationId: transaction?.organizationId,
         });
       }

@@ -16,6 +16,7 @@ import {
   User,
   Transaction,
   Post,
+  Comment,
 } from './index';
 
 @Entity('organization')
@@ -68,4 +69,7 @@ export class Organization extends BaseEntity {
 
   @OneToMany(() => Membership, (membership) => membership.organization)
   memberships?: Membership[];
+
+  @OneToMany(() => Comment, (comment) => comment.organization)
+  comments?: Comment[];
 }

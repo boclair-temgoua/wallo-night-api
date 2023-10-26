@@ -33,6 +33,7 @@ export class CommentsService {
       parentId,
       productId,
       userId,
+      modelIds,
       likeUserId,
     } = selections;
 
@@ -45,6 +46,11 @@ export class CommentsService {
       .addSelect('comment.productId', 'productId')
       .addSelect('comment.userId', 'userId')
       .addSelect('comment.parentId', 'parentId')
+      .addSelect('comment.model', 'model')
+      .addSelect('comment.color', 'color')
+      .addSelect('comment.email', 'email')
+      .addSelect('comment.fullName', 'fullName')
+      .addSelect('comment.organizationId', 'organizationId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'username', "user"."username",
@@ -85,6 +91,10 @@ export class CommentsService {
 
     if (postId) {
       query = query.andWhere('comment.postId = :postId', { postId });
+    }
+
+    if (modelIds && modelIds.length > 0) {
+      query = query.andWhere('comment.model IN (:...modelIds)', { modelIds });
     }
 
     if (productId) {
@@ -153,12 +163,28 @@ export class CommentsService {
 
   /** Create one Comment to the database. */
   async createOne(options: CreateCommentOptions): Promise<Comment> {
-    const { description, postId, productId, parentId, userId } = options;
+    const {
+      description,
+      postId,
+      productId,
+      parentId,
+      model,
+      organizationId,
+      userId,
+      color,
+      email,
+      fullName,
+    } = options;
 
     const comment = new Comment();
     comment.postId = postId;
     comment.userId = userId;
     comment.parentId = parentId;
+    comment.model = model;
+    comment.color = color;
+    comment.email = email;
+    comment.fullName = fullName;
+    comment.organizationId = organizationId;
     comment.productId = productId;
     comment.description = description;
 

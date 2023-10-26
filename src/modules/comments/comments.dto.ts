@@ -1,5 +1,9 @@
 import { User } from '../../models/User';
 import {
+  FilterQueryType,
+  filterQueryTypeArrays,
+} from '../../app/utils/search-query/search-query.dto';
+import {
   IsString,
   IsNotEmpty,
   MaxLength,
@@ -21,7 +25,17 @@ export class CreateOrUpdateCommentsDto {
 
   @IsOptional()
   @IsString()
+  @IsUUID()
+  organizationId: string;
+
+  @IsOptional()
+  @IsString()
   productId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(filterQueryTypeArrays)
+  model: FilterQueryType;
 }
 
 export class CommentsDto {
@@ -34,7 +48,7 @@ export class CommentsDto {
   @IsString()
   @IsUUID()
   productId: string;
-  
+
   @IsOptional()
   @IsString()
   @IsUUID()
@@ -48,4 +62,8 @@ export class CommentsDto {
   @IsString()
   @IsUUID()
   userId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  modelIds: string;
 }

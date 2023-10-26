@@ -6,8 +6,9 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { User, Product, Post } from './index';
+import { User, Product, Post, Organization } from './index';
 import { BaseDeleteEntity } from '../app/databases/common/index';
+import { FilterQueryType } from '../app/utils/search-query';
 
 @Entity('comment')
 export class Comment extends BaseDeleteEntity {
@@ -17,8 +18,20 @@ export class Comment extends BaseDeleteEntity {
   @Column({ type: 'text', nullable: true })
   description?: string;
 
+  @Column({ default: 'POST' })
+  model?: FilterQueryType;
+
   @Column({ type: 'uuid', nullable: true })
   parentId?: string;
+
+  @Column({ nullable: true })
+  color: string;
+
+  @Column({ nullable: true })
+  fullName: string;
+
+  @Column({ nullable: true })
+  email: string;
 
   @Column({ type: 'uuid', nullable: true })
   productId?: string;
@@ -38,7 +51,15 @@ export class Comment extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.comments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Organization;
 }
