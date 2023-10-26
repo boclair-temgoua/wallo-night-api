@@ -140,6 +140,8 @@ export class CommentsController {
 
     await this.commentsService.createOne({
       postId: findOneComment?.postId,
+      productId: findOneComment?.productId,
+      organizationId: findOneComment?.organizationId,
       parentId: parentId,
       userId: user?.id,
       model,

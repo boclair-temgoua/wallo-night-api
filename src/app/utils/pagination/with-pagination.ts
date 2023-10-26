@@ -39,7 +39,7 @@ export const addPagination = (options: PaginationType) => {
 export const withPagination = async (options: WithPaginationResponse) => {
   const { rowCount, value, pagination } = options;
 
-  const n_pages = Math.ceil(Number(rowCount) / Number(pagination.take));
+  const n_pages = Math.ceil(Number(rowCount) / Number(pagination?.take));
 
   const next_page =
     pagination?.page && pagination?.page < n_pages
