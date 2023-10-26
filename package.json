@@ -48,8 +48,8 @@
     "seed:create": "cross-var ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli migration:create ./src/app/databases/seeds/$npm_config_name "
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.435.0",
-    "@aws-sdk/client-ses": "^3.435.0",
+    "@aws-sdk/client-s3": "^3.436.0",
+    "@aws-sdk/client-ses": "^3.436.0",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/cli": "^10.2.0",
     "@nestjs/common": "^10.2.7",
@@ -70,7 +70,7 @@
     "@types/mime": "^3.0.3",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.3",
-    "aws-sdk": "^2.1480.0",
+    "aws-sdk": "^2.1481.0",
     "axios": "^1.5.1",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
@@ -117,7 +117,7 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "18.1.0",
+    "@commitlint/cli": "18.2.0",
     "@commitlint/config-conventional": "18.1.0",
     "@faker-js/faker": "^8.2.0",
     "@nestjs/passport": "^10.0.2",
