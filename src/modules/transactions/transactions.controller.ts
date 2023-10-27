@@ -53,6 +53,19 @@ export class TransactionsController {
     return reply({ res, results: transactions });
   }
 
+  /** Get Transaction statistic */
+  @Get(`/statistics`)
+  @UseGuards(JwtAuthGuard)
+  async findGroupOrganization(@Res() res, @Req() req) {
+    const { user } = req;
+
+    const transactions = await this.transactionsService.findGroupOrganization({
+      organizationId: user?.organizationId,
+    });
+
+    return reply({ res, results: transactions });
+  }
+
   /** Get one Transaction */
   @Get(`/show/:transactionId`)
   @UseGuards(JwtAuthGuard)
@@ -60,10 +73,10 @@ export class TransactionsController {
     @Res() res,
     @Param('transactionId', ParseUUIDPipe) transactionId: string,
   ) {
-    const Transaction = await this.transactionsService.findOneBy({
+    const transaction = await this.transactionsService.findOneBy({
       transactionId,
     });
 
-    return reply({ res, results: Transaction });
+    return reply({ res, results: transaction });
   }
 }

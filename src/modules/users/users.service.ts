@@ -295,6 +295,58 @@ export class UsersService {
       .addSelect(
         /*sql*/ `(
         SELECT jsonb_build_object(
+        'amount', CAST(SUM("tran"."amountConvert") AS DECIMAL),
+        'count', CAST(COUNT(DISTINCT tran) AS INT)
+        )
+        FROM "transaction" "tran"
+        WHERE "tran"."model" IN ('PRODUCT')
+        AND "tran"."organizationId" = "user"."organizationId"
+        AND DATE_TRUNC('month', "tran"."createdAt") = DATE_TRUNC('month', NOW())
+        GROUP BY "tran"."organizationId", "user"."organizationId",
+        DATE_TRUNC('month', "tran"."createdAt")
+        ) AS "product"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'amount', CAST(SUM("tran"."amountConvert") AS DECIMAL),
+        'count', CAST(COUNT(DISTINCT tran) AS INT)
+        )
+        FROM "transaction" "tran"
+        WHERE "tran"."model" IN ('DONATION')
+        AND "tran"."organizationId" = "user"."organizationId"
+        AND DATE_TRUNC('month', "tran"."createdAt") = DATE_TRUNC('month', NOW())
+        GROUP BY "tran"."organizationId", "user"."organizationId",
+        DATE_TRUNC('month', "tran"."createdAt")
+        ) AS "donation"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'amount', CAST(SUM("tran"."amountConvert") AS DECIMAL),
+        'count', CAST(COUNT(DISTINCT tran) AS INT)
+        )
+        FROM "transaction" "tran"
+        WHERE "tran"."model" IN ('MEMBERSHIP')
+        AND "tran"."organizationId" = "user"."organizationId"
+        AND DATE_TRUNC('month', "tran"."createdAt") = DATE_TRUNC('month', NOW())
+        GROUP BY "tran"."organizationId", "user"."organizationId",
+        DATE_TRUNC('month', "tran"."createdAt")
+        ) AS "membership"`,
+      )
+      // .addSelect(
+      //   /*sql*/ `jsonb_build_object(
+      //       SELECT jsonb_build_object(
+      //         'total', CAST(SUM("tran"."amountConvert") AS DECIMAL)
+      //       )
+      //       FROM "transaction" "tran"
+      //       WHERE "user"."organizationId" = "tran"."organizationId"
+      //       AND "tran"."model" IN ('DONATION')
+      // ) AS "transaction"`,
+      // )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
         'name', "con"."role"
         )
         FROM "contributor" "con"

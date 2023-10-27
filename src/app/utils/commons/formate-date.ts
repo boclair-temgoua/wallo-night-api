@@ -69,12 +69,12 @@ export const addYearsFormateDDMMYYDate = (options: {
   return DateTime.fromISO(dateFormate).plus({ years: yearNumber }).toJSDate();
 };
 
-export const substrateDaysToTimeNowUtcDate = (dayNumber: number) => {
-  return DateTime.utc().minus({ days: dayNumber }).toJSDate();
+export const substrateDaysToTimeNowUtcDate = (value: number) => {
+  return DateTime.utc().minus({ days: value }).toJSDate();
 };
 
-export const substrateDaysToTimeNowUtcUnixInteger = (dayNumber: number) => {
-  return DateTime.utc().minus({ days: dayNumber }).toUnixInteger();
+export const substrateDaysToTimeNowUtcUnixInteger = (value: number) => {
+  return DateTime.utc().minus({ days: value }).toUnixInteger();
 };
 
 export const formateNowDateUnixInteger = (date: Date) => {

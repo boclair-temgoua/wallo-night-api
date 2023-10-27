@@ -17,7 +17,10 @@ import {
   WithPaginationResponse,
   withPagination,
 } from '../../app/utils/pagination/with-pagination';
-import { colorsArrays } from '../../app/utils/commons'
+import {
+  colorsArrays,
+  substrateDaysToTimeNowUtcDate,
+} from '../../app/utils/commons';
 import { getRandomElement } from '../../app/utils/array/get-random-element';
 
 @Injectable()
@@ -136,6 +139,36 @@ export class TransactionsService {
       rowCount,
       value: transactions,
     });
+  }
+
+  async findGroupOrganization(
+    selections: GetTransactionsSelections,
+  ): Promise<any> {
+    const { organizationId } = selections;
+
+    let query = this.driver
+      .createQueryBuilder('transaction')
+      .select('transaction.organizationId', 'organizationId')
+      .addSelect('transaction.model', 'model')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'amount', CAST(SUM("transaction"."amountConvert") AS DECIMAL),
+            'count', CAST(COUNT(DISTINCT transaction) AS INT)
+          ) AS "statistic"`,
+      )
+      .where('transaction.deletedAt IS NULL')
+      .groupBy('transaction.organizationId')
+      .addGroupBy('transaction.model');
+
+    if (organizationId) {
+      query = query.andWhere('transaction.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
+    const transactions = await query.getRawMany();
+
+    return transactions;
   }
 
   async findOneBy(

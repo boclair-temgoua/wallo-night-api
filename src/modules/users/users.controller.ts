@@ -67,7 +67,7 @@ export class UsersController {
 
   /** Get one user */
   @Get(`/show/:userId`)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async getOneByIdUser(
     @Res() res,
     @Param('userId', ParseUUIDPipe) userId: string,
