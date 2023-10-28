@@ -8,6 +8,7 @@ export const transactionTypeArrays = ['PAYPAL', 'CARD', 'COUPON', 'PHONE'];
 export type GetTransactionsSelections = {
   search?: string;
   model?: string;
+  days?: number;
   pagination?: PaginationType;
   campaignId?: Transaction['campaignId'];
   userSendId?: Transaction['userSendId'];

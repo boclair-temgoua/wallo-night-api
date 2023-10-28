@@ -301,9 +301,7 @@ export class UsersService {
         FROM "transaction" "tran"
         WHERE "tran"."model" IN ('PRODUCT')
         AND "tran"."organizationId" = "user"."organizationId"
-        AND DATE_TRUNC('month', "tran"."createdAt") = DATE_TRUNC('month', NOW())
-        GROUP BY "tran"."organizationId", "user"."organizationId",
-        DATE_TRUNC('month', "tran"."createdAt")
+        GROUP BY "tran"."organizationId", "user"."organizationId"
         ) AS "product"`,
       )
       .addSelect(
@@ -315,9 +313,7 @@ export class UsersService {
         FROM "transaction" "tran"
         WHERE "tran"."model" IN ('DONATION')
         AND "tran"."organizationId" = "user"."organizationId"
-        AND DATE_TRUNC('month', "tran"."createdAt") = DATE_TRUNC('month', NOW())
-        GROUP BY "tran"."organizationId", "user"."organizationId",
-        DATE_TRUNC('month', "tran"."createdAt")
+        GROUP BY "tran"."organizationId", "user"."organizationId"
         ) AS "donation"`,
       )
       .addSelect(
@@ -329,21 +325,9 @@ export class UsersService {
         FROM "transaction" "tran"
         WHERE "tran"."model" IN ('MEMBERSHIP')
         AND "tran"."organizationId" = "user"."organizationId"
-        AND DATE_TRUNC('month', "tran"."createdAt") = DATE_TRUNC('month', NOW())
-        GROUP BY "tran"."organizationId", "user"."organizationId",
-        DATE_TRUNC('month', "tran"."createdAt")
+        GROUP BY "tran"."organizationId", "user"."organizationId"
         ) AS "membership"`,
       )
-      // .addSelect(
-      //   /*sql*/ `jsonb_build_object(
-      //       SELECT jsonb_build_object(
-      //         'total', CAST(SUM("tran"."amountConvert") AS DECIMAL)
-      //       )
-      //       FROM "transaction" "tran"
-      //       WHERE "user"."organizationId" = "tran"."organizationId"
-      //       AND "tran"."model" IN ('DONATION')
-      // ) AS "transaction"`,
-      // )
       .addSelect(
         /*sql*/ `(
         SELECT jsonb_build_object(

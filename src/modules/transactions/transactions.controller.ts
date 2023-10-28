@@ -35,7 +35,7 @@ export class TransactionsController {
     @Query() query: FilterTransactionsDto,
   ) {
     const { user } = req;
-    const { campaignId, model, userSendId, organizationId } = query;
+    const { campaignId, model, userSendId, organizationId, days } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -43,6 +43,7 @@ export class TransactionsController {
 
     const transactions = await this.transactionsService.findAll({
       search,
+      days: Number(days),
       model: model?.toLocaleUpperCase(),
       campaignId,
       userSendId,
@@ -56,11 +57,17 @@ export class TransactionsController {
   /** Get Transaction statistic */
   @Get(`/statistics`)
   @UseGuards(JwtAuthGuard)
-  async findGroupOrganization(@Res() res, @Req() req) {
+  async findGroupOrganization(
+    @Res() res,
+    @Req() req,
+    @Query() query: FilterTransactionsDto,
+  ) {
     const { user } = req;
+    const { days, organizationId } = query;
 
     const transactions = await this.transactionsService.findGroupOrganization({
-      organizationId: user?.organizationId,
+      organizationId: organizationId ?? user.organizationId,
+      days: Number(days),
     });
 
     return reply({ res, results: transactions });

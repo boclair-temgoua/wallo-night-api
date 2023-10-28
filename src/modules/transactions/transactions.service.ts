@@ -37,6 +37,7 @@ export class TransactionsService {
       search,
       pagination,
       model,
+      days,
       campaignId,
       userSendId,
       organizationId,
@@ -104,6 +105,12 @@ export class TransactionsService {
       });
     }
 
+    if (days) {
+      query = query.andWhere(
+        `DATE_TRUNC('day', "transaction"."createdAt") BETWEEN (CURRENT_DATE - INTERVAL '${days} days') AND  CURRENT_DATE`,
+      );
+    }
+
     if (organizationId) {
       query = query.andWhere('transaction.organizationId = :organizationId', {
         organizationId,
@@ -144,7 +151,7 @@ export class TransactionsService {
   async findGroupOrganization(
     selections: GetTransactionsSelections,
   ): Promise<any> {
-    const { organizationId } = selections;
+    const { organizationId, days } = selections;
 
     let query = this.driver
       .createQueryBuilder('transaction')
@@ -157,6 +164,7 @@ export class TransactionsService {
           ) AS "statistic"`,
       )
       .where('transaction.deletedAt IS NULL')
+
       .groupBy('transaction.organizationId')
       .addGroupBy('transaction.model');
 
@@ -164,6 +172,12 @@ export class TransactionsService {
       query = query.andWhere('transaction.organizationId = :organizationId', {
         organizationId,
       });
+    }
+
+    if (days) {
+      query = query.andWhere(
+        `DATE_TRUNC('day', "transaction"."createdAt") BETWEEN (CURRENT_DATE - INTERVAL '${days} days') AND  CURRENT_DATE`,
+      );
     }
 
     const transactions = await query.getRawMany();

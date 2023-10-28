@@ -35,6 +35,10 @@ export class FilterTransactionsDto {
 
   @IsOptional()
   @IsString()
+  days: string;
+
+  @IsOptional()
+  @IsString()
   @IsIn(filterQueryTypeArrays)
   model: FilterQueryType;
 }
