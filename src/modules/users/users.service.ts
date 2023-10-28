@@ -213,6 +213,39 @@ export class UsersService {
       AND "sub"."deletedAt" IS NULL)
       ) AS "totalSubscribe"`,
       )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'count', CAST(COUNT(DISTINCT tran) AS INT)
+        )
+        FROM "transaction" "tran"
+        WHERE "tran"."model" IN ('PRODUCT')
+        AND "tran"."organizationId" = "user"."organizationId"
+        GROUP BY "tran"."organizationId", "user"."organizationId"
+        ) AS "product"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'count', CAST(COUNT(DISTINCT tran) AS INT)
+        )
+        FROM "transaction" "tran"
+        WHERE "tran"."model" IN ('DONATION')
+        AND "tran"."organizationId" = "user"."organizationId"
+        GROUP BY "tran"."organizationId", "user"."organizationId"
+        ) AS "donation"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'count', CAST(COUNT(DISTINCT tran) AS INT)
+        )
+        FROM "transaction" "tran"
+        WHERE "tran"."model" IN ('MEMBERSHIP')
+        AND "tran"."organizationId" = "user"."organizationId"
+        GROUP BY "tran"."organizationId", "user"."organizationId"
+        ) AS "membership"`,
+      )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile')
       .leftJoin('profile.currency', 'currency');
