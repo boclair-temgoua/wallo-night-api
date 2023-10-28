@@ -31,7 +31,7 @@ export class CountriesService {
     }
 
     const [errors, results] = await useCatch(
-      query.orderBy('country.createdAt', 'DESC').getMany(),
+      query.orderBy('country.name', 'ASC').getMany(),
     );
     if (errors) throw new NotFoundException(errors);
 

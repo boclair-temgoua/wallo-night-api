@@ -47,7 +47,7 @@ export class CurrenciesService {
     }
 
     const [errors, results] = await useCatch(
-      query.orderBy('currency.createdAt', 'DESC').getRawMany(),
+      query.orderBy('currency.name', 'ASC').getRawMany(),
     );
     if (errors) throw new NotFoundException(errors);
 
