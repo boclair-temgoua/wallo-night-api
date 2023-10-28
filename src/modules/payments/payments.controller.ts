@@ -34,7 +34,14 @@ export class PaymentsController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const { amount, membershipId, userId, reference, paymentMethod } = body;
+    const {
+      amount,
+      membershipId,
+      userReceiveId,
+      userSendId,
+      reference,
+      paymentMethod,
+    } = body;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -44,7 +51,8 @@ export class PaymentsController {
 
     const { transaction } =
       await this.subscribesUtil.createOrUpdateOneSubscribe({
-        userId,
+        userSendId: userSendId,
+        userReceiveId: userReceiveId,
         amount: {
           currency: amount?.currency.toUpperCase(),
           value: amount?.value * 100,
@@ -75,7 +83,14 @@ export class PaymentsController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const { amount, membershipId, userId, reference, paymentMethod } = body;
+    const {
+      amount,
+      membershipId,
+      userReceiveId,
+      userSendId,
+      reference,
+      paymentMethod,
+    } = body;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -100,7 +115,8 @@ export class PaymentsController {
     if (paymentIntents) {
       const { transaction } =
         await this.subscribesUtil.createOrUpdateOneSubscribe({
-          userId,
+          userSendId: userSendId,
+          userReceiveId: userReceiveId,
           amount: {
             currency: paymentIntents?.currency.toUpperCase(),
             value: amount?.value * 100,
@@ -132,7 +148,14 @@ export class PaymentsController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const { amount, organizationId, userId, reference, paymentMethod } = body;
+    const {
+      amount,
+      organizationId,
+      userReceiveId,
+      userSendId,
+      reference,
+      paymentMethod,
+    } = body;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -141,7 +164,8 @@ export class PaymentsController {
       });
 
     const transaction = await this.transactionsService.createOne({
-      userSendId: userId,
+      userSendId: userSendId,
+      userReceiveId: userReceiveId,
       amount: amount?.value * 100,
       currency: amount?.currency.toUpperCase(),
       organizationId: organizationId,
@@ -166,7 +190,7 @@ export class PaymentsController {
         userId: transaction?.userSendId,
         fullName: transaction?.fullName,
         description: transaction?.description,
-        organizationId: transaction?.organizationId,
+        userReceiveId: transaction?.userReceiveId,
       });
     }
 
@@ -180,7 +204,14 @@ export class PaymentsController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const { amount, organizationId, userId, reference, paymentMethod } = body;
+    const {
+      amount,
+      organizationId,
+      userReceiveId,
+      userSendId,
+      reference,
+      paymentMethod,
+    } = body;
     const { billing_details } = paymentMethod;
 
     const { value: amountValueConvert } =
@@ -205,7 +236,8 @@ export class PaymentsController {
 
     if (paymentIntents) {
       const transaction = await this.transactionsService.createOne({
-        userSendId: userId,
+        userSendId: userSendId,
+        userReceiveId: userReceiveId,
         amount: amount?.value * 100,
         currency: paymentIntents?.currency.toUpperCase(),
         organizationId: organizationId,
@@ -231,7 +263,7 @@ export class PaymentsController {
           userId: transaction?.userSendId,
           fullName: transaction?.fullName,
           description: transaction?.description,
-          organizationId: transaction?.organizationId,
+          userReceiveId: transaction?.userReceiveId,
         });
       }
     }

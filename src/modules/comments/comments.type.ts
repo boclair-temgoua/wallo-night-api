@@ -3,11 +3,11 @@ import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetCommentsSelections = {
   search?: string;
-  userId?: Comment['userId'];
   likeUserId?: Comment['userId'];
   postId?: Comment['postId'];
   parentId?: Comment['parentId'];
   productId?: Comment['productId'];
+  userReceiveId?: Comment['userReceiveId'];
   modelIds?: [];
   pagination?: PaginationType;
 };

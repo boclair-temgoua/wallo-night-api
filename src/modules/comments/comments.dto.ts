@@ -26,7 +26,7 @@ export class CreateOrUpdateCommentsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  organizationId: string;
+  userReceiveId: string;
 
   @IsOptional()
   @IsString()
@@ -61,7 +61,7 @@ export class CommentsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userId: string;
+  userReceiveId: string;
 
   @IsNotEmpty()
   @IsString()

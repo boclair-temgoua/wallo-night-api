@@ -32,7 +32,7 @@ export class CommentsService {
       postId,
       parentId,
       productId,
-      userId,
+      userReceiveId,
       modelIds,
       likeUserId,
     } = selections;
@@ -50,7 +50,7 @@ export class CommentsService {
       .addSelect('comment.color', 'color')
       .addSelect('comment.email', 'email')
       .addSelect('comment.fullName', 'fullName')
-      .addSelect('comment.organizationId', 'organizationId')
+      .addSelect('comment.userReceiveId', 'userReceiveId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'username', "user"."username",
@@ -93,6 +93,10 @@ export class CommentsService {
       query = query.andWhere('comment.postId = :postId', { postId });
     }
 
+    if (userReceiveId) {
+      query = query.andWhere('comment.userReceiveId = :userReceiveId', { userReceiveId });
+    }
+
     if (modelIds && modelIds.length > 0) {
       query = query.andWhere('comment.model IN (:...modelIds)', { modelIds });
     }
@@ -110,7 +114,7 @@ export class CommentsService {
     }
 
     if (search) {
-      query = query.andWhere('comment.title ::text ILIKE :search', {
+      query = query.andWhere('comment.description ::text ILIKE :search', {
         search: `%${search}%`,
       });
     }
@@ -169,11 +173,11 @@ export class CommentsService {
       productId,
       parentId,
       model,
-      organizationId,
       userId,
       color,
       email,
       fullName,
+      userReceiveId,
     } = options;
 
     const comment = new Comment();
@@ -184,9 +188,9 @@ export class CommentsService {
     comment.color = color;
     comment.email = email;
     comment.fullName = fullName;
-    comment.organizationId = organizationId;
     comment.productId = productId;
     comment.description = description;
+    comment.userReceiveId = userReceiveId;
 
     const query = this.driver.save(comment);
 

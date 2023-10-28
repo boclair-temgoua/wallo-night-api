@@ -42,7 +42,7 @@ export class CommentsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { postId, productId, userVisitorId, modelIds } = query;
+    const { postId, productId, userVisitorId, userReceiveId, modelIds } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -53,6 +53,7 @@ export class CommentsController {
       postId,
       productId,
       pagination,
+      userReceiveId,
       likeUserId: userVisitorId,
       modelIds: modelIds ? (String(modelIds).split(',') as []) : null,
     });
@@ -103,15 +104,15 @@ export class CommentsController {
     @Body() body: CreateOrUpdateCommentsDto,
   ) {
     const { user } = req;
-    const { description, postId, productId, organizationId, model } = body;
+    const { description, postId, productId, userReceiveId, model } = body;
 
     const comment = await this.commentsService.createOne({
       postId: isEmpty(postId) ? null : postId,
       productId: isEmpty(productId) ? null : productId,
       description,
       model,
-      organizationId: organizationId,
       userId: user?.id,
+      userReceiveId: userReceiveId,
     });
 
     return reply({ res, results: comment });
@@ -141,7 +142,7 @@ export class CommentsController {
     await this.commentsService.createOne({
       postId: findOneComment?.postId,
       productId: findOneComment?.productId,
-      organizationId: findOneComment?.organizationId,
+      userReceiveId: findOneComment?.userReceiveId,
       parentId: parentId,
       userId: user?.id,
       model,

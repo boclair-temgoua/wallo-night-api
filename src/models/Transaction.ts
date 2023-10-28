@@ -100,6 +100,14 @@ export class Transaction extends BaseDeleteEntity {
   userSend?: Relation<User>;
 
   @Column({ type: 'uuid', nullable: true })
+  userReceiveId?: string;
+  @ManyToOne(() => User, (user) => user.transactions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userReceiveId', referencedColumnName: 'id' })
+  userReceive?: Relation<User>;
+
+  @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
   @ManyToOne(() => Organization, (organization) => organization.transactions)
   @JoinColumn()

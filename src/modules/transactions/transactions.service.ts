@@ -57,6 +57,7 @@ export class TransactionsService {
       .addSelect('transaction.giftId', 'giftId')
       .addSelect('transaction.email', 'email')
       .addSelect('transaction.color', 'color')
+      .addSelect('transaction.userReceiveId', 'userReceiveId')
       .addSelect('transaction.fullName', 'fullName')
       .addSelect('transaction.userSendId', 'userSendId')
       .addSelect('transaction.organizationId', 'organizationId')
@@ -221,6 +222,7 @@ export class TransactionsService {
       giftId,
       fullName,
       email,
+      userReceiveId,
     } = options;
 
     const transaction = new Transaction();
@@ -235,6 +237,7 @@ export class TransactionsService {
     transaction.giftId = giftId;
     transaction.fullName = fullName;
     transaction.email = email;
+    transaction.userReceiveId = userReceiveId;
     transaction.color = getRandomElement(colorsArrays);
     transaction.amountConvert = amountConvert;
     transaction.organizationId = organizationId;
