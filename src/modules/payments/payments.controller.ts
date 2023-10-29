@@ -173,7 +173,7 @@ export class PaymentsController {
       token: reference,
       model: 'DONATION',
       fullName: 'Somebody',
-      description: amount?.description ?? 'bought un pot',
+      description: amount?.description || 'bought un pot',
       amountConvert: amountValueConvert * 100,
     });
 
@@ -225,7 +225,7 @@ export class PaymentsController {
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
       token: reference,
-      description: amount?.description ?? 'bought un pot',
+      description: amount?.description || 'bought un pot',
     });
     if (!paymentIntents) {
       throw new HttpException(
