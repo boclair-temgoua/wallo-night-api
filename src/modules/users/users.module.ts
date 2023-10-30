@@ -9,6 +9,7 @@ import {
   Organization,
   Currency,
   Subscribe,
+  Donation,
 } from '../../models';
 import { ProfilesService } from '../profiles/profiles.service';
 import { AuthUserController } from './auth/auth-user.controller';
@@ -23,6 +24,7 @@ import { WalletsService } from '../wallets/wallets.service';
 import { SubscribesService } from '../subscribes/subscribes.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { OrganizationsService } from '../organizations/organizations.service';
+import { DonationsService } from '../donations/donations.service';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { OrganizationsService } from '../organizations/organizations.service';
       Profile,
       Subscribe,
       Currency,
+      Donation,
       Organization,
       ResetPassword,
       Contributor,
@@ -44,6 +47,7 @@ import { OrganizationsService } from '../organizations/organizations.service';
     ProfilesService,
     CheckUserService,
     JwtAuthStrategy,
+    DonationsService,
     ContributorsUtil,
     CurrenciesService,
     SubscribesService,

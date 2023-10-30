@@ -20,7 +20,7 @@ import {
   Comment,
   Campaign,
   Gift,
-  Wallet,
+  Donation,
   Transaction,
   Cart,
   Contributor,
@@ -93,6 +93,11 @@ export class User extends BaseDeleteEntity {
 
   @OneToMany(() => Discount, (discount) => discount.user)
   discounts?: Discount[];
+
+  @OneToOne(() => Donation, (donation) => donation.user, {
+    onDelete: 'CASCADE',
+  })
+  donation?: Donation;
 
   @OneToMany(() => Product, (product) => product.user)
   products?: Product[];

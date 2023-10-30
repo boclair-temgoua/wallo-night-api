@@ -21,6 +21,7 @@ export * from './Comment';
 export * from './Upload';
 export * from './Campaign';
 export * from './Faq';
+export * from './Donation';
 export * from './Gift';
 export * from './OrderProduct';
 export * from './Product';

@@ -226,6 +226,16 @@ export class UsersService {
       )
       .addSelect(
         /*sql*/ `(
+         jsonb_build_object(
+        'id', "donation"."id",
+        'userId', "donation"."userId",
+        'messageWelcome', "donation"."messageWelcome",
+        'description', "donation"."description",
+        'price', "donation"."price")
+        ) AS "donationUser"`,
+      )
+      .addSelect(
+        /*sql*/ `(
         SELECT jsonb_build_object(
         'count', CAST(COUNT(DISTINCT tran) AS INT)
         )
@@ -248,6 +258,7 @@ export class UsersService {
       )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.profile', 'profile')
+      .leftJoin('user.donation', 'donation')
       .leftJoin('profile.currency', 'currency');
 
     if (followerId) {
@@ -339,6 +350,17 @@ export class UsersService {
       )
       .addSelect(
         /*sql*/ `(
+         jsonb_build_object(
+        'id', "donation"."id",
+        'userId', "donation"."userId",
+        'messageWelcome', "donation"."messageWelcome",
+        'description', "donation"."description",
+        'price', "donation"."price"
+        )
+        ) AS "donationUser"`,
+      )
+      .addSelect(
+        /*sql*/ `(
         SELECT jsonb_build_object(
         'amount', CAST(SUM("tran"."amountConvert") AS DECIMAL),
         'count', CAST(COUNT(DISTINCT tran) AS INT)
@@ -413,6 +435,7 @@ export class UsersService {
       )
       .where('user.deletedAt IS NULL')
       .leftJoin('user.organization', 'organization')
+      .leftJoin('user.donation', 'donation')
       .leftJoin('organization.wallet', 'wallet')
       .leftJoin('organization.user', 'userOrg')
       .leftJoin('userOrg.profile', 'profile')

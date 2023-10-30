@@ -36,6 +36,7 @@ import { CommissionsModule } from './modules/commissions/commissions.module';
 import { SubscribesModule } from './modules/subscribes/subscribes.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
+import { DonationsModule } from './modules/donations/donations.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
     MediaModule,
     GiftsModule,
     PostsModule,
+    DonationsModule,
     CommentsModule,
     CurrenciesModule,
     WithdrawalsModule,

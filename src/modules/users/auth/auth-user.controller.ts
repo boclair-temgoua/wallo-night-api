@@ -51,6 +51,7 @@ import { JwtAuthGuard } from '../middleware';
 import { SubscribesService } from '../../subscribes/subscribes.service';
 import { CurrenciesService } from '../../currencies/currencies.service';
 import { OrganizationsService } from '../../organizations/organizations.service';
+import { DonationsService } from '../../donations/donations.service';
 import {
   expire_cookie_setting,
   validation_code_verification_cookie_setting,
@@ -61,6 +62,7 @@ import {
 export class AuthUserController {
   constructor(
     private readonly usersService: UsersService,
+    private readonly donationsService: DonationsService,
     private readonly walletsService: WalletsService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
@@ -144,18 +146,25 @@ export class AuthUserController {
       organizationId: organization?.id,
     });
 
+    /** Create Donation */
+    await this.donationsService.createOne({
+      price: 5, // USD
+      userId: user?.id,
+      messageWelcome: 'Thank you for the support! 🎉',
+    });
+
     /** Update Organization */
-    await this.organizationsService.updateOne(
+    await this.organizationsService.updateOne(  
       { organizationId: organization?.id },
       { userId: user?.id },
     );
 
-    const queue = 'user-register';
-    const connect = await amqplib.connect(config.implementations.amqp.link);
-    const channel = await connect.createChannel();
-    await channel.assertQueue(queue, { durable: false });
-    await channel.sendToQueue(queue, Buffer.from(JSON.stringify(user)));
-    await authRegisterJob({ channel, queue });
+    // const queue = 'user-register';
+    // const connect = await amqplib.connect(config.implementations.amqp.link);
+    // const channel = await connect.createChannel();
+    // await channel.assertQueue(queue, { durable: false });
+    // await channel.sendToQueue(queue, Buffer.from(JSON.stringify(user)));
+    // await authRegisterJob({ channel, queue });
 
     const jwtPayload: JwtPayloadType = {
       id: user.id,

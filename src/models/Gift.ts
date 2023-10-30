@@ -33,7 +33,7 @@ export class Gift extends BaseDeleteEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'float' })
   amount: number;
 
   @Column({ type: 'uuid', nullable: true })
