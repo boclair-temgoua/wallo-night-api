@@ -15,7 +15,7 @@ import { BaseDeleteEntity } from '../app/databases/common';
 import { OrderProduct } from './OrderProduct';
 import { Discount } from './Discount';
 import { ProductStatus } from '../app/utils/pagination';
-import { WhoCanSeeType } from '../app/utils/search-query';
+import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
 import { ProductType } from '../modules/products/products.dto';
 import {
   Cart,
@@ -46,6 +46,9 @@ export class Product extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   urlMedia: string;
+
+  @Column({ type: 'enum', enum: whoCanSeeTypeArrays, default: 'PUBLIC' })
+  whoCanSee?: WhoCanSeeType;
 
   @Column({ nullable: true })
   urlRedirect: string;
@@ -82,9 +85,6 @@ export class Product extends BaseDeleteEntity {
 
   @Column({ default: 'PHYSICAL' })
   productType?: ProductType;
-
-  @Column({ default: 'PUBLIC' })
-  whoCanSee?: WhoCanSeeType;
 
   @Column({ type: 'uuid', nullable: true })
   categoryId: string;

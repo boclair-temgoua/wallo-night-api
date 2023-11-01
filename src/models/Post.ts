@@ -13,7 +13,7 @@ import {
 import { BaseDeleteEntity } from '../app/databases/common';
 import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
 import { User } from './User';
-import { PostType, postTypeArrays } from '../modules/posts/posts.type';
+import { PostType } from '../modules/posts/posts.type';
 import { Comment, PostCategory, Membership, Organization } from './index';
 import { ProductStatus } from '../app/utils/pagination';
 
@@ -34,18 +34,10 @@ export class Post extends BaseDeleteEntity {
   @Column({ nullable: true })
   urlMedia?: string;
 
-  @Column({
-    type: 'enum',
-    enum: whoCanSeeTypeArrays,
-    default: 'PUBLIC',
-  })
+  @Column({ type: 'enum', enum: whoCanSeeTypeArrays, default: 'PUBLIC' })
   whoCanSee?: WhoCanSeeType;
 
-  @Column({
-    type: 'enum',
-    enum: postTypeArrays,
-    default: 'ARTICLE',
-  })
+  @Column({ default: 'ARTICLE' })
   type?: PostType;
 
   @Column({ default: 'ACTIVE' })
