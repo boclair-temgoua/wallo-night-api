@@ -21,10 +21,6 @@ export class CreateOrUpdatePostsGalleriesDto {
   @MaxLength(100)
   title: string;
 
-  @IsOptional()
-  @IsString()
-  membershipId: string;
-
   @IsNotEmpty()
   @IsString()
   @IsIn(whoCanSeeTypeArrays)
@@ -79,10 +75,6 @@ export class CreateOrUpdatePostsDto {
   @IsString()
   @MaxLength(200)
   title: string;
-
-  @IsOptional()
-  @IsString()
-  membershipId: string;
 
   @IsOptional()
   @IsString()

@@ -45,7 +45,6 @@ export class ProductsService {
       .addSelect('product.moreDescription', 'moreDescription')
       .addSelect('product.status', 'status')
       .addSelect('product.limitSlot', 'limitSlot')
-      .addSelect('product.membershipId', 'membershipId')
       .addSelect('product.urlRedirect', 'urlRedirect')
       .addSelect('product.enableUrlRedirect', 'enableUrlRedirect')
       .addSelect('product.price', 'price')
@@ -195,7 +194,6 @@ export class ProductsService {
       .addSelect('product.description', 'description')
       .addSelect('product.moreDescription', 'moreDescription')
       .addSelect('product.limitSlot', 'limitSlot')
-      .addSelect('product.membershipId', 'membershipId')
       .addSelect('product.urlRedirect', 'urlRedirect')
       .addSelect('product.enableUrlRedirect', 'enableUrlRedirect')
       .addSelect('product.status', 'status')
@@ -328,7 +326,6 @@ export class ProductsService {
       whoCanSee,
       productType,
       urlRedirect,
-      membershipId,
       enableLimitSlot,
       enableDiscount,
       organizationId,
@@ -351,7 +348,6 @@ export class ProductsService {
     product.limitSlot = limitSlot;
     product.categoryId = categoryId;
     product.status = status;
-    product.membershipId = membershipId;
     product.discountId = discountId;
     product.currencyId = currencyId;
     product.organizationId = organizationId;
@@ -395,7 +391,6 @@ export class ProductsService {
       urlMedia,
       limitSlot,
       urlRedirect,
-      membershipId,
       enableUrlRedirect,
       enableLimitSlot,
       enableDiscount,
@@ -425,7 +420,6 @@ export class ProductsService {
     product.currencyId = currencyId;
     product.limitSlot = limitSlot;
     product.urlRedirect = urlRedirect;
-    product.membershipId = membershipId;
     product.enableUrlRedirect = enableUrlRedirect;
     product.enableLimitSlot = enableLimitSlot;
     product.enableDiscount = enableDiscount;

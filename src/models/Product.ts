@@ -93,12 +93,6 @@ export class Product extends BaseDeleteEntity {
   category: Relation<Category>;
 
   @Column({ type: 'uuid', nullable: true })
-  membershipId?: string;
-  @ManyToOne(() => Membership, (membership) => membership.products)
-  @JoinColumn()
-  membership?: Relation<Membership>;
-
-  @Column({ type: 'uuid', nullable: true })
   discountId: string;
   @ManyToOne(() => Discount, (discount) => discount.products)
   @JoinColumn()

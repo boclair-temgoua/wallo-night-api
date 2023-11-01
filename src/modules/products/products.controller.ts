@@ -94,7 +94,6 @@ export class ProductsController {
       messageAfterPayment,
       description,
       limitSlot,
-      membershipId,
       enableDiscount,
       discountId,
     } = body;
@@ -109,7 +108,6 @@ export class ProductsController {
       urlRedirect,
       whoCanSee,
       productType,
-      membershipId,
       messageAfterPayment,
       currencyId: user?.profile?.currencyId,
       discountId: isNotUndefined(discountId) ? discountId : null,
@@ -157,7 +155,6 @@ export class ProductsController {
       messageAfterPayment,
       description,
       limitSlot,
-      membershipId,
       discountId,
       enableDiscount,
     } = body;
@@ -183,7 +180,6 @@ export class ProductsController {
         urlRedirect,
         whoCanSee,
         productType,
-        membershipId,
         messageAfterPayment,
         limitSlot: Number(limitSlot),
         currencyId: user?.profile?.currencyId,

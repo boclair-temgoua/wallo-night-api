@@ -12,7 +12,7 @@ import { TransactionType } from '../modules/transactions/transactions.type';
 import { Organization } from './index';
 import {
   StatusPayment,
-  StatusPaymentArray,
+  statusPaymentArray,
 } from '../modules/payments/payments.dto';
 
 @Entity('payment')
@@ -29,7 +29,7 @@ export class Payment extends BaseDeleteEntity {
   @Column({ nullable: true })
   phone?: string;
 
-  @Column({ type: 'enum', enum: StatusPaymentArray, default: 'PENDING' })
+  @Column({ type: 'enum', enum: statusPaymentArray, default: 'PENDING' })
   status?: StatusPayment;
 
   @Column({ nullable: true })

@@ -73,10 +73,4 @@ export class Membership extends BaseDeleteEntity {
 
   @OneToMany(() => Subscribe, (subscribe) => subscribe.membership)
   subscribes?: Subscribe[];
-
-  @OneToMany(() => Post, (post) => post.membership)
-  posts?: Post[];
-
-  @OneToMany(() => Product, (product) => product.membership)
-  products?: Product[];
 }

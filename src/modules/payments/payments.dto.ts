@@ -17,7 +17,7 @@ import {
 
 export type StatusPayment = 'ACTIVE' | 'PENDING' | 'INVALID';
 
-export const StatusPaymentArray = ['ACTIVE', 'PENDING', 'INVALID'];
+export const statusPaymentArray = ['ACTIVE', 'PENDING', 'INVALID'];
 
 export class CreateOnePaymentDto {
   @IsNotEmpty()

@@ -146,7 +146,7 @@ export class PostsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
-    const { title, whoCanSee, allowDownload, membershipId, description, type } =
+    const { title, whoCanSee, allowDownload, description, type } =
       body;
 
     const post = await this.postsService.createOne({
@@ -156,7 +156,6 @@ export class PostsController {
       description,
       userId: user?.id,
       organizationId: user?.organizationId,
-      membershipId: isNotUndefined(membershipId) ? membershipId : null,
       allowDownload: allowDownload === 'true' ? true : false,
     });
 
@@ -190,7 +189,6 @@ export class PostsController {
       allowDownload,
       urlMedia,
       whoCanSee,
-      membershipId,
       enableUrlMedia,
       type,
     } = body;
@@ -205,7 +203,6 @@ export class PostsController {
       userId: user?.id,
       organizationId: user?.organizationId,
       allowDownload: allowDownload === 'true' ? true : false,
-      membershipId: isNotUndefined(membershipId) ? membershipId : null,
       enableUrlMedia: enableUrlMedia === 'true' ? true : false,
     });
 
@@ -239,7 +236,6 @@ export class PostsController {
       allowDownload,
       urlMedia,
       whoCanSee,
-      membershipId,
       enableUrlMedia,
     } = body;
 
@@ -259,7 +255,6 @@ export class PostsController {
         whoCanSee,
         description,
         allowDownload: allowDownload === 'true' ? true : false,
-        membershipId: isNotUndefined(membershipId) ? membershipId : null,
         enableUrlMedia: enableUrlMedia === 'true' ? true : false,
       },
     );

@@ -11,9 +11,9 @@ import {
   JoinTable,
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { WhoCanSeeType } from '../app/utils/search-query';
+import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
 import { User } from './User';
-import { PostType } from '../modules/posts/posts.type';
+import { PostType, postTypeArrays } from '../modules/posts/posts.type';
 import { Comment, PostCategory, Membership, Organization } from './index';
 import { ProductStatus } from '../app/utils/pagination';
 
@@ -34,10 +34,18 @@ export class Post extends BaseDeleteEntity {
   @Column({ nullable: true })
   urlMedia?: string;
 
-  @Column({ default: 'PUBLIC' })
+  @Column({
+    type: 'enum',
+    enum: whoCanSeeTypeArrays,
+    default: 'PUBLIC',
+  })
   whoCanSee?: WhoCanSeeType;
 
-  @Column({ default: 'ARTICLE' })
+  @Column({
+    type: 'enum',
+    enum: postTypeArrays,
+    default: 'ARTICLE',
+  })
   type?: PostType;
 
   @Column({ default: 'ACTIVE' })
@@ -64,12 +72,6 @@ export class Post extends BaseDeleteEntity {
   })
   @JoinColumn()
   organization?: Relation<Organization>;
-
-  @Column({ type: 'uuid', nullable: true })
-  membershipId?: string;
-  @ManyToOne(() => Membership, (membership) => membership.posts)
-  @JoinColumn()
-  membership?: Relation<Membership>;
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments?: Comment[];
