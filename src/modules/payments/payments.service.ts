@@ -1,21 +1,243 @@
 import {
-  Injectable,
-  NotFoundException,
   HttpException,
   HttpStatus,
+  Injectable,
+  NotFoundException,
 } from '@nestjs/common';
-
+import { Repository, Brackets } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { config } from '../../app/config/index';
 import { AmountModel } from '../wallets/wallets.type';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from 'src/app/utils/use-catch';
+import { Payment } from '../../models';
+import {
+  CreatePaymentsOptions,
+  GetOnePaymentsSelections,
+  GetPaymentsSelections,
+  UpdatePaymentsOptions,
+  UpdatePaymentsSelections,
+} from './payments.type';
 
-const stripe = new Stripe(String(config.implementations.stripe.key), {
-  apiVersion: '2023-10-16',
-});
+const apiVersion = '2023-10-16';
+const stripePrivate = new Stripe(
+  String(config.implementations.stripe.privateKey),
+  {
+    apiVersion,
+  },
+);
+
+const stripePublic = new Stripe(
+  String(config.implementations.stripe.publicKey),
+  {
+    apiVersion,
+  },
+);
 
 @Injectable()
 export class PaymentsService {
-  constructor() {} // private readonly createOrUpdateActivity: CreateOrUpdateActivity, // private readonly updateUserAfterBilling: UpdateUserAfterBilling, // private readonly createAmountAmountBalance: CreateAmountAmountBalance,
+  constructor(
+    @InjectRepository(Payment)
+    private driver: Repository<Payment>,
+  ) {}
+
+  async findAll(selections: GetPaymentsSelections): Promise<any> {
+    const { search, pagination, userId, organizationId } = selections;
+
+    let query = this.driver
+      .createQueryBuilder('payment')
+      .where('payment.deletedAt IS NULL');
+
+    if (userId) {
+      query = query.andWhere('payment.userId = :userId', {
+        userId,
+      });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('payment.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
+    if (search) {
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('payment.name ::text ILIKE :search', {
+            search: `%${search}%`,
+          }).orWhere('payment.description ::text ILIKE :search', {
+            search: `%${search}%`,
+          });
+        }),
+      );
+    }
+
+    const [errorRowCount, rowCount] = await useCatch(query.getCount());
+    if (errorRowCount) throw new NotFoundException(errorRowCount);
+
+    const [error, Gifts] = await useCatch(
+      query
+        .orderBy('payment.createdAt', pagination?.sort)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
+        .getMany(),
+    );
+    if (error) throw new NotFoundException(error);
+
+    return withPagination({
+      pagination,
+      rowCount,
+      value: Gifts,
+    });
+  }
+
+  async findOneBy(selections: GetOnePaymentsSelections): Promise<Payment> {
+    const { organizationId, paymentId,cardNumber } = selections;
+    let query = this.driver
+      .createQueryBuilder('payment')
+      .where('payment.deletedAt IS NULL');
+
+    if (paymentId) {
+      query = query.andWhere('payment.id = :id', { id: paymentId });
+    }
+
+    if (cardNumber) {
+      query = query.andWhere('payment.cardNumber = :cardNumber', { cardNumber });
+    }
+    
+    if (organizationId) {
+      query = query.andWhere('payment.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
+    const result = await query.getOne();
+
+    return result;
+  }
+
+  /** Create one Payment to the database. */
+  async createOne(options: CreatePaymentsOptions): Promise<Payment> {
+    const {
+      email,
+      fullName,
+      phone,
+      cardNumber,
+      cardExpMonth,
+      cardExpYear,
+      cardCvc,
+      type,
+      description,
+      userId,
+      organizationId,
+    } = options;
+
+    const payment = new Payment();
+    payment.email = email;
+    payment.fullName = fullName;
+    payment.phone = phone;
+    payment.cardNumber = cardNumber;
+    payment.cardExpMonth = cardExpMonth;
+    payment.cardExpYear = cardExpYear;
+    payment.cardCvc = cardCvc;
+    payment.type = type;
+    payment.description = description;
+    payment.userId = userId;
+    payment.organizationId = organizationId;
+
+    const query = this.driver.save(payment);
+
+    const [error, result] = await useCatch(query);
+    if (error) throw new NotFoundException(error);
+
+    return result;
+  }
+
+  /** Update one Payment to the database. */
+  async updateOne(
+    selections: UpdatePaymentsSelections,
+    options: UpdatePaymentsOptions,
+  ): Promise<Payment> {
+    const { paymentId } = selections;
+    const {
+      email,
+      phone,
+      fullName,
+      cardNumber,
+      cardExpMonth,
+      cardExpYear,
+      cardCvc,
+      type,
+      description,
+      deletedAt,
+    } = options;
+
+    let findQuery = this.driver.createQueryBuilder('payment');
+
+    if (paymentId) {
+      findQuery = findQuery.where('payment.id = :id', { id: paymentId });
+    }
+
+    const [errorFind, payment] = await useCatch(findQuery.getOne());
+    if (errorFind) throw new NotFoundException(errorFind);
+
+    payment.email = email;
+    payment.phone = phone;
+    payment.fullName = fullName;
+    payment.cardNumber = cardNumber;
+    payment.cardExpMonth = cardExpMonth;
+    payment.cardExpYear = cardExpYear;
+    payment.cardCvc = cardCvc;
+    payment.type = type;
+    payment.description = description;
+    payment.deletedAt = deletedAt;
+
+    const query = this.driver.save(payment);
+
+    const [errorUp, result] = await useCatch(query);
+    if (errorUp) throw new NotFoundException(errorUp);
+
+    return result;
+  }
+
+  /** Stripe billing */
+  async stripeTokenCreate(options: {
+    name: string;
+    email?: string;
+    cardNumber?: string;
+    cardExpMonth?: number;
+    cardExpYear?: number;
+    cardCvc?: string;
+    token?: string;
+  }): Promise<any> {
+    const { name, email, cardNumber, cardExpMonth, cardExpYear, cardCvc } =
+      options;
+
+    const paymentMethod = await stripePublic.tokens.create({
+      card: {
+        number: cardNumber,
+        exp_month: Number(cardExpMonth),
+        exp_year: Number(cardExpYear),
+        cvc: cardCvc,
+      } as any,
+    });
+
+    const params: Stripe.CustomerCreateParams = {
+      name: name,
+      email: email,
+      source: paymentMethod?.id,
+    };
+    const card: Stripe.Customer = await stripePrivate.customers.create(params);
+    if (!paymentMethod && !card) {
+      throw new HttpException(
+        `Transaction not found please try again`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return { paymentMethod };
+  }
 
   /** Stripe billing */
   async stripeMethod(options: {
@@ -33,8 +255,9 @@ export class PaymentsService {
       email: paymentMethod?.billing_details?.email,
       name: paymentMethod?.billing_details?.name,
     };
-    const customer: Stripe.Customer = await stripe.customers.create(params);
-    const paymentIntents = await stripe.paymentIntents.create({
+    const customer: Stripe.Customer =
+      await stripePrivate.customers.create(params);
+    const paymentIntents = await stripePrivate.paymentIntents.create({
       amount: Number(amountDetail?.value) * 100, // 25
       currency: currency,
       description: customer?.description,

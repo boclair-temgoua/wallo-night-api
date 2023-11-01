@@ -32,6 +32,7 @@ import {
 import { Follow } from './Follow';
 import { Like } from './Like';
 import { Subscribe } from './Subscribe';
+import { Payment } from './Payment';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -141,6 +142,11 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   carts?: Cart[];
+
+  @OneToMany(() => Payment, (payment) => payment.user, {
+    onDelete: 'CASCADE',
+  })
+  payments?: Payment[];
 
   @OneToMany(() => Membership, (membership) => membership.user, {
     onDelete: 'CASCADE',

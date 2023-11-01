@@ -126,7 +126,8 @@ export const config = {
      * Stripe
      */
     stripe: {
-      key: process.env.STRIPE_PRIVATE_KEY,
+      privateKey: process.env.STRIPE_PRIVATE_KEY,
+      publicKey: process.env.STRIPE_PUBLIC_KEY,
     },
     /**
      * Amqp

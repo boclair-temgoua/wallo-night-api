@@ -4,9 +4,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Repository, Brackets } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Gift } from '../../models/Gift';
-import { Repository, Brackets } from 'typeorm';
 import {
   CreateGiftsOptions,
   GetGiftsSelections,

@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { config } from '../../app/config/index';
 import { CreateBullingStripeOptions } from './bulling.type';
 
-const stripe = new Stripe(String(config.implementations.stripe.key), {
+const stripe = new Stripe(String(config.implementations.stripe.privateKey), {
   apiVersion: '2023-10-16',
 });
 

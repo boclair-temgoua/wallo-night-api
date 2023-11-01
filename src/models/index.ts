@@ -12,6 +12,7 @@ export * from './PostCategory';
 export * from './Discount';
 export * from './Membership';
 export * from './Like';
+export * from './Payment';
 export * from './Subscribe';
 export * from './Organization';
 export * from './Post';

@@ -1,4 +1,4 @@
-import { Donation } from '../../models/donation';
+import { Donation } from '../../models';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetDonationsSelections = {

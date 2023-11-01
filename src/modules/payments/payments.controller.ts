@@ -6,15 +6,20 @@ import {
   Req,
   HttpStatus,
   HttpException,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { PaymentsService } from './payments.service';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { WalletsService } from '../wallets/wallets.service';
-import { CreateSubscribePaymentsDto } from './payments.dto';
+import {
+  CreateOnePaymentDto,
+  CreateSubscribePaymentsDto,
+} from './payments.dto';
 import { TransactionsUtil } from '../transactions/transactions.util';
 import { TransactionsService } from '../transactions/transactions.service';
 import { CommentsService } from '../comments/comments.service';
+import { JwtAuthGuard } from '../users/middleware';
 
 @Controller('payments')
 export class PaymentsController {
@@ -26,6 +31,61 @@ export class PaymentsController {
     private readonly commentsService: CommentsService,
     private readonly transactionsService: TransactionsService,
   ) {}
+
+  /** Create one payment */
+  @Post(`/create`)
+  @UseGuards(JwtAuthGuard)
+  async createOne(@Res() res, @Req() req, @Body() body: CreateOnePaymentDto) {
+    const { user } = req;
+    const {
+      email,
+      phone,
+      fullName,
+      cardNumber,
+      cardExpMonth,
+      cardExpYear,
+      cardCvc,
+      type,
+      description,
+    } = body;
+
+    const findOnePayment = await this.paymentsService.findOneBy({
+      cardNumber,
+      organizationId: user?.organizationId,
+    });
+    if (findOnePayment)
+      throw new HttpException(
+        `Card ${cardNumber} already exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    if (type === 'CARD') {
+      await this.paymentsService.stripeTokenCreate({
+        name: fullName,
+        email,
+        cardNumber,
+        cardExpMonth,
+        cardExpYear,
+        cardCvc,
+      });
+    }
+
+    await this.paymentsService.createOne({
+      email,
+      phone,
+      fullName,
+      cardNumber,
+      cardExpMonth,
+      cardExpYear,
+      cardCvc,
+      type,
+      description,
+      userId: user?.id,
+      organizationId: user?.organizationId,
+    });
+
+    return reply({ res, results: 'payment created successfully' });
+  }
 
   /** Create subscribe */
   @Post(`/paypal/subscribe`)

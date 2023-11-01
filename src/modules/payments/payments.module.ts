@@ -14,6 +14,7 @@ import {
   Wallet,
   Comment,
   Currency,
+  Payment,
 } from '../../models';
 import { SubscribesService } from '../subscribes/subscribes.service';
 import { WalletsService } from '../wallets/wallets.service';
@@ -29,6 +30,7 @@ import { CommentsService } from '../comments/comments.service';
       Wallet,
       Comment,
       Currency,
+      Payment,
       Transaction,
     ]),
   ],
