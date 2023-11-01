@@ -88,7 +88,7 @@ export class AuthUserController {
       username,
     });
     const findOnCurrency = await this.currenciesService.findOneBy({
-      code: 'EUR',
+      code: 'USD',
     });
     if (findOnUser)
       throw new HttpException(
