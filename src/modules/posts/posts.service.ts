@@ -57,6 +57,7 @@ export class PostsService {
       .addSelect('post.type', 'type')
       .addSelect('post.urlMedia', 'urlMedia')
       .addSelect('post.enableUrlMedia', 'enableUrlMedia')
+      .addSelect('post.organizationId', 'organizationId')
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.createdAt', 'createdAt')
       .addSelect(
@@ -66,6 +67,7 @@ export class PostsService {
               'lastName', "profile"."lastName",
               'image', "profile"."image",
               'color', "profile"."color",
+              'description', "profile"."description",
               'userId', "user"."id",
               'username', "user"."username"
           ) AS "profile"`,
@@ -227,6 +229,7 @@ export class PostsService {
             'image', "profile"."image",
             'color', "profile"."color",
             'userId', "user"."id",
+            'description', "profile"."description",
             'username', "user"."username"
         ) AS "profile"`,
       )
