@@ -19,6 +19,10 @@ export type StatusPayment = 'ACTIVE' | 'PENDING' | 'INVALID';
 
 export const statusPaymentArray = ['ACTIVE', 'PENDING', 'INVALID'];
 
+export type ActionPayment = 'PAYMENT' | 'WITHDRAWING';
+
+export const actionPaymentArray = ['PAYMENT', 'WITHDRAWING'];
+
 export class CreateOnePaymentDto {
   @IsNotEmpty()
   @IsString()

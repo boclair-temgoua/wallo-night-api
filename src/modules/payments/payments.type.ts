@@ -10,6 +10,7 @@ export type GetPaymentsSelections = {
 
 export type GetOnePaymentsSelections = {
   paymentId?: Payment['id'];
+  phone?: Payment['phone'];
   cardNumber?: Payment['cardNumber'];
   organizationId?: Payment['organizationId'];
 };

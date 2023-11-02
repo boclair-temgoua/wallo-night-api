@@ -61,22 +61,10 @@ export class PaymentsService {
       });
     }
 
-    if (search) {
-      query = query.andWhere(
-        new Brackets((qb) => {
-          qb.where('payment.name ::text ILIKE :search', {
-            search: `%${search}%`,
-          }).orWhere('payment.description ::text ILIKE :search', {
-            search: `%${search}%`,
-          });
-        }),
-      );
-    }
-
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const [error, Gifts] = await useCatch(
+    const [error, payments] = await useCatch(
       query
         .orderBy('payment.createdAt', pagination?.sort)
         .limit(pagination.limit)
@@ -88,12 +76,12 @@ export class PaymentsService {
     return withPagination({
       pagination,
       rowCount,
-      value: Gifts,
+      value: payments,
     });
   }
 
   async findOneBy(selections: GetOnePaymentsSelections): Promise<Payment> {
-    const { organizationId, paymentId,cardNumber } = selections;
+    const { organizationId, paymentId, cardNumber, phone } = selections;
     let query = this.driver
       .createQueryBuilder('payment')
       .where('payment.deletedAt IS NULL');
@@ -103,9 +91,11 @@ export class PaymentsService {
     }
 
     if (cardNumber) {
-      query = query.andWhere('payment.cardNumber = :cardNumber', { cardNumber });
+      query = query.andWhere('payment.cardNumber = :cardNumber', {
+        cardNumber,
+      });
     }
-    
+
     if (organizationId) {
       query = query.andWhere('payment.organizationId = :organizationId', {
         organizationId,
@@ -120,6 +110,7 @@ export class PaymentsService {
   /** Create one Payment to the database. */
   async createOne(options: CreatePaymentsOptions): Promise<Payment> {
     const {
+      action,
       email,
       fullName,
       phone,
@@ -142,6 +133,7 @@ export class PaymentsService {
     payment.cardExpYear = cardExpYear;
     payment.cardCvc = cardCvc;
     payment.type = type;
+    payment.action = action;
     payment.description = description;
     payment.userId = userId;
     payment.organizationId = organizationId;
@@ -162,6 +154,7 @@ export class PaymentsService {
     const { paymentId } = selections;
     const {
       email,
+      action,
       phone,
       fullName,
       cardNumber,
@@ -190,6 +183,7 @@ export class PaymentsService {
     payment.cardExpYear = cardExpYear;
     payment.cardCvc = cardCvc;
     payment.type = type;
+    payment.action = action;
     payment.description = description;
     payment.deletedAt = deletedAt;
 

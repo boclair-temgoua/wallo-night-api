@@ -115,7 +115,7 @@ export class MembershipsService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const [error, Memberships] = await useCatch(
+    const [error, memberships] = await useCatch(
       query
         .orderBy('membership.createdAt', pagination?.sort)
         .limit(pagination.limit)
@@ -127,7 +127,7 @@ export class MembershipsService {
     return withPagination({
       pagination,
       rowCount,
-      value: Memberships,
+      value: memberships,
     });
   }
 

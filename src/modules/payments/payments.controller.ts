@@ -7,6 +7,8 @@ import {
   HttpStatus,
   HttpException,
   UseGuards,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { PaymentsService } from './payments.service';
@@ -20,6 +22,10 @@ import { TransactionsUtil } from '../transactions/transactions.util';
 import { TransactionsService } from '../transactions/transactions.service';
 import { CommentsService } from '../comments/comments.service';
 import { JwtAuthGuard } from '../users/middleware';
+import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { FilterTransactionsDto } from '../transactions/transactions.dto';
+import { PaginationType, addPagination } from '../../app/utils/pagination';
 
 @Controller('payments')
 export class PaymentsController {
@@ -31,6 +37,30 @@ export class PaymentsController {
     private readonly commentsService: CommentsService,
     private readonly transactionsService: TransactionsService,
   ) {}
+
+  /** Get all Payments */
+  @Get(`/`)
+  @UseGuards(JwtAuthGuard)
+  async findAll(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { user } = req;
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const payments = await this.paymentsService.findAll({
+      search,
+      pagination,
+      organizationId: user.organizationId,
+    });
+
+    return reply({ res, results: payments });
+  }
 
   /** Create one payment */
   @Post(`/create`)
@@ -49,17 +79,17 @@ export class PaymentsController {
       description,
     } = body;
 
-    const findOnePayment = await this.paymentsService.findOneBy({
-      cardNumber,
-      organizationId: user?.organizationId,
-    });
-    if (findOnePayment)
-      throw new HttpException(
-        `Card ${cardNumber} already exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
-
     if (type === 'CARD') {
+      const findOnePayment = await this.paymentsService.findOneBy({
+        cardNumber,
+        organizationId: user?.organizationId,
+      });
+      if (findOnePayment)
+        throw new HttpException(
+          `Card ${cardNumber} already exists please change`,
+          HttpStatus.NOT_FOUND,
+        );
+
       await this.paymentsService.stripeTokenCreate({
         name: fullName,
         email,
@@ -68,6 +98,18 @@ export class PaymentsController {
         cardExpYear,
         cardCvc,
       });
+    }
+
+    if (type === 'PHONE') {
+      const findOnePayment = await this.paymentsService.findOneBy({
+        phone,
+        organizationId: user?.organizationId,
+      });
+      if (findOnePayment)
+        throw new HttpException(
+          `Phone ${phone} already exists please change`,
+          HttpStatus.NOT_FOUND,
+        );
     }
 
     await this.paymentsService.createOne({
@@ -79,6 +121,7 @@ export class PaymentsController {
       cardExpYear,
       cardCvc,
       type,
+      action: type === 'PHONE' ? 'WITHDRAWING' : 'PAYMENT',
       description,
       userId: user?.id,
       organizationId: user?.organizationId,

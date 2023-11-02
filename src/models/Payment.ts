@@ -11,7 +11,9 @@ import { User } from './User';
 import { TransactionType } from '../modules/transactions/transactions.type';
 import { Organization } from './index';
 import {
+  ActionPayment,
   StatusPayment,
+  actionPaymentArray,
   statusPaymentArray,
 } from '../modules/payments/payments.dto';
 
@@ -31,6 +33,9 @@ export class Payment extends BaseDeleteEntity {
 
   @Column({ type: 'enum', enum: statusPaymentArray, default: 'PENDING' })
   status?: StatusPayment;
+
+  @Column({ type: 'enum', enum: actionPaymentArray, default: 'PAYMENT' })
+  action?: ActionPayment;
 
   @Column({ nullable: true })
   cardNumber?: string;
