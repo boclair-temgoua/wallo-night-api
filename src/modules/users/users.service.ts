@@ -489,7 +489,7 @@ export class UsersService {
     user.token = generateLongUUID(50);
     user.email = email.toLowerCase();
     user.hashPassword(password);
-    user.username = username;
+    user.username = username.toLowerCase();
     user.provider = provider;
     user.profileId = profileId;
     user.organizationId = organizationId;
