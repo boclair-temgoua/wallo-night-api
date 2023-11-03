@@ -1,5 +1,5 @@
 import { generateLongUUID } from '../../app/utils/commons/generate-random';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { DonationsService } from '../donations/donations.service';
 import { WalletsService } from '../wallets/wallets.service';
@@ -122,12 +122,14 @@ export class UsersUtil {
       { userId: user?.id },
     );
 
-    // const queue = 'user-register';
-    // const connect = await amqplib.connect(config.implementations.amqp.link);
-    // const channel = await connect.createChannel();
-    // await channel.assertQueue(queue, { durable: false });
-    // await channel.sendToQueue(queue, Buffer.from(JSON.stringify(user)));
-    // await authRegisterJob({ channel, queue });
+    if (provider === 'default') {
+      // const queue = 'user-register';
+      // const connect = await amqplib.connect(config.implementations.amqp.link);
+      // const channel = await connect.createChannel();
+      // await channel.assertQueue(queue, { durable: false });
+      // await channel.sendToQueue(queue, Buffer.from(JSON.stringify(user)));
+      // await authRegisterJob({ channel, queue });
+    }
 
     const jwtPayload: JwtPayloadType = {
       id: user.id,
