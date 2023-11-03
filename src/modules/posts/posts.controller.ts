@@ -111,19 +111,14 @@ export class PostsController {
 
   /** Get one Posts */
   @Get(`/view`)
-  async getOne(
-    @Res() res,
-    @Req() req,
-    @Query() query: GetOnePostDto,
-    @Cookies('x-cookies-login') user: any,
-  ) {
-    const { postId, organizationId, type, postSlug } = query;
+  async getOne(@Res() res, @Req() req, @Query() query: GetOnePostDto) {
+    const { postId, organizationId, type, postSlug, userVisitorId } = query;
 
     const findOnePost = await this.postsService.findOneBy({
       postId,
       postSlug,
       organizationId,
-      likeUserId: user?.id,
+      likeUserId: userVisitorId,
       type: type?.toUpperCase(),
     });
     if (!findOnePost)
@@ -146,8 +141,7 @@ export class PostsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
-    const { title, whoCanSee, allowDownload, description, type } =
-      body;
+    const { title, whoCanSee, allowDownload, description, type } = body;
 
     const post = await this.postsService.createOne({
       type,

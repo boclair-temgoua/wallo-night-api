@@ -223,64 +223,64 @@ export class PostsService {
       .addSelect('post.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
+            'fullName', "profile"."fullName",
             'firstName', "profile"."firstName",
             'lastName', "profile"."lastName",
-            'fullName', "profile"."fullName",
             'image', "profile"."image",
             'color', "profile"."color",
-            'userId', "user"."id",
             'description', "profile"."description",
+            'userId', "user"."id",
             'username', "user"."username"
         ) AS "profile"`,
       )
       .addSelect(
         /*sql*/ `(
-        SELECT
-            CAST(COUNT(DISTINCT lik) AS INT)
-        FROM "like" "lik"
-        WHERE ("lik"."likeableId" = "post"."id"
-         AND "lik"."type" IN ('POST')
-         AND "lik"."deletedAt" IS NULL)
-         GROUP BY "lik"."likeableId", "lik"."type", "post"."id"
-        ) AS "totalLike"`,
+      SELECT
+          CAST(COUNT(DISTINCT lik) AS INT)
+      FROM "like" "lik"
+      WHERE ("lik"."likeableId" = "post"."id"
+       AND "lik"."type" IN ('POST')
+       AND "lik"."deletedAt" IS NULL)
+       GROUP BY "lik"."likeableId", "lik"."type", "post"."id"
+      ) AS "totalLike"`,
       )
       .addSelect(
         /*sql*/ `(
-        SELECT
-            CAST(COUNT(DISTINCT com) AS INT)
-        FROM "comment" "com"
-        WHERE ("com"."postId" = "post"."id"
-         AND "com"."deletedAt" IS NULL)
-         GROUP BY "com"."postId", "post"."id"
-        ) AS "totalComment"`,
+      SELECT
+          CAST(COUNT(DISTINCT com) AS INT)
+      FROM "comment" "com"
+      WHERE ("com"."postId" = "post"."id"
+       AND "com"."deletedAt" IS NULL)
+       GROUP BY "com"."postId", "post"."id"
+      ) AS "totalComment"`,
       )
       .addSelect(
         /*sql*/ `(
-          SELECT array_agg(jsonb_build_object(
-            'name', "upl"."name",
-            'path', "upl"."path"
-          )) 
-          FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "post"."id"
-          AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('POST')
-          AND "upl"."uploadType" IN ('IMAGE')
-          GROUP BY "post"."id", "upl"."uploadableId"
-          ) AS "uploadsImage"`,
+        SELECT array_agg(jsonb_build_object(
+          'name', "upl"."name",
+          'path', "upl"."path"
+        )) 
+        FROM "upload" "upl"
+        WHERE "upl"."uploadableId" = "post"."id"
+        AND "upl"."deletedAt" IS NULL
+        AND "upl"."model" IN ('POST')
+        AND "upl"."uploadType" IN ('IMAGE')
+        GROUP BY "post"."id", "upl"."uploadableId"
+        ) AS "uploadsImage"`,
       )
       .addSelect(
         /*sql*/ `(
-          SELECT array_agg(jsonb_build_object(
-            'name', "upl"."name",
-            'path', "upl"."path"
-          )) 
-          FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "post"."id"
-          AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('POST')
-          AND "upl"."uploadType" IN ('FILE')
-          GROUP BY "post"."id", "upl"."uploadableId"
-          ) AS "uploadsFile"`,
+        SELECT array_agg(jsonb_build_object(
+          'name', "upl"."name",
+          'path', "upl"."path"
+        )) 
+        FROM "upload" "upl"
+        WHERE "upl"."uploadableId" = "post"."id"
+        AND "upl"."deletedAt" IS NULL
+        AND "upl"."model" IN ('POST')
+        AND "upl"."uploadType" IN ('FILE')
+        GROUP BY "post"."id", "upl"."uploadableId"
+        ) AS "uploadsFile"`,
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
@@ -290,23 +290,24 @@ export class PostsService {
 
     if (likeUserId) {
       query = query.addSelect(/*sql*/ `(
+            SELECT
+                CAST(COUNT(DISTINCT lk) AS INT)
+            FROM "like" "lk"
+            WHERE ("lk"."type" IN ('POST')
+             AND "lk"."deletedAt" IS NULL
+             AND "lk"."likeableId" = "post"."id"
+             AND "lk"."userId" IN ('${likeUserId}'))
+            ) AS "isLike"`).addSelect(/*sql*/ `(
               SELECT
-                  CAST(COUNT(DISTINCT lk) AS INT)
-              FROM "like" "lk"
-              WHERE ("lk"."type" IN ('POST')
-               AND "lk"."deletedAt" IS NULL
-               AND "lk"."likeableId" = "post"."id"
-               AND "lk"."userId" IN ('${likeUserId}'))
-               GROUP BY "lk"."likeableId", "post"."id"
-              ) AS "isLike"`).addSelect(/*sql*/ `(
-                SELECT
-                    CAST(COUNT(DISTINCT sub) AS INT)
-                FROM "subscribe" "sub"
-                WHERE ("sub"."subscriberId" = "user"."id"
-                 AND "sub"."expiredAt" >= now()::date
-                 AND "sub"."userId" IN ('${likeUserId}')
-                 AND "sub"."deletedAt" IS NULL)
-                ) AS "isValidSubscribe"`);
+                  CAST(COUNT(DISTINCT sub) AS INT)
+              FROM "subscribe" "sub"
+              WHERE ("sub"."subscriberId" = "post"."userId"
+               AND "sub"."expiredAt" >= now()::date
+               AND "sub"."userId" IN ('${likeUserId}')
+               AND "sub"."deletedAt" IS NULL)
+              ) AS "isValidSubscribe"`);
+    } else {
+      query = query.addSelect(/*sql*/ `null`, 'isValidSubscribe');
     }
 
     if (status) {
