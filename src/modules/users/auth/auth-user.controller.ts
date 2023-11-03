@@ -1,16 +1,11 @@
-import { ContributorsService } from './../../contributors/contributors.service';
-import { ContributorRole } from './../../contributors/contributors.type';
 import {
   Controller,
   Post,
-  NotFoundException,
   Body,
   Put,
   Param,
   Res,
-  Query,
   Get,
-  Headers,
   Req,
   HttpException,
   HttpStatus,
@@ -19,7 +14,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../../app/utils/reply';
-import { useCatch } from '../../../app/utils/use-catch';
 import * as amqplib from 'amqplib';
 import { UsersService } from '../users.service';
 import {
@@ -35,60 +29,34 @@ import { CheckUserService } from '../middleware/check-user.service';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
 import { config } from '../../../app/config/index';
-import {
-  authCodeConfirmationJob,
-  authPasswordResetJob,
-  authRegisterJob,
-} from '../users.job';
-import { WalletsService } from '../../wallets/wallets.service';
-import {
-  addYearsFormateDDMMYYDate,
-  dateTimeNowUtc,
-  generateLongUUID,
-  generateNumber,
-} from '../../../app/utils/commons';
+import { authCodeConfirmationJob, authPasswordResetJob } from '../users.job';
+import { dateTimeNowUtc, generateNumber } from '../../../app/utils/commons';
 import { JwtAuthGuard } from '../middleware';
-import { SubscribesService } from '../../subscribes/subscribes.service';
-import { CurrenciesService } from '../../currencies/currencies.service';
-import { OrganizationsService } from '../../organizations/organizations.service';
-import { DonationsService } from '../../donations/donations.service';
 import {
   expire_cookie_setting,
   validation_code_verification_cookie_setting,
   validation_login_cookie_setting,
 } from '../../../app/utils/cookies';
+import { UsersUtil } from '../users.util';
 
 @Controller()
 export class AuthUserController {
   constructor(
+    private readonly usersUtil: UsersUtil,
     private readonly usersService: UsersService,
-    private readonly donationsService: DonationsService,
-    private readonly walletsService: WalletsService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
-    private readonly currenciesService: CurrenciesService,
-    private readonly subscribesService: SubscribesService,
-    private readonly organizationsService: OrganizationsService,
-    private readonly contributorsService: ContributorsService,
     private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
 
   /** Register new user */
   @Post(`/register`)
-  async createOneRegister(
-    @Res() res,
-    @Req() req,
-    @Body() body: CreateRegisterUserDto,
-    @Headers('User-Agent') userAgent: string,
-  ) {
+  async createOneRegister(@Res() res, @Body() body: CreateRegisterUserDto) {
     const { email, password, firstName, lastName, username } = body;
 
-    const findOnUser = await this.usersService.findOneBy({ email });
-    const findOnUserByUsername = await this.usersService.findOneBy({
-      username,
-    });
-    const findOnCurrency = await this.currenciesService.findOneBy({
-      code: 'USD',
+    const findOnUser = await this.usersService.findOneBy({
+      email,
+      provider: 'default',
     });
     if (findOnUser)
       throw new HttpException(
@@ -96,84 +64,14 @@ export class AuthUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    /** Create Profile */
-    const profile = await this.profilesService.createOne({
-      fullName: `${firstName} ${lastName}`,
-      lastName,
-      firstName,
-      currencyId: findOnCurrency?.id,
-    });
-
-    /** Create Organization */
-    const organization = await this.organizationsService.createOne({
-      name: `${firstName} ${lastName}`,
-    });
-
-    /** Create User */
-    const usernameGenerate = `${generateLongUUID(8)}`.toLowerCase();
-    const user = await this.usersService.createOne({
+    const { user, refreshToken } = await this.usersUtil.saveOrUpdate({
       email,
       password,
-      profileId: profile?.id,
-      username: username
-        ? findOnUserByUsername
-          ? usernameGenerate
-          : username
-        : usernameGenerate,
-      organizationId: organization?.id,
+      firstName,
+      lastName,
+      username,
+      provider: 'default',
     });
-
-    /** Create Contributor */
-    await this.subscribesService.createOne({
-      userId: user?.id,
-      subscriberId: user?.id,
-      expiredAt: addYearsFormateDDMMYYDate({
-        date: new Date(),
-        yearNumber: 50,
-      }),
-    });
-
-    /** Create Wallet */
-    await this.walletsService.createOne({
-      organizationId: user?.organizationId,
-    });
-
-    /** Create Subscribe */
-    await this.contributorsService.createOne({
-      userId: user?.id,
-      userCreatedId: user?.id,
-      role: 'ADMIN',
-      organizationId: organization?.id,
-    });
-
-    /** Create Donation */
-    await this.donationsService.createOne({
-      price: 5, // USD
-      userId: user?.id,
-      messageWelcome: 'Thank you for the support! 🎉',
-    });
-
-    /** Update Organization */
-    await this.organizationsService.updateOne(  
-      { organizationId: organization?.id },
-      { userId: user?.id },
-    );
-
-    // const queue = 'user-register';
-    // const connect = await amqplib.connect(config.implementations.amqp.link);
-    // const channel = await connect.createChannel();
-    // await channel.assertQueue(queue, { durable: false });
-    // await channel.sendToQueue(queue, Buffer.from(JSON.stringify(user)));
-    // await authRegisterJob({ channel, queue });
-
-    const jwtPayload: JwtPayloadType = {
-      id: user.id,
-      profileId: user.profileId,
-      organizationId: user.organizationId,
-    };
-
-    const refreshToken =
-      await this.checkUserService.createJwtTokens(jwtPayload);
 
     return reply({
       res,
@@ -188,12 +86,14 @@ export class AuthUserController {
   @Post(`/login`)
   async createOneLogin(
     @Res() res,
-    @Req() req,
     @Body() createLoginUserDto: CreateLoginUserDto,
   ) {
     const { email, password } = createLoginUserDto;
 
-    const findOnUser = await this.usersService.findOneBy({ email });
+    const findOnUser = await this.usersService.findOneBy({
+      email,
+      provider: 'default',
+    });
     if (!findOnUser?.checkIfPasswordMatch(password))
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
 
@@ -228,7 +128,10 @@ export class AuthUserController {
   ) {
     const { email } = body;
 
-    const findOnUser = await this.usersService.findOneBy({ email });
+    const findOnUser = await this.usersService.findOneBy({
+      email,
+      provider: 'default',
+    });
     if (!findOnUser)
       throw new HttpException(
         `Email ${email} dons't exists please change`,
@@ -363,11 +266,7 @@ export class AuthUserController {
 
   /** Resend code user */
   @Get(`/resend/code/:userId`)
-  async resendCode(
-    @Res() res,
-    @Req() req,
-    @Param('userId', ParseUUIDPipe) userId: string,
-  ) {
+  async resendCode(@Res() res, @Param('userId', ParseUUIDPipe) userId: string) {
     const findOnUser = await this.usersService.findOneBy({ userId });
     if (!findOnUser)
       throw new HttpException(

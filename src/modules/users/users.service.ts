@@ -115,7 +115,8 @@ export class UsersService {
   }
 
   async findOneBy(selections: GetOneUserSelections): Promise<User> {
-    const { userId, email, token, username, organizationId } = selections;
+    const { userId, email, token, username, provider, organizationId } =
+      selections;
     let query = this.driver
       .createQueryBuilder('user')
       .where('user.deletedAt IS NULL')
@@ -123,6 +124,10 @@ export class UsersService {
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });
+    }
+
+    if (provider) {
+      query = query.andWhere('user.provider = :provider', { provider });
     }
 
     if (organizationId) {
@@ -469,17 +474,27 @@ export class UsersService {
 
   /** Create one User to the database. */
   async createOne(options: CreateUserOptions): Promise<User> {
-    const { email, username, password, profileId, organizationId, nextStep } =
-      options;
+    const {
+      email,
+      provider,
+      confirmedAt,
+      username,
+      password,
+      profileId,
+      organizationId,
+      nextStep,
+    } = options;
 
     const user = new User();
     user.token = generateLongUUID(50);
     user.email = email.toLowerCase();
     user.hashPassword(password);
     user.username = username;
+    user.provider = provider;
     user.profileId = profileId;
     user.organizationId = organizationId;
     user.nextStep = nextStep;
+    user.confirmedAt = confirmedAt;
 
     const query = this.driver.save(user);
 

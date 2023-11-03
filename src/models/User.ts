@@ -42,7 +42,7 @@ export class User extends BaseDeleteEntity {
   @Column({ nullable: true })
   confirmedAt?: Date;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ nullable: true })
   email?: string;
 
   @Column('simple-array', { nullable: true })
@@ -51,7 +51,7 @@ export class User extends BaseDeleteEntity {
   @Column('simple-array', { nullable: true })
   refreshToken?: string[];
 
-  @Column({ unique: true, nullable: true })
+  @Column({ nullable: true })
   username?: string;
 
   @Column({ nullable: true })
@@ -62,6 +62,9 @@ export class User extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   password?: string;
+
+  @Column({ nullable: true })
+  provider?: string;
 
   @Column({ default: 'SETTING_PROFILE' })
   nextStep?: NextStep;

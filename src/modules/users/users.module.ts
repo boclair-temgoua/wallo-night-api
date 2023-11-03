@@ -25,6 +25,8 @@ import { SubscribesService } from '../subscribes/subscribes.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { DonationsService } from '../donations/donations.service';
+import { UsersUtil } from './users.util';
+import { SocialUserController } from './auth/social-user.controller';
 
 @Module({
   imports: [
@@ -40,8 +42,9 @@ import { DonationsService } from '../donations/donations.service';
       Contributor,
     ]),
   ],
-  controllers: [AuthUserController, UsersController],
+  controllers: [AuthUserController, UsersController, SocialUserController],
   providers: [
+    UsersUtil,
     UsersService,
     WalletsService,
     ProfilesService,

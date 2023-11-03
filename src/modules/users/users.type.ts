@@ -32,6 +32,7 @@ export type GetOneUserSelections = {
   token?: User['token'];
   followerId?: User['id'];
   username?: User['username'];
+  provider?: User['provider']
   organizationId?: User['organizationId'];
 };
 
