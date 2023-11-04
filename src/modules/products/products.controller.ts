@@ -120,6 +120,7 @@ export class ProductsController {
     });
 
     await this.uploadsUtil.saveOrUpdateAws({
+      productId: product?.id,
       uploadableId: product?.id,
       model: 'PRODUCT',
       userId: product?.userId,
@@ -192,6 +193,7 @@ export class ProductsController {
     );
 
     await this.uploadsUtil.saveOrUpdateAws({
+      productId: productId,
       userId: user?.id,
       uploadableId: productId,
       model: 'PRODUCT',

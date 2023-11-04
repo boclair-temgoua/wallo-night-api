@@ -50,26 +50,38 @@ export class UploadsController {
       model: model?.toUpperCase(),
     });
 
-    Promise.all(
-      uploads.map(async (upload) => {
-        await this.uploadsService.deleteOne({ uploadId: upload?.id });
-      }),
-    );
+    for (const upload of uploads) {
+      await this.uploadsService.deleteOne({ uploadId: upload?.id });
+    }
+
+    // Promise.all(
+    //   uploads.map(async (upload) => {
+    //     await this.uploadsService.deleteOne({ uploadId: upload?.id });
+    //   }),
+    // );
 
     if (newFileLists && newFileLists.length > 0) {
-      Promise.all(
-        newFileLists.map(async (upload) => {
-          await this.uploadsService.createOne({ ...upload });
-        }),
-      );
+      for (const upload of newFileLists) {
+        await this.uploadsService.createOne({ ...upload });
+      }
+
+      // Promise.all(
+      //   newFileLists.map(async (upload) => {
+      //     await this.uploadsService.createOne({ ...upload });
+      //   }),
+      // );
     }
 
     if (newImageLists && newImageLists.length > 0) {
-      Promise.all(
-        newImageLists.map(async (upload) => {
-          await this.uploadsService.createOne({ ...upload });
-        }),
-      );
+      for (const upload of newImageLists) {
+        await this.uploadsService.createOne({ ...upload });
+      }
+
+      // Promise.all(
+      //   newImageLists.map(async (upload) => {
+      //     await this.uploadsService.createOne({ ...upload });
+      //   }),
+      // );
     }
 
     return reply({ res, results: 'Image upload' });

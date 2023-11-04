@@ -92,6 +92,7 @@ export class MembershipsController {
 
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'MEMBERSHIP',
+      membershipId: membership?.id,
       uploadableId: membership?.id,
       userId: membership?.userId,
       folder: 'memberships',
@@ -139,6 +140,7 @@ export class MembershipsController {
 
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'MEMBERSHIP',
+      membershipId: findOneMembership?.id,
       uploadableId: findOneMembership?.id,
       userId: findOneMembership?.userId,
       folder: 'memberships',

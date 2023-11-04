@@ -155,6 +155,7 @@ export class PostsController {
 
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'POST',
+      postId: post?.id,
       uploadableId: post?.id,
       userId: post?.userId,
       organizationId: post?.userId,
@@ -202,6 +203,7 @@ export class PostsController {
 
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'POST',
+      postId: post?.id,
       uploadableId: post?.id,
       userId: post?.userId,
       folder: 'posts',
@@ -255,6 +257,7 @@ export class PostsController {
 
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'POST',
+      postId: postId,
       uploadableId: postId,
       userId: findOnePost?.userId,
       folder: 'posts',

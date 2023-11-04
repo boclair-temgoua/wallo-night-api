@@ -115,6 +115,7 @@ export class CommissionsController {
 
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'COMMISSION',
+      commissionId: commission?.id,
       uploadableId: commission?.id,
       userId: commission?.userId,
       folder: 'commissions',
@@ -174,6 +175,7 @@ export class CommissionsController {
 
     await this.uploadsUtil.saveOrUpdateAws({
       model: 'COMMISSION',
+      commissionId: commissionId,
       uploadableId: commissionId,
       userId: user?.id,
       folder: 'commissions',

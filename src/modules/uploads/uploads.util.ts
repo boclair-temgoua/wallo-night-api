@@ -16,11 +16,26 @@ export class UploadsUtil {
     model: FilterQueryType;
     uploadableId: string;
     organizationId: string;
+    postId?: string;
+    productId?: string;
+    commissionId?: string;
+    membershipId?: string;
+
     folder: 'products' | 'commissions' | 'posts' | 'memberships';
     files: Array<Express.Multer.File>;
   }): Promise<any> {
-    const { files, userId, organizationId, model, uploadableId, folder } =
-      options;
+    const {
+      files,
+      userId,
+      organizationId,
+      model,
+      uploadableId,
+      folder,
+      postId,
+      productId,
+      commissionId,
+      membershipId,
+    } = options;
 
     for (const file of files) {
       const extension = mime.extension(file.mimetype);
@@ -47,6 +62,10 @@ export class UploadsUtil {
           uploadType: 'IMAGE',
           model: model,
           userId: userId,
+          postId: postId,
+          productId: productId,
+          commissionId: commissionId,
+          membershipId: membershipId,
           organizationId: organizationId,
           uploadableId: uploadableId,
         });
@@ -61,6 +80,10 @@ export class UploadsUtil {
           uploadType: 'FILE',
           model: model,
           userId: userId,
+          postId: postId,
+          productId: productId,
+          commissionId: commissionId,
+          membershipId: membershipId,
           organizationId: organizationId,
           uploadableId: uploadableId,
         });
