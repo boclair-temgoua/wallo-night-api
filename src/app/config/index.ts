@@ -204,6 +204,9 @@ export const config = {
         host: 'sts.eu-west-1.amazonaws.com',
         service: 'sts',
       },
+      cloudfront: {
+        url: process.env.AWS_CLOUD_FRONT_URL,
+      },
       executeApi: {
         host: 'sellingpartnerapi-eu.amazon.com',
         service: 'execute-api',

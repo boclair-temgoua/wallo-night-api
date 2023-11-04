@@ -37,14 +37,14 @@ export const awsS3ServiceAdapter = async (data: {
 export const getFileToAws = async (options: {
   folder: string;
   fileName: string;
-}): Promise<{ fileBuffer: Buffer; contentType: string }> => {
+}): Promise<{ fileBuffer: Buffer; contentType: string; imageUrl: string }> => {
   const { folder, fileName } = options;
-  const imageUrl = `https://${config.implementations.aws.bucket}.s3.${config.implementations.aws.region}.amazonaws.com/${folder}/${fileName}`;
+  const imageUrl = `https://${config.implementations.aws.cloudfront.url}/${folder}/${fileName}`;
   const imageResponse = await axios.get(imageUrl, {
     responseType: 'arraybuffer',
   });
   const fileBuffer = Buffer.from(imageResponse.data, 'binary');
   const contentType = imageResponse.headers['content-type'];
 
-  return { fileBuffer, contentType };
+  return { fileBuffer, contentType, imageUrl };
 };

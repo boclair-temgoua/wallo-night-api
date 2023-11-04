@@ -70,7 +70,7 @@ export class UploadsController {
   }
 
   /** Get on file upload */
-  @Get(`/view/:folder/:fileName`)
+  @Get(`/:folder/:fileName`)
   async getOneFileUploadProduct(
     @Res() res,
     @Param('folder') folder: string,
