@@ -11,9 +11,7 @@ import { UsersService } from '../users.service';
 import { JwtPayloadType } from '../users.type';
 import { CheckUserService } from '../middleware/check-user.service';
 import { config } from '../../../app/config/index';
-import {
-  generateLongUUID,
-} from '../../../app/utils/commons';
+import { generateLongUUID } from '../../../app/utils/commons';
 import { OAuth2Client } from 'google-auth-library';
 import { UsersUtil } from '../users.util';
 
@@ -96,7 +94,7 @@ export class SocialUserController {
       password: generateLongUUID(8),
       firstName: family_name,
       lastName: given_name,
-      username: `${given_name}-${family_name}`,
+      username: `${given_name}-${family_name}-${generateLongUUID(4)}`,
       image: picture,
     });
 

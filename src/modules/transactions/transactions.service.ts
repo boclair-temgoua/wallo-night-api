@@ -19,6 +19,7 @@ import {
 } from '../../app/utils/pagination/with-pagination';
 import {
   colorsArrays,
+  colorsArraysTransaction,
   substrateDaysToTimeNowUtcDate,
 } from '../../app/utils/commons';
 import { getRandomElement } from '../../app/utils/array/get-random-element';
@@ -238,7 +239,7 @@ export class TransactionsService {
     transaction.fullName = fullName;
     transaction.email = email;
     transaction.userReceiveId = userReceiveId;
-    transaction.color = getRandomElement(colorsArrays);
+    transaction.color = getRandomElement(colorsArraysTransaction);
     transaction.amountConvert = amountConvert;
     transaction.organizationId = organizationId;
     transaction.subscribeId = subscribeId;
