@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Transaction } from '../../models/Transaction';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import {
   CreateTransactionOptions,
   GetOneTransactionSelections,
@@ -126,9 +126,25 @@ export class TransactionsService {
     }
 
     if (search) {
-      query = query.andWhere('transaction.title ::text ILIKE :search', {
-        search: `%${search}%`,
-      });
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('transaction.fullName ::text ILIKE :search', {
+            search: `%${search}%`,
+          })
+            .orWhere('transaction.email ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('userSend.email ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('profileSend.firstName ::text ILIKE :search', {
+              search: `%${search}%`,
+            })
+            .orWhere('profileSend.lastName ::text ILIKE :search', {
+              search: `%${search}%`,
+            });
+        }),
+      );
     }
 
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
