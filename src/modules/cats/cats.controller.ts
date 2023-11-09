@@ -48,7 +48,6 @@ export class CartsController {
     const { cartOrderId } = query;
 
     const carts = await this.cartsService.findAll({
-      ipLocation: ipLocation,
       userId: user?.id,
       status: 'ADDED',
       cartOrderId
