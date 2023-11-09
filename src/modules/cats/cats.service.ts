@@ -27,7 +27,7 @@ export class CartsService {
   ) {}
 
   async findAll(selections: GetCartsSelections): Promise<any> {
-    const { userId, productId, status } = selections;
+    const { userId, productId, status, cartOrderId, ipLocation } = selections;
 
     let query = this.driver
       .createQueryBuilder('cart')
@@ -35,38 +35,57 @@ export class CartsService {
       .addSelect('cart.quantity', 'quantity')
       .addSelect('cart.productId', 'productId')
       .addSelect('cart.userId', 'userId')
+      .addSelect('cart.organizationId', 'organizationId')
+      .addSelect(
+        /*sql*/ `
+          CASE
+          WHEN ("discount"."expiredAt" >= now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS TRUE
+          AND "product"."enableDiscount" IS TRUE) THEN
+          CAST(("product"."price" - (("product"."price"  * "cart"."quantity") * "discount"."percent") / 100) AS INT)
+          WHEN ("discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS FALSE
+          AND "product"."enableDiscount" IS TRUE) THEN
+          CAST(("product"."price" - (("product"."price" * "cart"."quantity") * "discount"."percent") / 100) AS INT)
+          ELSE "product"."price" * "cart"."quantity"
+          END
+      `,
+        'priceTotalProduct',
+      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-            'enableExpiredAt', "discount"."enableExpiredAt",
-            'expiredAt', "discount"."expiredAt",
-            'percent', "discount"."percent",
-            'isValid', CASE WHEN ("discount"."expiredAt" >= now()::date
-            AND "discount"."deletedAt" IS NULL
-            AND "discount"."enableExpiredAt" IS TRUE) THEN true 
-            WHEN ("discount"."expiredAt" < now()::date
-            AND "discount"."deletedAt" IS NULL
-            AND "discount"."enableExpiredAt" IS TRUE) THEN false
-            ELSE true
-            END
-        ) AS "discount"`,
+              'id', "product"."id",
+              'title', "product"."title",
+              'slug', "product"."slug",
+              'price', "product"."price",
+              'priceDiscount', CASE
+                WHEN ("discount"."expiredAt" >= now()::date
+                AND "discount"."deletedAt" IS NULL
+                AND "discount"."enableExpiredAt" IS TRUE
+                AND "product"."enableDiscount" IS TRUE) THEN
+                CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+                WHEN ("discount"."deletedAt" IS NULL
+                AND "discount"."enableExpiredAt" IS FALSE
+                AND "product"."enableDiscount" IS TRUE) THEN
+                CAST(("product"."price" - ("product"."price"* "discount"."percent") / 100) AS INT)
+                ELSE "product"."price"
+                END,
+              'discount', jsonb_build_object(
+                'enableExpiredAt', "discount"."enableExpiredAt",
+                'expiredAt', "discount"."expiredAt",
+                'percent', "discount"."percent",
+                'isValid', CASE WHEN ("discount"."expiredAt" >= now()::date
+                AND "discount"."deletedAt" IS NULL
+                AND "discount"."enableExpiredAt" IS TRUE) THEN true 
+                WHEN ("discount"."expiredAt" < now()::date
+                AND "discount"."deletedAt" IS NULL
+                AND "discount"."enableExpiredAt" IS TRUE) THEN false
+                ELSE false
+                END
+            )
+          ) AS "product"`,
       )
-      // .addSelect(
-      //   /*sql*/ `
-      //     CASE
-      //     WHEN ("discount"."expiredAt" >= now()::date
-      //     AND "discount"."deletedAt" IS NULL
-      //     AND "discount"."enableExpiredAt" IS TRUE
-      //     AND "product"."enableDiscount" IS TRUE) THEN
-      //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
-      //     WHEN ("discount"."deletedAt" IS NULL
-      //     AND "discount"."enableExpiredAt" IS FALSE
-      //     AND "product"."enableDiscount" IS TRUE) THEN
-      //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
-      //     ELSE "product"."price"
-      //     END
-      // `,
-      //   'priceDiscount',
-      // )
       // .addSelect(
       //   /*sql*/ `jsonb_build_object(
       //     'id', "product"."id",
@@ -74,16 +93,16 @@ export class CartsService {
       //     'description', "product"."description",
       //     'slug', "product"."slug",
       //     'priceNoDiscount', "product"."price",
-      //     'price',  CASE 
-      //     WHEN ("discount"."expiredAt" >= now()::date 
+      //     'price',  CASE
+      //     WHEN ("discount"."expiredAt" >= now()::date
       //     AND "discount"."deletedAt" IS NULL
-      //     AND "discount"."isActive" IS TRUE) THEN  
+      //     AND "discount"."isActive" IS TRUE) THEN
       //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
       //     WHEN ("discount"."expiredAt" < now()::date
       //     AND "discount"."deletedAt" IS NULL
       //     AND "discount"."isActive" IS TRUE) THEN "product"."price"
       //     ELSE "product"."price"
-      //     END, 
+      //     END,
       //     'category', jsonb_build_object(
       //       'slug', "category"."slug",
       //       'name', "category"."name",
@@ -108,6 +127,16 @@ export class CartsService {
       });
     }
 
+    if (cartOrderId) {
+      query = query.andWhere('cart.cartOrderId = :cartOrderId', {
+        cartOrderId,
+      });
+    }
+
+    if (ipLocation) {
+      query = query.andWhere('cart.ipLocation = :ipLocation', { ipLocation });
+    }
+
     if (userId) {
       query = query.andWhere('cart.userId = :userId', {
         userId,
@@ -129,7 +158,7 @@ export class CartsService {
     if (error) throw new NotFoundException(error);
 
     const totalPrice = carts.reduce(
-      (total, item) => total + Number(item?.product?.price),
+      (total, item) => total + Number(item?.priceTotalProduct),
       0,
     );
     const totalQuantity = carts.reduce(
@@ -137,20 +166,20 @@ export class CartsService {
       0,
     );
 
-    const totalPriceWithCurrency = `${totalPrice} ${carts[0].product?.currency?.symbol}`;
+    // const totalPriceWithCurrency = `${totalPrice} ${carts[0].product?.currency?.symbol}`;
 
     return {
       summary: {
         totalQuantity: totalQuantity,
         totalPrice: totalPrice,
-        totalPriceWithCurrency,
+        // totalPriceWithCurrency,
       },
-      cart_items: carts,
+      cartItems: carts,
     };
   }
 
   async findOneBy(selections: GetOneCartsSelections): Promise<Cart> {
-    const { cartId, userId, productId, status } = selections;
+    const { cartId, userId, productId, cartOrderId, status } = selections;
     let query = this.driver
       .createQueryBuilder('cart')
       .select('cart.id', 'id')
@@ -181,6 +210,12 @@ export class CartsService {
       query = query.andWhere('cart.id = :id', { id: cartId });
     }
 
+    if (cartOrderId) {
+      query = query.andWhere('cart.cartOrderId = :cartOrderId', {
+        cartOrderId,
+      });
+    }
+
     if (status) {
       query = query.andWhere('cart.status = :status', {
         status,
@@ -203,12 +238,22 @@ export class CartsService {
 
   /** Create one Carts to the database. */
   async createOne(options: CreateCartsOptions): Promise<Cart> {
-    const { userId, quantity, productId } = options;
+    const {
+      userId,
+      quantity,
+      ipLocation,
+      cartOrderId,
+      organizationId,
+      productId,
+    } = options;
 
     const cart = new Cart();
     cart.userId = userId;
     cart.quantity = quantity;
     cart.productId = productId;
+    cart.ipLocation = ipLocation;
+    cart.cartOrderId = cartOrderId;
+    cart.organizationId = organizationId;
     const query = this.driver.save(cart);
 
     const [error, result] = await useCatch(query);

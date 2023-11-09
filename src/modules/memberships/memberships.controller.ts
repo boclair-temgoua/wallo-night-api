@@ -219,6 +219,17 @@ export class MembershipsController {
     @Req() req,
     @Param('membershipId', ParseUUIDPipe) membershipId: string,
   ) {
+    const { user } = req;
+    const findOneMembership = await this.membershipsService.findOneBy({
+      membershipId,
+      organizationId: user?.organizationId,
+    });
+    if (!findOneMembership)
+      throw new HttpException(
+        `Membership ${membershipId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
     await this.membershipsService.updateOne(
       { membershipId },
       { deletedAt: new Date() },

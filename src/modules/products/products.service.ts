@@ -109,7 +109,7 @@ export class ProductsService {
             WHEN ("discount"."expiredAt" < now()::date
             AND "discount"."deletedAt" IS NULL
             AND "discount"."enableExpiredAt" IS TRUE) THEN false
-            ELSE true
+            ELSE false
             END
         ) AS "discount"`,
       )
@@ -201,6 +201,7 @@ export class ProductsService {
       .addSelect('product.enableLimitSlot', 'enableLimitSlot')
       .addSelect('product.enableDiscount', 'enableDiscount')
       .addSelect('product.discountId', 'discountId')
+      .addSelect('product.organizationId', 'organizationId')
       .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(

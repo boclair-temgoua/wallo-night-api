@@ -7,13 +7,16 @@ export type GetCartsSelections = {
   userId?: Cart['userId'];
   status: StatusCart;
   productId?: Cart['productId'];
+  cartOrderId?: Cart['cartOrderId'];
+  ipLocation?: Cart['ipLocation'];
 };
 
 export type GetOneCartsSelections = {
   cartId?: Cart['id'];
-  userId?: Cart['id'];
-  productId?: Cart['id'];
+  userId?: Cart['userId'];
+  productId?: Cart['productId'];
   status?: StatusCart;
+  cartOrderId?: Cart['cartOrderId'];
 };
 
 export type UpdateCartsSelections = {

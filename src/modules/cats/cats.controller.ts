@@ -13,6 +13,7 @@ import {
   Query,
   HttpStatus,
   HttpException,
+  Ip,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
@@ -24,25 +25,32 @@ import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import { CreateOrUpdateCartsDto, StatusCart } from './cats.dto';
+import { CartsDto, CreateOrUpdateCartsDto, StatusCart } from './cats.dto';
 import { ProductsService } from '../products/products.service';
+import { getIpRequest } from '../../app/utils/commons/get-ip-request';
+import { CartOrdersService } from '../cart-orders/cart-orders.service';
+import { query } from 'express';
 
 @Controller('carts')
 export class CartsController {
   constructor(
     private readonly cartsService: CartsService,
     private readonly productsService: ProductsService,
+    private readonly cartOrdersService: CartOrdersService,
   ) {}
 
   /** Get all Carts */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
-  async findAll(@Res() res, @Req() req) {
+  // @UseGuards(JwtAuthGuard)
+  async findAll(@Res() res, @Req() req, @Ip() ip, @Query() query: CartsDto) {
     const { user } = req;
+    const { cartOrderId } = query;
 
     const carts = await this.cartsService.findAll({
+      ipLocation: ip,
       userId: user?.id,
       status: 'ADDED',
+      cartOrderId
     });
 
     return reply({ res, results: carts });
@@ -55,10 +63,12 @@ export class CartsController {
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateCartsDto,
+    @Ip() ip,
   ) {
     const { user } = req;
     const { productId, quantity } = body;
-
+    // const ipLocation = getIpRequest(req);
+    
     const findOneProduct = await this.productsService.findOneBy({
       productId,
     });
@@ -68,13 +78,21 @@ export class CartsController {
         HttpStatus.NOT_FOUND,
       );
 
+    const findOneCartOrder =
+      (await this.cartOrdersService.findOneBy({
+        userId: user?.id,
+        organizationId: findOneProduct?.organizationId,
+      })) ??
+      (await this.cartOrdersService.createOne({
+        userId: user?.id,
+        organizationId: findOneProduct?.organizationId,
+      }));
+
     const findOneProductCart = await this.cartsService.findOneBy({
       productId,
       userId: user?.id,
       status: 'ADDED',
     });
-
-    console.log('findOneProductCart ===========>',findOneProductCart)
 
     if (findOneProductCart) {
       await this.cartsService.updateOne(
@@ -90,7 +108,10 @@ export class CartsController {
       await this.cartsService.createOne({
         quantity,
         productId,
+        ipLocation: ip,
         userId: user?.id,
+        cartOrderId: findOneCartOrder?.id,
+        organizationId: findOneProduct?.organizationId,
       });
     }
 

@@ -276,10 +276,14 @@ export class PostsController {
     @Req() req,
     @Param('postId', ParseUUIDPipe) postId: string,
   ) {
-    const findOnePost = await this.postsService.findOneBy({ postId });
+    const { user } = req;
+    const findOnePost = await this.postsService.findOneBy({
+      postId,
+      organizationId: user?.organizationId,
+    });
     if (!findOnePost)
       throw new HttpException(
-        `This post ${findOnePost} dons't exist please change`,
+        `This post ${postId} dons't exist please change`,
         HttpStatus.NOT_FOUND,
       );
 

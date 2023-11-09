@@ -9,6 +9,13 @@ import {
 
 export type StatusCart = 'ADDED' | 'COMPLETED';
 
+export class CartsDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  cartOrderId: string;
+}
+
 export class CreateOrUpdateCartsDto {
   @IsNotEmpty()
   @IsString()

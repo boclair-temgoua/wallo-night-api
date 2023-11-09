@@ -22,18 +22,28 @@ export class Cart extends BaseDeleteEntity {
   @Column({ default: 'ADDED' })
   status?: StatusCart;
 
-  @Column({ type: 'uuid', nullable: true })
-  userId?: string;
-  @ManyToOne(() => User, (user) => user.carts, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  user?: User;
-
   @Column({ type: 'bigint', nullable: true })
   quantity: number;
+
+  @Column({ type: 'uuid', nullable: true })
+  cartOrderId?: string;
 
   @Column({ type: 'uuid', nullable: true })
   productId?: string;
   @ManyToOne(() => Product, (product) => product.carts)
   @JoinColumn()
   product?: Relation<Product>;
+
+  @Column({ type: 'uuid', nullable: true })
+  userId?: string;
+  @ManyToOne(() => User, (user) => user.carts, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  user?: User;
+
+  @Column({ nullable: true })
+  ipLocation?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
 }

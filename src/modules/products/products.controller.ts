@@ -232,8 +232,19 @@ export class ProductsController {
     @Req() req,
     @Param('productId', ParseUUIDPipe) productId: string,
   ) {
+    const { user } = req;
+    const findOneProduct = await this.productsService.findOneBy({
+      productId,
+      organizationId: user?.organizationId,
+    });
+    if (!findOneProduct)
+      throw new HttpException(
+        `Product ${productId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
     await this.productsService.updateOne(
-      { productId },
+      { productId: findOneProduct?.id },
       { deletedAt: new Date() },
     );
 

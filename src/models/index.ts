@@ -33,4 +33,5 @@ export * from './ResetPassword';
 export * from './Testimonial';
 export * from './Transaction';
 export * from './User';
+export * from './CartOrder';
 export * from './Wallet';
