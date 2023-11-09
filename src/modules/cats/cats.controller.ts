@@ -63,12 +63,11 @@ export class CartsController {
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateCartsDto,
-    @Ip() ip,
   ) {
     const { user } = req;
     const { productId, quantity } = body;
-    // const ipLocation = getIpRequest(req);
-    
+    const ipLocation = getIpRequest(req);
+
     const findOneProduct = await this.productsService.findOneBy({
       productId,
     });
@@ -108,7 +107,7 @@ export class CartsController {
       await this.cartsService.createOne({
         quantity,
         productId,
-        ipLocation: ip,
+        ipLocation: ipLocation,
         userId: user?.id,
         cartOrderId: findOneCartOrder?.id,
         organizationId: findOneProduct?.organizationId,
