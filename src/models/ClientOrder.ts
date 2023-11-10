@@ -51,7 +51,14 @@ export class ClientOrder extends BaseEntity {
   quantity: number;
 
   @Column({ type: 'uuid', nullable: true })
-  userClientId?: string;
+  productId?: string;
+  
+  @Column({ type: 'uuid', nullable: true })
+  userId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+
 
   // @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.clientOrder)
   // orderProducts: OrderProduct[];

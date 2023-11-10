@@ -19,6 +19,7 @@ import {
   UpdatePaymentsOptions,
   UpdatePaymentsSelections,
 } from './payments.type';
+import { CartsService } from '../cats/cats.service';
 
 const apiVersion = '2023-10-16';
 const stripePrivate = new Stripe(
@@ -40,6 +41,7 @@ export class PaymentsService {
   constructor(
     @InjectRepository(Payment)
     private driver: Repository<Payment>,
+    private readonly cartsService: CartsService,
   ) {}
 
   async findAll(selections: GetPaymentsSelections): Promise<any> {
@@ -268,5 +270,30 @@ export class PaymentsService {
     }
 
     return { paymentIntents };
+  }
+
+  /** Cart execution */
+  async cartExecution(options: {
+    cartOrderId: string;
+    userSendId: string;
+    organizationId: string;
+  }): Promise<any> {
+    const { cartOrderId, userSendId, organizationId } = options;
+
+    const { summary, cartItems } = await this.cartsService.findAll({
+      userId: userSendId,
+      status: 'ADDED',
+      cartOrderId,
+    });
+
+    if (!summary && cartItems) {
+      throw new HttpException(
+        `Cart not found please try again`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+
+    return { summary, cartItems };
   }
 }

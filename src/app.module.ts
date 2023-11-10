@@ -28,7 +28,6 @@ import { WithdrawalUsersModule } from './modules/withdrawal-users/withdrawal-use
 import { PostsModule } from './modules/posts/posts.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
 import { CommentsModule } from './modules/comments/comments.module';
-import { PostCategoriesModule } from './modules/post-categories/post-categories.module';
 import { FollowsModule } from './modules/follows/follows.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
@@ -75,7 +74,6 @@ import { CartOrdersModule } from './modules/cart-orders/cart-orders.module';
     OrganizationsModule,
     SubscribesModule,
     CommissionsModule,
-    PostCategoriesModule,
     WithdrawalUsersModule,
     ContributionsModule,
     ContactUsModule,

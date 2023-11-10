@@ -78,6 +78,10 @@ export class CreateSubscribePaymentsDto {
 
   @IsOptional()
   @IsString()
+  cartOrderId: string;
+
+  @IsOptional()
+  @IsString()
   @IsUUID()
   userReceiveId: string;
 

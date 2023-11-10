@@ -12,6 +12,7 @@ import {
   Membership,
   Transaction,
   Wallet,
+  Cart,
   Comment,
   Currency,
   Payment,
@@ -21,6 +22,7 @@ import { WalletsService } from '../wallets/wallets.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { TransactionsUtil } from '../transactions/transactions.util';
 import { CommentsService } from '../comments/comments.service';
+import { CartsService } from '../cats/cats.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -28,6 +30,7 @@ import { CommentsService } from '../comments/comments.service';
       Follow,
       Membership,
       Wallet,
+      Cart,
       Comment,
       Currency,
       Payment,
@@ -42,6 +45,7 @@ import { CommentsService } from '../comments/comments.service';
     FollowsService,
     SubscribesUtil,
     WalletsService,
+    CartsService,
     CommentsService,
     TransactionsUtil,
     CurrenciesService,

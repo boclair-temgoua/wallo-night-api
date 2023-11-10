@@ -58,18 +58,24 @@ export class CartsService {
               'id', "product"."id",
               'title', "product"."title",
               'slug', "product"."slug",
+              'productType', "product"."productType",
               'price', "product"."price",
+              'currency', jsonb_build_object(
+                'symbol', "currency"."symbol",
+                'name', "currency"."name",
+                'code', "currency"."code"
+              ),
               'priceDiscount', CASE
                 WHEN ("discount"."expiredAt" >= now()::date
                 AND "discount"."deletedAt" IS NULL
                 AND "discount"."enableExpiredAt" IS TRUE
                 AND "product"."enableDiscount" IS TRUE) THEN
-                CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+                CAST(("product"."price" - (("product"."price" * "cart"."quantity") * "discount"."percent") / 100) AS INT)
                 WHEN ("discount"."deletedAt" IS NULL
                 AND "discount"."enableExpiredAt" IS FALSE
                 AND "product"."enableDiscount" IS TRUE) THEN
-                CAST(("product"."price" - ("product"."price"* "discount"."percent") / 100) AS INT)
-                ELSE "product"."price"
+                CAST(("product"."price" - (("product"."price" * "cart"."quantity") * "discount"."percent") / 100) AS INT)
+                ELSE "product"."price" * "cart"."quantity"
                 END,
               'discount', jsonb_build_object(
                 'enableExpiredAt', "discount"."enableExpiredAt",
@@ -116,11 +122,11 @@ export class CartsService {
       // )
       .addSelect('cart.createdAt', 'createdAt')
       .where('cart.deletedAt IS NULL')
+      .andWhere('product.deletedAt IS NULL')
       .leftJoin('cart.product', 'product')
       .leftJoin('product.currency', 'currency')
       .leftJoin('product.category', 'category')
       .leftJoin('product.discount', 'discount');
-
     if (status) {
       query = query.andWhere('cart.status = :status', {
         status,
@@ -153,7 +159,7 @@ export class CartsService {
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
     const [error, carts] = await useCatch(
-      query.orderBy('cart.createdAt', 'ASC').getRawMany(),
+      query.orderBy('cart.createdAt', 'DESC').getRawMany(),
     );
     if (error) throw new NotFoundException(error);
 

@@ -14,7 +14,7 @@ import { BaseDeleteEntity } from '../app/databases/common';
 import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
 import { User } from './User';
 import { PostType } from '../modules/posts/posts.type';
-import { Comment, PostCategory, Membership, Organization } from './index';
+import { Comment, Membership, Organization } from './index';
 import { ProductStatus } from '../app/utils/pagination';
 
 @Entity('post')
@@ -67,7 +67,4 @@ export class Post extends BaseDeleteEntity {
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments?: Comment[];
-
-  @OneToMany(() => PostCategory, (postCategory) => postCategory.post)
-  postCategories?: PostCategory[];
 }

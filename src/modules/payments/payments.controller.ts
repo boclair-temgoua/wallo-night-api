@@ -26,6 +26,7 @@ import { RequestPaginationDto } from '../../app/utils/pagination/request-paginat
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { FilterTransactionsDto } from '../transactions/transactions.dto';
 import { PaginationType, addPagination } from '../../app/utils/pagination';
+import { CartsService } from '../cats/cats.service';
 
 @Controller('payments')
 export class PaymentsController {
@@ -370,6 +371,74 @@ export class PaymentsController {
         });
       }
     }
+
+    return reply({ res, results: reference });
+  }
+
+  /** Create Shop */
+  @Post(`/paypal/shop`)
+  async createOnePaypalShop(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateSubscribePaymentsDto,
+  ) {
+    const {
+      amount,
+      organizationId,
+      userReceiveId,
+      userSendId,
+      reference,
+      cartOrderId,
+      paymentMethod,
+    } = body;
+
+    const { summary, cartItems } = await this.paymentsService.cartExecution({
+      cartOrderId,
+      userSendId,
+      organizationId,
+    });
+
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: amount?.currency,
+        value: amount?.value,
+      });
+
+    console.log('body =======>', body);
+    console.log('summary =======>', summary);
+    console.log('amountValueConvert =======>', amountValueConvert);
+
+    const transaction = await this.transactionsService.createOne({
+      userSendId: userSendId,
+      userReceiveId: userReceiveId,
+      amount: amount?.value * 100,
+      currency: amount?.currency.toUpperCase(),
+      organizationId: organizationId,
+      type: 'PAYPAL',
+      token: reference,
+      model: 'PRODUCT',
+      fullName: 'Somebody',
+      description: 'purchasing items',
+      amountConvert: amountValueConvert * 100,
+    });
+
+    if (transaction?.token) {
+      await this.walletsService.incrementOne({
+        amount: transaction?.amountConvert,
+        organizationId: transaction?.organizationId,
+      });
+    }
+
+    //   await this.commentsService.createOne({
+    //     model: transaction?.model,
+    //     color: transaction?.color,
+    //     email: transaction?.email,
+    //     userId: transaction?.userSendId,
+    //     fullName: transaction?.fullName,
+    //     description: transaction?.description,
+    //     userReceiveId: transaction?.userReceiveId,
+    //   });
+    // }
 
     return reply({ res, results: reference });
   }

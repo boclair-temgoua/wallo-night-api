@@ -41,7 +41,7 @@ export class CartsController {
 
   /** Get all Carts */
   @Get(`/`)
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async findAll(@Res() res, @Req() req, @Ip() ip, @Query() query: CartsDto) {
     const ipLocation = getIpRequest(req);
     const { user } = req;
@@ -50,7 +50,7 @@ export class CartsController {
     const carts = await this.cartsService.findAll({
       userId: user?.id,
       status: 'ADDED',
-      cartOrderId
+      cartOrderId,
     });
 
     return reply({ res, results: carts });
