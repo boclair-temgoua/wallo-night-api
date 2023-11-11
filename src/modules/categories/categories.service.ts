@@ -27,44 +27,28 @@ export class CategoriesService {
     private driver: Repository<Category>,
   ) {}
 
-  async findAllNotPaginate(selections: GetCategoriesSelections): Promise<any> {
-    const { search, userId } = selections;
-
-    let query = this.driver
-      .createQueryBuilder('category')
-      .where('category.deletedAt IS NULL');
-
-    if (userId) {
-      query = query.andWhere('category.userId = :userId', { userId });
-    }
-
-    if (search) {
-      query = query.andWhere(
-        new Brackets((qb) => {
-          qb.where('category.name ::text ILIKE :search', {
-            search: `%${search}%`,
-          });
-        }),
-      );
-    }
-
-    const [errors, results] = await useCatch(
-      query.orderBy('category.createdAt', 'DESC').getMany(),
-    );
-    if (errors) throw new NotFoundException(errors);
-
-    return results;
-  }
-
   async findAll(selections: GetCategoriesSelections): Promise<any> {
-    const { search, pagination, userId } = selections;
+    const { search, pagination, userId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('category')
+      .select('category.id', 'id')
+      .addSelect('category.slug', 'slug')
+      .addSelect('category.name', 'name')
+      .addSelect('category.userId', 'userId')
+      .addSelect('category.createdAt', 'createdAt')
+      .addSelect('category.description', 'description')
+      .addSelect('category.organizationId', 'organizationId')
       .where('category.deletedAt IS NULL');
 
     if (userId) {
       query = query.andWhere('category.userId = :userId', { userId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('category.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (search) {
@@ -80,20 +64,29 @@ export class CategoriesService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const [error, categories] = await useCatch(
-      query
-        .orderBy('category.createdAt', pagination?.sort)
-        .take(pagination.take)
-        .skip(pagination.skip)
-        .getMany(),
-    );
-    if (error) throw new NotFoundException(error);
+    if (pagination?.isPaginate === 'false') {
+      const [error, categories] = await useCatch(
+        query.orderBy('category.createdAt', pagination?.sort).getRawMany(),
+      );
+      if (error) throw new NotFoundException(error);
 
-    return withPagination({
-      pagination,
-      rowCount,
-      value: categories,
-    });
+      return categories;
+    } else {
+      const [error, categories] = await useCatch(
+        query
+          .orderBy('category.createdAt', pagination?.sort)
+          .limit(pagination.limit)
+          .offset(pagination.offset)
+          .getRawMany(),
+      );
+      if (error) throw new NotFoundException(error);
+
+      return withPagination({
+        pagination,
+        rowCount,
+        value: categories,
+      });
+    }
   }
 
   async findOneBy(selections: GetOneCategoriesSelections): Promise<Category> {
@@ -115,10 +108,11 @@ export class CategoriesService {
 
   /** Create one Categories to the database. */
   async createOne(options: CreateCategoriesOptions): Promise<Category> {
-    const { name, description, userId } = options;
+    const { name, description, organizationId, userId } = options;
 
     const category = new Category();
     category.name = name;
+    category.organizationId = organizationId;
     category.color = getRandomElement(colorsArrays);
     category.slug = `${Slug(name)}-${generateNumber(4)}`;
     category.description = description;

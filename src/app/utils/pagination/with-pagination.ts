@@ -12,12 +12,13 @@ export type PaginationType = {
   skip?: number;
   limit?: number;
   offset?: number;
+  isPaginate?: string;
   sort: SortType;
 };
 
 export const addPagination = (options: PaginationType) => {
   let pagination: any = {};
-  const { page, take, sort } = options;
+  const { page, take, sort, isPaginate } = options;
   const takePage = Number(page);
   const currentTake = Number(take);
   const takeSkip = (Number(page) - 1) * currentTake;
@@ -32,6 +33,7 @@ export const addPagination = (options: PaginationType) => {
   pagination.take = pageTakeSkip?.take;
   pagination.skip = pageTakeSkip?.skip;
   pagination.sort = sort;
+  pagination.isPaginate = isPaginate;
 
   return pagination;
 };
@@ -58,6 +60,7 @@ export const withPagination = async (options: WithPaginationResponse) => {
     last_page: n_pages ? n_pages : undefined,
     skip: pagination?.skip,
     sort: pagination?.sort ?? 'DESC',
+    is_paginate: pagination?.isPaginate ?? 'false',
     total_page: n_pages,
     total_value: Array.isArray(value) ? value.length : 0,
     value,

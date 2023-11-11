@@ -97,6 +97,7 @@ export class Product extends BaseDeleteEntity {
   @ManyToOne(() => Discount, (discount) => discount.products)
   @JoinColumn()
   discount: Discount;
+  
 
   @Column({ type: 'uuid', nullable: true })
   currencyId: string;

@@ -10,8 +10,7 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Product } from './Product';
-import { Post } from './Post';
+import { Product, Post } from './index';
 
 @Entity('category')
 export class Category extends BaseDeleteEntity {
@@ -40,4 +39,7 @@ export class Category extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   products?: Product[];
+
+  @OneToMany(() => Post, (post) => post.category)
+  posts?: Post[];
 }

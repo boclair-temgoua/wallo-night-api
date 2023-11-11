@@ -38,5 +38,5 @@ export class RequestPaginationDto {
   @IsString()
   @IsIn(['true', 'false'])
   @Type(() => String)
-  is_paginate: string;
+  isPaginate: string;
 }

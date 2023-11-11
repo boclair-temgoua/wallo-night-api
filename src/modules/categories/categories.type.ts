@@ -5,6 +5,7 @@ export type GetCategoriesSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: Category['userId'];
+  organizationId?: Category['organizationId'];
 };
 
 export type GetOneCategoriesSelections = {

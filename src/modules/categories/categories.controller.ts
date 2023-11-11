@@ -34,7 +34,7 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   /** Get all CategoriesUs */
-  @Get(`/all`)
+  @Get(`/`)
   @UseGuards(JwtAuthGuard)
   async findAll(
     @Res() res,
@@ -45,31 +45,18 @@ export class CategoriesController {
     const { user } = req;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
-    const pagination: PaginationType = addPagination({ page, take, sort });
+    const { take, page, sort, isPaginate } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({
+      page,
+      take,
+      sort,
+      isPaginate,
+    });
 
     const categories = await this.categoriesService.findAll({
       search,
-      userId: user?.id,
       pagination,
-    });
-
-    return reply({ res, results: categories });
-  }
-
-  @Get(`/`)
-  @UseGuards(JwtAuthGuard)
-  async findAllByOrganizationId(
-    @Res() res,
-    @Req() req,
-    @Query() searchQuery: SearchQueryDto,
-  ) {
-    const { user } = req;
-    const { search } = searchQuery;
-
-    const categories = await this.categoriesService.findAllNotPaginate({
-      search,
-      userId: user?.id,
+      organizationId: user?.organizationId,
     });
 
     return reply({ res, results: categories });
@@ -90,6 +77,7 @@ export class CategoriesController {
       name,
       description,
       userId: user?.id,
+      organizationId: user?.organizationId,
     });
 
     return reply({ res, results: category });
@@ -143,24 +131,18 @@ export class CategoriesController {
   }
 
   /** Delete one CategoriesUs */
-  @Delete(`/delete/:categoryId`)
+  @Delete(`/:categoryId`)
   @UseGuards(JwtAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,
-    @Body() body: PasswordBodyDto,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
-    const { user } = req;
-    const { password } = body;
-    if (!user?.checkIfPasswordMatch(password))
-      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
-
-    const category = await this.categoriesService.updateOne(
+    await this.categoriesService.updateOne(
       { categoryId },
       { deletedAt: new Date() },
     );
 
-    return reply({ res, results: category });
+    return reply({ res, results: 'category deleted successfully' });
   }
 }

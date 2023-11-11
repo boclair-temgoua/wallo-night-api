@@ -14,7 +14,7 @@ import { BaseDeleteEntity } from '../app/databases/common';
 import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
 import { User } from './User';
 import { PostType } from '../modules/posts/posts.type';
-import { Comment, Membership, Organization } from './index';
+import { Category, Comment, Membership, Organization } from './index';
 import { ProductStatus } from '../app/utils/pagination';
 
 @Entity('post')
@@ -48,6 +48,12 @@ export class Post extends BaseDeleteEntity {
 
   @Column({ type: 'text', nullable: true })
   description?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  categoryId: string;
+  @ManyToOne(() => Category, (category) => category.posts)
+  @JoinColumn()
+  category: Relation<Category>;
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
