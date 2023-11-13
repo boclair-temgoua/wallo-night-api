@@ -221,13 +221,48 @@ export class UsersService {
       .addSelect(
         /*sql*/ `(
         SELECT jsonb_build_object(
-        'count', CAST(COUNT(DISTINCT tran) AS INT)
+        'count', CAST(COUNT(DISTINCT prod) AS INT)
         )
-        FROM "transaction" "tran"
-        WHERE "tran"."model" IN ('PRODUCT')
-        AND "tran"."organizationId" = "user"."organizationId"
-        GROUP BY "tran"."organizationId", "user"."organizationId"
+        FROM "product" "prod"
+        WHERE "prod"."organizationId" = "user"."organizationId"
+        AND "prod"."deletedAt" IS NULL
+        GROUP BY "prod"."organizationId", "user"."organizationId"
         ) AS "product"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'count', CAST(COUNT(DISTINCT post) AS INT)
+        )
+        FROM "post"
+        WHERE "post"."organizationId" = "user"."organizationId"
+        AND "post"."type" IN ('AUDIO', 'VIDEO')
+        AND "post"."deletedAt" IS NULL
+        GROUP BY "post"."organizationId", "user"."organizationId"
+        ) AS "post"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'count', CAST(COUNT(DISTINCT comm) AS INT)
+        )
+        FROM "commission" "comm"
+        WHERE "comm"."organizationId" = "user"."organizationId"
+        AND "comm"."deletedAt" IS NULL
+        GROUP BY "comm"."organizationId", "user"."organizationId"
+        ) AS "commission"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'count', CAST(COUNT(DISTINCT post) AS INT)
+        )
+        FROM "post"
+        WHERE "post"."organizationId" = "user"."organizationId"
+        AND "post"."type" IN ('GALLERY')
+        AND "post"."deletedAt" IS NULL
+        GROUP BY "post"."organizationId", "user"."organizationId"
+        ) AS "gallery"`,
       )
       .addSelect(
         /*sql*/ `(
@@ -253,12 +288,12 @@ export class UsersService {
       .addSelect(
         /*sql*/ `(
         SELECT jsonb_build_object(
-        'count', CAST(COUNT(DISTINCT tran) AS INT)
+        'count', CAST(COUNT(DISTINCT mem) AS INT)
         )
-        FROM "transaction" "tran"
-        WHERE "tran"."model" IN ('MEMBERSHIP')
-        AND "tran"."organizationId" = "user"."organizationId"
-        GROUP BY "tran"."organizationId", "user"."organizationId"
+        FROM "membership" "mem"
+        WHERE "mem"."organizationId" = "user"."organizationId"
+        AND "mem"."deletedAt" IS NULL
+        GROUP BY "mem"."organizationId", "user"."organizationId"
         ) AS "membership"`,
       )
       .where('user.deletedAt IS NULL')
