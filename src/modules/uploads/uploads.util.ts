@@ -1,7 +1,7 @@
 import { generateLongUUID } from '../../app/utils/commons/generate-random';
 import { formateNowDateYYMMDD } from '../../app/utils/commons/formate-date';
 import { Injectable } from '@nestjs/common';
-import { GetCommissionsSelections } from '../commissions/commissions.type';
+import * as Slug from 'slug';
 import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
 import * as mime from 'mime-types';
 import { UploadsService } from './uploads.service';
@@ -39,9 +39,12 @@ export class UploadsUtil {
 
     for (const file of files) {
       const extension = mime.extension(file.mimetype);
-      const nameFile = `${organizationId}-${formateNowDateYYMMDD(
+      // const nameFile = `${organizationId}-${formateNowDateYYMMDD(
+      //   new Date(),
+      // )}${generateLongUUID(8)}`;
+      const nameFile = `${Slug(file?.originalname)}${formateNowDateYYMMDD(
         new Date(),
-      )}${generateLongUUID(8)}`;
+      )}-${generateLongUUID(4)}`;
       const fileName = `${`${nameFile}.${
         extension === 'mpga' ? 'mp3' : extension
       }`}`;

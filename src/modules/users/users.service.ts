@@ -232,13 +232,13 @@ export class UsersService {
       .addSelect(
         /*sql*/ `(
         SELECT jsonb_build_object(
-        'count', CAST(COUNT(DISTINCT post) AS INT)
+        'count', CAST(COUNT(DISTINCT po) AS INT)
         )
-        FROM "post"
-        WHERE "post"."organizationId" = "user"."organizationId"
-        AND "post"."type" IN ('AUDIO', 'VIDEO')
-        AND "post"."deletedAt" IS NULL
-        GROUP BY "post"."organizationId", "user"."organizationId"
+        FROM "post" "po"
+        WHERE "po"."organizationId" = "user"."organizationId"
+        AND "po"."type" IN ('AUDIO', 'VIDEO')
+        AND "po"."deletedAt" IS NULL
+        GROUP BY "po"."organizationId", "user"."organizationId"
         ) AS "post"`,
       )
       .addSelect(

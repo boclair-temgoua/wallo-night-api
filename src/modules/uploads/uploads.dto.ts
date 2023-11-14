@@ -15,7 +15,7 @@ export class UploadsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userId: string;
+  organizationId: string;
 
   @IsOptional()
   @IsString()

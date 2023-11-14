@@ -18,7 +18,7 @@ export class UploadsService {
   ) {}
 
   async findAll(selections: GetUploadsSelections): Promise<any> {
-    const { model, uploadableId, uploadType } = selections;
+    const { model, uploadableId, organizationId, uploadType } = selections;
 
     let query = this.driver
       .createQueryBuilder('upload')
@@ -27,6 +27,12 @@ export class UploadsService {
     if (uploadableId) {
       query = query.andWhere('upload.uploadableId = :uploadableId', {
         uploadableId,
+      });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('upload.organizationId = :organizationId', {
+        organizationId,
       });
     }
 
