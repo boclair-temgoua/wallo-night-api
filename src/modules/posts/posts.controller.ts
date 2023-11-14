@@ -158,7 +158,7 @@ export class PostsController {
       postId: post?.id,
       uploadableId: post?.id,
       userId: post?.userId,
-      organizationId: post?.userId,
+      organizationId: post?.organizationId,
       folder: 'posts',
       files,
     });

@@ -39,9 +39,6 @@ export class UploadsUtil {
 
     for (const file of files) {
       const extension = mime.extension(file.mimetype);
-      // const nameFile = `${organizationId}-${formateNowDateYYMMDD(
-      //   new Date(),
-      // )}${generateLongUUID(8)}`;
       const nameFile = `${Slug(file?.originalname)}${formateNowDateYYMMDD(
         new Date(),
       )}-${generateLongUUID(4)}`;
