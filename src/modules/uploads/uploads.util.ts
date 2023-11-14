@@ -39,8 +39,9 @@ export class UploadsUtil {
 
     for (const file of files) {
       const extension = mime.extension(file.mimetype);
-      const nameFile = `
-      ${formateNowDateYYMMDD(new Date())}${generateLongUUID(8)}`;
+      const nameFile = `${organizationId}-${formateNowDateYYMMDD(
+        new Date(),
+      )}${generateLongUUID(8)}`;
       const fileName = `${`${nameFile}.${
         extension === 'mpga' ? 'mp3' : extension
       }`}`;
