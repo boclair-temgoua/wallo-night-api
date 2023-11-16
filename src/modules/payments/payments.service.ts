@@ -49,6 +49,16 @@ export class PaymentsService {
 
     let query = this.driver
       .createQueryBuilder('payment')
+      .select('payment.id', 'id')
+      .addSelect('payment.phone', 'phone')
+      .addSelect('payment.fullName', 'fullName')
+      .addSelect('payment.email', 'email')
+      .addSelect('payment.status', 'status')
+      .addSelect('payment.action', 'action')
+      .addSelect('payment.cardNumber', 'cardNumber')
+      .addSelect('payment.type', 'type')
+      .addSelect('payment.cardExpYear', 'cardExpYear')
+      .addSelect('payment.organizationId', 'organizationId')
       .where('payment.deletedAt IS NULL');
 
     if (userId) {
@@ -71,7 +81,7 @@ export class PaymentsService {
         .orderBy('payment.createdAt', pagination?.sort)
         .limit(pagination.limit)
         .offset(pagination.offset)
-        .getMany(),
+        .getRawMany(),
     );
     if (error) throw new NotFoundException(error);
 
@@ -130,7 +140,7 @@ export class PaymentsService {
     payment.email = email;
     payment.fullName = fullName;
     payment.phone = phone;
-    payment.cardNumber = cardNumber;
+    payment.cardNumber = cardNumber.split(' ').join('');
     payment.cardExpMonth = cardExpMonth;
     payment.cardExpYear = cardExpYear;
     payment.cardCvc = cardCvc;
@@ -212,7 +222,7 @@ export class PaymentsService {
 
     const paymentMethod = await stripePublic.tokens.create({
       card: {
-        number: cardNumber,
+        number: cardNumber.split(' ').join(''),
         exp_month: Number(cardExpMonth),
         exp_year: Number(cardExpYear),
         cvc: cardCvc,
@@ -292,7 +302,6 @@ export class PaymentsService {
         HttpStatus.NOT_FOUND,
       );
     }
-
 
     return { summary, cartItems };
   }
