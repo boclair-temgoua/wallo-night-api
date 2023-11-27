@@ -12,7 +12,7 @@ import {
   GetOneAuthProviderSelections,
   UpdateAuthProviderOptions,
   UpdateAuthProviderSelections,
-} from './auth-Providers.type';
+} from './auth-providers.type';
 import { useCatch } from '../../app/utils/use-catch';
 
 @Injectable()
