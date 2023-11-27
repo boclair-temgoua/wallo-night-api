@@ -100,7 +100,6 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       organizationId: findOnUser.organizationId,
-      profileId: findOnUser.profileId,
     };
 
     const refreshToken =
@@ -141,7 +140,6 @@ export class AuthUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       organizationId: findOnUser.organizationId,
-      profileId: findOnUser.profileId,
     };
 
     if (!findOnUser)

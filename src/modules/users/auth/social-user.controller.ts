@@ -14,6 +14,7 @@ import { config } from '../../../app/config/index';
 import { generateLongUUID } from '../../../app/utils/commons';
 import { OAuth2Client } from 'google-auth-library';
 import { UsersUtil } from '../users.util';
+import { AuthProvidersService } from '../../auth-providers/auth-providers.service';
 
 const clientId = config.implementations.google.clientId;
 const clientSecret = config.implementations.google.clientSecret;
@@ -25,6 +26,7 @@ export class SocialUserController {
     private readonly usersUtil: UsersUtil,
     private readonly usersService: UsersService,
     private readonly checkUserService: CheckUserService,
+    private readonly authProvidersService: AuthProvidersService,
   ) {}
 
   /** Google login new user */
@@ -38,7 +40,7 @@ export class SocialUserController {
 
     const findOnUser = await this.usersService.findOneBy({
       email,
-      provider: 'google',
+      provider: 'provider',
     });
     if (!findOnUser)
       throw new HttpException(
@@ -49,7 +51,6 @@ export class SocialUserController {
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
       organizationId: findOnUser.organizationId,
-      profileId: findOnUser.profileId,
     };
 
     const refreshToken =
@@ -74,12 +75,12 @@ export class SocialUserController {
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-    const { given_name, family_name, picture, email, email_verified } =
+    const { given_name, family_name, picture, email, email_verified, sub } =
       ticket.getPayload();
 
     const findOnUser = await this.usersService.findOneBy({
       email,
-      provider: 'google',
+      provider: 'provider',
     });
     if (findOnUser)
       throw new HttpException(
@@ -89,13 +90,20 @@ export class SocialUserController {
 
     const { user, refreshToken } = await this.usersUtil.saveOrUpdate({
       email,
-      provider: 'google',
+      provider: 'provider',
       email_verified,
       password: generateLongUUID(8),
       firstName: family_name,
       lastName: given_name,
       username: `${given_name}-${family_name}-${generateLongUUID(4)}`,
       image: picture,
+    });
+
+    await this.authProvidersService.createOne({
+      providerId: sub,
+      email: user?.email,
+      userId: user?.id,
+      name: 'google',
     });
 
     return reply({

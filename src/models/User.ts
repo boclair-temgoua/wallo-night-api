@@ -26,6 +26,7 @@ import {
   Contributor,
   Profile,
   Product,
+  AuthProvider,
   Discount,
   Organization,
 } from './index';
@@ -145,6 +146,11 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   carts?: Cart[];
+
+  @OneToMany(() => AuthProvider, (authProvider) => authProvider.user, {
+    onDelete: 'CASCADE',
+  })
+  authProviders?: AuthProvider[];
 
   @OneToMany(() => Payment, (payment) => payment.user, {
     onDelete: 'CASCADE',

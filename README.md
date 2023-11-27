@@ -29,12 +29,12 @@
 ## Generate migration
 
 ```typescript
-npm run migration:generate --name="migration"
+npm run db:generate --name="migration"
 ```
 ## Generate run
 
 ```typescript
-npm run migration:run
+npm run db:push
 ```
 
 ```typescript

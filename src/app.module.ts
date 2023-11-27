@@ -37,6 +37,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { DonationsModule } from './modules/donations/donations.module';
 import { CartOrdersModule } from './modules/cart-orders/cart-orders.module';
+import { AuthProvidersModule } from './modules/auth-providers/auth-providers.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { CartOrdersModule } from './modules/cart-orders/cart-orders.module';
     OrganizationsModule,
     SubscribesModule,
     CommissionsModule,
+    AuthProvidersModule,
     WithdrawalUsersModule,
     ContributionsModule,
     ContactUsModule,

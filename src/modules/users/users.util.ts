@@ -29,7 +29,7 @@ export class UsersUtil {
   ) {}
 
   async saveOrUpdate(options: {
-    provider: 'google' | 'github' | 'default';
+    provider: 'google' | 'github' | 'provider' | 'default';
     email: string;
     password: string;
     firstName: string;
@@ -133,7 +133,6 @@ export class UsersUtil {
 
     const jwtPayload: JwtPayloadType = {
       id: user.id,
-      profileId: user.profileId,
       organizationId: user.organizationId,
     };
 

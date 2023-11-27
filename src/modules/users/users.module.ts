@@ -10,6 +10,7 @@ import {
   Currency,
   Subscribe,
   Donation,
+  AuthProvider,
 } from '../../models';
 import { ProfilesService } from '../profiles/profiles.service';
 import { AuthUserController } from './auth/auth-user.controller';
@@ -27,6 +28,7 @@ import { OrganizationsService } from '../organizations/organizations.service';
 import { DonationsService } from '../donations/donations.service';
 import { UsersUtil } from './users.util';
 import { SocialUserController } from './auth/social-user.controller';
+import { AuthProvidersService } from '../auth-providers/auth-providers.service';
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { SocialUserController } from './auth/social-user.controller';
       Organization,
       ResetPassword,
       Contributor,
+      AuthProvider,
     ]),
   ],
   controllers: [AuthUserController, UsersController, SocialUserController],
@@ -54,6 +57,7 @@ import { SocialUserController } from './auth/social-user.controller';
     ContributorsUtil,
     CurrenciesService,
     SubscribesService,
+    AuthProvidersService,
     ContributorsService,
     OrganizationsService,
     ResetPasswordsService,
