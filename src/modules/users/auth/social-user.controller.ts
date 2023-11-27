@@ -36,6 +36,7 @@ export class SocialUserController {
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
+
     const { email } = ticket.getPayload();
 
     const findOnUser = await this.usersService.findOneBy({
