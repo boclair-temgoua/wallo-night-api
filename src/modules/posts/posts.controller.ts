@@ -90,7 +90,8 @@ export class PostsController {
     @Query() searchQuery: SearchQueryDto,
     @Cookies('x-cookies-login') user: any,
   ) {
-    const { type, organizationId, typeIds, status, userVisitorId } = query;
+    const { type, albumId, organizationId, typeIds, status, userVisitorId } =
+      query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -100,6 +101,7 @@ export class PostsController {
       search,
       pagination,
       type,
+      albumId,
       organizationId,
       status: status?.toUpperCase(),
       likeUserId: userVisitorId,
@@ -141,12 +143,14 @@ export class PostsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
-    const { title, whoCanSee, allowDownload, description, type } = body;
+    const { title, categoryId, whoCanSee, allowDownload, description, type } =
+      body;
 
     const post = await this.postsService.createOne({
       type,
       title,
       whoCanSee,
+      categoryId,
       description,
       userId: user?.id,
       organizationId: user?.organizationId,
@@ -180,12 +184,14 @@ export class PostsController {
     const {
       title,
       status,
+      categoryId,
       description,
       allowDownload,
       urlMedia,
       whoCanSee,
       enableUrlMedia,
       type,
+      albumId,
     } = body;
 
     const post = await this.postsService.createOne({
@@ -194,7 +200,9 @@ export class PostsController {
       status,
       urlMedia,
       whoCanSee,
+      categoryId,
       description,
+      albumId,
       userId: user?.id,
       organizationId: user?.organizationId,
       allowDownload: allowDownload === 'true' ? true : false,
@@ -228,6 +236,7 @@ export class PostsController {
     const {
       title,
       status,
+      categoryId,
       description,
       allowDownload,
       urlMedia,
@@ -249,6 +258,7 @@ export class PostsController {
         status,
         urlMedia,
         whoCanSee,
+        categoryId,
         description,
         allowDownload: allowDownload === 'true' ? true : false,
         enableUrlMedia: enableUrlMedia === 'true' ? true : false,

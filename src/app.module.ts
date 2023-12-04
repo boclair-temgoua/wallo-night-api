@@ -38,6 +38,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
 import { DonationsModule } from './modules/donations/donations.module';
 import { CartOrdersModule } from './modules/cart-orders/cart-orders.module';
 import { AuthProvidersModule } from './modules/auth-providers/auth-providers.module';
+import { AlbumsModule } from './modules/albums/albums.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { AuthProvidersModule } from './modules/auth-providers/auth-providers.mod
     LikesModule,
     PaymentsModule,
     UploadsModule,
+    AlbumsModule,
     CartOrdersModule,
     OrganizationsModule,
     SubscribesModule,

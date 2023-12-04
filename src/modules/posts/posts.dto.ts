@@ -32,6 +32,10 @@ export class CreateOrUpdatePostsGalleriesDto {
 
   @IsOptional()
   @IsString()
+  categoryId: string;
+
+  @IsOptional()
+  @IsString()
   description: string;
 
   @IsNotEmpty()
@@ -69,7 +73,11 @@ export class CreateOrUpdatePostsDto {
 
   @IsOptional()
   @IsString()
-  categories: any[];
+  categoryId: string;
+
+  @IsOptional()
+  @IsString()
+  albumId: string;
 
   @IsOptional()
   @IsString()
@@ -116,6 +124,16 @@ export class GetGalleriesDto {
   @IsString()
   @IsUUID()
   organizationId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  categoryId: string
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  albumId: string
 
   @IsOptional()
   @IsString()

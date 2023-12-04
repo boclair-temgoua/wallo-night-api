@@ -16,12 +16,9 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { CategoriesService } from './categories.service';
-import {
-  PasswordBodyDto,
-  SearchQueryDto,
-} from '../../app/utils/search-query/search-query.dto';
-import { CreateOrUpdateCategoriesDto } from './categories.dto';
+import { AlbumsService } from './albums.service';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { CreateOrUpdateAlbumsDto } from './albums.dto';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
@@ -29,11 +26,11 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 
-@Controller('categories')
-export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+@Controller('albums')
+export class AlbumsController {
+  constructor(private readonly albumsService: AlbumsService) {}
 
-  /** Get all Categories */
+  /** Get all Albums */
   @Get(`/`)
   async findAll(
     @Res() res,
@@ -51,27 +48,27 @@ export class CategoriesController {
       isPaginate,
     });
 
-    const categories = await this.categoriesService.findAll({
+    const Albums = await this.albumsService.findAll({
       search,
       pagination,
       organizationId: organizationId,
     });
 
-    return reply({ res, results: categories });
+    return reply({ res, results: Albums });
   }
 
-  /** Post one Categories */
+  /** Post one Albums */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateCategoriesDto,
+    @Body() body: CreateOrUpdateAlbumsDto,
   ) {
     const { user } = req;
     const { name, description } = body;
 
-    const category = await this.categoriesService.createOne({
+    const category = await this.albumsService.createOne({
       name,
       description,
       userId: user?.id,
@@ -81,65 +78,59 @@ export class CategoriesController {
     return reply({ res, results: category });
   }
 
-  /** Post one Categories */
-  @Put(`/:categoryId`)
+  /** Post one Albums */
+  @Put(`/:albumId`)
   @UseGuards(JwtAuthGuard)
   async updateOneCategory(
     @Res() res,
     @Req() req,
-    @Body() body: CreateOrUpdateCategoriesDto,
-    @Param('categoryId', ParseUUIDPipe) categoryId: string,
+    @Body() body: CreateOrUpdateAlbumsDto,
+    @Param('albumId', ParseUUIDPipe) albumId: string,
   ) {
     const { name, description } = body;
 
-    const findOneCategory = await this.categoriesService.findOneBy({
-      categoryId,
+    const findOneCategory = await this.albumsService.findOneBy({
+      albumId,
     });
     if (!findOneCategory)
       throw new HttpException(
-        `Category ${categoryId} don't exists please change`,
+        `Album ${albumId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
-    const category = await this.categoriesService.updateOne(
-      { categoryId },
+    const category = await this.albumsService.updateOne(
+      { albumId },
       { name, description },
     );
 
     return reply({ res, results: category });
   }
 
-  /** Get one Categories */
-  @Get(`/show/:categoryId`)
+  /** Get one Albums */
+  @Get(`/show/:albumId`)
   @UseGuards(JwtAuthGuard)
-  async getOne(
-    @Res() res,
-    @Param('categoryId', ParseUUIDPipe) categoryId: string,
-  ) {
-    const findOneCategory = await this.categoriesService.findOneBy({
-      categoryId,
+  async getOne(@Res() res, @Param('albumId', ParseUUIDPipe) albumId: string) {
+    const findOneCategory = await this.albumsService.findOneBy({
+      albumId,
     });
     if (!findOneCategory)
       throw new HttpException(
-        `Category ${categoryId} don't exists please change`,
+        `Category ${albumId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
     return reply({ res, results: findOneCategory });
   }
 
-  /** Delete one CategoriesUs */
-  @Delete(`/:categoryId`)
+  /** Delete one Album */
+  @Delete(`/:albumId`)
   @UseGuards(JwtAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,
-    @Param('categoryId', ParseUUIDPipe) categoryId: string,
+    @Param('albumId', ParseUUIDPipe) albumId: string,
   ) {
-    await this.categoriesService.updateOne(
-      { categoryId },
-      { deletedAt: new Date() },
-    );
+    await this.albumsService.updateOne({ albumId }, { deletedAt: new Date() });
 
     return reply({ res, results: 'category deleted successfully' });
   }

@@ -23,6 +23,7 @@ export * from './Campaign';
 export * from './Faq';
 export * from './Donation';
 export * from './Gift';
+export * from './Album';
 export * from './OrderProduct';
 export * from './Product';
 export * from './AuthProvider';

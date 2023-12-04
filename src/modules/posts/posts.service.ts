@@ -23,6 +23,7 @@ import { useCatch } from '../../app/utils/use-catch';
 import {
   generateLongUUID,
   generateNumber,
+  isNotUndefined,
 } from '../../app/utils/commons/generate-random';
 
 @Injectable()
@@ -43,6 +44,8 @@ export class PostsService {
       likeUserId,
       followerIds,
       typeIds,
+      albumId,
+      categoryId,
       organizationId,
     } = selections;
 
@@ -59,7 +62,16 @@ export class PostsService {
       .addSelect('post.enableUrlMedia', 'enableUrlMedia')
       .addSelect('post.organizationId', 'organizationId')
       .addSelect('post.whoCanSee', 'whoCanSee')
+      .addSelect('post.categoryId', 'categoryId')
       .addSelect('post.createdAt', 'createdAt')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'id', "category"."id",
+            'name', "category"."name",
+            'slug', "category"."slug",
+            'color', "category"."color"
+        ) AS "category"`,
+      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
@@ -123,6 +135,7 @@ export class PostsService {
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
+      .leftJoin('post.category', 'category')
       .leftJoin('post.organization', 'organization')
       .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
@@ -163,6 +176,16 @@ export class PostsService {
       query = query.andWhere('post.organizationId = :organizationId', {
         organizationId,
       });
+    }
+
+    if (categoryId) {
+      query = query.andWhere('post.categoryId = :categoryId', {
+        categoryId,
+      });
+    }
+
+    if (albumId) {
+      query = query.andWhere('post.albumId = :albumId', { albumId });
     }
 
     if (status) {
@@ -220,7 +243,16 @@ export class PostsService {
       .addSelect('post.enableUrlMedia', 'enableUrlMedia')
       .addSelect('post.organizationId', 'organizationId')
       .addSelect('post.whoCanSee', 'whoCanSee')
+      .addSelect('post.categoryId', 'categoryId')
       .addSelect('post.createdAt', 'createdAt')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'id', "category"."id",
+            'name', "category"."name",
+            'slug', "category"."slug",
+            'color', "category"."color"
+        ) AS "category"`,
+      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'fullName', "profile"."fullName",
@@ -284,6 +316,7 @@ export class PostsService {
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
+      .leftJoin('post.category', 'category')
       .leftJoin('post.organization', 'organization')
       .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
@@ -347,11 +380,13 @@ export class PostsService {
       status,
       title,
       type,
+      albumId,
       urlMedia,
       whoCanSee,
       enableUrlMedia,
       allowDownload,
       description,
+      categoryId,
       organizationId,
     } = options;
 
@@ -361,6 +396,7 @@ export class PostsService {
     post.type = type;
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
+    post.albumId = albumId;
     post.allowDownload = allowDownload;
     post.enableUrlMedia = enableUrlMedia;
     post.slug = `${
@@ -369,6 +405,8 @@ export class PostsService {
     post.status = status;
     post.organizationId = organizationId;
     post.description = description;
+    post.albumId = isNotUndefined(albumId) ? albumId : null;
+    post.categoryId = isNotUndefined(categoryId) ? categoryId : null;
 
     const query = this.driver.save(post);
 
@@ -393,7 +431,9 @@ export class PostsService {
       enableUrlMedia,
       description,
       urlMedia,
+      albumId,
       deletedAt,
+      categoryId,
     } = options;
 
     let findQuery = this.driver
@@ -413,9 +453,11 @@ export class PostsService {
     post.whoCanSee = whoCanSee;
     post.allowDownload = allowDownload;
     post.status = status;
+    post.albumId = albumId;
     post.description = description;
     post.enableUrlMedia = enableUrlMedia;
     post.deletedAt = deletedAt;
+    post.categoryId = isNotUndefined(categoryId) ? categoryId : null;
 
     const query = this.driver.save(post);
 

@@ -5,15 +5,15 @@ import {
   Generated,
   ManyToOne,
   JoinColumn,
+  Relation,
   OneToMany,
-  ManyToMany,
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Product, Post } from './index';
+import { Organization, Post } from './index';
 
-@Entity('category')
-export class Category extends BaseDeleteEntity {
+@Entity('album')
+export class Album extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -23,21 +23,15 @@ export class Category extends BaseDeleteEntity {
   @Column({ nullable: true })
   slug?: string;
 
-  @Column({ nullable: true })
-  color?: string;
-
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ nullable: true })
   userId?: string;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
 
-  @OneToMany(() => Product, (product) => product.category)
-  products?: Product[];
-
-  @OneToMany(() => Post, (post) => post.category)
+  @OneToMany(() => Post, (post) => post.album)
   posts?: Post[];
 }

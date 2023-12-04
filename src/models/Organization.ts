@@ -16,7 +16,7 @@ import {
   User,
   Transaction,
   Post,
-  Comment,
+  Album,
 } from './index';
 import { Payment } from './Payment';
 

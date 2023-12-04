@@ -10,7 +10,7 @@ import { Repository, Brackets } from 'typeorm';
 import * as Slug from 'slug';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { generateNumber } from '../../app/utils/commons';
+import { generateNumber, isNotUndefined } from '../../app/utils/commons';
 import {
   CreateProductsOptions,
   GetOneProductsSelections,
@@ -58,6 +58,14 @@ export class ProductsService {
             'name', "currency"."name",
             'code', "currency"."code"
         ) AS "currency"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'id', "category"."id",
+            'name', "category"."name",
+            'slug', "category"."slug",
+            'color', "category"."color"
+        ) AS "category"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -212,6 +220,14 @@ export class ProductsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
+            'id', "category"."id",
+            'name', "category"."name",
+            'slug', "category"."slug",
+            'color', "category"."color"
+        ) AS "category"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
               'firstName', "profile"."firstName",
               'lastName', "profile"."lastName",
@@ -347,9 +363,7 @@ export class ProductsService {
     product.subTitle = subTitle;
     product.moreDescription = moreDescription;
     product.limitSlot = limitSlot;
-    product.categoryId = categoryId;
     product.status = status;
-    product.discountId = discountId;
     product.currencyId = currencyId;
     product.organizationId = organizationId;
     product.enableLimitSlot = enableLimitSlot;
@@ -360,6 +374,8 @@ export class ProductsService {
     product.slug = `${Slug(title)}-${generateNumber(4)}`;
     product.description = description;
     product.userId = userId;
+    product.discountId = isNotUndefined(discountId) ? categoryId : null;
+    product.categoryId = isNotUndefined(categoryId) ? categoryId : null;
 
     const query = this.driver.save(product);
 
@@ -413,11 +429,9 @@ export class ProductsService {
     product.sku = sku;
     product.subTitle = subTitle;
     product.moreDescription = moreDescription;
-    product.categoryId = categoryId;
     product.status = status;
     product.whoCanSee = whoCanSee;
     product.productType = productType;
-    product.discountId = discountId;
     product.currencyId = currencyId;
     product.limitSlot = limitSlot;
     product.urlRedirect = urlRedirect;
@@ -429,6 +443,8 @@ export class ProductsService {
     product.urlMedia = urlMedia;
     product.description = description;
     product.deletedAt = deletedAt;
+    product.discountId = isNotUndefined(discountId) ? categoryId : null;
+    product.categoryId = isNotUndefined(categoryId) ? categoryId : null;
 
     const query = this.driver.save(product);
 
