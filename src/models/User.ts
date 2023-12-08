@@ -11,9 +11,7 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Withdrawal } from './Withdrawal';
 import { Membership } from './Membership';
-import { WithdrawalUser } from './WithdrawalUser';
 import { NextStep } from '../modules/users/users.type';
 import {
   Post,
@@ -127,20 +125,10 @@ export class User extends BaseDeleteEntity {
   })
   likes?: Like[];
 
-  @OneToMany(() => Withdrawal, (withdrawal) => withdrawal.user, {
-    onDelete: 'CASCADE',
-  })
-  withdrawals?: Withdrawal[];
-
   @OneToMany(() => Follow, (follow) => follow.user, {
     onDelete: 'CASCADE',
   })
   follows?: Follow[];
-
-  @OneToMany(() => WithdrawalUser, (withdrawalUser) => withdrawalUser.user, {
-    onDelete: 'CASCADE',
-  })
-  withdrawalUsers?: WithdrawalUser[];
 
   @OneToMany(() => Cart, (cart) => cart.user, {
     onDelete: 'CASCADE',

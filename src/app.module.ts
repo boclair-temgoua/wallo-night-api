@@ -23,8 +23,6 @@ import { MediaModule } from './modules/media/media.module';
 import { GiftsModule } from './modules/gifts/gifts.module';
 import { CurrenciesModule } from './modules/currencies/currencies.module';
 import { ContributionsModule } from './modules/contributions/contributions.module';
-import { WithdrawalsModule } from './modules/withdrawals/withdrawals.module';
-import { WithdrawalUsersModule } from './modules/withdrawal-users/withdrawal-users.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
 import { CommentsModule } from './modules/comments/comments.module';
@@ -66,7 +64,6 @@ import { AlbumsModule } from './modules/albums/albums.module';
     DonationsModule,
     CommentsModule,
     CurrenciesModule,
-    WithdrawalsModule,
     MembershipsModule,
     FollowsModule,
     LikesModule,
@@ -78,7 +75,6 @@ import { AlbumsModule } from './modules/albums/albums.module';
     SubscribesModule,
     CommissionsModule,
     AuthProvidersModule,
-    WithdrawalUsersModule,
     ContributionsModule,
     ContactUsModule,
   ],
