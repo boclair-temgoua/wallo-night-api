@@ -15,8 +15,10 @@ import { PaymentsService } from './payments.service';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { WalletsService } from '../wallets/wallets.service';
 import {
+  CodeVerifyPaymentsDto,
   CreateOnePaymentDto,
   CreateSubscribePaymentsDto,
+  SendCodeVerifyPaymentsDto,
 } from './payments.dto';
 import { TransactionsUtil } from '../transactions/transactions.util';
 import { TransactionsService } from '../transactions/transactions.service';
@@ -24,9 +26,8 @@ import { CommentsService } from '../comments/comments.service';
 import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { FilterTransactionsDto } from '../transactions/transactions.dto';
 import { PaginationType, addPagination } from '../../app/utils/pagination';
-import { CartsService } from '../cats/cats.service';
+import { otpMessageSend, otpVerifySid } from '../integrations/twilio-otp';
 
 @Controller('payments')
 export class PaymentsController {
@@ -61,6 +62,68 @@ export class PaymentsController {
     });
 
     return reply({ res, results: payments });
+  }
+
+  /** resend code one payment */
+  @Post(`/resend-code-verify-phone`)
+  @UseGuards(JwtAuthGuard)
+  async sendCodeVerifyPhoneOne(
+    @Res() res,
+    @Req() req,
+    @Body() body: SendCodeVerifyPaymentsDto,
+  ) {
+    const { phone } = body;
+    console.log('phone ========>', phone);
+
+    const otpMessageVoce = await otpMessageSend({ phone });
+    if (!otpMessageVoce) {
+      throw new HttpException(
+        `OTP messageVoce not valid`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return reply({ res, results: 'OTP send successfully' });
+  }
+
+  /** Verify one payment */
+  @Post(`/code-verify-phone`)
+  @UseGuards(JwtAuthGuard)
+  async codeVerifyPhoneOne(
+    @Res() res,
+    @Req() req,
+    @Body() body: CodeVerifyPaymentsDto,
+  ) {
+    const { user } = req;
+    const { phone, code } = body;
+
+    const findOnePayment = await this.paymentsService.findOneBy({
+      phone,
+      organizationId: user?.organizationId,
+    });
+    if (!findOnePayment)
+      throw new HttpException(
+        `Phone ${phone} already exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const otpMessageVerifySid = await otpVerifySid({
+      phone: findOnePayment?.phone,
+      code: code,
+    });
+    if (!otpMessageVerifySid?.valid) {
+      throw new HttpException(`OTP verify not valid`, HttpStatus.NOT_FOUND);
+    }
+
+    await this.paymentsService.updateOne(
+      { paymentId: findOnePayment?.id },
+      {
+        status: 'ACTIVE',
+      },
+    );
+    console.log('otpMessageVerifySid =====>', otpMessageVerifySid);
+
+    return reply({ res, results: 'OTP verified successfully' });
   }
 
   /** Create one payment */
@@ -99,6 +162,20 @@ export class PaymentsController {
         cardExpYear,
         cardCvc,
       });
+
+      await this.paymentsService.createOne({
+        email,
+        fullName,
+        cardNumber,
+        cardExpMonth,
+        cardExpYear,
+        cardCvc,
+        type,
+        action: 'PAYMENT',
+        description,
+        userId: user?.id,
+        organizationId: user?.organizationId,
+      });
     }
 
     if (type === 'PHONE') {
@@ -111,22 +188,16 @@ export class PaymentsController {
           `Phone ${phone} already exists please change`,
           HttpStatus.NOT_FOUND,
         );
-    }
 
-    await this.paymentsService.createOne({
-      email,
-      phone,
-      fullName,
-      cardNumber,
-      cardExpMonth,
-      cardExpYear,
-      cardCvc,
-      type,
-      action: type === 'PHONE' ? 'WITHDRAWING' : 'PAYMENT',
-      description,
-      userId: user?.id,
-      organizationId: user?.organizationId,
-    });
+      await this.paymentsService.createOne({
+        phone,
+        fullName,
+        type,
+        action: 'WITHDRAWING',
+        userId: user?.id,
+        organizationId: user?.organizationId,
+      });
+    }
 
     return reply({ res, results: 'payment created successfully' });
   }

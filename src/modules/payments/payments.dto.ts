@@ -104,3 +104,19 @@ export class CreateSubscribePaymentsDto {
   @IsOptional()
   amount: AmountModel;
 }
+
+export class SendCodeVerifyPaymentsDto {
+  @IsNotEmpty()
+  @IsString()
+  phone: string;
+}
+
+export class CodeVerifyPaymentsDto {
+  @IsNotEmpty()
+  @IsString()
+  phone: string;
+
+  @IsNotEmpty()
+  @IsString()
+  code: string;
+}

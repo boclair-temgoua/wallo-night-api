@@ -102,6 +102,10 @@ export class PaymentsService {
       query = query.andWhere('payment.id = :id', { id: paymentId });
     }
 
+    if (phone) {
+      query = query.andWhere('payment.phone = :phone', { phone });
+    }
+
     if (cardNumber) {
       query = query.andWhere('payment.cardNumber = :cardNumber', {
         cardNumber,
@@ -140,7 +144,7 @@ export class PaymentsService {
     payment.email = email;
     payment.fullName = fullName;
     payment.phone = phone;
-    payment.cardNumber = cardNumber.split(' ').join('');
+    payment.cardNumber = cardNumber?.split(' ').join('');
     payment.cardExpMonth = cardExpMonth;
     payment.cardExpYear = cardExpYear;
     payment.cardCvc = cardCvc;
@@ -174,6 +178,7 @@ export class PaymentsService {
       cardExpYear,
       cardCvc,
       type,
+      status,
       description,
       deletedAt,
     } = options;
@@ -196,6 +201,7 @@ export class PaymentsService {
     payment.cardCvc = cardCvc;
     payment.type = type;
     payment.action = action;
+    payment.status = status;
     payment.description = description;
     payment.deletedAt = deletedAt;
 
@@ -269,6 +275,7 @@ export class PaymentsService {
       description: customer?.description,
       payment_method: paymentMethod?.id,
       confirm: true,
+      confirmation_method: 'manual', // For 3D Security
       return_url: `${config.url.client}/success?token=${token}`,
     });
 

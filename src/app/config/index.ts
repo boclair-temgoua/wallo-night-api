@@ -116,6 +116,14 @@ export const config = {
    */
   implementations: {
     /**
+     * Twilio
+     */
+    twilio: {
+      accountSid: process.env.TWILIO_ACCOUNT_SID,
+      authToken: process.env.TWILIO_AUTH_TOKEN,
+      verifySid: process.env.TWILIO_VERIFY_SID,
+    },
+    /**
      * Birevo marketplace
      */
     ivemo: {
