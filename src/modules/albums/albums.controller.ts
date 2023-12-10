@@ -68,20 +68,20 @@ export class AlbumsController {
     const { user } = req;
     const { name, description } = body;
 
-    const category = await this.albumsService.createOne({
+    const album = await this.albumsService.createOne({
       name,
       description,
       userId: user?.id,
       organizationId: user?.organizationId,
     });
 
-    return reply({ res, results: category });
+    return reply({ res, results: album });
   }
 
   /** Post one Albums */
   @Put(`/:albumId`)
   @UseGuards(JwtAuthGuard)
-  async updateOneCategory(
+  async updateOneAlbum(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateAlbumsDto,
@@ -89,37 +89,37 @@ export class AlbumsController {
   ) {
     const { name, description } = body;
 
-    const findOneCategory = await this.albumsService.findOneBy({
+    const findOneAlbum = await this.albumsService.findOneBy({
       albumId,
     });
-    if (!findOneCategory)
+    if (!findOneAlbum)
       throw new HttpException(
         `Album ${albumId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
-    const category = await this.albumsService.updateOne(
+    const album = await this.albumsService.updateOne(
       { albumId },
       { name, description },
     );
 
-    return reply({ res, results: category });
+    return reply({ res, results: album });
   }
 
   /** Get one Albums */
   @Get(`/show/:albumId`)
   @UseGuards(JwtAuthGuard)
   async getOne(@Res() res, @Param('albumId', ParseUUIDPipe) albumId: string) {
-    const findOneCategory = await this.albumsService.findOneBy({
+    const findOneAlbum = await this.albumsService.findOneBy({
       albumId,
     });
-    if (!findOneCategory)
+    if (!findOneAlbum)
       throw new HttpException(
-        `Category ${albumId} don't exists please change`,
+        `Album ${albumId} don't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
-    return reply({ res, results: findOneCategory });
+    return reply({ res, results: findOneAlbum });
   }
 
   /** Delete one Album */
@@ -132,6 +132,6 @@ export class AlbumsController {
   ) {
     await this.albumsService.updateOne({ albumId }, { deletedAt: new Date() });
 
-    return reply({ res, results: 'category deleted successfully' });
+    return reply({ res, results: 'album deleted successfully' });
   }
 }

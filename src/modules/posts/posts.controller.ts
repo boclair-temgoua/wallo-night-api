@@ -143,8 +143,15 @@ export class PostsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { user } = req;
-    const { title, categoryId, whoCanSee, allowDownload, description, type } =
-      body;
+    const {
+      title,
+      categoryId,
+      whoCanSee,
+      allowDownload,
+      description,
+      albumId,
+      type,
+    } = body;
 
     const post = await this.postsService.createOne({
       type,
@@ -153,6 +160,7 @@ export class PostsController {
       categoryId,
       description,
       userId: user?.id,
+      albumId: albumId,
       organizationId: user?.organizationId,
       allowDownload: allowDownload === 'true' ? true : false,
     });
