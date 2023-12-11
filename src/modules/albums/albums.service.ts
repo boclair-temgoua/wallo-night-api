@@ -38,6 +38,17 @@ export class AlbumsService {
       .addSelect('album.createdAt', 'createdAt')
       .addSelect('album.description', 'description')
       .addSelect('album.organizationId', 'organizationId')
+      .addSelect(
+        /*sql*/ `(
+        SELECT
+            CAST(COUNT(DISTINCT po) AS INT)
+        FROM "post" "po"
+        WHERE ("po"."albumId" = "album"."id"
+         AND "po"."type" IN ('GALLERY')
+         AND "po"."deletedAt" IS NULL)
+         GROUP BY "album"."id", "po"."albumId", "po"."type"
+        ) AS "totalPost"`,
+      )
       .where('album.deletedAt IS NULL');
 
     if (userId) {
