@@ -23,6 +23,7 @@ import { CurrenciesService } from '../currencies/currencies.service';
 import { TransactionsUtil } from '../transactions/transactions.util';
 import { CommentsService } from '../comments/comments.service';
 import { CartsService } from '../cats/cats.service';
+import { PaymentsTransactionController } from './payments-transaction.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -37,7 +38,7 @@ import { CartsService } from '../cats/cats.service';
       Transaction,
     ]),
   ],
-  controllers: [PaymentsController],
+  controllers: [PaymentsController, PaymentsTransactionController],
   providers: [
     PaymentsService,
     SubscribesService,
