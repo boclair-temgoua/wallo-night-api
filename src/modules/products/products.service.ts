@@ -7,10 +7,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../../models/Product';
 import { Repository, Brackets } from 'typeorm';
-import * as Slug from 'slug';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { generateNumber, isNotUndefined } from '../../app/utils/commons';
+import { Slug, generateNumber, isNotUndefined } from '../../app/utils/commons';
 import {
   CreateProductsOptions,
   GetOneProductsSelections,

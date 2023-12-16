@@ -14,11 +14,10 @@ import {
   UpdateCategoriesOptions,
   UpdateCategoriesSelections,
 } from './categories.type';
-import * as Slug from 'slug';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { getRandomElement } from '../../app/utils/array/get-random-element';
-import { colorsArrays, generateNumber } from '../../app/utils/commons';
+import { Slug, colorsArrays, generateNumber } from '../../app/utils/commons';
 
 @Injectable()
 export class CategoriesService {

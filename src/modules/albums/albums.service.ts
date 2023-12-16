@@ -14,10 +14,9 @@ import {
   UpdateAlbumsOptions,
   UpdateAlbumsSelections,
 } from './albums.type';
-import * as Slug from 'slug';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { generateNumber } from '../../app/utils/commons';
+import { Slug, generateNumber } from '../../app/utils/commons';
 
 @Injectable()
 export class AlbumsService {
@@ -110,8 +109,7 @@ export class AlbumsService {
     }
 
     const [error, result] = await useCatch(query.getOne());
-    if (error)
-      throw new HttpException('album not found', HttpStatus.NOT_FOUND);
+    if (error) throw new HttpException('album not found', HttpStatus.NOT_FOUND);
 
     return result;
   }

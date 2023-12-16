@@ -1,7 +1,9 @@
-import { generateLongUUID } from '../../app/utils/commons/generate-random';
+import {
+  Slug,
+  generateLongUUID,
+} from '../../app/utils/commons/generate-random';
 import { formateNowDateYYMMDD } from '../../app/utils/commons/formate-date';
 import { Injectable } from '@nestjs/common';
-import * as Slug from 'slug';
 import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
 import * as mime from 'mime-types';
 import { UploadsService } from './uploads.service';

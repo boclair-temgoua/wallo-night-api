@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Commission } from '../../models/Commission';
 import { Repository, Brackets } from 'typeorm';
-import * as Slug from 'slug';
 import { useCatch } from '../../app/utils/use-catch';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import {

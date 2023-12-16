@@ -8,7 +8,7 @@ import { Country } from '../../../models/Country';
 import { AppSeedDataSource } from '../orm/orm-config-seed';
 
 import { Faq } from '../../../models/Faq';
-import * as Slug from 'slug';
+import slugify from 'slugify';
 import { getValueCurrencyLiveApi } from '../../../modules/integrations/taux-live';
 import { CurrencySymbolMap } from '../../../modules/currencies/currencies.type';
 
@@ -76,7 +76,7 @@ export class Seeds1590519635401 implements MigrationInterface {
         .insert()
         .into(Faq)
         .values({
-          slug: `${Slug(title)}-${generateNumber(4)}`,
+          slug: `${slugify(title)}-${generateNumber(4)}`,
           title: title,
           status: faker.datatype.boolean(),
           description: faker.lorem.lines(),

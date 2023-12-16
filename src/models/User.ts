@@ -1,4 +1,3 @@
-import * as bcrypt from 'bcryptjs';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -149,15 +148,4 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   memberships?: Membership[];
-
-  async hashPassword(password: string) {
-    this.password = await bcrypt.hashSync(
-      String(password) || String(this.password),
-      8,
-    );
-  }
-
-  checkIfPasswordMatch(password: string) {
-    return bcrypt.compareSync(String(password), String(this.password));
-  }
 }

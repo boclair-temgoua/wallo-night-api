@@ -8,7 +8,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Follow } from '../../models/Follow';
 import { Brackets, Repository } from 'typeorm';

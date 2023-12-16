@@ -24,7 +24,7 @@ import {
   UpdateResetPasswordUserDto,
 } from '../users.dto';
 import { ProfilesService } from '../../profiles/profiles.service';
-import { JwtPayloadType, NextStep } from '../users.type';
+import { JwtPayloadType, NextStep, checkIfPasswordMatch } from '../users.type';
 import { CheckUserService } from '../middleware/check-user.service';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
@@ -94,7 +94,7 @@ export class AuthUserController {
       email,
       provider: 'default',
     });
-    if (!findOnUser?.checkIfPasswordMatch(password))
+    if (!(await checkIfPasswordMatch(findOnUser?.password, password)))
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
 
     const jwtPayload: JwtPayloadType = {

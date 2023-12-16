@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Profile } from '../../models/Profile';
 import { getRandomElement } from '../../app/utils/array/get-random-element';

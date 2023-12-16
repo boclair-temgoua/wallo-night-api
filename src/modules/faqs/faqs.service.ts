@@ -8,7 +8,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Faq } from '../../models/Faq';
 import { Repository } from 'typeorm';
@@ -20,7 +19,7 @@ import {
   UpdateFaqSelections,
 } from './faqs.type';
 import { useCatch } from '../../app/utils/use-catch';
-import { generateNumber } from '../../app/utils/commons/generate-random';
+import { generateNumber, Slug } from '../../app/utils/commons/generate-random';
 
 @Injectable()
 export class FaqsService {

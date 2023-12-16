@@ -6,7 +6,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../models/User';
 import { Brackets, Repository } from 'typeorm';
@@ -15,11 +14,15 @@ import {
   GetOneUserSelections,
   GetOnUserPublic,
   GetUsersSelections,
+  hashPassword,
   UpdateUserOptions,
   UpdateUserSelections,
 } from './users.type';
 import { useCatch } from '../../app/utils/use-catch';
-import { generateLongUUID } from '../../app/utils/commons/generate-random';
+import {
+  Slug,
+  generateLongUUID,
+} from '../../app/utils/commons/generate-random';
 import { withPagination } from '../../app/utils/pagination';
 
 @Injectable()
@@ -522,9 +525,9 @@ export class UsersService {
 
     const user = new User();
     user.token = generateLongUUID(50);
-    user.email = email.toLowerCase();
-    user.hashPassword(password);
-    user.username = Slug(username.toLowerCase());
+    user.email = email;
+    user.password = await hashPassword(password);
+    user.username = Slug(username.toLocaleLowerCase());
     user.provider = provider;
     user.profileId = profileId;
     user.organizationId = organizationId;
@@ -575,7 +578,7 @@ export class UsersService {
     user.email = email;
     user.username = username;
     if (password) {
-      user.hashPassword(password);
+      user.password = await hashPassword(password);
     }
     user.accessToken = accessToken;
     user.nextStep = nextStep;

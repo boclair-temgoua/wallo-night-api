@@ -5,7 +5,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import { Country } from '../../../models/Country';
 import { AppSeedDataSource } from '../orm/orm-config-seed';
 
-import * as Slug from 'slug';
+import slugify from 'slugify';
 import {
   Contributor,
   Post,
@@ -17,7 +17,6 @@ import {
   Wallet,
   Currency,
 } from '../../../models';
-import * as bcrypt from 'bcryptjs';
 import { getRandomElement } from '../../utils/array/get-random-element';
 import { colorsArrays } from '../../utils/commons/get-colors';
 import {
@@ -25,6 +24,7 @@ import {
   formateNowDateYYMMDD,
 } from '../../utils/commons/formate-date';
 import { generateNumber } from '../../../app/utils/commons';
+import { hashPassword } from '../../../modules/users/users.type';
 
 export class Seeds1590629635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
@@ -70,7 +70,7 @@ export class Seeds1590629635401 implements MigrationInterface {
     //     .values({
     //       username: `${firstName}-${lastName}`.toLocaleLowerCase(),
     //       email: faker.internet.email().toLocaleLowerCase(),
-    //       password: await bcrypt.hashSync('password', 8),
+    //       password: await hashPassword(password),
     //       profileId: profile?.id,
     //       confirmedAt: new Date(),
     //       nextStep: 'COMPLETE_REGISTRATION',

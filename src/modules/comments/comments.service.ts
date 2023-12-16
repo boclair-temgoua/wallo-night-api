@@ -5,7 +5,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from '../../models/Comment';
 import { Repository } from 'typeorm';
@@ -94,7 +93,9 @@ export class CommentsService {
     }
 
     if (userReceiveId) {
-      query = query.andWhere('comment.userReceiveId = :userReceiveId', { userReceiveId });
+      query = query.andWhere('comment.userReceiveId = :userReceiveId', {
+        userReceiveId,
+      });
     }
 
     if (modelIds && modelIds.length > 0) {
