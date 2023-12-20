@@ -81,13 +81,13 @@ export class FollowsService {
           qb.where('follower.email ::text ILIKE :search', {
             search: `%${search}%`,
           })
-            .orWhere('profile.firstName ::text ILIKE :search', {
+            .orWhere('profileFollower.firstName ::text ILIKE :search', {
               search: `%${search}%`,
             })
-            .orWhere('profile.lastName ::text ILIKE :search', {
+            .orWhere('profileFollower.lastName ::text ILIKE :search', {
               search: `%${search}%`,
             })
-            .orWhere('profile.fullName ::text ILIKE :search', {
+            .orWhere('profileFollower.fullName ::text ILIKE :search', {
               search: `%${search}%`,
             });
         }),
