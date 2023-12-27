@@ -19,7 +19,7 @@ export const NodeMailServiceAdapter = async (options: {
   subject: string;
   to: string[];
   attachments?: any[];
-}) => {
+}): Promise<any> => {
   const { attachments, to, html, subject, description } = options;
 
   const mailOptions: EmailMessage = {
