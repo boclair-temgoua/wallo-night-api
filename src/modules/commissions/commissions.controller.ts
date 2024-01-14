@@ -123,7 +123,7 @@ export class CommissionsController {
       organizationId: commission?.organizationId,
     });
 
-    return reply({ res, results: 'commission' });
+    return reply({ res, results: 'commission save successfully' });
   }
 
   /** Post one Commissions */
@@ -150,7 +150,6 @@ export class CommissionsController {
 
     const findOneCommission = await this.commissionsService.findOneBy({
       commissionId,
-      userId: user?.id,
       organizationId: user?.organizationId,
     });
     if (!findOneCommission)
@@ -177,10 +176,10 @@ export class CommissionsController {
       model: 'COMMISSION',
       commissionId: commissionId,
       uploadableId: commissionId,
-      userId: user?.id,
+      userId: findOneCommission?.id,
       folder: 'commissions',
       files,
-      organizationId: user?.organizationId,
+      organizationId: findOneCommission?.organizationId,
     });
 
     return reply({ res, results: 'commission updated successfully' });
@@ -189,38 +188,20 @@ export class CommissionsController {
   /** Post one Commissions */
   @Put(`/:commissionId`)
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(AnyFilesInterceptor())
   async updateOneOld(
     @Res() res,
     @Req() req,
     @Body() body: CreateOrUpdateCommissionsDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('commissionId', ParseUUIDPipe) commissionId: string,
   ) {
     const { user } = req;
     const { title, price, description, messageAfterPayment, urlMedia } = body;
-    const attachment = req.file;
-    let fileName;
-
-    if (attachment) {
-      const extension = mime.extension(file.mimetype);
-      const nameFile = `${commissionId}-${formateNowDateYYMMDD(
-        new Date(),
-      )}${generateLongUUID(8)}`;
-      const fileName = `${`${nameFile}.${
-        extension === 'mpga' ? 'mp3' : extension
-      }`}`;
-      await awsS3ServiceAdapter({
-        fileName: fileName,
-        mimeType: file?.mimetype,
-        folder: 'posts',
-        file: file.buffer,
-      });
-    }
 
     const findOneCommission = await this.commissionsService.findOneBy({
       commissionId,
-      userId: user?.id,
+      organizationId: user?.organizationId,
     });
     if (!findOneCommission)
       throw new HttpException(
@@ -229,16 +210,25 @@ export class CommissionsController {
       );
 
     await this.commissionsService.updateOne(
-      { commissionId },
+      { commissionId: findOneCommission?.id },
       {
         title,
         price: Number(price),
         urlMedia,
         description,
-        image: fileName,
         messageAfterPayment,
       },
     );
+
+    await this.uploadsUtil.saveOrUpdateAws({
+      model: 'COMMISSION',
+      commissionId: commissionId,
+      uploadableId: commissionId,
+      userId: findOneCommission?.userId,
+      folder: 'commissions',
+      files,
+      organizationId: findOneCommission?.organizationId,
+    });
 
     return reply({ res, results: 'commission updated successfully' });
   }

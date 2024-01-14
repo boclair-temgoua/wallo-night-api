@@ -251,8 +251,12 @@ export class PostsController {
       whoCanSee,
       enableUrlMedia,
     } = body;
+    const { user } = req;
 
-    const findOnePost = await this.postsService.findOneBy({ postId });
+    const findOnePost = await this.postsService.findOneBy({
+      postId,
+      organizationId: user?.organizationId,
+    });
     if (!findOnePost)
       throw new HttpException(
         `This post ${postId} dons't exist please change`,
