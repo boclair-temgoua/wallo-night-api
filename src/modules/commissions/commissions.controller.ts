@@ -236,11 +236,11 @@ export class CommissionsController {
   /** Get one Commissions */
   @Get(`/view`)
   async getOne(@Res() res, @Query() query: GetOneCommissionDto) {
-    const { commissionId, commissionSlug, userId } = query;
+    const { commissionId, commissionSlug, organizationId } = query;
 
     const findOneCommission = await this.commissionsService.findOneBy({
       commissionId,
-      userId,
+      organizationId,
     });
     if (!findOneCommission)
       throw new HttpException(
@@ -259,8 +259,12 @@ export class CommissionsController {
     @Req() req,
     @Param('commissionId', ParseUUIDPipe) commissionId: string,
   ) {
+    const findOneCommission = await this.commissionsService.findOneBy({
+      commissionId,
+    });
+
     await this.commissionsService.updateOne(
-      { commissionId },
+      { commissionId: findOneCommission?.id },
       { deletedAt: new Date() },
     );
 

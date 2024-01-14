@@ -50,7 +50,7 @@ export class GetOneCommissionDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userId: string;
+  organizationId: string;
 
   @IsOptional()
   @IsString()
