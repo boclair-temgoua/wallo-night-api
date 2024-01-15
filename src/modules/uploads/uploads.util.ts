@@ -8,6 +8,7 @@ import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter'
 import * as mime from 'mime-types';
 import { UploadsService } from './uploads.service';
 import { FilterQueryType } from '../../app/utils/search-query';
+import sharp from "sharp";
 
 @Injectable()
 export class UploadsUtil {
