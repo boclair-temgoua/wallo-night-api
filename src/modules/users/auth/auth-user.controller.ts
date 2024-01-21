@@ -94,8 +94,10 @@ export class AuthUserController {
       email,
       provider: 'default',
     });
-    if (!(await checkIfPasswordMatch(findOnUser?.password, password)))
+    if (!(await checkIfPasswordMatch(findOnUser?.password, password))) {
+      await new Promise((resolve) => setTimeout(resolve, 1_000));
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
+    }
 
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,
