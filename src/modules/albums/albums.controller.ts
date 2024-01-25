@@ -1,30 +1,30 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { AlbumsService } from './albums.service';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { CreateOrUpdateAlbumsDto } from './albums.dto';
-import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { JwtAuthGuard } from '../users/middleware';
+import { CreateOrUpdateAlbumsDto } from './albums.dto';
+import { AlbumsService } from './albums.service';
 
 @Controller('albums')
 export class AlbumsController {

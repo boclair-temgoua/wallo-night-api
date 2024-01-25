@@ -1,37 +1,36 @@
 import {
+  Body,
   Controller,
-  Param,
-  Res,
-  Query,
   Get,
-  ParseUUIDPipe,
-  UseGuards,
   HttpException,
   HttpStatus,
-  Body,
-  Req,
+  Param,
+  ParseUUIDPipe,
   Put,
+  Query,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { UsersService } from './users.service';
-import { ProfilesService } from '../profiles/profiles.service';
-import { JwtAuthGuard } from './middleware';
 import {
+  PaginationType,
   RequestPaginationDto,
   addPagination,
-  PaginationType,
 } from '../../app/utils/pagination';
-import { FilterQueryType, SearchQueryDto } from '../../app/utils/search-query';
+import { SearchQueryDto } from '../../app/utils/search-query';
+import { ContributorsService } from '../contributors/contributors.service';
+import { ProfilesService } from '../profiles/profiles.service';
+import { JwtAuthGuard } from './middleware';
+import { Cookies } from './middleware/cookie.guard';
 import {
   GetOneUserDto,
   UpdateEnableProfileDto,
   UpdateOneEmailUserDto,
   UpdateProfileDto,
 } from './users.dto';
-import { ContributorsService } from '../contributors/contributors.service';
-import { Cookies } from './middleware/cookie.guard';
-import { query } from 'express';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {

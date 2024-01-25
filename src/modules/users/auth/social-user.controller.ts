@@ -1,20 +1,20 @@
 import {
-  Controller,
-  Post,
   Body,
-  Res,
+  Controller,
   HttpException,
   HttpStatus,
+  Post,
+  Res,
 } from '@nestjs/common';
-import { reply } from '../../../app/utils/reply';
-import { UsersService } from '../users.service';
-import { JwtPayloadType } from '../users.type';
-import { CheckUserService } from '../middleware/check-user.service';
+import { OAuth2Client } from 'google-auth-library';
 import { config } from '../../../app/config/index';
 import { generateLongUUID } from '../../../app/utils/commons';
-import { OAuth2Client } from 'google-auth-library';
-import { UsersUtil } from '../users.util';
+import { reply } from '../../../app/utils/reply';
 import { AuthProvidersService } from '../../auth-providers/auth-providers.service';
+import { CheckUserService } from '../middleware/check-user.service';
+import { UsersService } from '../users.service';
+import { JwtPayloadType } from '../users.type';
+import { UsersUtil } from '../users.util';
 
 const clientId = config.implementations.google.clientId;
 const clientSecret = config.implementations.google.clientSecret;

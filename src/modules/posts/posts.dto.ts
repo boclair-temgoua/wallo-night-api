@@ -1,19 +1,17 @@
 import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
+import { ProductStatus } from '../../app/utils/pagination';
+import {
   WhoCanSeeType,
   whoCanSeeTypeArrays,
 } from '../../app/utils/search-query/search-query.dto';
-import {
-  IsString,
-  IsNotEmpty,
-  MaxLength,
-  MinLength,
-  IsBoolean,
-  IsOptional,
-  IsIn,
-  IsUUID,
-} from 'class-validator';
 import { PostType, postTypeArrays } from './posts.type';
-import { ProductStatus } from '../../app/utils/pagination';
 
 export class CreateOrUpdatePostsGalleriesDto {
   @IsOptional()

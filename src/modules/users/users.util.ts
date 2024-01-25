@@ -1,16 +1,16 @@
-import { generateLongUUID } from '../../app/utils/commons/generate-random';
 import { Injectable } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { DonationsService } from '../donations/donations.service';
-import { WalletsService } from '../wallets/wallets.service';
-import { ProfilesService } from '../profiles/profiles.service';
-import { CheckUserService } from './middleware/check-user.service';
-import { CurrenciesService } from '../currencies/currencies.service';
-import { SubscribesService } from '../subscribes/subscribes.service';
-import { OrganizationsService } from '../organizations/organizations.service';
-import { ContributorsService } from '../contributors/contributors.service';
-import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
 import { addYearsFormateDDMMYYDate } from '../../app/utils/commons/formate-date';
+import { generateLongUUID } from '../../app/utils/commons/generate-random';
+import { ContributorsService } from '../contributors/contributors.service';
+import { CurrenciesService } from '../currencies/currencies.service';
+import { DonationsService } from '../donations/donations.service';
+import { OrganizationsService } from '../organizations/organizations.service';
+import { ProfilesService } from '../profiles/profiles.service';
+import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
+import { SubscribesService } from '../subscribes/subscribes.service';
+import { WalletsService } from '../wallets/wallets.service';
+import { CheckUserService } from './middleware/check-user.service';
+import { UsersService } from './users.service';
 import { JwtPayloadType } from './users.type';
 
 @Injectable()

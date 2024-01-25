@@ -119,6 +119,7 @@ export class MembershipsController {
 
     const findOneMembership = await this.membershipsService.findOneBy({
       membershipId,
+      organizationId: user?.organizationId
     });
     if (!findOneMembership)
       throw new HttpException(

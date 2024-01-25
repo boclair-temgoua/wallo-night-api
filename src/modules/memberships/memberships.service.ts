@@ -5,8 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Brackets, Repository } from 'typeorm';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
 import { Membership } from '../../models/Membership';
-import { Repository, Brackets } from 'typeorm';
 import {
   CreateMembershipsOptions,
   GetMembershipsSelections,
@@ -14,8 +16,6 @@ import {
   UpdateMembershipsOptions,
   UpdateMembershipsSelections,
 } from './memberships.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
 
 @Injectable()
 export class MembershipsService {

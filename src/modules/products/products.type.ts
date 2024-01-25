@@ -1,6 +1,5 @@
-import { Category } from '../../models/Category';
-import { Product } from '../../models/Product';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { Product } from '../../models/Product';
 
 export type GetProductsSelections = {
   search?: string;

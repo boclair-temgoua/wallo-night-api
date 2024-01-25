@@ -1,14 +1,13 @@
+import { Injectable } from '@nestjs/common';
+import * as mime from 'mime-types';
+import { formateNowDateYYMMDD } from '../../app/utils/commons/formate-date';
 import {
   Slug,
   generateLongUUID,
 } from '../../app/utils/commons/generate-random';
-import { formateNowDateYYMMDD } from '../../app/utils/commons/formate-date';
-import { Injectable } from '@nestjs/common';
-import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
-import * as mime from 'mime-types';
-import { UploadsService } from './uploads.service';
 import { FilterQueryType } from '../../app/utils/search-query';
-import sharp from "sharp";
+import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
+import { UploadsService } from './uploads.service';
 
 @Injectable()
 export class UploadsUtil {

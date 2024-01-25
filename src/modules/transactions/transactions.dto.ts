@@ -1,16 +1,8 @@
+import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 import {
   FilterQueryType,
   filterQueryTypeArrays,
 } from '../../app/utils/search-query/search-query.dto';
-import {
-  IsString,
-  IsNotEmpty,
-  MaxLength,
-  IsUUID,
-  IsOptional,
-  IsInt,
-  IsIn,
-} from 'class-validator';
 
 export class FilterTransactionsDto {
   @IsOptional()

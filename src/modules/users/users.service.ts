@@ -1,29 +1,27 @@
-import { Contributor } from './../../models/Contributor';
 import {
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../models/User';
 import { Brackets, Repository } from 'typeorm';
-import {
-  CreateUserOptions,
-  GetOneUserSelections,
-  GetOnUserPublic,
-  GetUsersSelections,
-  hashPassword,
-  UpdateUserOptions,
-  UpdateUserSelections,
-} from './users.type';
-import { useCatch } from '../../app/utils/use-catch';
 import {
   Slug,
   generateLongUUID,
 } from '../../app/utils/commons/generate-random';
 import { withPagination } from '../../app/utils/pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { User } from '../../models/User';
+import {
+  CreateUserOptions,
+  GetOnUserPublic,
+  GetOneUserSelections,
+  GetUsersSelections,
+  UpdateUserOptions,
+  UpdateUserSelections,
+  hashPassword,
+} from './users.type';
 
 @Injectable()
 export class UsersService {

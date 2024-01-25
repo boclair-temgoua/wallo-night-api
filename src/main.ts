@@ -1,10 +1,9 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { config } from './app/config';
-import helmet from 'helmet';
-import * as path from 'path';
-import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   // config.update({});

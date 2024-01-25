@@ -1,5 +1,5 @@
-import { Post } from '../../models/Post';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { Post } from '../../models/Post';
 
 export type PostType = 'AUDIO' | 'VIDEO' | 'ARTICLE' | 'GALLERY';
 
@@ -13,7 +13,7 @@ export type GetPostsSelections = {
   likeUserId?: Post['userId'];
   followerIds?: string[];
   typeIds?: [];
-  albumId?: Post['albumId']
+  albumId?: Post['albumId'];
   categoryId?: Post['categoryId'];
   organizationId?: Post['organizationId'];
 };

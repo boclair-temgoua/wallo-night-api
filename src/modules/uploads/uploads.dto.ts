@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsUUID, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export type UploadType = 'IMAGE' | 'FILE';
 

@@ -1,30 +1,30 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { DiscountsService } from './discounts.service';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { CreateOrUpdateDiscountsDto } from './discounts.dto';
-import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { JwtAuthGuard } from '../users/middleware';
+import { CreateOrUpdateDiscountsDto } from './discounts.dto';
+import { DiscountsService } from './discounts.service';
 
 @Controller('discounts')
 export class DiscountsController {
@@ -142,7 +142,15 @@ export class DiscountsController {
     @Param('discountId', ParseUUIDPipe) discountId: string,
   ) {
     const { user } = req;
-
+    const findOneDiscount = await this.discountsService.findOneBy({
+      discountId,
+      organizationId: user?.organizationId,
+    });
+    if (!findOneDiscount)
+      throw new HttpException(
+        `Discount ${discountId} don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
     await this.discountsService.updateOne(
       { discountId },
       { deletedAt: new Date() },

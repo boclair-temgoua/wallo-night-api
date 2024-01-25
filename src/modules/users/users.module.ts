@@ -1,35 +1,35 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
-  User,
+  AuthProvider,
+  Contributor,
+  Currency,
+  Donation,
+  Organization,
   Profile,
   ResetPassword,
-  Contributor,
-  Wallet,
-  Organization,
-  Currency,
   Subscribe,
-  Donation,
-  AuthProvider,
+  User,
+  Wallet,
 } from '../../models';
+import { AuthProvidersService } from '../auth-providers/auth-providers.service';
+import { ContributorsService } from '../contributors/contributors.service';
+import { ContributorsUtil } from '../contributors/contributors.util';
+import { CurrenciesService } from '../currencies/currencies.service';
+import { DonationsService } from '../donations/donations.service';
+import { OrganizationsService } from '../organizations/organizations.service';
 import { ProfilesService } from '../profiles/profiles.service';
+import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
+import { SubscribesService } from '../subscribes/subscribes.service';
+import { WalletsService } from '../wallets/wallets.service';
 import { AuthUserController } from './auth/auth-user.controller';
-import { UsersService } from './users.service';
+import { SocialUserController } from './auth/social-user.controller';
+import { MailerService } from './mailer.service';
+import { JwtAuthStrategy } from './middleware';
 import { CheckUserService } from './middleware/check-user.service';
 import { UsersController } from './users.controller';
-import { JwtAuthStrategy } from './middleware';
-import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
-import { ContributorsUtil } from '../contributors/contributors.util';
-import { ContributorsService } from '../contributors/contributors.service';
-import { WalletsService } from '../wallets/wallets.service';
-import { SubscribesService } from '../subscribes/subscribes.service';
-import { CurrenciesService } from '../currencies/currencies.service';
-import { OrganizationsService } from '../organizations/organizations.service';
-import { DonationsService } from '../donations/donations.service';
+import { UsersService } from './users.service';
 import { UsersUtil } from './users.util';
-import { SocialUserController } from './auth/social-user.controller';
-import { AuthProvidersService } from '../auth-providers/auth-providers.service';
-import { MailerService } from './mailer.service';
 
 @Module({
   imports: [

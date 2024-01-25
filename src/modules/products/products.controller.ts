@@ -1,42 +1,39 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
-  UseInterceptors,
+  Req,
+  Res,
   UploadedFiles,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { reply } from '../../app/utils/reply';
-import { ProductsService } from './products.service';
-import {
-  PasswordBodyDto,
-  SearchQueryDto,
-} from '../../app/utils/search-query/search-query.dto';
-import { JwtAuthGuard } from '../users/middleware';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { isNotUndefined } from '../../app/utils/commons/generate-random';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
-  addPagination,
   PaginationType,
+  addPagination,
 } from '../../app/utils/pagination/with-pagination';
+import { reply } from '../../app/utils/reply';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { DiscountsService } from '../discounts/discounts.service';
+import { UploadsUtil } from '../uploads/uploads.util';
+import { JwtAuthGuard } from '../users/middleware';
 import {
   CreateOrUpdateProductsDto,
   GetOneProductDto,
   GetProductsDto,
 } from './products.dto';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { UploadsUtil } from '../uploads/uploads.util';
-import { DiscountsService } from '../discounts/discounts.service';
-import { isNotUndefined } from '../../app/utils/commons/generate-random';
+import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {

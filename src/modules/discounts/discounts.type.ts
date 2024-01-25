@@ -1,5 +1,5 @@
-import { Discount } from '../../models/Discount';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { Discount } from '../../models/Discount';
 
 export type GetDiscountsSelections = {
   search?: string;
@@ -8,7 +8,8 @@ export type GetDiscountsSelections = {
 };
 
 export type GetOneDiscountsSelections = {
-  discountId: Discount['id'];
+  discountId?: Discount['id'];
+  organizationId?: Discount['organizationId'];
 };
 
 export type UpdateDiscountsSelections = {

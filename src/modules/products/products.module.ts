@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Product, Upload, Discount } from '../../models';
-import { ProductsController } from './products.controller';
-import { ProductsService } from './products.service';
+import { Discount, Product, Upload } from '../../models';
+import { DiscountsService } from '../discounts/discounts.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { UploadsUtil } from '../uploads/uploads.util';
-import { DiscountsService } from '../discounts/discounts.service';
+import { ProductsController } from './products.controller';
+import { ProductsService } from './products.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product, Upload, Discount])],

@@ -1,5 +1,5 @@
-import { Subscribe } from '../../models/Subscribe';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { Subscribe } from '../../models/Subscribe';
 
 export type GetSubscribesSelections = {
   search?: string;

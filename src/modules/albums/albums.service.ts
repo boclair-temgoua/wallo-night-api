@@ -5,8 +5,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Brackets, Repository } from 'typeorm';
+import { Slug, generateNumber } from '../../app/utils/commons';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
 import { Album } from '../../models/Album';
-import { Repository, Brackets } from 'typeorm';
 import {
   CreateAlbumsOptions,
   GetAlbumsSelections,
@@ -14,9 +17,6 @@ import {
   UpdateAlbumsOptions,
   UpdateAlbumsSelections,
 } from './albums.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { Slug, generateNumber } from '../../app/utils/commons';
 
 @Injectable()
 export class AlbumsService {

@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  MaxLength,
-  IsUUID,
-  IsOptional,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateOrUpdateAlbumsDto {
   @IsNotEmpty()

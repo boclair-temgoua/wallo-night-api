@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Organization } from '../../models/Organization';
-import { getRandomElement } from '../../app/utils/array/get-random-element';
 import { Repository } from 'typeorm';
+import { getRandomElement } from '../../app/utils/array/get-random-element';
+import { colorsArrays } from '../../app/utils/commons';
+import { useCatch } from '../../app/utils/use-catch';
+import { Organization } from '../../models/Organization';
 import {
   CreateOrganizationOptions,
   GetOneOrganizationSelections,
   UpdateOrganizationOptions,
   UpdateOrganizationSelections,
 } from './organizations.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { colorsArrays } from '../../app/utils/commons';
 
 @Injectable()
 export class OrganizationsService {

@@ -1,6 +1,5 @@
 import { config } from '../../../app/config/index';
 
-import { User } from '../../../models/User';
 import { NodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
 
 export const authCodeConfirmationMail = async (options: { user: any }) => {

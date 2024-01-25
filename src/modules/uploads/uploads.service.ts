@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Upload } from '../../models/Upload';
 import { Repository } from 'typeorm';
+import { useCatch } from '../../app/utils/use-catch';
+import { Upload } from '../../models/Upload';
 import {
   CreateUploadOptions,
   GetUploadsSelections,
   UpdateUploadOptions,
   UpdateUploadSelections,
 } from './uploads.type';
-import { useCatch } from '../../app/utils/use-catch';
 
 @Injectable()
 export class UploadsService {

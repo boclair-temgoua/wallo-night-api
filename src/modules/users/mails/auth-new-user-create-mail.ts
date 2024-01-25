@@ -85,9 +85,7 @@ export const authNewUserCreateMail = async (options: { resetPassword }) => {
   <a href="${config.datasite.urlClient}/registration/confirm?token=${
     resetPassword.token
   }" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3869d4;">
-  ${config.datasite.urlClient}/registration/confirm?token=${
-    resetPassword.token
-  }
+  ${config.datasite.urlClient}/registration/confirm?token=${resetPassword.token}
   </a></span></p>
   
   </td>

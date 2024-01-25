@@ -1,30 +1,26 @@
 import {
   Controller,
-  Post,
-  NotFoundException,
-  Body,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
-  Put,
-  Res,
-  Req,
-  Get,
+  Post,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { JwtAuthGuard } from '../users/middleware';
 
-import { FollowsService } from './follows.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { FollowsService } from './follows.service';
 
 @Controller('follows')
 export class FollowsController {

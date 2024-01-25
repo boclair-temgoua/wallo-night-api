@@ -1,16 +1,17 @@
 import {
-  withPagination,
-  WithPaginationResponse,
-} from '../../app/utils/pagination/with-pagination';
-import {
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Follow } from '../../models/Follow';
 import { Brackets, Repository } from 'typeorm';
+import {
+  withPagination,
+  WithPaginationResponse,
+} from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { Follow } from '../../models/Follow';
 import {
   CreateFollowOptions,
   GetFollowsSelections,
@@ -18,8 +19,6 @@ import {
   UpdateFollowOptions,
   UpdateFollowSelections,
 } from './follows.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { generateNumber } from '../../app/utils/commons/generate-random';
 
 @Injectable()
 export class FollowsService {

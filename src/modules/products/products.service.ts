@@ -1,15 +1,10 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Product } from '../../models/Product';
-import { Repository, Brackets } from 'typeorm';
-import { useCatch } from '../../app/utils/use-catch';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { Brackets, Repository } from 'typeorm';
 import { Slug, generateNumber, isNotUndefined } from '../../app/utils/commons';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { Product } from '../../models/Product';
 import {
   CreateProductsOptions,
   GetOneProductsSelections,

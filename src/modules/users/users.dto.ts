@@ -1,15 +1,13 @@
 import {
-  IsString,
-  MaxLength,
   IsEmail,
-  IsNotEmpty,
-  MinLength,
-  IsInt,
-  IsOptional,
-  IsUUID,
-  IsDate,
   IsIn,
-  IsBoolean,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
 import { NextStep, nextStepArrays } from './users.type';

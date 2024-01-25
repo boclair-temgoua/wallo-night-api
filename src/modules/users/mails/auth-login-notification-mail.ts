@@ -56,9 +56,7 @@ export const authLoginNotificationMail = async (options: { user: User }) => {
 
   <span style="font-size:16px">
   At this time, we are restricting your ability to create 
-  new ${
-    config.datasite.name
-  } resources by placing your account on hold. 
+  new ${config.datasite.name} resources by placing your account on hold. 
   Once your outstanding balance is paid, the hold will be removed immediately.
   </span><br/><br/>
   

@@ -1,5 +1,5 @@
-import { NodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
 import { config } from '../../../app/config/index';
+import { NodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
 // import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
 
 export const authPasswordResetMail = async (options: { resetPassword }) => {

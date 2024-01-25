@@ -1,5 +1,5 @@
-import { Album } from '../../models/Album';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { Album } from '../../models/Album';
 
 export type GetAlbumsSelections = {
   search?: string;

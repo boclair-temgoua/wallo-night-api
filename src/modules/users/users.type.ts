@@ -1,6 +1,6 @@
-import { User } from '../../models/User';
-import { PaginationType } from '../../app/utils/pagination/with-pagination';
 import * as argon2 from 'argon2';
+import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { User } from '../../models/User';
 
 export type NextStep =
   | 'CONFIRM_EMAIL'

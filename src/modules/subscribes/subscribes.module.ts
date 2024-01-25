@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
-  Subscribe,
+  Currency,
   Follow,
   Membership,
+  Subscribe,
   Transaction,
-  Currency,
 } from '../../models';
-import { SubscribesController } from './subscribes.controller';
-import { SubscribesService } from './subscribes.service';
+import { CurrenciesService } from '../currencies/currencies.service';
 import { FollowsService } from '../follows/follows.service';
 import { MembershipsService } from '../memberships/memberships.service';
 import { TransactionsService } from '../transactions/transactions.service';
-import { SubscribesUtil } from './subscribes.util';
 import { TransactionsUtil } from '../transactions/transactions.util';
-import { CurrenciesService } from '../currencies/currencies.service';
+import { SubscribesController } from './subscribes.controller';
+import { SubscribesService } from './subscribes.service';
+import { SubscribesUtil } from './subscribes.util';
 
 @Module({
   imports: [

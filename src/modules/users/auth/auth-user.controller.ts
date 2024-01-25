@@ -1,21 +1,32 @@
 import {
-  Controller,
-  Post,
   Body,
-  Put,
-  Param,
-  Res,
+  Controller,
   Get,
-  Req,
   HttpException,
   HttpStatus,
-  UnauthorizedException,
+  Param,
   ParseUUIDPipe,
+  Post,
+  Put,
+  Req,
+  Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { reply } from '../../../app/utils/reply';
 import * as amqplib from 'amqplib';
-import { UsersService } from '../users.service';
+import { config } from '../../../app/config/index';
+import { dateTimeNowUtc, generateNumber } from '../../../app/utils/commons';
+import {
+  expire_cookie_setting,
+  validation_code_verification_cookie_setting,
+  validation_login_cookie_setting,
+} from '../../../app/utils/cookies';
+import { reply } from '../../../app/utils/reply';
+import { ProfilesService } from '../../profiles/profiles.service';
+import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
+import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
+import { JwtAuthGuard } from '../middleware';
+import { CheckUserService } from '../middleware/check-user.service';
 import {
   CreateLoginUserDto,
   CreateRegisterUserDto,
@@ -23,20 +34,9 @@ import {
   UpdateProfileDto,
   UpdateResetPasswordUserDto,
 } from '../users.dto';
-import { ProfilesService } from '../../profiles/profiles.service';
-import { JwtPayloadType, NextStep, checkIfPasswordMatch } from '../users.type';
-import { CheckUserService } from '../middleware/check-user.service';
-import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
-import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
-import { config } from '../../../app/config/index';
 import { authCodeConfirmationJob, authPasswordResetJob } from '../users.job';
-import { dateTimeNowUtc, generateNumber } from '../../../app/utils/commons';
-import { JwtAuthGuard } from '../middleware';
-import {
-  expire_cookie_setting,
-  validation_code_verification_cookie_setting,
-  validation_login_cookie_setting,
-} from '../../../app/utils/cookies';
+import { UsersService } from '../users.service';
+import { JwtPayloadType, NextStep, checkIfPasswordMatch } from '../users.type';
 import { UsersUtil } from '../users.util';
 
 @Controller()

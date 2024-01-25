@@ -1,5 +1,5 @@
-import { Follow } from '../../models/Follow';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { Follow } from '../../models/Follow';
 
 export type GetFollowsSelections = {
   search?: string;

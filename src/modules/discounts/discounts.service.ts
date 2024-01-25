@@ -1,12 +1,9 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Brackets, Repository } from 'typeorm';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
 import { Discount } from '../../models';
-import { Repository, Brackets } from 'typeorm';
 import {
   CreateDiscountsOptions,
   GetDiscountsSelections,
@@ -14,9 +11,6 @@ import {
   UpdateDiscountsOptions,
   UpdateDiscountsSelections,
 } from './discounts.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { isNotUndefined } from '../../app/utils/commons/generate-random';
 
 @Injectable()
 export class DiscountsService {
@@ -145,13 +139,19 @@ export class DiscountsService {
   }
 
   async findOneBy(selections: GetOneDiscountsSelections): Promise<Discount> {
-    const { discountId } = selections;
+    const { discountId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('discount')
       .where('discount.deletedAt IS NULL');
 
     if (discountId) {
       query = query.andWhere('discount.id = :id', { id: discountId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('discount.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     const discount = await query.getOne();

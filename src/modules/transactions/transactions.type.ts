@@ -1,5 +1,5 @@
-import { Transaction } from '../../models/Transaction';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { Transaction } from '../../models/Transaction';
 
 export type TransactionType = 'PAYPAL' | 'CARD' | 'COUPON' | 'PHONE';
 

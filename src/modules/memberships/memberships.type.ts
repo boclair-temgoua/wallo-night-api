@@ -1,5 +1,5 @@
-import { Membership } from '../../models/Membership';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { Membership } from '../../models/Membership';
 
 export type GetMembershipsSelections = {
   search?: string;
