@@ -1,7 +1,7 @@
-import { S3 } from 'aws-sdk';
-import { config } from '../../../app/config';
 import { PutObjectCommandInput } from '@aws-sdk/client-s3';
+import { S3 } from 'aws-sdk';
 import axios from 'axios';
+import { config } from '../../../app/config';
 
 export const awsS3ServiceAdapter = async (data: {
   file: PutObjectCommandInput['Body'];
@@ -39,7 +39,7 @@ export const getFileToAws = async (options: {
   fileName: string;
 }): Promise<{ fileBuffer: Buffer; contentType: string; imageUrl: string }> => {
   const { folder, fileName } = options;
-  const imageUrl = `https://${config.implementations.aws.cloudfront.url}/${folder}/${fileName}`;
+  const imageUrl = `https://${config.implementations.aws.bucket}.s3.${config.implementations.aws.region}.amazonaws.com/${folder}/${fileName}`;
   const imageResponse = await axios.get(imageUrl, {
     responseType: 'arraybuffer',
   });

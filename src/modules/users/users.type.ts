@@ -65,15 +65,12 @@ export type GetOnUserPublic = {
 export const checkIfPasswordMatch = async (
   userPassword: string,
   password: string,
-) => {
-  return await argon2.verify(String(userPassword), String(password));
-};
+) => await argon2.verify(String(userPassword), String(password));
 
-export const hashPassword = async (password: string) => {
-  return await argon2.hash(String(password), {
+export const hashPassword = async (password: string) =>
+  await argon2.hash(String(password), {
     type: argon2.argon2id,
     saltLength: 32,
     memoryCost: 2 ** 16,
     parallelism: 4,
   });
-};
