@@ -1,5 +1,5 @@
-import { Contribution } from '../../models';
 import { PaginationType } from '../../app/utils/pagination';
+import { Contribution } from '../../models';
 
 export type GetContributionsSelections = {
   search?: string;
@@ -7,6 +7,7 @@ export type GetContributionsSelections = {
   userId?: Contribution['userId'];
   campaignId?: Contribution['campaignId'];
   giftId?: Contribution['giftId'];
+  organizationId?: Contribution['organizationId'];
   currencyId?: Contribution['currencyId'];
 };
 

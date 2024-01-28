@@ -49,7 +49,6 @@ export class UsersController {
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { user } = req;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -58,7 +57,6 @@ export class UsersController {
     const users = await this.usersService.findAll({
       search,
       pagination,
-      userId: user?.id,
     });
 
     return reply({ res, results: users });
@@ -76,6 +74,7 @@ export class UsersController {
     const getOneContributor = await this.contributorsService.findOneBy({
       userId: user?.id,
       type: 'ORGANIZATION',
+      organizationId: user?.organizationId,
     });
     if (!getOneContributor)
       throw new HttpException(

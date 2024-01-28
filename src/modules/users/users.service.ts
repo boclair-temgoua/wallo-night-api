@@ -62,7 +62,9 @@ export class UsersService {
         'name', "con"."role"
         )
         FROM "contributor" "con"
-        WHERE "user"."id" = "con"."userId"
+        WHERE "con"."userId" = "user"."id"
+        AND  "con"."organizationId" = "user"."organizationId"
+        AND "con"."deletedAt" IS NULL
         AND "con"."type" IN ('ORGANIZATION')
         ) AS "role"`,
       )
@@ -326,10 +328,9 @@ export class UsersService {
       query = query.andWhere('user.email = :email', { email });
     }
 
-    const [error, result] = await useCatch(query.getRawOne());
-    if (error) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const user = await query.getRawOne();
 
-    return result;
+    return user;
   }
 
   /** FindOne one User to the database. */
@@ -430,7 +431,9 @@ export class UsersService {
         'name', "con"."role"
         )
         FROM "contributor" "con"
-        WHERE "user"."id" = "con"."userId"
+        WHERE "con"."userId" = "user"."id"
+        AND  "con"."organizationId" = "user"."organizationId"
+        AND "con"."deletedAt" IS NULL
         AND "con"."type" IN ('ORGANIZATION')
         ) AS "role"`,
       )
@@ -502,10 +505,9 @@ export class UsersService {
       query = query.andWhere('user.email = :email', { email });
     }
 
-    const [error, result] = await useCatch(query.getRawOne());
-    if (error) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const user = await query.getRawOne();
 
-    return result;
+    return user;
   }
 
   /** Create one User to the database. */

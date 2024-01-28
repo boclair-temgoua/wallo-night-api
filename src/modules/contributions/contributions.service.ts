@@ -3,11 +3,12 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Contribution } from '../../models/Contribution';
 import { Brackets, Repository } from 'typeorm';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { Contribution } from '../../models/Contribution';
 import {
   CreateContributionOptions,
   GetContributionsSelections,
@@ -15,8 +16,6 @@ import {
   UpdateContributionOptions,
   UpdateContributionSelections,
 } from './contributions.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
 
 @Injectable()
 export class ContributionsService {
@@ -28,8 +27,15 @@ export class ContributionsService {
   async findAll(
     selections: GetContributionsSelections,
   ): Promise<GetContributionsSelections | any> {
-    const { userId, search, giftId, campaignId, currencyId, pagination } =
-      selections;
+    const {
+      userId,
+      search,
+      giftId,
+      campaignId,
+      currencyId,
+      organizationId,
+      pagination,
+    } = selections;
 
     let query = this.driver
       .createQueryBuilder('contribution')
@@ -78,6 +84,12 @@ export class ContributionsService {
 
     if (giftId) {
       query = query.andWhere('contribution.giftId = :giftId', { giftId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('contribution.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (campaignId) {

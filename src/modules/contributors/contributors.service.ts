@@ -6,8 +6,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Contributor } from '../../models/Contributor';
 import { Brackets, Repository } from 'typeorm';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { Contributor } from '../../models/Contributor';
 import {
   CreateContributorOptions,
   DeleteContributorSelections,
@@ -16,8 +18,6 @@ import {
   UpdateContributorOptions,
   UpdateContributorSelections,
 } from './contributors.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
 
 @Injectable()
 export class ContributorsService {
@@ -29,7 +29,7 @@ export class ContributorsService {
   async findAll(
     selections: GetContributorsSelections,
   ): Promise<GetContributorsSelections | any> {
-    const { userId, search, pagination } = selections;
+    const { userId, search, organizationId, pagination } = selections;
 
     let query = this.driver
       .createQueryBuilder('contributor')
@@ -39,11 +39,14 @@ export class ContributorsService {
       .addSelect('contributor.type', 'type')
       .addSelect(
         /*sql*/ `jsonb_build_object(
-              'fullName', "profile"."fullName",
-              'image', "profile"."image",
-              'color', "profile"."color",
-              'userId', "user"."id",
-              'email', "user"."email"
+          'username', "user"."username",
+          'fullName', "profile"."fullName",
+          'firstName', "profile"."firstName",
+          'lastName', "profile"."lastName",
+          'image', "profile"."image",
+          'color', "profile"."color",
+          'userId', "user"."id",
+          'email', "user"."email"
           ) AS "profile"`,
       )
       .addSelect(
@@ -56,6 +59,12 @@ export class ContributorsService {
 
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('contributor.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (search) {
@@ -167,7 +176,7 @@ export class ContributorsService {
       query = query.andWhere('contributor.id = :id', { id: contributorId });
     }
 
-    if (contributorId) {
+    if (organizationId) {
       query = query.andWhere('contributor.organizationId = :organizationId', {
         organizationId,
       });

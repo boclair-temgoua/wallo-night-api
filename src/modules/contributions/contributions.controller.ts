@@ -1,46 +1,35 @@
 import {
-  Controller,
-  Post,
   Body,
-  Param,
-  ParseUUIDPipe,
-  Delete,
-  UseGuards,
-  Put,
-  Res,
-  Req,
+  Controller,
   Get,
+  Post,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
-import { reply } from '../../app/utils/reply';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
-  FilterQueryType,
-  SearchQueryDto,
-} from '../../app/utils/search-query/search-query.dto';
-import {
-  addPagination,
   PaginationType,
+  addPagination,
 } from '../../app/utils/pagination/with-pagination';
-import { ContributionsService } from './contributions.service';
+import { reply } from '../../app/utils/reply';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { BullingService } from '../bulling/bulling.service';
+import { CampaignsService } from '../campaigns/campaigns.service';
+import { CurrenciesService } from '../currencies/currencies.service';
+import { GiftsService } from '../gifts/gifts.service';
+import { TransactionsService } from '../transactions/transactions.service';
 import { JwtAuthGuard } from '../users/middleware';
+import { UsersService } from '../users/users.service';
+import { WalletsService } from '../wallets/wallets.service';
 import {
   CreateOneContributionDonationDto,
   CreateOneContributionDto,
   CreateOneContributionGiftDto,
   SearchContributionDto,
 } from './contributions.dto';
-import { config } from '../../app/config/index';
-import { GiftsService } from '../gifts/gifts.service';
-import { CampaignsService } from '../campaigns/campaigns.service';
-import { TransactionsService } from '../transactions/transactions.service';
-import { validationAmount } from '../../app/utils/decorators/date.decorator';
-import { CurrenciesService } from '../currencies/currencies.service';
-import { UsersService } from '../users/users.service';
-import { WalletsService } from '../wallets/wallets.service';
-import { BullingService } from '../bulling/bulling.service';
+import { ContributionsService } from './contributions.service';
 
 @Controller('contributions')
 export class ContributionsController {
@@ -64,6 +53,7 @@ export class ContributionsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: SearchContributionDto,
   ) {
+    const { user } = req;
     const { campaignId, giftId, userId } = query;
     const { search } = searchQuery;
 
@@ -76,6 +66,7 @@ export class ContributionsController {
       campaignId,
       giftId,
       userId,
+      organizationId: user?.organizationId,
     });
 
     return reply({ res, results: contributions });

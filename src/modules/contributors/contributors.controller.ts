@@ -1,34 +1,43 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
+  Query,
   Req,
-  Get,
-  HttpStatus,
-  HttpException,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
-import { reply } from '../../app/utils/reply';
-import { JwtPayloadType } from './../users/users.type';
-import { generateLongUUID } from './../../app/utils/commons/generate-random';
-import { PasswordBodyDto } from '../../app/utils/search-query/search-query.dto';
 import * as amqplib from 'amqplib';
+import { config } from '../../app/config/index';
+import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
+import {
+  PaginationType,
+  addPagination,
+} from '../../app/utils/pagination/with-pagination';
+import { reply } from '../../app/utils/reply';
+import {
+  PasswordBodyDto,
+  SearchQueryDto,
+} from '../../app/utils/search-query/search-query.dto';
 import { ProfilesService } from '../profiles/profiles.service';
+import { JwtAuthGuard } from '../users/middleware';
 import { CheckUserService } from '../users/middleware/check-user.service';
 import { UsersService } from '../users/users.service';
-import { ContributorsService } from './contributors.service';
-import { JwtAuthGuard } from '../users/middleware';
-import { ContributorRole } from './contributors.type';
+import { generateLongUUID } from './../../app/utils/commons/generate-random';
+import { JwtPayloadType } from './../users/users.type';
 import {
   CreateOneNewUserContributorsDto,
   UpdateRoleContributorDto,
 } from './contributors.dto';
-import { config } from '../../app/config/index';
+import { ContributorsService } from './contributors.service';
+import { ContributorRole } from './contributors.type';
 
 @Controller('contributors')
 export class ContributorsController {
@@ -38,6 +47,29 @@ export class ContributorsController {
     private readonly checkUserService: CheckUserService,
     private readonly contributorsService: ContributorsService,
   ) {}
+
+  @Get(`/`)
+  @UseGuards(JwtAuthGuard)
+  async findAll(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+  ) {
+    const { user } = req;
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const contributors = await this.contributorsService.findAll({
+      search,
+      pagination,
+      organizationId: user?.organizationId,
+    });
+
+    return reply({ res, results: contributors });
+  }
 
   @Post(`/new-user`)
   @UseGuards(JwtAuthGuard)
@@ -134,7 +166,7 @@ export class ContributorsController {
     return reply({ res, results: findOneContributor });
   }
 
-  @Delete(`/delete/:contributorId`)
+  @Delete(`/:contributorId`)
   @UseGuards(JwtAuthGuard)
   async deleteOne(
     @Res() res,

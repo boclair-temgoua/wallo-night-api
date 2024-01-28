@@ -50,6 +50,7 @@ export type GetOnUserPublic = {
   confirmedAt: Date;
   email: string;
   profileId: string;
+  organizationId: string;
   profile: {
     id: string;
     url: string;
