@@ -1,33 +1,31 @@
 import {
-  Controller,
-  Post,
-  NotFoundException,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { useCatch } from '../../app/utils/use-catch';
-import { CommentsDto, CreateOrUpdateCommentsDto } from './comments.dto';
 import { JwtAuthGuard } from '../users/middleware';
+import { CommentsDto, CreateOrUpdateCommentsDto } from './comments.dto';
 
-import { CommentsService } from './comments.service';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { isEmpty } from '../../app/utils/commons/is-empty';
+import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { CommentsService } from './comments.service';
 
 @Controller('comments')
 export class CommentsController {
@@ -42,7 +40,14 @@ export class CommentsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { postId, productId, userVisitorId, userReceiveId, modelIds } = query;
+    const {
+      postId,
+      productId,
+      userVisitorId,
+      userReceiveId,
+      organizationId,
+      modelIds,
+    } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -54,6 +59,7 @@ export class CommentsController {
       productId,
       pagination,
       userReceiveId,
+      organizationId,
       likeUserId: userVisitorId,
       modelIds: modelIds ? (String(modelIds).split(',') as []) : null,
     });
@@ -69,7 +75,7 @@ export class CommentsController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
-    const { commentId, userVisitorId, modelIds } = query;
+    const { commentId, userVisitorId, organizationId, modelIds } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -77,6 +83,7 @@ export class CommentsController {
 
     const findOneComment = await this.commentsService.findOneBy({
       commentId,
+      organizationId,
     });
     if (!findOneComment)
       throw new HttpException(
@@ -89,6 +96,7 @@ export class CommentsController {
       pagination,
       likeUserId: userVisitorId,
       parentId: findOneComment?.id,
+      organizationId: findOneComment?.organizationId,
       modelIds: modelIds ? (String(modelIds).split(',') as []) : null,
     });
 
@@ -104,14 +112,24 @@ export class CommentsController {
     @Body() body: CreateOrUpdateCommentsDto,
   ) {
     const { user } = req;
-    const { description, postId, productId, userReceiveId, model } = body;
+    const {
+      description,
+      postId,
+      productId,
+      commissionId,
+      userReceiveId,
+      organizationId,
+      model,
+    } = body;
 
     const comment = await this.commentsService.createOne({
       postId: isEmpty(postId) ? null : postId,
       productId: isEmpty(productId) ? null : productId,
+      commissionId: isEmpty(commissionId) ? null : commissionId,
       description,
       model,
       userId: user?.id,
+      organizationId: organizationId,
       userReceiveId: userReceiveId,
     });
 
@@ -143,7 +161,8 @@ export class CommentsController {
       postId: findOneComment?.postId,
       productId: findOneComment?.productId,
       userReceiveId: findOneComment?.userReceiveId,
-      parentId: parentId,
+      organizationId: findOneComment?.organizationId,
+      parentId: findOneComment?.id,
       userId: user?.id,
       model,
       description,

@@ -1,18 +1,17 @@
-import { StatusCommission } from './../modules/commissions/commissions.dto';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Currency } from './Currency';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { OrderProduct } from './OrderProduct';
-import { Cart, User } from './index';
 import { ProductStatus } from '../app/utils/pagination';
+import { Currency } from './Currency';
+import { OrderProduct } from './OrderProduct';
+import { Cart, Comment, User } from './index';
 @Entity('commission')
 export class Commission extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -59,6 +58,9 @@ export class Commission extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @OneToMany(() => Comment, (comment) => comment.commission)
+  comments?: Comment[];
 
   @OneToMany(() => Cart, (cart) => cart.product)
   carts: Cart[];

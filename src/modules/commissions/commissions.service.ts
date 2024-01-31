@@ -5,14 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Commission } from '../../models/Commission';
-import { Repository, Brackets } from 'typeorm';
-import { useCatch } from '../../app/utils/use-catch';
+import { Brackets, Repository } from 'typeorm';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { Commission } from '../../models/Commission';
 import {
   CreateCommissionsOptions,
-  GetOneCommissionsSelections,
   GetCommissionsSelections,
+  GetOneCommissionsSelections,
   UpdateCommissionsOptions,
   UpdateCommissionsSelections,
 } from './commissions.type';
@@ -171,6 +171,34 @@ export class CommissionsService {
               'userId', "user"."id",
               'username', "user"."username"
           ) AS "profile"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT array_agg(jsonb_build_object(
+          'name', "upl"."name",
+          'path', "upl"."path"
+        )) 
+        FROM "upload" "upl"
+        WHERE "upl"."uploadableId" = "commission"."id"
+        AND "upl"."deletedAt" IS NULL
+        AND "upl"."model" IN ('COMMISSION')
+        AND "upl"."uploadType" IN ('IMAGE')
+        GROUP BY "commission"."id", "upl"."uploadableId"
+        ) AS "uploadsImage"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT array_agg(jsonb_build_object(
+          'name', "upl"."name",
+          'path', "upl"."path"
+        )) 
+        FROM "upload" "upl"
+        WHERE "upl"."uploadableId" = "commission"."id"
+        AND "upl"."deletedAt" IS NULL
+        AND "upl"."model" IN ('COMMISSION')
+        AND "upl"."uploadType" IN ('FILE')
+        GROUP BY "commission"."id", "upl"."uploadableId"
+        ) AS "uploadsFile"`,
       )
       .addSelect('commission.createdAt', 'createdAt')
       .where('commission.deletedAt IS NULL')

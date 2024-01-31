@@ -1,24 +1,23 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  Generated,
+  Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
-  JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
-import {
-  Wallet,
-  Membership,
-  Subscribe,
-  Product,
-  User,
-  Transaction,
-  Post,
-  Album,
-} from './index';
 import { Payment } from './Payment';
+import {
+  Comment,
+  Membership,
+  Post,
+  Product,
+  Subscribe,
+  Transaction,
+  User,
+  Wallet,
+} from './index';
 
 @Entity('organization')
 export class Organization extends BaseEntity {
@@ -73,4 +72,7 @@ export class Organization extends BaseEntity {
 
   @OneToMany(() => Payment, (payment) => payment.organization)
   payments?: Payment[];
+
+  @OneToMany(() => Comment, (comment) => comment.organization)
+  comments?: Comment[];
 }

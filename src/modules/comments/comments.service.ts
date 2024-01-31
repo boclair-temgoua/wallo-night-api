@@ -1,4 +1,3 @@
-import { withPagination } from '../../app/utils/pagination/with-pagination';
 import {
   HttpException,
   HttpStatus,
@@ -6,8 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Comment } from '../../models/Comment';
 import { Repository } from 'typeorm';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { Comment } from '../../models/Comment';
 import {
   CreateCommentOptions,
   GetCommentsSelections,
@@ -15,7 +16,6 @@ import {
   UpdateCommentOptions,
   UpdateCommentSelections,
 } from './comments.type';
-import { useCatch } from '../../app/utils/use-catch';
 
 @Injectable()
 export class CommentsService {
@@ -34,6 +34,7 @@ export class CommentsService {
       userReceiveId,
       modelIds,
       likeUserId,
+      organizationId,
     } = selections;
 
     let query = this.driver
@@ -49,6 +50,8 @@ export class CommentsService {
       .addSelect('comment.color', 'color')
       .addSelect('comment.email', 'email')
       .addSelect('comment.fullName', 'fullName')
+      .addSelect('comment.organizationId', 'organizationId')
+      .addSelect('comment.commissionId', 'commissionId')
       .addSelect('comment.userReceiveId', 'userReceiveId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -86,6 +89,12 @@ export class CommentsService {
                  AND "lk"."userId" IN ('${likeUserId}'))
                  GROUP BY "lk"."likeableId", "comment"."id"
                 ) AS "isLike"`);
+    }
+
+    if (organizationId) {
+      query = query.andWhere('comment.organizationId = :organizationId', {
+        organizationId,
+      });
     }
 
     if (postId) {
@@ -145,7 +154,7 @@ export class CommentsService {
   }
 
   async findOneBy(selections: GetOneCommentSelections): Promise<Comment> {
-    const { commentId, userId } = selections;
+    const { commentId, userId, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('comment')
       .where('comment.deletedAt IS NULL');
@@ -153,6 +162,12 @@ export class CommentsService {
     if (commentId) {
       query = query.andWhere('comment.id = :id', {
         id: commentId,
+      });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('comment.organizationId = :organizationId', {
+        organizationId,
       });
     }
 
@@ -178,7 +193,9 @@ export class CommentsService {
       color,
       email,
       fullName,
+      organizationId,
       userReceiveId,
+      commissionId,
     } = options;
 
     const comment = new Comment();
@@ -188,9 +205,11 @@ export class CommentsService {
     comment.model = model;
     comment.color = color;
     comment.email = email;
+    comment.commissionId = commissionId;
     comment.fullName = fullName;
     comment.productId = productId;
     comment.description = description;
+    comment.organizationId = organizationId;
     comment.userReceiveId = userReceiveId;
 
     const query = this.driver.save(comment);

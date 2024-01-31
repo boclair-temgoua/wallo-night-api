@@ -1,31 +1,23 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  Index,
-  OneToOne,
-  ManyToMany,
+  Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { OrderProduct } from './OrderProduct';
-import { Discount } from './Discount';
 import { ProductStatus } from '../app/utils/pagination';
 import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
-import { ProductType } from '../modules/products/products.dto';
 import {
-  Cart,
-  Category,
-  User,
-  Membership,
-  Organization,
-  Currency,
-  Comment,
-} from './index';
+  ProductType,
+  productTypeArrays,
+} from '../modules/products/products.dto';
+import { Discount } from './Discount';
+import { OrderProduct } from './OrderProduct';
+import { Cart, Category, Comment, Currency, Organization, User } from './index';
 
 @Entity('product')
 export class Product extends BaseDeleteEntity {
@@ -83,7 +75,7 @@ export class Product extends BaseDeleteEntity {
   @Column({ default: 'ACTIVE' })
   status?: ProductStatus;
 
-  @Column({ default: 'PHYSICAL' })
+  @Column({ type: 'enum', enum: productTypeArrays, default: 'PHYSICAL' })
   productType?: ProductType;
 
   @Column({ type: 'uuid', nullable: true })
@@ -97,7 +89,6 @@ export class Product extends BaseDeleteEntity {
   @ManyToOne(() => Discount, (discount) => discount.products)
   @JoinColumn()
   discount: Discount;
-  
 
   @Column({ type: 'uuid', nullable: true })
   currencyId: string;

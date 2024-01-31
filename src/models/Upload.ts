@@ -1,7 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common/index';
+import {
+  FilterQueryType,
+  filterQueryTypeArrays,
+} from '../app/utils/search-query/search-query.dto';
 import { UploadType } from '../modules/uploads/uploads.dto';
-import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 
 @Entity('upload')
 export class Upload extends BaseDeleteEntity {
@@ -26,7 +29,7 @@ export class Upload extends BaseDeleteEntity {
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
 
-  @Column({ default: 'PRODUCT' })
+  @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'PRODUCT' })
   model?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })

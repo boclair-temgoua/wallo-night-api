@@ -1,20 +1,20 @@
 import {
-  Controller,
-  Post,
   Body,
-  Res,
-  Req,
-  HttpStatus,
+  Controller,
   HttpException,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { PaymentsService } from './payments.service';
+import { CommentsService } from '../comments/comments.service';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
+import { TransactionsService } from '../transactions/transactions.service';
+import { TransactionsUtil } from '../transactions/transactions.util';
 import { WalletsService } from '../wallets/wallets.service';
 import { CreateSubscribePaymentsDto } from './payments.dto';
-import { TransactionsUtil } from '../transactions/transactions.util';
-import { TransactionsService } from '../transactions/transactions.service';
-import { CommentsService } from '../comments/comments.service';
+import { PaymentsService } from './payments.service';
 
 @Controller('payments')
 export class PaymentsTransactionController {
@@ -191,6 +191,7 @@ export class PaymentsTransactionController {
         fullName: transaction?.fullName,
         description: transaction?.description,
         userReceiveId: transaction?.userReceiveId,
+        organizationId: transaction?.organizationId,
       });
     }
 
@@ -264,6 +265,7 @@ export class PaymentsTransactionController {
           fullName: transaction?.fullName,
           description: transaction?.description,
           userReceiveId: transaction?.userReceiveId,
+          organizationId: transaction?.organizationId,
         });
       }
     }

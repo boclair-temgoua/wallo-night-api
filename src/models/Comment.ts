@@ -1,15 +1,17 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  Entity,
   JoinColumn,
-  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
-import { User, Product, Post, Organization } from './index';
 import { BaseDeleteEntity } from '../app/databases/common/index';
-import { FilterQueryType } from '../app/utils/search-query';
+import {
+  FilterQueryType,
+  filterQueryTypeArrays,
+} from '../app/utils/search-query';
+import { Commission, Organization, Post, Product, User } from './index';
 
 @Entity('comment')
 export class Comment extends BaseDeleteEntity {
@@ -19,7 +21,7 @@ export class Comment extends BaseDeleteEntity {
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @Column({ default: 'POST' })
+  @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'POST' })
   model?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
@@ -51,11 +53,27 @@ export class Comment extends BaseDeleteEntity {
   post?: Post;
 
   @Column({ type: 'uuid', nullable: true })
+  commissionId?: string;
+  @ManyToOne(() => Commission, (commission) => commission.comments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  commission?: Commission;
+
+  @Column({ type: 'uuid', nullable: true })
   userReceiveId?: string;
-  
+
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @Column({ type: 'uuid', nullable: true })
+  organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.comments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Relation<Organization>;
 }

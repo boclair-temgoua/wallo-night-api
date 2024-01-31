@@ -1,21 +1,18 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  Generated,
-  ManyToOne,
+  Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
   Relation,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
-import { User } from './User';
-import { PostType } from '../modules/posts/posts.type';
-import { Category, Comment, Album, Organization } from './index';
 import { ProductStatus } from '../app/utils/pagination';
+import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
+import { PostType, postTypeArrays } from '../modules/posts/posts.type';
+import { User } from './User';
+import { Album, Category, Comment, Organization } from './index';
 
 @Entity('post')
 export class Post extends BaseDeleteEntity {
@@ -37,7 +34,7 @@ export class Post extends BaseDeleteEntity {
   @Column({ type: 'enum', enum: whoCanSeeTypeArrays, default: 'PUBLIC' })
   whoCanSee?: WhoCanSeeType;
 
-  @Column({ default: 'ARTICLE' })
+  @Column({ type: 'enum', enum: postTypeArrays, default: 'ARTICLE' })
   type?: PostType;
 
   @Column({ default: 'ACTIVE' })
@@ -62,7 +59,7 @@ export class Post extends BaseDeleteEntity {
   })
   @JoinColumn()
   album?: Relation<Album>;
-  
+
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @ManyToOne(() => User, (user) => user.posts, {

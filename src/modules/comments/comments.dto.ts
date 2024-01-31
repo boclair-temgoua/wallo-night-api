@@ -1,20 +1,21 @@
-import { User } from '../../models/User';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import {
   FilterQueryType,
   filterQueryTypeArrays,
 } from '../../app/utils/search-query/search-query.dto';
-import {
-  IsString,
-  IsNotEmpty,
-  MaxLength,
-  MinLength,
-  IsBoolean,
-  IsOptional,
-  IsIn,
-  IsUUID,
-} from 'class-validator';
 
 export class CreateOrUpdateCommentsDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  organizationId: string;
+
   @IsNotEmpty()
   @IsString()
   description: string;
@@ -32,6 +33,10 @@ export class CreateOrUpdateCommentsDto {
   @IsString()
   productId: string;
 
+  @IsOptional()
+  @IsString()
+  commissionId: string;
+
   @IsNotEmpty()
   @IsString()
   @IsIn(filterQueryTypeArrays)
@@ -39,6 +44,11 @@ export class CreateOrUpdateCommentsDto {
 }
 
 export class CommentsDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  organizationId: string;
+
   @IsOptional()
   @IsString()
   @IsUUID()
