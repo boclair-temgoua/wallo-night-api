@@ -17,7 +17,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { isNotUndefined } from '../../app/utils/commons/generate-random';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   PaginationType,
@@ -106,14 +105,14 @@ export class ProductsController {
       whoCanSee,
       productType,
       messageAfterPayment,
-      currencyId: user?.profile?.currencyId,
-      discountId: isNotUndefined(discountId) ? discountId : null,
+      discountId,
       enableDiscount: enableDiscount === 'true' ? true : false,
       enableLimitSlot: enableLimitSlot === 'true' ? true : false,
       enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
       enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
-      organizationId: user?.organizationId,
       userId: user?.id,
+      organizationId: user?.organizationId,
+      currencyId: user?.profile?.currencyId,
     });
 
     await this.uploadsUtil.saveOrUpdateAws({
@@ -181,7 +180,7 @@ export class ProductsController {
         messageAfterPayment,
         limitSlot: Number(limitSlot),
         currencyId: user?.profile?.currencyId,
-        discountId: isNotUndefined(discountId) ? discountId : null,
+        discountId,
         enableDiscount: enableDiscount === 'true' ? true : false,
         enableLimitSlot: enableLimitSlot === 'true' ? true : false,
         enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
