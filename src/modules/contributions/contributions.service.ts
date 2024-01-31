@@ -30,7 +30,6 @@ export class ContributionsService {
     const {
       userId,
       search,
-      giftId,
       campaignId,
       currencyId,
       organizationId,
@@ -40,7 +39,6 @@ export class ContributionsService {
     let query = this.driver
       .createQueryBuilder('contribution')
       .select('contribution.id', 'id')
-      .addSelect('contribution.giftId', 'giftId')
       .addSelect('contribution.amount', 'amount')
       .addSelect('contribution.userId', 'userId')
       .addSelect('contribution.type', 'type')
@@ -58,13 +56,6 @@ export class ContributionsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-        'id', "gift"."id",
-        'title', "gift"."title",
-        'amount', "gift"."amount"
-    ) AS "gift"`,
-      )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
         'id', "campaign"."id",
         'title', "campaign"."title"
     ) AS "campaign"`,
@@ -77,14 +68,9 @@ export class ContributionsService {
       )
       .where('contribution.deletedAt IS NULL')
       .leftJoin('contribution.user', 'user')
-      .leftJoin('contribution.gift', 'gift')
       .leftJoin('contribution.campaign', 'campaign')
       .leftJoin('contribution.currency', 'currency')
       .leftJoin('user.profile', 'profile');
-
-    if (giftId) {
-      query = query.andWhere('contribution.giftId = :giftId', { giftId });
-    }
 
     if (organizationId) {
       query = query.andWhere('contribution.organizationId = :organizationId', {
@@ -112,8 +98,6 @@ export class ContributionsService {
       query = query.andWhere(
         new Brackets((qb) => {
           qb.where('campaign.title ::text ILIKE :search', {
-            search: `%${search}%`,
-          }).orWhere('gift.title ::text ILIKE :search', {
             search: `%${search}%`,
           });
         }),
@@ -145,7 +129,6 @@ export class ContributionsService {
     let query = this.driver
       .createQueryBuilder('contribution')
       .select('contribution.id', 'id')
-      .addSelect('contribution.giftId', 'giftId')
       .addSelect('contribution.amount', 'amount')
       .addSelect('contribution.userId', 'userId')
       .addSelect('contribution.type', 'type')
@@ -169,7 +152,6 @@ export class ContributionsService {
       )
       .where('contribution.deletedAt IS NULL')
       .leftJoin('contribution.user', 'user')
-      .leftJoin('contribution.gift', 'gift')
       .leftJoin('contribution.campaign', 'campaign')
       .leftJoin('contribution.currency', 'currency')
       .leftJoin('user.profile', 'profile');
@@ -201,7 +183,6 @@ export class ContributionsService {
       userId,
       campaignId,
       currencyId,
-      giftId,
       amountConvert,
       organizationId,
     } = options;
@@ -210,7 +191,6 @@ export class ContributionsService {
     contribution.amount = amount;
     contribution.type = type;
     contribution.userId = userId;
-    contribution.giftId = giftId;
     contribution.currencyId = currencyId;
     contribution.campaignId = campaignId;
     contribution.organizationId = organizationId;

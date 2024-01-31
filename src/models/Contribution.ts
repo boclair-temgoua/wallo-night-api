@@ -1,21 +1,19 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
   JoinColumn,
   ManyToOne,
   OneToOne,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
-import { ContributorRole } from '../modules/contributors/contributors.type';
-import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
 import { Campaign } from './Campaign';
-import { Gift } from './Gift';
-import { Transaction } from './Transaction';
 import { Currency } from './Currency';
 import { Membership } from './Membership';
+import { Transaction } from './Transaction';
+import { User } from './User';
 
 @Entity('contribution')
 export class Contribution extends BaseDeleteEntity {
@@ -47,14 +45,6 @@ export class Contribution extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
-
-  @Column({ type: 'uuid', nullable: true })
-  giftId?: string;
-  @ManyToOne(() => Gift, (gift) => gift.contributions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  gift?: Relation<Gift>;
 
   @Column({ type: 'uuid', nullable: true })
   campaignId?: string;

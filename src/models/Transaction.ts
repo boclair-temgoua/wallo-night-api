@@ -1,24 +1,16 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
+  Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { TransactionType } from '../modules/transactions/transactions.type';
-import {
-  Subscribe,
-  Membership,
-  Contribution,
-  Gift,
-  User,
-  Campaign,
-  Organization,
-} from './index';
 import { FilterQueryType } from '../app/utils/search-query';
+import { TransactionType } from '../modules/transactions/transactions.type';
+import { Campaign, Contribution, Organization, Subscribe, User } from './index';
 
 @Entity('transaction')
 export class Transaction extends BaseDeleteEntity {
@@ -65,14 +57,6 @@ export class Transaction extends BaseDeleteEntity {
 
   @Column({ default: 'CARD' })
   type?: TransactionType;
-
-  @Column({ type: 'uuid', nullable: true })
-  giftId?: string;
-  @ManyToOne(() => Gift, (gift) => gift.transactions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  gift?: Relation<Gift>;
 
   @Column({ type: 'uuid', nullable: true })
   campaignId?: string;

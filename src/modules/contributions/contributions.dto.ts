@@ -1,13 +1,13 @@
 import { Type } from 'class-transformer';
 import {
-  IsString,
+  IsIn,
+  IsInt,
   IsNotEmpty,
   IsOptional,
+  IsPositive,
+  IsString,
   IsUUID,
   Min,
-  IsPositive,
-  IsInt,
-  IsIn,
 } from 'class-validator';
 import {
   CurrencyCode,
@@ -23,11 +23,6 @@ export class SearchContributionDto {
   @IsString()
   @IsUUID()
   campaignId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  giftId: string;
 
   @IsOptional()
   @IsString()
@@ -59,37 +54,12 @@ export class CreateOneContributionDto {
   @IsUUID()
   userSendId: string;
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  giftId: string;
-
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
   @Min(1)
   @Type(() => Number)
   amount: number;
-}
-
-export class CreateOneContributionGiftDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsUUID()
-  giftId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  userSendId: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(transactionTypeArrays)
-  meanOfPayment: TransactionType;
-
-  @IsOptional()
-  infoPaymentMethod: any;
 }
 
 export class CreateOneContributionDonationDto {

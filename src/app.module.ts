@@ -21,7 +21,6 @@ import { DiscountsModule } from './modules/discounts/discounts.module';
 import { DonationsModule } from './modules/donations/donations.module';
 import { FaqsModule } from './modules/faqs/faqs.module';
 import { FollowsModule } from './modules/follows/follows.module';
-import { GiftsModule } from './modules/gifts/gifts.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { MediaModule } from './modules/media/media.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
@@ -59,7 +58,6 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     CartsModule,
     WalletsModule,
     MediaModule,
-    GiftsModule,
     PostsModule,
     DonationsModule,
     CommentsModule,

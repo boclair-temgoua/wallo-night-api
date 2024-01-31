@@ -18,7 +18,6 @@ import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { BullingService } from '../bulling/bulling.service';
 import { CampaignsService } from '../campaigns/campaigns.service';
 import { CurrenciesService } from '../currencies/currencies.service';
-import { GiftsService } from '../gifts/gifts.service';
 import { TransactionsService } from '../transactions/transactions.service';
 import { JwtAuthGuard } from '../users/middleware';
 import { UsersService } from '../users/users.service';
@@ -26,7 +25,6 @@ import { WalletsService } from '../wallets/wallets.service';
 import {
   CreateOneContributionDonationDto,
   CreateOneContributionDto,
-  CreateOneContributionGiftDto,
   SearchContributionDto,
 } from './contributions.dto';
 import { ContributionsService } from './contributions.service';
@@ -34,7 +32,6 @@ import { ContributionsService } from './contributions.service';
 @Controller('contributions')
 export class ContributionsController {
   constructor(
-    private readonly giftsService: GiftsService,
     private readonly usersService: UsersService,
     private readonly bullingService: BullingService,
     private readonly walletsService: WalletsService,
@@ -54,7 +51,7 @@ export class ContributionsController {
     @Query() query: SearchContributionDto,
   ) {
     const { user } = req;
-    const { campaignId, giftId, userId } = query;
+    const { campaignId, userId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -64,7 +61,6 @@ export class ContributionsController {
       search,
       pagination,
       campaignId,
-      giftId,
       userId,
       organizationId: user?.organizationId,
     });
@@ -139,71 +135,6 @@ export class ContributionsController {
     // /** Update wallet */
     // await this.walletsService.incrementOne({
     //   organizationId: findOneCampaign?.organizationId,
-    //   amount: contribution?.amountConvert,
-    // });
-
-    return reply({ res, results: 'contribution save successfully' });
-  }
-
-  /** Create gift */
-  @Post(`/gift`)
-  async createOneByGift(
-    @Res() res,
-    @Req() req,
-    @Body() body: CreateOneContributionGiftDto,
-  ) {
-    const { giftId, userSendId, meanOfPayment, infoPaymentMethod } = body;
-
-    // const findOneGift = await this.giftsService.findOneBy({
-    //   giftId,
-    // });
-    // if (!findOneGift)
-    //   throw new HttpException(
-    //     `Gift ${giftId} don't exists please change`,
-    //     HttpStatus.NOT_FOUND,
-    //   );
-
-    // const { amountConvert } = validationAmount({
-    //   amount: findOneGift?.amount / 100,
-    //   currency: findOneGift?.currency,
-    // });
-
-    // /** Create payment stripe */
-    // meanOfPayment === 'CARD' && infoPaymentMethod?.id
-    //   ? await this.bullingService.stripeMethod({
-    //       amount: amountConvert * 100,
-    //       currency: 'EUR',
-    //       fullName: 'Inconnu',
-    //       email: 'email@inconnu.com',
-    //       description: `Contribution gift ${findOneGift?.title}`,
-    //       infoPaymentMethod: infoPaymentMethod,
-    //     })
-    //   : null;
-
-    // /** create contribution */
-    // const contribution = await this.contributionsService.createOne({
-    //   amount: Number(findOneGift?.amount),
-    //   giftId: findOneGift?.id,
-    //   currencyId: findOneGift?.currencyId,
-    //   amountConvert: amountConvert * 100,
-    //   type: 'GIFT',
-    // });
-
-    // /** create transaction */
-    // await this.transactionsService.createOne({
-    //   contributionId: contribution?.id,
-    //   description: `Contribution gift ${findOneGift?.title}`,
-    //   amount: contribution?.amount,
-    //   userId: findOneGift?.userId,
-    //   userReceiveId: findOneGift?.userId,
-    //   userSendId: userSendId,
-    //   giftId: findOneGift?.id,
-    //   type: meanOfPayment,
-    // });
-
-    // /** Update wallet */
-    // await this.walletsService.incrementOne({
-    //   organizationId: findOneGift?.organizationId,
     //   amount: contribution?.amountConvert,
     // });
 

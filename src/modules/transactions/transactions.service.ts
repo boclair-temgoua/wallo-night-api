@@ -51,7 +51,6 @@ export class TransactionsService {
       .addSelect('transaction.model', 'model')
       .addSelect('transaction.campaignId', 'campaignId')
       .addSelect('transaction.contributionId', 'contributionId')
-      .addSelect('transaction.giftId', 'giftId')
       .addSelect('transaction.email', 'email')
       .addSelect('transaction.color', 'color')
       .addSelect('transaction.userReceiveId', 'userReceiveId')
@@ -60,13 +59,6 @@ export class TransactionsService {
       .addSelect('transaction.organizationId', 'organizationId')
       .addSelect('transaction.amountConvert', 'amountConvert')
       .addSelect('transaction.createdAt', 'createdAt')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-      'id', "gift"."id",
-      'title', "gift"."title",
-      'amount', "gift"."amount"
-  ) AS "gift"`,
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "campaign"."id",
@@ -89,7 +81,6 @@ export class TransactionsService {
       )
       .where('transaction.deletedAt IS NULL')
       .leftJoin('transaction.userSend', 'userSend')
-      .leftJoin('transaction.gift', 'gift')
       .leftJoin('transaction.campaign', 'campaign')
       .leftJoin('userSend.profile', 'profileSend');
 
@@ -232,7 +223,6 @@ export class TransactionsService {
       amountConvert,
       token,
       type,
-      giftId,
       fullName,
       email,
       userReceiveId,
@@ -247,7 +237,6 @@ export class TransactionsService {
     transaction.amount = amount;
     transaction.type = type;
     transaction.token = token;
-    transaction.giftId = giftId;
     transaction.fullName = fullName;
     transaction.email = email;
     transaction.userReceiveId = userReceiveId;

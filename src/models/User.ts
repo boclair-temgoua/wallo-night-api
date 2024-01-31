@@ -1,36 +1,34 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
-  OneToOne,
+  Entity,
   JoinColumn,
   ManyToOne,
-  Generated,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Membership } from './Membership';
 import { NextStep } from '../modules/users/users.type';
-import {
-  Post,
-  Comment,
-  Campaign,
-  Gift,
-  Donation,
-  Transaction,
-  Cart,
-  Contributor,
-  Profile,
-  Product,
-  AuthProvider,
-  Discount,
-  Organization,
-} from './index';
 import { Follow } from './Follow';
 import { Like } from './Like';
-import { Subscribe } from './Subscribe';
+import { Membership } from './Membership';
 import { Payment } from './Payment';
+import { Subscribe } from './Subscribe';
+import {
+  AuthProvider,
+  Campaign,
+  Cart,
+  Comment,
+  Contributor,
+  Discount,
+  Donation,
+  Organization,
+  Post,
+  Product,
+  Profile,
+  Transaction,
+} from './index';
 
 @Entity('user')
 export class User extends BaseDeleteEntity {
@@ -113,11 +111,6 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
-
-  @OneToMany(() => Gift, (gift) => gift.user, {
-    onDelete: 'CASCADE',
-  })
-  gifts?: Gift[];
 
   @OneToMany(() => Like, (like) => like.user, {
     onDelete: 'CASCADE',

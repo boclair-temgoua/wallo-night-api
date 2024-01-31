@@ -41,7 +41,6 @@ export type FilterQueryType =
   | 'PRODUCT'
   | 'COMMISSION'
   | 'MEMBERSHIP'
-  | 'GIFT'
   | 'HELP'
   | 'POST'
   | 'GALLERY'
@@ -54,7 +53,6 @@ export const filterQueryTypeArrays = [
   'MEMBERSHIP',
   'COMMISSION',
   'PRODUCT',
-  'GIFT',
   'HELP',
   'POST',
   'GALLERY',

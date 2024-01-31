@@ -1,23 +1,23 @@
 import {
-  Controller,
   Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  UseGuards,
   Put,
-  Res,
   Req,
-  Get,
-  HttpStatus,
-  HttpException,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { UpdateDonationsDto } from './donations.dto';
 import { JwtAuthGuard } from '../users/middleware';
+import { UpdateDonationsDto } from './donations.dto';
 import { DonationsService } from './donations.service';
 
 @Controller('donations')
-export class GiftsController {
+export class DonationsController {
   constructor(private readonly donationsService: DonationsService) {}
 
   /** Post one Donation */
