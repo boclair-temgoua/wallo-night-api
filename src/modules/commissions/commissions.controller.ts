@@ -1,51 +1,38 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
-  UseInterceptors,
+  Req,
+  Res,
   UploadedFiles,
-  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import * as mime from 'mime-types';
-import {
-  formateNowDateYYMMDD,
-  generateLongUUID,
-} from '../../app/utils/commons';
 
-import { CommissionsService } from './commissions.service';
-import {
-  PasswordBodyDto,
-  SearchQueryDto,
-} from '../../app/utils/search-query/search-query.dto';
-import { JwtAuthGuard } from '../users/middleware';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
-  addPagination,
   PaginationType,
+  addPagination,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { UploadsUtil } from '../uploads/uploads.util';
+import { JwtAuthGuard } from '../users/middleware';
 import {
   CreateOrUpdateCommissionsDto,
   GetCommissionsDto,
   GetOneCommissionDto,
 } from './commissions.dto';
-import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import {
-  awsS3ServiceAdapter,
-  getFileToAws,
-} from '../integrations/aws/aws-s3-service-adapter';
-import { UploadsUtil } from '../uploads/uploads.util';
+import { CommissionsService } from './commissions.service';
 
 @Controller('commissions')
 export class CommissionsController {

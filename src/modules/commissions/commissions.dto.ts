@@ -1,12 +1,9 @@
 import {
-  IsString,
   IsNotEmpty,
-  MaxLength,
-  IsUUID,
   IsOptional,
-  IsArray,
-  IsInt,
-  IsBoolean,
+  IsString,
+  IsUUID,
+  MaxLength,
 } from 'class-validator';
 
 export type StatusCommission = 'ACTIVE' | 'PENDING';
