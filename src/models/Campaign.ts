@@ -1,16 +1,16 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
   JoinColumn,
   ManyToOne,
-  Relation,
   OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
 } from 'typeorm';
-import { User } from './User';
-import { Transaction } from './Transaction';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Contribution } from './Contribution';
+import { Transaction } from './Transaction';
+import { User } from './User';
 
 @Entity('campaign')
 export class Campaign extends BaseDeleteEntity {

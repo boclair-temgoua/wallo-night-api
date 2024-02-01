@@ -1,14 +1,13 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  Entity,
   JoinColumn,
-  Relation,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/index';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
+import { User } from './User';
 
 @Entity('like')
 export class Like extends BaseDeleteEntity {

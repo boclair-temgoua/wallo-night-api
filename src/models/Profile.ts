@@ -1,16 +1,15 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
+  Entity,
   JoinColumn,
   ManyToOne,
-  Generated,
+  OneToOne,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
 
-import { User, Currency } from './index';
 import { BaseDeleteEntity } from '../app/databases/common';
+import { Currency, User } from './index';
 @Entity('profile')
 export class Profile extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')

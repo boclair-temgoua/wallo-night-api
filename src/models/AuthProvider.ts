@@ -1,16 +1,14 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
+  Entity,
   JoinColumn,
   ManyToOne,
-  Generated,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
 
-import { User, Currency } from './index';
 import { BaseDeleteEntity } from '../app/databases/common';
+import { User } from './index';
 @Entity('auth_provider')
 export class AuthProvider extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')

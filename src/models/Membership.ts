@@ -1,23 +1,15 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
   JoinColumn,
   ManyToOne,
-  Relation,
   OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { ProductStatus } from '../app/utils/pagination';
-import {
-  Contribution,
-  Subscribe,
-  Product,
-  User,
-  Organization,
-  Currency,
-  Post,
-} from './index';
+import { Contribution, Currency, Organization, Subscribe, User } from './index';
 
 @Entity('membership')
 export class Membership extends BaseDeleteEntity {

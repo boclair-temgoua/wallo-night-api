@@ -1,16 +1,7 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  Generated,
-  ManyToOne,
-  JoinColumn,
-  Relation,
-  OneToMany,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Organization, Post } from './index';
+import { Post } from './index';
 
 @Entity('album')
 export class Album extends BaseDeleteEntity {

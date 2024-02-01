@@ -1,15 +1,6 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  JoinColumn,
-  OneToMany,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-import { User } from './User';
 // import { UserAddress } from './UserAddress';
-import { OrderProduct } from './OrderProduct';
 import { BaseEntity } from '../app/databases/common';
 
 @Entity('client_order')
@@ -52,13 +43,12 @@ export class ClientOrder extends BaseEntity {
 
   @Column({ type: 'uuid', nullable: true })
   productId?: string;
-  
+
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
-
 
   // @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.clientOrder)
   // orderProducts: OrderProduct[];

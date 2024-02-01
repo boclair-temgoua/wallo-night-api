@@ -1,16 +1,7 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  Generated,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
-  ManyToMany,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Product, Post } from './index';
+import { Post, Product } from './index';
 
 @Entity('category')
 export class Category extends BaseDeleteEntity {

@@ -1,15 +1,13 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  Entity,
   JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
   Relation,
-  OneToMany,
 } from 'typeorm';
-import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common/index';
-import { Subscribe } from './Subscribe';
+import { User } from './User';
 
 @Entity('follow')
 export class Follow extends BaseDeleteEntity {

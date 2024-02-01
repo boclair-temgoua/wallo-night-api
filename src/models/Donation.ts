@@ -1,14 +1,13 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
   JoinColumn,
-  ManyToOne,
-  Relation,
   OneToOne,
+  PrimaryGeneratedColumn,
+  Relation,
 } from 'typeorm';
-import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common';
+import { User } from './User';
 
 @Entity('donation')
 export class Donation extends BaseDeleteEntity {

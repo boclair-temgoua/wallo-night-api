@@ -1,15 +1,14 @@
-import { BaseDeleteEntity } from '../app/databases/common';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
-  ManyToOne,
+  Entity,
   JoinColumn,
-  DeleteDateColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Product } from './Product';
 import { User } from '.';
+import { BaseDeleteEntity } from '../app/databases/common';
+import { Product } from './Product';
 @Entity('discount')
 export class Discount extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')

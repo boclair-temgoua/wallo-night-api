@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Generated } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
 
 @Entity('country')

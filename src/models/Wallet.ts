@@ -1,14 +1,12 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
-  ManyToOne,
+  Entity,
   JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
 import { BaseEntity } from '../app/databases/common';
-import { User } from './User';
 import { Organization } from './Organization';
 
 @Entity('wallet')

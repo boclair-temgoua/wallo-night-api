@@ -1,14 +1,12 @@
-import { StatusOderProduct } from './../modules/order-products/order-products.dto';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
+  Entity,
   JoinColumn,
-  OneToMany,
   ManyToOne,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
+import { StatusOderProduct } from './../modules/order-products/order-products.dto';
 
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Product } from './Product';

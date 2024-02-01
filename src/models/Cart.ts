@@ -1,18 +1,16 @@
-import { StatusCart } from './../modules/cats/cats.dto';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
+  Entity,
   JoinColumn,
-  OneToMany,
   ManyToOne,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
+import { StatusCart } from './../modules/cats/cats.dto';
 
+import { BaseDeleteEntity } from '../app/databases/common';
 import { Product } from './Product';
 import { User } from './User';
-import { BaseDeleteEntity } from '../app/databases/common';
 
 @Entity('cart')
 export class Cart extends BaseDeleteEntity {
@@ -45,5 +43,4 @@ export class Cart extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
-
 }

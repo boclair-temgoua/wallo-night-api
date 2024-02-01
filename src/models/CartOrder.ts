@@ -1,17 +1,5 @@
-import { StatusCart } from '../modules/cats/cats.dto';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToOne,
-  JoinColumn,
-  OneToMany,
-  ManyToOne,
-  Relation,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-import { Product } from './Product';
-import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common';
 
 @Entity('cart_order')

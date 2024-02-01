@@ -1,16 +1,15 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
   JoinColumn,
   ManyToOne,
-  Generated,
+  PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
-import { ContributorRole } from '../modules/contributors/contributors.type';
-import { User } from './User';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
+import { ContributorRole } from '../modules/contributors/contributors.type';
+import { User } from './User';
 
 @Entity('contributor')
 export class Contributor extends BaseDeleteEntity {
