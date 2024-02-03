@@ -6,7 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '.';
+import { Commission, User } from '.';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Product } from './Product';
 @Entity('discount')
@@ -35,12 +35,15 @@ export class Discount extends BaseDeleteEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   startedAt: Date;
 
-  @OneToMany(() => Product, (product) => product.discount)
-  products: Product[];
-
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @ManyToOne(() => User, (user) => user.discounts, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @OneToMany(() => Product, (product) => product.discount)
+  products: Product[];
+
+  @OneToMany(() => Commission, (commission) => commission.discount)
+  commissions: Commission[];
 }

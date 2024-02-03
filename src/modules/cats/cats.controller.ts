@@ -1,35 +1,28 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Ip,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
-  Ip,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { CartsService } from './cats.service';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { JwtAuthGuard } from '../users/middleware';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import {
-  addPagination,
-  PaginationType,
-} from '../../app/utils/pagination/with-pagination';
-import { CartsDto, CreateOrUpdateCartsDto, StatusCart } from './cats.dto';
-import { ProductsService } from '../products/products.service';
 import { getIpRequest } from '../../app/utils/commons/get-ip-request';
 import { CartOrdersService } from '../cart-orders/cart-orders.service';
-import { query } from 'express';
+import { ProductsService } from '../products/products.service';
+import { JwtAuthGuard } from '../users/middleware';
+import { CartsDto, CreateOrUpdateCartsDto } from './cats.dto';
+import { CartsService } from './cats.service';
 
 @Controller('carts')
 export class CartsController {

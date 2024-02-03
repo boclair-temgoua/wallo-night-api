@@ -41,7 +41,9 @@ export class CommissionsService {
       .addSelect('commission.messageAfterPayment', 'messageAfterPayment')
       .addSelect('commission.status', 'status')
       .addSelect('commission.currencyId', 'currencyId')
+      .addSelect('commission.discountId', 'discountId')
       .addSelect('commission.organizationId', 'organizationId')
+      .addSelect('commission.enableDiscount', 'enableDiscount')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'symbol', "currency"."symbol",
@@ -88,9 +90,42 @@ export class CommissionsService {
         GROUP BY "commission"."id", "upl"."uploadableId"
         ) AS "uploadsFile"`,
       )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'enableExpiredAt', "discount"."enableExpiredAt",
+            'expiredAt', "discount"."expiredAt",
+            'percent', "discount"."percent",
+            'isValid', CASE WHEN ("discount"."expiredAt" >= now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN true 
+            WHEN ("discount"."expiredAt" < now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN false
+            ELSE false
+            END
+        ) AS "discount"`,
+      )
+      .addSelect(
+        /*sql*/ `
+          CASE
+          WHEN ("discount"."expiredAt" >= now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS TRUE
+          AND "commission"."enableDiscount" IS TRUE) THEN
+          CAST(("commission"."price" - ("commission"."price" * "discount"."percent") / 100) AS INT)
+          WHEN ("discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS FALSE
+          AND "commission"."enableDiscount" IS TRUE) THEN
+          CAST(("commission"."price" - ("commission"."price" * "discount"."percent") / 100) AS INT)
+          ELSE "commission"."price"
+          END
+      `,
+        'priceDiscount',
+      )
       .addSelect('commission.createdAt', 'createdAt')
       .where('commission.deletedAt IS NULL')
       .leftJoin('commission.currency', 'currency')
+      .leftJoin('commission.discount', 'discount')
       .leftJoin('commission.user', 'user')
       .leftJoin('user.profile', 'profile');
 
@@ -153,7 +188,9 @@ export class CommissionsService {
       .addSelect('commission.messageAfterPayment', 'messageAfterPayment')
       .addSelect('commission.status', 'status')
       .addSelect('commission.currencyId', 'currencyId')
+      .addSelect('commission.discountId', 'discountId')
       .addSelect('commission.organizationId', 'organizationId')
+      .addSelect('commission.enableDiscount', 'enableDiscount')
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'symbol', "currency"."symbol",
@@ -200,9 +237,42 @@ export class CommissionsService {
         GROUP BY "commission"."id", "upl"."uploadableId"
         ) AS "uploadsFile"`,
       )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+            'enableExpiredAt', "discount"."enableExpiredAt",
+            'expiredAt', "discount"."expiredAt",
+            'percent', "discount"."percent",
+            'isValid', CASE WHEN ("discount"."expiredAt" >= now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN true 
+            WHEN ("discount"."expiredAt" < now()::date
+            AND "discount"."deletedAt" IS NULL
+            AND "discount"."enableExpiredAt" IS TRUE) THEN false
+            ELSE false
+            END
+        ) AS "discount"`,
+      )
+      .addSelect(
+        /*sql*/ `
+          CASE
+          WHEN ("discount"."expiredAt" >= now()::date
+          AND "discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS TRUE
+          AND "commission"."enableDiscount" IS TRUE) THEN
+          CAST(("commission"."price" - ("commission"."price" * "discount"."percent") / 100) AS INT)
+          WHEN ("discount"."deletedAt" IS NULL
+          AND "discount"."enableExpiredAt" IS FALSE
+          AND "commission"."enableDiscount" IS TRUE) THEN
+          CAST(("commission"."price" - ("commission"."price" * "discount"."percent") / 100) AS INT)
+          ELSE "commission"."price"
+          END
+      `,
+        'priceDiscount',
+      )
       .addSelect('commission.createdAt', 'createdAt')
       .where('commission.deletedAt IS NULL')
       .leftJoin('commission.currency', 'currency')
+      .leftJoin('commission.discount', 'discount')
       .leftJoin('commission.user', 'user')
       .leftJoin('user.profile', 'profile');
 
@@ -241,6 +311,8 @@ export class CommissionsService {
       limitSlot,
       enableLimitSlot,
       userId,
+      discountId,
+      enableDiscount,
       organizationId,
     } = options;
 
@@ -256,6 +328,8 @@ export class CommissionsService {
     commission.urlMedia = urlMedia;
     commission.description = description;
     commission.userId = userId;
+    commission.enableDiscount = enableDiscount;
+    commission.discountId = discountId;
     commission.organizationId = organizationId;
 
     const query = this.driver.save(commission);
@@ -281,8 +355,10 @@ export class CommissionsService {
       messageAfterPayment,
       status,
       limitSlot,
+      enableDiscount,
       enableLimitSlot,
       currencyId,
+      discountId,
       deletedAt,
     } = options;
 
@@ -304,7 +380,9 @@ export class CommissionsService {
     commission.enableLimitSlot = enableLimitSlot;
     commission.messageAfterPayment = messageAfterPayment;
     commission.urlMedia = urlMedia;
+    commission.enableDiscount = enableDiscount;
     commission.description = description;
+    commission.discountId = discountId;
     commission.deletedAt = deletedAt;
 
     const query = this.driver.save(commission);

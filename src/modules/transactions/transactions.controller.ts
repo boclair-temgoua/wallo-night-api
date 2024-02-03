@@ -43,7 +43,7 @@ export class TransactionsController {
 
     const transactions = await this.transactionsService.findAll({
       search,
-      days: Number(days),
+      days: Number(days) > 0 ? Number(days) : null,
       model: model?.toLocaleUpperCase(),
       campaignId,
       userSendId,
@@ -67,7 +67,7 @@ export class TransactionsController {
 
     const transactions = await this.transactionsService.findGroupOrganization({
       organizationId: organizationId ?? user.organizationId,
-      days: Number(days),
+      days: Number(days) > 0 ? Number(days) : null,
     });
 
     return reply({ res, results: transactions });

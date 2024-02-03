@@ -130,7 +130,9 @@ export class CommissionsController {
       description,
       urlMedia,
       limitSlot,
+      discountId,
       enableLimitSlot,
+      enableDiscount,
       messageAfterPayment,
     } = body;
     const { user } = req;
@@ -152,9 +154,11 @@ export class CommissionsController {
         price: Number(price),
         urlMedia,
         description,
+        discountId,
         messageAfterPayment,
         currencyId: user?.profile?.currencyId,
         limitSlot: Number(limitSlot),
+        enableDiscount: enableDiscount === 'true' ? true : false,
         enableLimitSlot: enableLimitSlot === 'true' ? true : false,
       },
     );
@@ -184,7 +188,16 @@ export class CommissionsController {
     @Param('commissionId', ParseUUIDPipe) commissionId: string,
   ) {
     const { user } = req;
-    const { title, price, description, messageAfterPayment, urlMedia } = body;
+    const {
+      title,
+      price,
+      discountId,
+      description,
+      enableLimitSlot,
+      enableDiscount,
+      messageAfterPayment,
+      urlMedia,
+    } = body;
 
     const findOneCommission = await this.commissionsService.findOneBy({
       commissionId,
@@ -202,7 +215,10 @@ export class CommissionsController {
         title,
         price: Number(price),
         urlMedia,
+        discountId,
         description,
+        enableDiscount: enableDiscount === 'true' ? true : false,
+        enableLimitSlot: enableLimitSlot === 'true' ? true : false,
         messageAfterPayment,
       },
     );

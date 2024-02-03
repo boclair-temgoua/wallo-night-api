@@ -11,7 +11,7 @@ import { BaseDeleteEntity } from '../app/databases/common';
 import { ProductStatus } from '../app/utils/pagination';
 import { Currency } from './Currency';
 import { OrderProduct } from './OrderProduct';
-import { Cart, Comment, User } from './index';
+import { Cart, Comment, Discount, User } from './index';
 @Entity('commission')
 export class Commission extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -35,6 +35,9 @@ export class Commission extends BaseDeleteEntity {
   @Column({ type: 'boolean', default: false })
   enableLimitSlot: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  enableDiscount: boolean;
+
   @Column({ type: 'bigint', default: 0 })
   limitSlot: number;
 
@@ -49,9 +52,15 @@ export class Commission extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   currencyId: string;
-  @ManyToOne(() => Currency, (currency) => currency.products)
+  @ManyToOne(() => Currency, (currency) => currency.commissions)
   @JoinColumn()
   currency: Currency;
+
+  @Column({ type: 'uuid', nullable: true })
+  discountId: string;
+  @ManyToOne(() => Discount, (discount) => discount.commissions)
+  @JoinColumn()
+  discount: Discount;
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;

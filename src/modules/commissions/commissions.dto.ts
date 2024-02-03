@@ -19,11 +19,19 @@ export class CreateOrUpdateCommissionsDto {
 
   @IsOptional()
   @IsString()
+  discountId: string;
+
+  @IsOptional()
+  @IsString()
   limitSlot: string;
 
   @IsOptional()
   @IsString()
   enableLimitSlot: string;
+
+  @IsOptional()
+  @IsString()
+  enableDiscount: string;
 
   @IsOptional()
   @IsString()
