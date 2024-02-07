@@ -11,7 +11,7 @@ export const AppSeedDataSource = new DataSource({
   database: config.database.postgres.name,
   ssl: config.database.postgres.ssl === 'true' ? true : false,
   extra:
-  config.database.postgres.ssl === 'true'
+    config.database.postgres.ssl === 'true'
       ? {
           ssl: {
             rejectUnauthorized: false,

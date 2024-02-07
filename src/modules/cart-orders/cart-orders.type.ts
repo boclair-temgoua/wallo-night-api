@@ -2,8 +2,8 @@ import { CartOrder } from '../../models';
 
 export type GetOneCartOrderSelections = {
   cartOrderId?: CartOrder['id'];
-  userId?: CartOrder['userId']
-  organizationId?: CartOrder['organizationId']
+  userId?: CartOrder['userId'];
+  organizationId?: CartOrder['organizationId'];
 };
 
 export type GetOneCartsSelections = {

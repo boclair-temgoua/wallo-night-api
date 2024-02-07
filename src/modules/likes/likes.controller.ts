@@ -64,7 +64,7 @@ export class LikesController {
         );
       }),
     ]);
-    
+
     return reply({ res, results: `like deleted successfully` });
   }
 }

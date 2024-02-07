@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { generateNumber } from '../../app/utils/commons';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { useCatch } from '../../app/utils/use-catch';
@@ -31,11 +31,11 @@ export class OrdersService {
     let query = this.driver
       .createQueryBuilder('order')
       .select('order.id', 'id')
-      .addSelect('order.totalPriceDiscount', 'totalPriceDiscount')
-      .addSelect('order.currency', 'currency')
-      .addSelect('order.totalPrice', 'totalPrice')
       .addSelect('order.userId', 'userId')
+      .addSelect('order.currency', 'currency')
       .addSelect('order.orderNumber', 'orderNumber')
+      .addSelect('order.totalPriceDiscount', 'totalPriceDiscount')
+      .addSelect('order.totalPriceNoDiscount', 'totalPriceNoDiscount')
       .where('order.deletedAt IS NULL')
       .leftJoin('order.user', 'user');
 
@@ -43,17 +43,15 @@ export class OrdersService {
       query = query.andWhere('order.userId = :userId', { userId });
     }
 
-    // if (search) {
-    //   query = query.andWhere(
-    //     new Brackets((qb) => {
-    //       qb.where('orderProduct.titleProduct ::text ILIKE :search', {
-    //         search: `%${search}%`,
-    //       }).orWhere('orderProduct.price ::text ILIKE :search', {
-    //         search: `%${search}%`,
-    //       });
-    //     }),
-    //   );
-    // }
+    if (search) {
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('order.orderNumber ::text ILIKE :search', {
+            search: `%${search}%`,
+          });
+        }),
+      );
+    }
 
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);

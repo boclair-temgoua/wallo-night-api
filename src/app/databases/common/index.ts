@@ -10,7 +10,6 @@ export abstract class BaseEntity {
 }
 
 export class BaseDeleteEntity extends BaseEntity {
-    @Column({ nullable: true })
-    deletedAt?: Date;
-  }
-  
+  @Column({ nullable: true })
+  deletedAt?: Date;
+}

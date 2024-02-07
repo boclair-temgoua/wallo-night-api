@@ -7,8 +7,10 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { filterQueryTypeArrays } from '../app/utils/search-query';
-import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
+import {
+  FilterQueryType,
+  filterQueryTypeArrays,
+} from '../app/utils/search-query';
 import {
   OrderItemStatus,
   orderItemStatusArrays,

@@ -1,10 +1,4 @@
-
-import {
-  IsString,
-  IsUUID,
-  IsOptional,
-  IsNotEmpty,
-} from 'class-validator';
+import { IsString, IsUUID, IsOptional, IsNotEmpty } from 'class-validator';
 
 export class CartOrdersDto {
   @IsOptional()

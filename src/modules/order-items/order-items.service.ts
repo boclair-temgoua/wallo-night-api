@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { OrderItem } from '../../models';
@@ -27,26 +27,34 @@ export class OrderItemsService {
   ) {}
 
   async findAll(selections: GetOrderItemsSelections): Promise<any> {
-    const { search, pagination, userId, orderId, commissionId, productId } =
-      selections;
+    const {
+      search,
+      pagination,
+      userId,
+      orderId,
+      model,
+      organizationSellerId,
+      organizationBeyerId,
+    } = selections;
 
     let query = this.driver
       .createQueryBuilder('orderItem')
       .select('orderItem.id', 'id')
+      .addSelect('orderItem.orderNumber', 'orderNumber')
       .addSelect('orderItem.quantity', 'quantity')
-      .addSelect('orderItem.status', 'status')
       .addSelect('orderItem.percentDiscount', 'percentDiscount')
       .addSelect('orderItem.price', 'price')
       .addSelect('orderItem.priceDiscount', 'priceDiscount')
       .addSelect('orderItem.organizationBeyerId', 'organizationBeyerId')
       .addSelect('orderItem.organizationSellerId', 'organizationSellerId')
       .addSelect('orderItem.model', 'model')
+      .addSelect('orderItem.status', 'status')
       .addSelect('orderItem.currency', 'currency')
       .addSelect('orderItem.commissionId', 'commissionId')
       .addSelect('orderItem.productId', 'productId')
       .addSelect('orderItem.orderId', 'orderId')
-      .addSelect('order.orderNumber', 'orderNumber')
       .addSelect('orderItem.userId', 'userId')
+      .addSelect('orderItem.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
@@ -55,6 +63,7 @@ export class OrderItemsService {
               'image', "profile"."image",
               'color', "profile"."color",
               'userId', "user"."id",
+              'email', "user"."email",
               'username', "user"."username"
           ) AS "profile"`,
       )
@@ -66,10 +75,43 @@ export class OrderItemsService {
           ) AS "product"`,
       )
       .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."productId" = "product"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "product"."id", "upl"."uploadableId"
+          ) AS "uploadsImages"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."productId" = "product"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."uploadType" IN ('FILE')
+          GROUP BY "product"."id", "upl"."uploadableId"
+          ) AS "uploadsFiles"`,
+      )
+      .addSelect(
         /*sql*/ `jsonb_build_object(
               'id', "commission"."id",
-              'title', "commission"."title",
-              'slug', "commission"."slug"
+              'title', "commission"."title"
           ) AS "commission"`,
       )
       .where('orderItem.deletedAt IS NULL')
@@ -79,22 +121,40 @@ export class OrderItemsService {
       .leftJoin('orderItem.user', 'user')
       .leftJoin('user.profile', 'profile');
 
+    if (search) {
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('orderItem.orderNumber ::text ILIKE :search', {
+            search: `%${search}%`,
+          });
+        }),
+      );
+    }
+
     if (userId) {
-      query = query.andWhere('order.userId = :userId', { userId });
+      query = query.andWhere('orderItem.userId = :userId', { userId });
+    }
+
+    if (model) {
+      query = query.andWhere('orderItem.model = :model', { model });
+    }
+
+    if (organizationBeyerId) {
+      query = query.andWhere(
+        'orderItem.organizationBeyerId = :organizationBeyerId',
+        { organizationBeyerId },
+      );
+    }
+
+    if (organizationSellerId) {
+      query = query.andWhere(
+        'orderItem.organizationSellerId = :organizationSellerId',
+        { organizationSellerId },
+      );
     }
 
     if (orderId) {
-      query = query.andWhere('order.orderId = :orderId', { orderId });
-    }
-
-    if (productId) {
-      query = query.andWhere('order.productId = :productId', { productId });
-    }
-
-    if (commissionId) {
-      query = query.andWhere('order.commissionId = :commissionId', {
-        commissionId,
-      });
+      query = query.andWhere('orderItem.orderId = :orderId', { orderId });
     }
 
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
@@ -102,7 +162,7 @@ export class OrderItemsService {
 
     const [error, orderProducts] = await useCatch(
       query
-        .orderBy('order.createdAt', pagination?.sort)
+        .orderBy('orderItem.createdAt', pagination?.sort)
         .limit(pagination.limit)
         .offset(pagination.offset)
         .getRawMany(),

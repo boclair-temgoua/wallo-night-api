@@ -41,13 +41,7 @@ export class DonationsService {
 
   /** Create one Gifts to the database. */
   async createOne(options: CreateDonationsOptions): Promise<Donation> {
-    const {
-      title,
-      price,
-      userId,
-      messageWelcome,
-      description,
-    } = options;
+    const { title, price, userId, messageWelcome, description } = options;
 
     const donation = new Donation();
     donation.title = title;
@@ -71,13 +65,7 @@ export class DonationsService {
     options: UpdateDonationsOptions,
   ): Promise<Donation> {
     const { donationId } = selections;
-    const {
-      title,
-      price,
-      userId,
-      messageWelcome,
-      description,
-    } = options;
+    const { title, price, userId, messageWelcome, description } = options;
 
     let findQuery = this.driver.createQueryBuilder('donation');
 

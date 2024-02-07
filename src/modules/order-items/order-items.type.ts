@@ -21,8 +21,9 @@ export type GetOrderItemsSelections = {
   pagination?: PaginationType;
   userId?: OrderItem['userId'];
   orderId?: OrderItem['orderId'];
-  commissionId?: OrderItem['commissionId'];
-  productId?: OrderItem['productId'];
+  model?: OrderItem['model'];
+  organizationSellerId?: OrderItem['organizationSellerId'];
+  organizationBeyerId?: OrderItem['organizationBeyerId'];
 };
 
 export type GetOneOrderItemSelections = {

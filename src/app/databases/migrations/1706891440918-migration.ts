@@ -1,14 +1,17 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class Migration1706891440918 implements MigrationInterface {
-    name = 'Migration1706891440918'
+  name = 'Migration1706891440918';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "commission" ADD "enableDiscount" boolean NOT NULL DEFAULT false`);
-    }
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "commission" ADD "enableDiscount" boolean NOT NULL DEFAULT false`,
+    );
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "commission" DROP COLUMN "enableDiscount"`);
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "commission" DROP COLUMN "enableDiscount"`,
+    );
+  }
 }

@@ -18,6 +18,7 @@ import { SearchQueryDto } from '../../app/utils/search-query';
 import { CartsService } from '../cats/cats.service';
 import { OrderItemsService } from '../order-items/order-items.service';
 import { JwtAuthGuard } from '../users/middleware';
+import { GetOrderItemDto } from './orders.dto';
 import { OrdersService } from './orders.service';
 
 @Controller('orders')
@@ -51,6 +52,34 @@ export class OrdersController {
     return reply({ res, results: orders });
   }
 
+  /** Get OrderItems */
+  @Get(`/order-items`)
+  @UseGuards(JwtAuthGuard)
+  async findAllOrderItems(
+    @Res() res,
+    @Req() req,
+    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() searchQuery: SearchQueryDto,
+    @Query() query: GetOrderItemDto,
+  ) {
+    const { orderId, organizationSellerId, organizationBeyerId, model } = query;
+    const { search } = searchQuery;
+
+    const { take, page, sort } = requestPaginationDto;
+    const pagination: PaginationType = addPagination({ page, take, sort });
+
+    const orderItems = await this.orderItemsService.findAll({
+      search,
+      pagination,
+      orderId,
+      model,
+      organizationBeyerId,
+      organizationSellerId,
+    });
+
+    return reply({ res, results: orderItems });
+  }
+
   /** Create Faq */
   @Post(`/`)
   @UseGuards(JwtAuthGuard)
@@ -74,8 +103,8 @@ export class OrdersController {
         currency: order?.currency,
         quantity: Number(cart?.quantity),
         percentDiscount: cart?.product?.discount?.percent,
-        price: Number(cart?.product?.price),
-        priceDiscount: Number(cart?.product?.priceDiscount),
+        price: Number(cart?.product?.price) * 100,
+        priceDiscount: Number(cart?.product?.priceDiscount) * 100,
         organizationBeyerId: user?.organizationId,
         organizationSellerId: cart?.product?.organizationId,
         model: cart?.model,

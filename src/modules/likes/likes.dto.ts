@@ -1,5 +1,8 @@
 import { User } from '../../models/User';
-import { FilterQueryType, filterQueryTypeArrays } from '../../app/utils/search-query/search-query.dto';
+import {
+  FilterQueryType,
+  filterQueryTypeArrays,
+} from '../../app/utils/search-query/search-query.dto';
 import {
   IsString,
   IsNotEmpty,
