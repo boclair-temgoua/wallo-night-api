@@ -5,15 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Cart } from '../../models/Cart';
-import { Repository, Brackets } from 'typeorm';
+import { Repository } from 'typeorm';
 import { useCatch } from '../../app/utils/use-catch';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { generateNumber } from '../../app/utils/commons';
+import { Cart } from '../../models/Cart';
 import {
+  CartResponse,
   CreateCartsOptions,
-  GetOneCartsSelections,
   GetCartsSelections,
+  GetOneCartsSelections,
   UpdateCartsOptions,
   UpdateCartsSelections,
 } from './cats.type';
@@ -25,8 +24,16 @@ export class CartsService {
     private driver: Repository<Cart>,
   ) {}
 
-  async findAll(selections: GetCartsSelections): Promise<any> {
-    const { userId, productId, status, cartOrderId, ipLocation } = selections;
+  async findAll(selections: GetCartsSelections): Promise<CartResponse> {
+    const {
+      userId,
+      productId,
+      status,
+      cartOrderId,
+      ipLocation,
+      currency,
+      organizationId,
+    } = selections;
 
     let query = this.driver
       .createQueryBuilder('cart')
@@ -34,23 +41,50 @@ export class CartsService {
       .addSelect('cart.quantity', 'quantity')
       .addSelect('cart.productId', 'productId')
       .addSelect('cart.userId', 'userId')
-      .addSelect('cart.organizationId', 'organizationId')
+      .addSelect('cart.model', 'model')
+      .addSelect('cart.organizationId', 'cardOrganizationId')
       .addSelect(
-        /*sql*/ `
-          CASE
-          WHEN ("discount"."expiredAt" >= now()::date
-          AND "discount"."deletedAt" IS NULL
-          AND "discount"."enableExpiredAt" IS TRUE
-          AND "product"."enableDiscount" IS TRUE) THEN
-          CAST(("product"."price" - (("product"."price"  * "cart"."quantity") * "discount"."percent") / 100) AS INT)
-          WHEN ("discount"."deletedAt" IS NULL
-          AND "discount"."enableExpiredAt" IS FALSE
-          AND "product"."enableDiscount" IS TRUE) THEN
-          CAST(("product"."price" - (("product"."price" * "cart"."quantity") * "discount"."percent") / 100) AS INT)
-          ELSE "product"."price" * "cart"."quantity"
-          END
-      `,
-        'priceTotalProduct',
+        /*sql*/ `jsonb_build_object(
+          'fullName', "profile"."fullName",
+          'firstName', "profile"."firstName",
+          'lastName', "profile"."lastName",
+          'image', "profile"."image",
+          'color', "profile"."color",
+          'userId', "user"."id",
+          'username', "user"."username"
+          ) AS "profileVendor"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "product"."id", "upl"."uploadableId"
+          ) AS "uploadsImages"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."uploadType" IN ('FILE')
+          GROUP BY "product"."id", "upl"."uploadableId"
+          ) AS "uploadsFiles"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -59,73 +93,48 @@ export class CartsService {
               'slug', "product"."slug",
               'productType', "product"."productType",
               'price', "product"."price",
+              'organizationId', "product"."organizationId",
               'currency', jsonb_build_object(
                 'symbol', "currency"."symbol",
                 'name', "currency"."name",
                 'code', "currency"."code"
               ),
               'priceDiscount', CASE
-                WHEN ("discount"."expiredAt" >= now()::date
-                AND "discount"."deletedAt" IS NULL
-                AND "discount"."enableExpiredAt" IS TRUE
-                AND "product"."enableDiscount" IS TRUE) THEN
-                CAST(("product"."price" - (("product"."price" * "cart"."quantity") * "discount"."percent") / 100) AS INT)
-                WHEN ("discount"."deletedAt" IS NULL
-                AND "discount"."enableExpiredAt" IS FALSE
-                AND "product"."enableDiscount" IS TRUE) THEN
-                CAST(("product"."price" - (("product"."price" * "cart"."quantity") * "discount"."percent") / 100) AS INT)
-                ELSE "product"."price" * "cart"."quantity"
-                END,
+              WHEN ("discount"."expiredAt" >= now()::date
+              AND "discount"."deletedAt" IS NULL
+              AND "discount"."enableExpiredAt" IS TRUE
+              AND "product"."enableDiscount" IS TRUE) THEN
+              CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+              WHEN ("discount"."deletedAt" IS NULL
+              AND "discount"."enableExpiredAt" IS FALSE
+              AND "product"."enableDiscount" IS TRUE) THEN
+              CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
+              ELSE "product"."price"
+              END,
               'discount', jsonb_build_object(
                 'enableExpiredAt', "discount"."enableExpiredAt",
                 'expiredAt', "discount"."expiredAt",
                 'percent', "discount"."percent",
                 'isValid', CASE WHEN ("discount"."expiredAt" >= now()::date
                 AND "discount"."deletedAt" IS NULL
-                AND "discount"."enableExpiredAt" IS TRUE) THEN true 
+                OR "discount"."expiredAt" IS NULL) THEN true 
                 WHEN ("discount"."expiredAt" < now()::date
-                AND "discount"."deletedAt" IS NULL
-                AND "discount"."enableExpiredAt" IS TRUE) THEN false
+                AND "discount"."deletedAt" IS NULL) THEN false
                 ELSE false
                 END
             )
           ) AS "product"`,
       )
-      // .addSelect(
-      //   /*sql*/ `jsonb_build_object(
-      //     'id', "product"."id",
-      //     'title', "product"."title",
-      //     'description', "product"."description",
-      //     'slug', "product"."slug",
-      //     'priceNoDiscount', "product"."price",
-      //     'price',  CASE
-      //     WHEN ("discount"."expiredAt" >= now()::date
-      //     AND "discount"."deletedAt" IS NULL
-      //     AND "discount"."isActive" IS TRUE) THEN
-      //     CAST(("product"."price" - ("product"."price" * "discount"."percent") / 100) AS INT)
-      //     WHEN ("discount"."expiredAt" < now()::date
-      //     AND "discount"."deletedAt" IS NULL
-      //     AND "discount"."isActive" IS TRUE) THEN "product"."price"
-      //     ELSE "product"."price"
-      //     END,
-      //     'category', jsonb_build_object(
-      //       'slug', "category"."slug",
-      //       'name', "category"."name",
-      //       'color', "category"."color"
-      //       ),
-      //     'currency', jsonb_build_object(
-      //       'code', "currency"."code",
-      //       'symbol', "currency"."symbol"
-      //       )
-      // ) AS "product"`,
-      // )
       .addSelect('cart.createdAt', 'createdAt')
       .where('cart.deletedAt IS NULL')
       .andWhere('product.deletedAt IS NULL')
       .leftJoin('cart.product', 'product')
       .leftJoin('product.currency', 'currency')
       .leftJoin('product.category', 'category')
-      .leftJoin('product.discount', 'discount');
+      .leftJoin('product.discount', 'discount')
+      .leftJoin('product.user', 'user')
+      .leftJoin('user.profile', 'profile');
+
     if (status) {
       query = query.andWhere('cart.status = :status', {
         status,
@@ -142,6 +151,16 @@ export class CartsService {
       query = query.andWhere('cart.ipLocation = :ipLocation', { ipLocation });
     }
 
+    if (currency) {
+      query = query.andWhere('cart.currency = :currency', { currency });
+    }
+
+    if (organizationId) {
+      query = query.andWhere('cart.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+
     if (userId) {
       query = query.andWhere('cart.userId = :userId', {
         userId,
@@ -154,20 +173,19 @@ export class CartsService {
       });
     }
 
-    const [errorRowCount, rowCount] = await useCatch(query.getCount());
-    if (errorRowCount) throw new NotFoundException(errorRowCount);
-
-    const [error, carts] = await useCatch(
-      query.orderBy('cart.createdAt', 'DESC').getRawMany(),
-    );
-    if (error) throw new NotFoundException(error);
-
-    const totalPrice = carts.reduce(
-      (total, item) => total + Number(item?.priceTotalProduct),
+    const carts = await query.orderBy('cart.createdAt', 'DESC').getRawMany();
+    const totalPriceDiscount = carts?.reduce(
+      (acc, item) =>
+        acc + Number(item?.product?.priceDiscount) * Number(item?.quantity),
       0,
     );
-    const totalQuantity = carts.reduce(
-      (total, item) => total + Number(item.quantity),
+    const totalPriceNoDiscount = carts?.reduce(
+      (acc, item) =>
+        acc + Number(item?.product?.price) * Number(item?.quantity),
+      0,
+    );
+    const totalQuantity = carts?.reduce(
+      (acc, item) => acc + Number(item?.quantity),
       0,
     );
 
@@ -175,16 +193,26 @@ export class CartsService {
 
     return {
       summary: {
-        totalQuantity: totalQuantity,
-        totalPrice: totalPrice,
-        // totalPriceWithCurrency,
+        totalQuantity: totalQuantity ?? 0,
+        totalPriceDiscount: totalPriceDiscount ?? 0,
+        totalPriceNoDiscount: totalPriceNoDiscount ?? 0,
+        currency: carts[0]?.product?.currency?.code ?? '',
+        userId: carts[0]?.userId ?? '',
       },
       cartItems: carts,
     };
   }
 
   async findOneBy(selections: GetOneCartsSelections): Promise<Cart> {
-    const { cartId, userId, productId, cartOrderId, status } = selections;
+    const {
+      cartId,
+      userId,
+      productId,
+      cartOrderId,
+      organizationId,
+      currency,
+      status,
+    } = selections;
     let query = this.driver
       .createQueryBuilder('cart')
       .select('cart.id', 'id')
@@ -221,9 +249,19 @@ export class CartsService {
       });
     }
 
+    if (currency) {
+      query = query.andWhere('cart.currency = :currency', { currency });
+    }
+
     if (status) {
       query = query.andWhere('cart.status = :status', {
         status,
+      });
+    }
+
+    if (userId) {
+      query = query.andWhere('cart.organizationId = :organizationId', {
+        organizationId,
       });
     }
 
@@ -250,12 +288,16 @@ export class CartsService {
       cartOrderId,
       organizationId,
       productId,
+      currency,
+      model,
     } = options;
 
     const cart = new Cart();
     cart.userId = userId;
     cart.quantity = quantity;
     cart.productId = productId;
+    cart.currency = currency;
+    cart.model = model;
     cart.ipLocation = ipLocation;
     cart.cartOrderId = cartOrderId;
     cart.organizationId = organizationId;

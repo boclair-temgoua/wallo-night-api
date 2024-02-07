@@ -10,14 +10,26 @@ import {
 
 import { BaseDeleteEntity } from '../app/databases/common';
 import { ProductStatus } from '../app/utils/pagination';
-import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
+import {
+  FilterQueryType,
+  WhoCanSeeType,
+  filterQueryTypeArrays,
+  whoCanSeeTypeArrays,
+} from '../app/utils/search-query';
 import {
   ProductType,
   productTypeArrays,
 } from '../modules/products/products.dto';
 import { Discount } from './Discount';
-import { OrderProduct } from './OrderProduct';
-import { Cart, Category, Comment, Currency, Organization, User } from './index';
+import {
+  Cart,
+  Category,
+  Comment,
+  Currency,
+  OrderItem,
+  Organization,
+  User,
+} from './index';
 
 @Entity('product')
 export class Product extends BaseDeleteEntity {
@@ -41,6 +53,9 @@ export class Product extends BaseDeleteEntity {
 
   @Column({ type: 'enum', enum: whoCanSeeTypeArrays, default: 'PUBLIC' })
   whoCanSee?: WhoCanSeeType;
+
+  @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'PRODUCT' })
+  model?: FilterQueryType;
 
   @Column({ nullable: true })
   urlRedirect: string;
@@ -116,6 +131,6 @@ export class Product extends BaseDeleteEntity {
   @OneToMany(() => Comment, (comment) => comment.product)
   comments?: Comment[];
 
-  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
-  orderProducts: OrderProduct[];
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
+  orderItems: OrderItem[];
 }

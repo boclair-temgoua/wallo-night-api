@@ -1,16 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CartOrder } from '../../models/CartOrder';
-import { getRandomElement } from '../../app/utils/array/get-random-element';
 import { Repository } from 'typeorm';
+import { useCatch } from '../../app/utils/use-catch';
+import { CartOrder } from '../../models/CartOrder';
 import {
   CreateCartOrderOptions,
   GetOneCartOrderSelections,
   UpdateCartOrderOptions,
   UpdateCartOrdersSelections,
 } from './cart-orders.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { colorsArrays } from '../../app/utils/commons';
 
 @Injectable()
 export class CartOrdersService {
@@ -26,8 +24,23 @@ export class CartOrdersService {
       .select('cartOrder.id', 'id')
       .addSelect('cartOrder.userId', 'userId')
       .addSelect('cartOrder.organizationId', 'organizationId')
+      .addSelect('cartOrder.model', 'model')
       .addSelect('cartOrder.createdAt', 'createdAt')
-      .where('cartOrder.deletedAt IS NULL');
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+          'fullName', "profile"."fullName",
+          'firstName', "profile"."firstName",
+          'lastName', "profile"."lastName",
+          'image', "profile"."image",
+          'color', "profile"."color",
+          'userId', "user"."id",
+          'username', "user"."username"
+          ) AS "profileVendor"`,
+      )
+      .where('cartOrder.deletedAt IS NULL')
+      .leftJoin('cartOrder.organization', 'organization')
+      .leftJoin('organization.user', 'user')
+      .leftJoin('user.profile', 'profile');
 
     if (cartOrderId) {
       query = query.andWhere('cartOrder.id = :id', { id: cartOrderId });
@@ -50,10 +63,11 @@ export class CartOrdersService {
 
   /** Create one CartOrder to the database. */
   async createOne(options: CreateCartOrderOptions): Promise<CartOrder> {
-    const { userId, organizationId } = options;
+    const { userId, organizationId, model } = options;
 
     const cartOrder = new CartOrder();
     cartOrder.userId = userId;
+    cartOrder.model = model;
     cartOrder.organizationId = organizationId;
 
     const query = this.driver.save(cartOrder);

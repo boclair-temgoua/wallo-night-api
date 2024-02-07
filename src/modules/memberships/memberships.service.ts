@@ -39,11 +39,23 @@ export class MembershipsService {
       .addSelect('membership.messageWelcome', 'messageWelcome')
       .addSelect('membership.currencyId', 'currencyId')
       .addSelect('membership.userId', 'userId')
+      .addSelect('membership.model', 'model')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'code', "currency"."code",
           'symbol', "currency"."symbol"
         ) AS "currency"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'fullName', "profile"."fullName",
+              'firstName', "profile"."firstName",
+              'lastName', "profile"."lastName",
+              'image', "profile"."image",
+              'color', "profile"."color",
+              'userId', "user"."id",
+              'username', "user"."username"
+          ) AS "profile"`,
       )
       .addSelect(
         /*sql*/ `(
@@ -53,6 +65,7 @@ export class MembershipsService {
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "membership"."id"
+          AND "upl"."membershipId" = "membership"."id"
           AND "upl"."deletedAt" IS NULL
           AND "upl"."model" IN ('MEMBERSHIP')
           AND "upl"."uploadType" IN ('IMAGE')
@@ -67,6 +80,7 @@ export class MembershipsService {
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "membership"."id"
+          AND "upl"."membershipId" = "membership"."id"
           AND "upl"."deletedAt" IS NULL
           AND "upl"."model" IN ('MEMBERSHIP')
           AND "upl"."uploadType" IN ('FILE')
@@ -86,6 +100,9 @@ export class MembershipsService {
       //     ) AS "contribution"`,
       // )
       .where('membership.deletedAt IS NULL')
+      .leftJoin('membership.organization', 'organization')
+      .leftJoin('organization.user', 'user')
+      .leftJoin('user.profile', 'profile')
       .leftJoin('membership.currency', 'currency');
 
     if (userId) {
@@ -146,26 +163,13 @@ export class MembershipsService {
       .addSelect('membership.price', 'price')
       .addSelect('membership.messageWelcome', 'messageWelcome')
       .addSelect('membership.currencyId', 'currencyId')
+      .addSelect('membership.model', 'model')
       .addSelect('membership.userId', 'userId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'code', "currency"."code",
           'symbol', "currency"."symbol"
         ) AS "currency"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-          SELECT array_agg(jsonb_build_object(
-            'name', "upl"."name",
-            'path', "upl"."path"
-          )) 
-          FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "membership"."id"
-          AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('MEMBERSHIP')
-          AND "upl"."uploadType" IN ('IMAGE')
-          GROUP BY "membership"."id", "upl"."uploadableId"
-          ) AS "uploadsImage"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -186,6 +190,22 @@ export class MembershipsService {
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "membership"."id"
+          AND "upl"."membershipId" = "membership"."id"
+          AND "upl"."deletedAt" IS NULL
+          AND "upl"."model" IN ('MEMBERSHIP')
+          AND "upl"."uploadType" IN ('IMAGE')
+          GROUP BY "membership"."id", "upl"."uploadableId"
+          ) AS "uploadsImage"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+          SELECT array_agg(jsonb_build_object(
+            'name', "upl"."name",
+            'path', "upl"."path"
+          )) 
+          FROM "upload" "upl"
+          WHERE "upl"."uploadableId" = "membership"."id"
+          AND "upl"."membershipId" = "membership"."id"
           AND "upl"."deletedAt" IS NULL
           AND "upl"."model" IN ('MEMBERSHIP')
           AND "upl"."uploadType" IN ('FILE')

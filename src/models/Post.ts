@@ -9,7 +9,12 @@ import {
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { ProductStatus } from '../app/utils/pagination';
-import { WhoCanSeeType, whoCanSeeTypeArrays } from '../app/utils/search-query';
+import {
+  FilterQueryType,
+  WhoCanSeeType,
+  filterQueryTypeArrays,
+  whoCanSeeTypeArrays,
+} from '../app/utils/search-query';
 import { PostType, postTypeArrays } from '../modules/posts/posts.type';
 import { User } from './User';
 import { Album, Category, Comment, Organization } from './index';
@@ -36,6 +41,9 @@ export class Post extends BaseDeleteEntity {
 
   @Column({ type: 'enum', enum: postTypeArrays, default: 'ARTICLE' })
   type?: PostType;
+
+  @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'POST' })
+  model?: FilterQueryType;
 
   @Column({ default: 'ACTIVE' })
   status?: ProductStatus;

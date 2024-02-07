@@ -45,6 +45,7 @@ export class ProductsService {
       .addSelect('product.enableLimitSlot', 'enableLimitSlot')
       .addSelect('product.enableDiscount', 'enableDiscount')
       .addSelect('product.discountId', 'discountId')
+      .addSelect('product.model', 'model')
       .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -76,10 +77,13 @@ export class ProductsService {
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
-            'path', "upl"."path"
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."productId" = "product"."id"
           AND "upl"."deletedAt" IS NULL
           AND "upl"."model" IN ('PRODUCT')
           AND "upl"."uploadType" IN ('IMAGE')
@@ -90,10 +94,13 @@ export class ProductsService {
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
-            'path', "upl"."path"
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."productId" = "product"."id"
           AND "upl"."deletedAt" IS NULL
           AND "upl"."model" IN ('PRODUCT')
           AND "upl"."uploadType" IN ('FILE')
@@ -204,6 +211,7 @@ export class ProductsService {
       .addSelect('product.enableDiscount', 'enableDiscount')
       .addSelect('product.discountId', 'discountId')
       .addSelect('product.organizationId', 'organizationId')
+      .addSelect('product.model', 'model')
       .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -235,10 +243,14 @@ export class ProductsService {
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
-            'path', "upl"."path"
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."productId" = "product"."id"
+          AND "upl"."productId" = "product"."id"
           AND "upl"."deletedAt" IS NULL
           AND "upl"."model" IN ('PRODUCT')
           AND "upl"."uploadType" IN ('IMAGE')
@@ -249,10 +261,14 @@ export class ProductsService {
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
-            'path', "upl"."path"
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "product"."id"
+          AND "upl"."productId" = "product"."id"
+          AND "upl"."productId" = "product"."id"
           AND "upl"."deletedAt" IS NULL
           AND "upl"."model" IN ('PRODUCT')
           AND "upl"."uploadType" IN ('FILE')
@@ -368,7 +384,7 @@ export class ProductsService {
     product.slug = `${Slug(title)}-${generateNumber(4)}`;
     product.description = description;
     product.userId = userId;
-    product.discountId = isNotUndefined(discountId) ? categoryId : null;
+    product.discountId = isNotUndefined(discountId) ? discountId : null;
     product.categoryId = isNotUndefined(categoryId) ? categoryId : null;
 
     const query = this.driver.save(product);
@@ -437,7 +453,7 @@ export class ProductsService {
     product.urlMedia = urlMedia;
     product.description = description;
     product.deletedAt = deletedAt;
-    product.discountId = isNotUndefined(discountId) ? categoryId : null;
+    product.discountId = isNotUndefined(discountId) ? discountId : null;
     product.categoryId = isNotUndefined(categoryId) ? categoryId : null;
 
     const query = this.driver.save(product);

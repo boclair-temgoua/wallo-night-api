@@ -82,8 +82,10 @@ export class CartsController {
 
     const findOneProductCart = await this.cartsService.findOneBy({
       productId,
-      userId: user?.id,
       status: 'ADDED',
+      userId: user?.id,
+      currency: findOneProduct?.currency?.code,
+      organizationId: findOneProduct?.organizationId,
     });
 
     if (findOneProductCart) {
@@ -100,9 +102,11 @@ export class CartsController {
       await this.cartsService.createOne({
         quantity,
         productId,
-        ipLocation: ipLocation,
         userId: user?.id,
+        ipLocation: ipLocation,
         cartOrderId: findOneCartOrder?.id,
+        model: findOneProduct?.model,
+        currency: findOneProduct?.currency?.code,
         organizationId: findOneProduct?.organizationId,
       });
     }

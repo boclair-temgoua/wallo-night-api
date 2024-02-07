@@ -9,9 +9,12 @@ import {
 
 import { BaseDeleteEntity } from '../app/databases/common';
 import { ProductStatus } from '../app/utils/pagination';
+import {
+  FilterQueryType,
+  filterQueryTypeArrays,
+} from '../app/utils/search-query';
 import { Currency } from './Currency';
-import { OrderProduct } from './OrderProduct';
-import { Cart, Comment, Discount, User } from './index';
+import { Cart, Comment, Discount, OrderItem, User } from './index';
 @Entity('commission')
 export class Commission extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -31,6 +34,9 @@ export class Commission extends BaseDeleteEntity {
 
   @Column({ type: 'text', nullable: true })
   description: string;
+
+  @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'COMMISSION' })
+  model?: FilterQueryType;
 
   @Column({ type: 'boolean', default: false })
   enableLimitSlot: boolean;
@@ -74,6 +80,6 @@ export class Commission extends BaseDeleteEntity {
   @OneToMany(() => Cart, (cart) => cart.product)
   carts: Cart[];
 
-  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
-  orderProducts: OrderProduct[];
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.user)
+  orderItems?: OrderItem[];
 }

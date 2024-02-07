@@ -24,6 +24,8 @@ import { FollowsModule } from './modules/follows/follows.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { MediaModule } from './modules/media/media.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
+import { OrderItemsModule } from './modules/order-items/order-items.module';
+import { OrdersModule } from './modules/orders/orders.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { PostsModule } from './modules/posts/posts.module';
@@ -68,6 +70,8 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     PaymentsModule,
     UploadsModule,
     AlbumsModule,
+    OrdersModule,
+    OrderItemsModule,
     CartOrdersModule,
     OrganizationsModule,
     SubscribesModule,

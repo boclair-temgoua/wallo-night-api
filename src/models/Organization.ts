@@ -9,6 +9,7 @@ import {
 import { BaseEntity } from '../app/databases/common';
 import { Payment } from './Payment';
 import {
+  CartOrder,
   Comment,
   Membership,
   Post,
@@ -75,4 +76,7 @@ export class Organization extends BaseEntity {
 
   @OneToMany(() => Comment, (comment) => comment.organization)
   comments?: Comment[];
+
+  @OneToMany(() => CartOrder, (cartOrder) => cartOrder.organization)
+  cartOrders?: CartOrder[];
 }

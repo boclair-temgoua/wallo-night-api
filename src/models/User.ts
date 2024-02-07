@@ -23,6 +23,8 @@ import {
   Contributor,
   Discount,
   Donation,
+  Order,
+  OrderItem,
   Organization,
   Post,
   Product,
@@ -101,6 +103,12 @@ export class User extends BaseDeleteEntity {
 
   @OneToMany(() => Product, (product) => product.user)
   products?: Product[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders?: Order[];
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.user)
+  orderItems?: OrderItem[];
 
   @OneToMany(() => Transaction, (transaction) => transaction.userSend, {
     onDelete: 'CASCADE',

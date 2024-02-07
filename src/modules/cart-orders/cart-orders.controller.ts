@@ -1,16 +1,8 @@
-import {
-  Controller,
-  ParseUUIDPipe,
-  UseGuards,
-  Res,
-  Get,
-  Req,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { CartOrdersService } from './cart-orders.service';
 import { JwtAuthGuard } from '../users/middleware';
 import { CartOrdersDto } from './cart-orders.dto';
+import { CartOrdersService } from './cart-orders.service';
 
 @Controller('cart-orders')
 export class CartOrderController {

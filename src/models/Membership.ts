@@ -9,6 +9,10 @@ import {
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { ProductStatus } from '../app/utils/pagination';
+import {
+  FilterQueryType,
+  filterQueryTypeArrays,
+} from '../app/utils/search-query';
 import { Contribution, Currency, Organization, Subscribe, User } from './index';
 
 @Entity('membership')
@@ -33,6 +37,9 @@ export class Membership extends BaseDeleteEntity {
 
   @Column({ type: 'text', nullable: true })
   messageWelcome: string;
+
+  @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'MEMBERSHIP' })
+  model?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;

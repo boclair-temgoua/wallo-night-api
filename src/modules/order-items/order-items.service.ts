@@ -1,0 +1,205 @@
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { OrderItem } from '../../models';
+
+import { generateNumber } from '../../app/utils/commons';
+import {
+  CreateOrderItemOptions,
+  GetOneOrderItemSelections,
+  GetOrderItemsSelections,
+  UpdateOrderItemOptions,
+  UpdateOrderItemSelections,
+} from './order-items.type';
+
+@Injectable()
+export class OrderItemsService {
+  constructor(
+    @InjectRepository(OrderItem)
+    private driver: Repository<OrderItem>,
+  ) {}
+
+  async findAll(selections: GetOrderItemsSelections): Promise<any> {
+    const { search, pagination, userId, orderId, commissionId, productId } =
+      selections;
+
+    let query = this.driver
+      .createQueryBuilder('orderItem')
+      .select('orderItem.id', 'id')
+      .addSelect('orderItem.quantity', 'quantity')
+      .addSelect('orderItem.status', 'status')
+      .addSelect('orderItem.percentDiscount', 'percentDiscount')
+      .addSelect('orderItem.price', 'price')
+      .addSelect('orderItem.priceDiscount', 'priceDiscount')
+      .addSelect('orderItem.organizationBeyerId', 'organizationBeyerId')
+      .addSelect('orderItem.organizationSellerId', 'organizationSellerId')
+      .addSelect('orderItem.model', 'model')
+      .addSelect('orderItem.currency', 'currency')
+      .addSelect('orderItem.commissionId', 'commissionId')
+      .addSelect('orderItem.productId', 'productId')
+      .addSelect('orderItem.orderId', 'orderId')
+      .addSelect('order.orderNumber', 'orderNumber')
+      .addSelect('orderItem.userId', 'userId')
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'fullName', "profile"."fullName",
+              'firstName', "profile"."firstName",
+              'lastName', "profile"."lastName",
+              'image', "profile"."image",
+              'color', "profile"."color",
+              'userId', "user"."id",
+              'username', "user"."username"
+          ) AS "profile"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'title', "product"."title",
+              'slug', "product"."slug",
+              'id', "product"."id"
+          ) AS "product"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
+              'id', "commission"."id",
+              'title', "commission"."title",
+              'slug', "commission"."slug"
+          ) AS "commission"`,
+      )
+      .where('orderItem.deletedAt IS NULL')
+      .leftJoin('orderItem.order', 'order')
+      .leftJoin('orderItem.product', 'product')
+      .leftJoin('orderItem.commission', 'commission')
+      .leftJoin('orderItem.user', 'user')
+      .leftJoin('user.profile', 'profile');
+
+    if (userId) {
+      query = query.andWhere('order.userId = :userId', { userId });
+    }
+
+    if (orderId) {
+      query = query.andWhere('order.orderId = :orderId', { orderId });
+    }
+
+    if (productId) {
+      query = query.andWhere('order.productId = :productId', { productId });
+    }
+
+    if (commissionId) {
+      query = query.andWhere('order.commissionId = :commissionId', {
+        commissionId,
+      });
+    }
+
+    const [errorRowCount, rowCount] = await useCatch(query.getCount());
+    if (errorRowCount) throw new NotFoundException(errorRowCount);
+
+    const [error, orderProducts] = await useCatch(
+      query
+        .orderBy('order.createdAt', pagination?.sort)
+        .limit(pagination.limit)
+        .offset(pagination.offset)
+        .getRawMany(),
+    );
+    if (error) throw new NotFoundException(error);
+
+    return withPagination({
+      pagination,
+      rowCount,
+      value: orderProducts,
+    });
+  }
+
+  async findOneBy(selections: GetOneOrderItemSelections): Promise<OrderItem> {
+    const { orderItemId } = selections;
+    let query = this.driver
+      .createQueryBuilder('orderItem')
+      .where('orderItem.deletedAt IS NULL');
+
+    if (orderItemId) {
+      query = query.andWhere('orderItem.id = :id', { id: orderItemId });
+    }
+
+    const [error, result] = await useCatch(query.getOne());
+    if (error)
+      throw new HttpException('orderItem not found', HttpStatus.NOT_FOUND);
+
+    return result;
+  }
+
+  /** Create on to the database. */
+  async createOne(options: CreateOrderItemOptions): Promise<OrderItem> {
+    const {
+      userId,
+      currency,
+      quantity,
+      percentDiscount,
+      price,
+      priceDiscount,
+      organizationBeyerId,
+      organizationSellerId,
+      model,
+      status,
+      commissionId,
+      productId,
+      orderId,
+    } = options;
+
+    const orderItem = new OrderItem();
+    orderItem.userId = userId;
+    orderItem.currency = currency;
+    orderItem.quantity = quantity;
+    orderItem.percentDiscount = percentDiscount;
+    orderItem.price = price;
+    orderItem.orderNumber = generateNumber(10);
+    orderItem.priceDiscount = priceDiscount;
+    orderItem.organizationBeyerId = organizationBeyerId;
+    orderItem.organizationSellerId = organizationSellerId;
+    orderItem.model = model;
+    orderItem.status = status;
+    orderItem.commissionId = commissionId;
+    orderItem.productId = productId;
+    orderItem.orderId = orderId;
+
+    const query = this.driver.save(orderItem);
+
+    const [error, result] = await useCatch(query);
+    if (error) throw new NotFoundException(error);
+
+    return result;
+  }
+
+  /** Update one OrderProduct to the database. */
+  async updateOne(
+    selections: UpdateOrderItemSelections,
+    options: UpdateOrderItemOptions,
+  ): Promise<OrderItem> {
+    const { orderItemId } = selections;
+    const { deletedAt } = options;
+
+    let findQuery = this.driver.createQueryBuilder('orderItem');
+
+    if (orderItemId) {
+      findQuery = findQuery.where('orderItem.id = :id', {
+        id: orderItemId,
+      });
+    }
+
+    const [errorFind, orderItem] = await useCatch(findQuery.getOne());
+    if (errorFind) throw new NotFoundException(errorFind);
+
+    orderItem.deletedAt = deletedAt;
+
+    const query = this.driver.save(orderItem);
+    const [errorUp, result] = await useCatch(query);
+    if (errorUp) throw new NotFoundException(errorUp);
+
+    return result;
+  }
+}

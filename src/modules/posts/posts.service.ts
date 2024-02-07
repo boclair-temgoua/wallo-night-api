@@ -7,14 +7,14 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import {
+  Slug,
   generateLongUUID,
   generateNumber,
   isNotUndefined,
-  Slug,
 } from '../../app/utils/commons/generate-random';
 import {
-  withPagination,
   WithPaginationResponse,
+  withPagination,
 } from '../../app/utils/pagination/with-pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { Post } from '../../models/Post';
@@ -63,6 +63,7 @@ export class PostsService {
       .addSelect('post.organizationId', 'organizationId')
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.categoryId', 'categoryId')
+      .addSelect('post.model', 'model')
       .addSelect('post.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -109,10 +110,13 @@ export class PostsService {
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
-            'path', "upl"."path"
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "post"."id"
+          AND "upl"."postId" = "post"."id"
           AND "upl"."deletedAt" IS NULL
           AND "upl"."model" IN ('POST')
           AND "upl"."uploadType" IN ('IMAGE')
@@ -123,10 +127,13 @@ export class PostsService {
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
-            'path', "upl"."path"
+            'path', "upl"."path",
+            'model', "upl"."model",
+            'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
           WHERE "upl"."uploadableId" = "post"."id"
+          AND "upl"."postId" = "post"."id"
           AND "upl"."deletedAt" IS NULL
           AND "upl"."model" IN ('POST')
           AND "upl"."uploadType" IN ('FILE')
@@ -245,6 +252,7 @@ export class PostsService {
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.categoryId', 'categoryId')
       .addSelect('post.createdAt', 'createdAt')
+      .addSelect('post.model', 'model')
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'id', "category"."id",
@@ -290,10 +298,13 @@ export class PostsService {
         /*sql*/ `(
         SELECT array_agg(jsonb_build_object(
           'name', "upl"."name",
-          'path', "upl"."path"
+          'path', "upl"."path",
+          'model', "upl"."model",
+          'uploadType', "upl"."uploadType"
         )) 
         FROM "upload" "upl"
         WHERE "upl"."uploadableId" = "post"."id"
+        AND "upl"."postId" = "post"."id"
         AND "upl"."deletedAt" IS NULL
         AND "upl"."model" IN ('POST')
         AND "upl"."uploadType" IN ('IMAGE')
@@ -304,10 +315,13 @@ export class PostsService {
         /*sql*/ `(
         SELECT array_agg(jsonb_build_object(
           'name', "upl"."name",
-          'path', "upl"."path"
+          'path', "upl"."path",
+          'model', "upl"."model",
+          'uploadType', "upl"."uploadType"
         )) 
         FROM "upload" "upl"
         WHERE "upl"."uploadableId" = "post"."id"
+        AND "upl"."postId" = "post"."id"
         AND "upl"."deletedAt" IS NULL
         AND "upl"."model" IN ('POST')
         AND "upl"."uploadType" IN ('FILE')
