@@ -4,6 +4,10 @@ import {
   FilterQueryType,
   filterQueryTypeArrays,
 } from '../../app/utils/search-query';
+import {
+  OrderItemStatus,
+  orderItemStatusArrays,
+} from '../order-items/order-items.type';
 export type StatusOderProduct = 'ORDERED' | 'DELIVERING';
 
 export class GetOrderItemDto {
@@ -26,4 +30,21 @@ export class GetOrderItemDto {
   @IsString()
   @IsUUID()
   orderId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  userId: string;
+}
+
+export class UpdateOrderItemDto {
+  @IsOptional()
+  @IsString()
+  @IsIn(filterQueryTypeArrays)
+  model: FilterQueryType;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(orderItemStatusArrays)
+  status: OrderItemStatus;
 }

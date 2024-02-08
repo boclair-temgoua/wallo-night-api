@@ -2,7 +2,12 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
   Post,
+  Put,
   Query,
   Req,
   Res,
@@ -18,7 +23,7 @@ import { SearchQueryDto } from '../../app/utils/search-query';
 import { CartsService } from '../cats/cats.service';
 import { OrderItemsService } from '../order-items/order-items.service';
 import { JwtAuthGuard } from '../users/middleware';
-import { GetOrderItemDto } from './orders.dto';
+import { GetOrderItemDto, UpdateOrderItemDto } from './orders.dto';
 import { OrdersService } from './orders.service';
 
 @Controller('orders')
@@ -62,7 +67,13 @@ export class OrdersController {
     @Query() searchQuery: SearchQueryDto,
     @Query() query: GetOrderItemDto,
   ) {
-    const { orderId, organizationSellerId, organizationBeyerId, model } = query;
+    const {
+      orderId,
+      userId,
+      organizationSellerId,
+      organizationBeyerId,
+      model,
+    } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -73,6 +84,7 @@ export class OrdersController {
       pagination,
       orderId,
       model,
+      userId,
       organizationBeyerId,
       organizationSellerId,
     });
@@ -115,5 +127,31 @@ export class OrdersController {
     }
 
     return reply({ res, results: carts.cartItems });
+  }
+
+  /** Create OrderItem */
+  @Put(`/order-items/:orderItemId`)
+  @UseGuards(JwtAuthGuard)
+  async updateOne(
+    @Res() res,
+    @Req() req,
+    @Body() body: UpdateOrderItemDto,
+    @Param('orderItemId', ParseUUIDPipe) orderItemId: string,
+  ) {
+    const { status } = body;
+    const { user } = req;
+    const findOneOrderItem = await this.orderItemsService.findOneBy({
+      orderItemId,
+      organizationSellerId: user?.organizationId,
+    });
+    if (!findOneOrderItem)
+      throw new HttpException(
+        `This order item ${orderItemId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.orderItemsService.updateOne({ orderItemId }, { status });
+
+    return reply({ res, results: 'orderItem updated successfully' });
   }
 }

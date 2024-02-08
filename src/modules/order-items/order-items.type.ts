@@ -27,7 +27,9 @@ export type GetOrderItemsSelections = {
 };
 
 export type GetOneOrderItemSelections = {
-  orderItemId: OrderItem['id'];
+  orderItemId?: OrderItem['id'];
+  organizationSellerId?: OrderItem['organizationSellerId'];
+  organizationBeyerId?: OrderItem['organizationBeyerId'];
 };
 
 export type UpdateOrderItemSelections = {

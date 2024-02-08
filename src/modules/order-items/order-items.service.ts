@@ -71,6 +71,7 @@ export class OrderItemsService {
         /*sql*/ `jsonb_build_object(
               'title', "product"."title",
               'slug', "product"."slug",
+              'productType', "product"."productType",
               'id', "product"."id"
           ) AS "product"`,
       )
@@ -177,13 +178,28 @@ export class OrderItemsService {
   }
 
   async findOneBy(selections: GetOneOrderItemSelections): Promise<OrderItem> {
-    const { orderItemId } = selections;
+    const { orderItemId, organizationBeyerId, organizationSellerId } =
+      selections;
     let query = this.driver
       .createQueryBuilder('orderItem')
       .where('orderItem.deletedAt IS NULL');
 
     if (orderItemId) {
       query = query.andWhere('orderItem.id = :id', { id: orderItemId });
+    }
+
+    if (organizationBeyerId) {
+      query = query.andWhere(
+        'orderItem.organizationBeyerId = :organizationBeyerId',
+        { organizationBeyerId },
+      );
+    }
+
+    if (organizationSellerId) {
+      query = query.andWhere(
+        'orderItem.organizationSellerId = :organizationSellerId',
+        { organizationSellerId },
+      );
     }
 
     const [error, result] = await useCatch(query.getOne());
@@ -241,7 +257,7 @@ export class OrderItemsService {
     options: UpdateOrderItemOptions,
   ): Promise<OrderItem> {
     const { orderItemId } = selections;
-    const { deletedAt } = options;
+    const { deletedAt, status } = options;
 
     let findQuery = this.driver.createQueryBuilder('orderItem');
 
@@ -254,6 +270,7 @@ export class OrderItemsService {
     const [errorFind, orderItem] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
+    orderItem.status = status;
     orderItem.deletedAt = deletedAt;
 
     const query = this.driver.save(orderItem);
