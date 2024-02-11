@@ -6,7 +6,6 @@ import { AppDataSource } from './app/databases/orm';
 import { AppSeedDataSource } from './app/databases/orm/orm-config-seed';
 import { AlbumsModule } from './modules/albums/albums.module';
 import { AuthProvidersModule } from './modules/auth-providers/auth-providers.module';
-import { CampaignsModule } from './modules/campaigns/campaigns.module';
 import { CartOrdersModule } from './modules/cart-orders/cart-orders.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { CartsModule } from './modules/cats/cats.module';
@@ -21,6 +20,7 @@ import { DiscountsModule } from './modules/discounts/discounts.module';
 import { DonationsModule } from './modules/donations/donations.module';
 import { FaqsModule } from './modules/faqs/faqs.module';
 import { FollowsModule } from './modules/follows/follows.module';
+import { JobsModule } from './modules/jobs/jobs.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { MediaModule } from './modules/media/media.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
@@ -56,7 +56,6 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     ResetPasswordsModule,
     ProductsModule,
     DiscountsModule,
-    CampaignsModule,
     CartsModule,
     WalletsModule,
     MediaModule,
@@ -70,6 +69,7 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     PaymentsModule,
     UploadsModule,
     AlbumsModule,
+    JobsModule,
     OrdersModule,
     OrderItemsModule,
     CartOrdersModule,

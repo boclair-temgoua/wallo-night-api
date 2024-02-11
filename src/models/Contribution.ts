@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
-import { Campaign } from './Campaign';
 import { Currency } from './Currency';
 import { Membership } from './Membership';
 import { Transaction } from './Transaction';
@@ -45,14 +44,6 @@ export class Contribution extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.contributors, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
-
-  @Column({ type: 'uuid', nullable: true })
-  campaignId?: string;
-  @ManyToOne(() => Campaign, (campaign) => campaign.contributions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  campaign?: Relation<Campaign>;
 
   @Column({ type: 'uuid', nullable: true })
   membershipId?: string;

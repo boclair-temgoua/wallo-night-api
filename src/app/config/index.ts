@@ -59,6 +59,13 @@ export const config = {
     email: 'info@birevo.com',
   },
   /**
+   * Job
+   */
+  job: {
+    start: process.env.JOB_START ?? 'true',
+  },
+
+  /**
    * Api
    */
   api: {

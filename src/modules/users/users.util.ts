@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { addYearsFormateDDMMYYDate } from '../../app/utils/commons/formate-date';
-import { generateLongUUID } from '../../app/utils/commons/generate-random';
+import { generateNumber } from '../../app/utils/commons/generate-random';
 import { ContributorsService } from '../contributors/contributors.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { DonationsService } from '../donations/donations.service';
@@ -71,7 +71,7 @@ export class UsersUtil {
     });
 
     /** Create User */
-    const usernameGenerate = `${generateLongUUID(8)}`.toLowerCase();
+    const usernameGenerate = `${firstName}-${lastName}-${generateNumber(6)}`;
     const user = await this.usersService.createOne({
       email,
       provider,

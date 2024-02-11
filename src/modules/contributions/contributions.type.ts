@@ -5,7 +5,6 @@ export type GetContributionsSelections = {
   search?: string;
   pagination?: PaginationType;
   userId?: Contribution['userId'];
-  campaignId?: Contribution['campaignId'];
   organizationId?: Contribution['organizationId'];
   currencyId?: Contribution['currencyId'];
 };

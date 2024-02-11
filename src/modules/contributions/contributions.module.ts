@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
-  Campaign,
   Contribution,
   Currency,
   Transaction,
@@ -9,7 +8,6 @@ import {
   Wallet,
 } from '../../models';
 import { BullingService } from '../bulling/bulling.service';
-import { CampaignsService } from '../campaigns/campaigns.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { TransactionsService } from '../transactions/transactions.service';
 import { UsersService } from '../users/users.service';
@@ -21,7 +19,6 @@ import { ContributionsService } from './contributions.service';
   imports: [
     TypeOrmModule.forFeature([
       Contribution,
-      Campaign,
       User,
       Wallet,
       Transaction,
@@ -31,7 +28,6 @@ import { ContributionsService } from './contributions.service';
   controllers: [ContributionsController],
   providers: [
     ContributionsService,
-    CampaignsService,
     UsersService,
     WalletsService,
     BullingService,

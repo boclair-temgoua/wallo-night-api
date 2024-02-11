@@ -22,11 +22,6 @@ export class SearchContributionDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  campaignId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
   userId: string;
 }
 
@@ -43,11 +38,6 @@ export class CreateOneContributionDto {
 
   @IsOptional()
   infoPaymentMethod: any;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsUUID()
-  campaignId: string;
 
   @IsOptional()
   @IsString()

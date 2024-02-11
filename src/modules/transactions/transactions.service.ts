@@ -30,15 +30,8 @@ export class TransactionsService {
   async findAll(
     selections: GetTransactionsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const {
-      search,
-      pagination,
-      model,
-      days,
-      campaignId,
-      userSendId,
-      organizationId,
-    } = selections;
+    const { search, pagination, model, days, userSendId, organizationId } =
+      selections;
 
     let query = this.driver
       .createQueryBuilder('transaction')
@@ -49,7 +42,6 @@ export class TransactionsService {
       .addSelect('transaction.currency', 'currency')
       .addSelect('transaction.description', 'description')
       .addSelect('transaction.model', 'model')
-      .addSelect('transaction.campaignId', 'campaignId')
       .addSelect('transaction.contributionId', 'contributionId')
       .addSelect('transaction.email', 'email')
       .addSelect('transaction.color', 'color')
@@ -59,12 +51,6 @@ export class TransactionsService {
       .addSelect('transaction.organizationId', 'organizationId')
       .addSelect('transaction.amountConvert', 'amountConvert')
       .addSelect('transaction.createdAt', 'createdAt')
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-          'id', "campaign"."id",
-          'title', "campaign"."title"
-      ) AS "campaign"`,
-      )
       .addSelect(
         /*sql*/ `jsonb_build_object(
         'id', "profileSend"."id",
@@ -81,7 +67,6 @@ export class TransactionsService {
       )
       .where('transaction.deletedAt IS NULL')
       .leftJoin('transaction.userSend', 'userSend')
-      .leftJoin('transaction.campaign', 'campaign')
       .leftJoin('userSend.profile', 'profileSend');
 
     if (model) {
@@ -103,12 +88,6 @@ export class TransactionsService {
     if (organizationId) {
       query = query.andWhere('transaction.organizationId = :organizationId', {
         organizationId,
-      });
-    }
-
-    if (campaignId) {
-      query = query.andWhere('transaction.campaignId = :campaignId', {
-        campaignId,
       });
     }
 
@@ -212,7 +191,6 @@ export class TransactionsService {
     const {
       amount,
       currency,
-      campaignId,
       title,
       model,
       userSendId,
@@ -232,7 +210,6 @@ export class TransactionsService {
     transaction.title = title;
     transaction.model = model;
     transaction.currency = currency;
-    transaction.campaignId = campaignId;
     transaction.userSendId = userSendId;
     transaction.amount = amount;
     transaction.type = type;

@@ -10,7 +10,7 @@ import {
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query';
 import { TransactionType } from '../modules/transactions/transactions.type';
-import { Campaign, Contribution, Organization, Subscribe, User } from './index';
+import { Contribution, Organization, Subscribe, User } from './index';
 
 @Entity('transaction')
 export class Transaction extends BaseDeleteEntity {
@@ -57,14 +57,6 @@ export class Transaction extends BaseDeleteEntity {
 
   @Column({ default: 'CARD' })
   type?: TransactionType;
-
-  @Column({ type: 'uuid', nullable: true })
-  campaignId?: string;
-  @ManyToOne(() => Campaign, (campaign) => campaign.transactions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  campaign?: Relation<Campaign>;
 
   @Column({ type: 'uuid', nullable: true })
   userSendId?: string;

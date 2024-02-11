@@ -17,7 +17,6 @@ import { Payment } from './Payment';
 import { Subscribe } from './Subscribe';
 import {
   AuthProvider,
-  Campaign,
   Cart,
   Comment,
   Contributor,
@@ -80,9 +79,6 @@ export class User extends BaseDeleteEntity {
   @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
   @JoinColumn()
   profile?: Profile;
-
-  @OneToMany(() => Campaign, (campaign) => campaign.user)
-  campaigns?: Campaign[];
 
   @OneToMany(() => Subscribe, (subscribe) => subscribe.user)
   subscribes?: Subscribe[];

@@ -16,7 +16,6 @@ import {
 import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { BullingService } from '../bulling/bulling.service';
-import { CampaignsService } from '../campaigns/campaigns.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { TransactionsService } from '../transactions/transactions.service';
 import { JwtAuthGuard } from '../users/middleware';
@@ -24,7 +23,6 @@ import { UsersService } from '../users/users.service';
 import { WalletsService } from '../wallets/wallets.service';
 import {
   CreateOneContributionDonationDto,
-  CreateOneContributionDto,
   SearchContributionDto,
 } from './contributions.dto';
 import { ContributionsService } from './contributions.service';
@@ -35,7 +33,6 @@ export class ContributionsController {
     private readonly usersService: UsersService,
     private readonly bullingService: BullingService,
     private readonly walletsService: WalletsService,
-    private readonly campaignsService: CampaignsService,
     private readonly currenciesService: CurrenciesService,
     private readonly transactionsService: TransactionsService,
     private readonly contributionsService: ContributionsService,
@@ -51,7 +48,7 @@ export class ContributionsController {
     @Query() query: SearchContributionDto,
   ) {
     const { user } = req;
-    const { campaignId, userId } = query;
+    const { userId } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -60,85 +57,11 @@ export class ContributionsController {
     const contributions = await this.contributionsService.findAll({
       search,
       pagination,
-      campaignId,
       userId,
       organizationId: user?.organizationId,
     });
 
     return reply({ res, results: contributions });
-  }
-
-  /** Create campaign */
-  @Post(`/campaign`)
-  async createOneByCampaign(
-    @Res() res,
-    @Req() req,
-    @Body() body: CreateOneContributionDto,
-  ) {
-    const {
-      amount,
-      campaignId,
-      currency,
-      userSendId,
-      meanOfPayment,
-      infoPaymentMethod,
-    } = body;
-
-    // const findOneCampaign = await this.campaignsService.findOneBy({
-    //   campaignId,
-    // });
-    // if (!findOneCampaign)
-    //   throw new HttpException(
-    //     `Campaign ${campaignId} don't exists please change`,
-    //     HttpStatus.NOT_FOUND,
-    //   );
-
-    // const findOneCurrency = await this.currenciesService.findOneBy({
-    //   code: currency,
-    // });
-    // const { amountConvert } = validationAmount({
-    //   amount: amount,
-    //   currency: findOneCurrency,
-    // });
-
-    // /** Create payment stripe */
-    // meanOfPayment === 'CARD' && infoPaymentMethod?.id
-    //   ? await this.bullingService.stripeMethod({
-    //       amount: amountConvert * 100,
-    //       currency: 'EUR',
-    //       fullName: 'Inconnu',
-    //       email: 'email@inconnu.com',
-    //       description: `Contribution campaign ${findOneCampaign?.title}`,
-    //       infoPaymentMethod: infoPaymentMethod,
-    //     })
-    //   : null;
-
-    // /** create contribution */
-    // const contribution = await this.contributionsService.createOne({
-    //   amount: amount * 100,
-    //   campaignId,
-    //   amountConvert: amountConvert * 100,
-    //   currencyId: findOneCurrency?.id,
-    //   type: 'CAMPAIGN',
-    // });
-
-    // /** Create transaction */
-    // await this.transactionsService.createOne({
-    //   contributionId: contribution?.id,
-    //   description: `Contribution campaign ${findOneCampaign?.title}`,
-    //   amount: contribution?.amount,
-    //   userSendId: userSendId,
-    //   campaignId: findOneCampaign?.id,
-    //   organizationId: findOneCampaign?.organizationId,
-    // });
-
-    // /** Update wallet */
-    // await this.walletsService.incrementOne({
-    //   organizationId: findOneCampaign?.organizationId,
-    //   amount: contribution?.amountConvert,
-    // });
-
-    return reply({ res, results: 'contribution save successfully' });
   }
 
   /** Create donation */

@@ -36,7 +36,6 @@ export class PasswordBodyDto {
 
 export type FilterQueryType =
   | 'ORGANIZATION'
-  | 'CAMPAIGN'
   | 'DONATION'
   | 'PRODUCT'
   | 'COMMISSION'
@@ -47,8 +46,6 @@ export type FilterQueryType =
   | 'COMMENT';
 
 export const filterQueryTypeArrays = [
-  'ORGANIZATION',
-  'CAMPAIGN',
   'DONATION',
   'MEMBERSHIP',
   'COMMISSION',

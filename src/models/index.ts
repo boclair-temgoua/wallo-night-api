@@ -1,6 +1,5 @@
 export * from './Album';
 export * from './AuthProvider';
-export * from './Campaign';
 export * from './Cart';
 export * from './CartOrder';
 export * from './Category';

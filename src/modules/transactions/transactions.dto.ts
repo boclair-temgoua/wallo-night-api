@@ -13,11 +13,6 @@ export class FilterTransactionsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  campaignId: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
   userSendId: string;
 
   @IsOptional()

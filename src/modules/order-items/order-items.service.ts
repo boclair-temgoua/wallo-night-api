@@ -72,6 +72,7 @@ export class OrderItemsService {
               'title', "product"."title",
               'slug', "product"."slug",
               'productType', "product"."productType",
+              'messageAfterPayment', "product"."messageAfterPayment",
               'id', "product"."id"
           ) AS "product"`,
       )

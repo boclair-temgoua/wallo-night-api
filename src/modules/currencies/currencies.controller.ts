@@ -1,14 +1,16 @@
-import { Controller, UseGuards, Res, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { CurrenciesService } from './currencies.service';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { currenciesCodeArrays, CurrencySymbolMap } from './currencies.type';
-import { getValueCurrencyLiveApi } from '../integrations/taux-live';
+import { CurrenciesService } from './currencies.service';
+import { CurrenciesUtil } from './currencies.util';
 
 @Controller('currencies')
 export class CurrenciesController {
-  constructor(private readonly currenciesService: CurrenciesService) {}
+  constructor(
+    private readonly currenciesService: CurrenciesService,
+    private readonly currenciesUtil: CurrenciesUtil,
+  ) {}
 
   /** Get all CurrenciesUs */
   @Get(`/`)
@@ -25,33 +27,7 @@ export class CurrenciesController {
   /** Get all CurrenciesUs */
   @Get(`/upgrade`)
   async upgrade(@Res() res, @Query() searchQuery: SearchQueryDto) {
-    const { rates } = await getValueCurrencyLiveApi();
-
-    const currencies = currenciesCodeArrays;
-
-    for (const currency of currenciesCodeArrays) {
-      const newCurrency = currency?.toUpperCase();
-      const findOneCurrency = await this.currenciesService.findOneBy({
-        code: newCurrency,
-      });
-      if (findOneCurrency) {
-        await this.currenciesService.updateOne(
-          { currencyId: findOneCurrency?.id },
-          {
-            amount: Number(rates[newCurrency]) || 0,
-            name: CurrencySymbolMap[newCurrency]?.name,
-            symbol: CurrencySymbolMap[newCurrency]?.symbol,
-          },
-        );
-      } else {
-        await this.currenciesService.createOne({
-          code: newCurrency,
-          amount: Number(rates[newCurrency]) || 0,
-          name: CurrencySymbolMap[newCurrency]?.name,
-          symbol: CurrencySymbolMap[newCurrency]?.symbol,
-        });
-      }
-    }
+    const currencies = await this.currenciesUtil.updateCurrencies();
 
     return reply({ res, results: currencies });
   }

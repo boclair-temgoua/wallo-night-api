@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { config } from '../../../app/config/index';
-import { generateLongUUID } from '../../../app/utils/commons';
+import { generateLongUUID, generateNumber } from '../../../app/utils/commons';
 import { reply } from '../../../app/utils/reply';
 import { AuthProvidersService } from '../../auth-providers/auth-providers.service';
 import { CheckUserService } from '../middleware/check-user.service';
@@ -45,7 +45,7 @@ export class SocialUserController {
     });
     if (!findOnUser)
       throw new HttpException(
-        `user dons't exists please`,
+        `user dons't exists please try again`,
         HttpStatus.NOT_FOUND,
       );
 
@@ -96,7 +96,7 @@ export class SocialUserController {
       password: generateLongUUID(8),
       firstName: family_name,
       lastName: given_name,
-      username: `${given_name}-${family_name}-${generateLongUUID(4)}`,
+      username: `${given_name}-${family_name}-${generateNumber(6)}`,
       image: picture,
     });
 

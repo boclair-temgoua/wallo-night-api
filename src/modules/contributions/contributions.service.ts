@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { Contribution } from '../../models/Contribution';
@@ -27,14 +27,8 @@ export class ContributionsService {
   async findAll(
     selections: GetContributionsSelections,
   ): Promise<GetContributionsSelections | any> {
-    const {
-      userId,
-      search,
-      campaignId,
-      currencyId,
-      organizationId,
-      pagination,
-    } = selections;
+    const { userId, search, currencyId, organizationId, pagination } =
+      selections;
 
     let query = this.driver
       .createQueryBuilder('contribution')
@@ -42,7 +36,6 @@ export class ContributionsService {
       .addSelect('contribution.amount', 'amount')
       .addSelect('contribution.userId', 'userId')
       .addSelect('contribution.type', 'type')
-      .addSelect('contribution.campaignId', 'campaignId')
       .addSelect('contribution.currencyId', 'currencyId')
       .addSelect('contribution.amountConvert', 'amountConvert')
       .addSelect(
@@ -56,31 +49,18 @@ export class ContributionsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
-        'id', "campaign"."id",
-        'title', "campaign"."title"
-    ) AS "campaign"`,
-      )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
           'code', "currency"."code",
           'symbol', "currency"."symbol"
       ) AS "currency"`,
       )
       .where('contribution.deletedAt IS NULL')
       .leftJoin('contribution.user', 'user')
-      .leftJoin('contribution.campaign', 'campaign')
       .leftJoin('contribution.currency', 'currency')
       .leftJoin('user.profile', 'profile');
 
     if (organizationId) {
       query = query.andWhere('contribution.organizationId = :organizationId', {
         organizationId,
-      });
-    }
-
-    if (campaignId) {
-      query = query.andWhere('contribution.campaignId = :campaignId', {
-        campaignId,
       });
     }
 
@@ -92,16 +72,6 @@ export class ContributionsService {
       query = query.andWhere('contribution.currencyId = :currencyId', {
         currencyId,
       });
-    }
-
-    if (search) {
-      query = query.andWhere(
-        new Brackets((qb) => {
-          qb.where('campaign.title ::text ILIKE :search', {
-            search: `%${search}%`,
-          });
-        }),
-      );
     }
 
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
@@ -132,7 +102,6 @@ export class ContributionsService {
       .addSelect('contribution.amount', 'amount')
       .addSelect('contribution.userId', 'userId')
       .addSelect('contribution.type', 'type')
-      .addSelect('contribution.campaignId', 'campaignId')
       .addSelect('contribution.currencyId', 'currencyId')
       .addSelect('contribution.amountConvert', 'amountConvert')
       .addSelect(
@@ -152,7 +121,6 @@ export class ContributionsService {
       )
       .where('contribution.deletedAt IS NULL')
       .leftJoin('contribution.user', 'user')
-      .leftJoin('contribution.campaign', 'campaign')
       .leftJoin('contribution.currency', 'currency')
       .leftJoin('user.profile', 'profile');
 
@@ -177,22 +145,14 @@ export class ContributionsService {
 
   /** Create one Contribution to the database. */
   async createOne(options: CreateContributionOptions): Promise<Contribution> {
-    const {
-      amount,
-      type,
-      userId,
-      campaignId,
-      currencyId,
-      amountConvert,
-      organizationId,
-    } = options;
+    const { amount, type, userId, currencyId, amountConvert, organizationId } =
+      options;
 
     const contribution = new Contribution();
     contribution.amount = amount;
     contribution.type = type;
     contribution.userId = userId;
     contribution.currencyId = currencyId;
-    contribution.campaignId = campaignId;
     contribution.organizationId = organizationId;
     contribution.amountConvert = amountConvert;
     const query = this.driver.save(contribution);
