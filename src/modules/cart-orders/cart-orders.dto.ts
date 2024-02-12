@@ -1,4 +1,4 @@
-import { IsString, IsUUID, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CartOrdersDto {
   @IsOptional()
@@ -6,7 +6,7 @@ export class CartOrdersDto {
   @IsUUID()
   cartOrderId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsUUID()
   organizationId: string;

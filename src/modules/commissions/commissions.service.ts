@@ -66,6 +66,7 @@ export class CommissionsService {
         /*sql*/ `(
         SELECT array_agg(jsonb_build_object(
           'name', "upl"."name",
+          'size', "upl"."size",
           'path', "upl"."path"
         )) 
         FROM "upload" "upl"
@@ -74,12 +75,13 @@ export class CommissionsService {
         AND "upl"."model" IN ('COMMISSION')
         AND "upl"."uploadType" IN ('IMAGE')
         GROUP BY "commission"."id", "upl"."uploadableId"
-        ) AS "uploadsImage"`,
+        ) AS "uploadsImages"`,
       )
       .addSelect(
         /*sql*/ `(
         SELECT array_agg(jsonb_build_object(
           'name', "upl"."name",
+          'size', "upl"."size",
           'path', "upl"."path"
         )) 
         FROM "upload" "upl"
@@ -88,7 +90,7 @@ export class CommissionsService {
         AND "upl"."model" IN ('COMMISSION')
         AND "upl"."uploadType" IN ('FILE')
         GROUP BY "commission"."id", "upl"."uploadableId"
-        ) AS "uploadsFile"`,
+        ) AS "uploadsFiles"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -213,6 +215,7 @@ export class CommissionsService {
         /*sql*/ `(
         SELECT array_agg(jsonb_build_object(
           'name', "upl"."name",
+          'size', "upl"."size",
           'path', "upl"."path"
         )) 
         FROM "upload" "upl"
@@ -221,12 +224,13 @@ export class CommissionsService {
         AND "upl"."model" IN ('COMMISSION')
         AND "upl"."uploadType" IN ('IMAGE')
         GROUP BY "commission"."id", "upl"."uploadableId"
-        ) AS "uploadsImage"`,
+        ) AS "uploadsImages"`,
       )
       .addSelect(
         /*sql*/ `(
         SELECT array_agg(jsonb_build_object(
           'name', "upl"."name",
+          'size', "upl"."size",
           'path', "upl"."path"
         )) 
         FROM "upload" "upl"
@@ -235,7 +239,7 @@ export class CommissionsService {
         AND "upl"."model" IN ('COMMISSION')
         AND "upl"."uploadType" IN ('FILE')
         GROUP BY "commission"."id", "upl"."uploadableId"
-        ) AS "uploadsFile"`,
+        ) AS "uploadsFiles"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(

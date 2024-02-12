@@ -20,8 +20,10 @@ import {
 } from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query';
+import { CartOrdersService } from '../cart-orders/cart-orders.service';
 import { CartsService } from '../cats/cats.service';
 import { OrderItemsService } from '../order-items/order-items.service';
+import { ProductsService } from '../products/products.service';
 import { JwtAuthGuard } from '../users/middleware';
 import { GetOrderItemDto, UpdateOrderItemDto } from './orders.dto';
 import { OrdersService } from './orders.service';
@@ -31,6 +33,8 @@ export class OrdersController {
   constructor(
     private readonly ordersService: OrdersService,
     private readonly cartsService: CartsService,
+    private readonly productsService: ProductsService,
+    private readonly cartOrdersService: CartOrdersService,
     private readonly orderItemsService: OrderItemsService,
   ) {}
 
@@ -92,16 +96,39 @@ export class OrdersController {
     return reply({ res, results: orderItems });
   }
 
-  /** Create Faq */
-  @Post(`/`)
+  /** Create Order */
+  @Post(`/:cartOrderId`)
   @UseGuards(JwtAuthGuard)
-  async createOne(@Res() res, @Req() req, @Body() body) {
+  async createOne(
+    @Res() res,
+    @Req() req,
+    @Param('cartOrderId', ParseUUIDPipe) cartOrderId: string,
+  ) {
     const { user } = req;
-    const carts = await this.cartsService.findAll({
-      cartOrderId: 'cecf3e89-93fc-4b26-ba55-daef929cc725',
-      userId: user?.userId,
-      status: 'ADDED',
+
+    const findOneCartOrder = await this.cartOrdersService.findOneBy({
+      cartOrderId,
+      userId: user?.id,
     });
+    if (!findOneCartOrder) {
+      throw new HttpException(
+        `This order ${cartOrderId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const carts = await this.cartsService.findAll({
+      status: 'ADDED',
+      userId: findOneCartOrder?.userId,
+      cartOrderId: findOneCartOrder?.id,
+    });
+    if (!carts?.summary?.userId) {
+      throw new HttpException(
+        `Carts dons't exist please try again`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     const order = await this.ordersService.createOne({
       userId: carts?.summary?.userId,
       currency: carts?.summary?.currency,
@@ -110,7 +137,13 @@ export class OrdersController {
     });
 
     for (const cart of carts?.cartItems) {
-      await this.orderItemsService.createOne({
+      const findOneProduct = await this.productsService.findOneBy({
+        productId: cart.productId,
+      });
+      if (!findOneProduct) {
+        false;
+      }
+      const orderItemCreate = await this.orderItemsService.createOne({
         userId: order?.userId,
         currency: order?.currency,
         quantity: Number(cart?.quantity),
@@ -123,10 +156,22 @@ export class OrdersController {
         commissionId: cart?.commissionId,
         productId: cart?.productId,
         orderId: order?.id,
+        status:
+          findOneProduct?.productType === 'DIGITAL' ? 'ACCEPTED' : 'PENDING',
       });
+
+      if (orderItemCreate) {
+        await this.cartsService.updateOne(
+          { cartId: cart?.id },
+          {
+            status: 'COMPLETED',
+            deletedAt: new Date(),
+          },
+        );
+      }
     }
 
-    return reply({ res, results: carts.cartItems });
+    return reply({ res, results: carts?.cartItems });
   }
 
   /** Create OrderItem */

@@ -1,7 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export type UploadType = 'IMAGE' | 'FILE';
-
 export class UploadsDto {
   @IsNotEmpty()
   @IsString()

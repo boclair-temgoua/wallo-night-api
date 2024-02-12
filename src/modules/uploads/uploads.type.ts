@@ -1,5 +1,7 @@
 import { Upload } from '../../models/Upload';
 
+export type UploadType = 'IMAGE' | 'FILE';
+
 export type GetUploadsSelections = {
   search?: string;
   uploadType?: string;

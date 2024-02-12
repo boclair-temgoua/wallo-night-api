@@ -72,6 +72,9 @@ export class OrderItemsService {
               'title', "product"."title",
               'slug', "product"."slug",
               'productType', "product"."productType",
+              'urlRedirect', "product"."urlRedirect",
+              'model', "product"."model",
+              'enableUrlRedirect', "product"."enableUrlRedirect",
               'messageAfterPayment', "product"."messageAfterPayment",
               'id', "product"."id"
           ) AS "product"`,
@@ -82,6 +85,7 @@ export class OrderItemsService {
             'name', "upl"."name",
             'path', "upl"."path",
             'model', "upl"."model",
+            'size', "upl"."size",
             'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
@@ -99,6 +103,7 @@ export class OrderItemsService {
             'name', "upl"."name",
             'path', "upl"."path",
             'model', "upl"."model",
+            'size', "upl"."size",
             'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"

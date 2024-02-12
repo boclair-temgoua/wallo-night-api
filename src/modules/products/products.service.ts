@@ -79,6 +79,7 @@ export class ProductsService {
             'name', "upl"."name",
             'path', "upl"."path",
             'model', "upl"."model",
+            'size', "upl"."size",
             'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
@@ -88,7 +89,7 @@ export class ProductsService {
           AND "upl"."model" IN ('PRODUCT')
           AND "upl"."uploadType" IN ('IMAGE')
           GROUP BY "product"."id", "upl"."uploadableId"
-          ) AS "uploadsImage"`,
+          ) AS "uploadsImages"`,
       )
       .addSelect(
         /*sql*/ `(
@@ -96,6 +97,7 @@ export class ProductsService {
             'name', "upl"."name",
             'path', "upl"."path",
             'model', "upl"."model",
+            'size', "upl"."size",
             'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
@@ -105,7 +107,7 @@ export class ProductsService {
           AND "upl"."model" IN ('PRODUCT')
           AND "upl"."uploadType" IN ('FILE')
           GROUP BY "product"."id", "upl"."uploadableId"
-          ) AS "uploadsFile"`,
+          ) AS "uploadsFiles"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -245,6 +247,7 @@ export class ProductsService {
             'name', "upl"."name",
             'path', "upl"."path",
             'model', "upl"."model",
+            'size', "upl"."size",
             'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
@@ -255,7 +258,7 @@ export class ProductsService {
           AND "upl"."model" IN ('PRODUCT')
           AND "upl"."uploadType" IN ('IMAGE')
           GROUP BY "product"."id", "upl"."uploadableId"
-          ) AS "uploadsImage"`,
+          ) AS "uploadsImages"`,
       )
       .addSelect(
         /*sql*/ `(
@@ -263,6 +266,7 @@ export class ProductsService {
             'name', "upl"."name",
             'path', "upl"."path",
             'model', "upl"."model",
+            'size', "upl"."size",
             'uploadType', "upl"."uploadType"
           )) 
           FROM "upload" "upl"
@@ -273,7 +277,7 @@ export class ProductsService {
           AND "upl"."model" IN ('PRODUCT')
           AND "upl"."uploadType" IN ('FILE')
           GROUP BY "product"."id", "upl"."uploadableId"
-          ) AS "uploadsFile"`,
+          ) AS "uploadsFiles"`,
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(

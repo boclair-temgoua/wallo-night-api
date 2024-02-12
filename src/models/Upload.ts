@@ -4,7 +4,7 @@ import {
   FilterQueryType,
   filterQueryTypeArrays,
 } from '../app/utils/search-query/search-query.dto';
-import { UploadType } from '../modules/uploads/uploads.dto';
+import { UploadType } from '../modules/uploads/uploads.type';
 
 @Entity('upload')
 export class Upload extends BaseDeleteEntity {
@@ -16,6 +16,9 @@ export class Upload extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   path?: string;
+
+  @Column({ nullable: true })
+  size?: number;
 
   @Column({ nullable: true })
   status?: string;

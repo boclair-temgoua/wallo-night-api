@@ -5,10 +5,16 @@ import {
   Slug,
   generateLongUUID,
 } from '../../app/utils/commons/generate-random';
+import { KeyAsString } from '../../app/utils/commons/key-as-string';
 import { FilterQueryType } from '../../app/utils/search-query';
 import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
 import { UploadsService } from './uploads.service';
+import { UploadType } from './uploads.type';
 
+const fieldnameLists: KeyAsString = {
+  attachmentImages: 'IMAGE',
+  attachmentFiles: 'FILE',
+};
 @Injectable()
 export class UploadsUtil {
   constructor(private readonly uploadsService: UploadsService) {} // private driver: Repository<Commission>, // @InjectRepository(Commission)
@@ -55,41 +61,22 @@ export class UploadsUtil {
         file: file.buffer,
       });
 
-      if (file?.fieldname === 'attachmentImages') {
-        await this.uploadsService.createOne({
-          name: file?.originalname,
-          path: fileName,
-          status: 'success',
-          url: urlAWS.Location,
-          uploadType: 'IMAGE',
-          model: model,
-          userId: userId,
-          postId: postId,
-          productId: productId,
-          commissionId: commissionId,
-          membershipId: membershipId,
-          organizationId: organizationId,
-          uploadableId: uploadableId,
-        });
-      }
-
-      if (file?.fieldname === 'attachmentFiles') {
-        await this.uploadsService.createOne({
-          name: file?.originalname,
-          path: fileName,
-          status: 'success',
-          url: urlAWS.Location,
-          uploadType: 'FILE',
-          model: model,
-          userId: userId,
-          postId: postId,
-          productId: productId,
-          commissionId: commissionId,
-          membershipId: membershipId,
-          organizationId: organizationId,
-          uploadableId: uploadableId,
-        });
-      }
+      await this.uploadsService.createOne({
+        name: file?.originalname,
+        path: fileName,
+        size: Number(file?.size),
+        status: 'success',
+        url: urlAWS.Location,
+        uploadType: fieldnameLists[file?.fieldname] as UploadType,
+        model: model,
+        userId: userId,
+        postId: postId,
+        productId: productId,
+        commissionId: commissionId,
+        membershipId: membershipId,
+        organizationId: organizationId,
+        uploadableId: uploadableId,
+      });
     }
 
     return 'ok';

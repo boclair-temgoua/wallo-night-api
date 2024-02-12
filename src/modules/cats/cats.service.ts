@@ -315,7 +315,7 @@ export class CartsService {
     options: UpdateCartsOptions,
   ): Promise<Cart> {
     const { cartId } = selections;
-    const { quantity, deletedAt } = options;
+    const { quantity, status, deletedAt } = options;
 
     let findQuery = this.driver.createQueryBuilder('cart');
 
@@ -326,6 +326,7 @@ export class CartsService {
     const [errorFind, cart] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
+    cart.status = status;
     cart.quantity = quantity;
     cart.deletedAt = deletedAt;
 

@@ -61,6 +61,7 @@ export class MembershipsService {
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
+            'size', "upl"."size",
             'path', "upl"."path"
           )) 
           FROM "upload" "upl"
@@ -70,12 +71,13 @@ export class MembershipsService {
           AND "upl"."model" IN ('MEMBERSHIP')
           AND "upl"."uploadType" IN ('IMAGE')
           GROUP BY "membership"."id", "upl"."uploadableId"
-          ) AS "uploadsImage"`,
+          ) AS "uploadsImages"`,
       )
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
+            'size', "upl"."size",
             'path', "upl"."path"
           )) 
           FROM "upload" "upl"
@@ -85,7 +87,7 @@ export class MembershipsService {
           AND "upl"."model" IN ('MEMBERSHIP')
           AND "upl"."uploadType" IN ('FILE')
           GROUP BY "membership"."id", "upl"."uploadableId"
-          ) AS "uploadsFile"`,
+          ) AS "uploadsFiles"`,
       )
       // .addSelect(
       //   /*sql*/ `(
@@ -186,6 +188,7 @@ export class MembershipsService {
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
+            'size', "upl"."size",
             'path', "upl"."path"
           )) 
           FROM "upload" "upl"
@@ -195,12 +198,13 @@ export class MembershipsService {
           AND "upl"."model" IN ('MEMBERSHIP')
           AND "upl"."uploadType" IN ('IMAGE')
           GROUP BY "membership"."id", "upl"."uploadableId"
-          ) AS "uploadsImage"`,
+          ) AS "uploadsImages"`,
       )
       .addSelect(
         /*sql*/ `(
           SELECT array_agg(jsonb_build_object(
             'name', "upl"."name",
+            'size', "upl"."size",
             'path', "upl"."path"
           )) 
           FROM "upload" "upl"
@@ -210,7 +214,7 @@ export class MembershipsService {
           AND "upl"."model" IN ('MEMBERSHIP')
           AND "upl"."uploadType" IN ('FILE')
           GROUP BY "membership"."id", "upl"."uploadableId"
-          ) AS "uploadsFile"`,
+          ) AS "uploadsFiles"`,
       )
       .where('membership.deletedAt IS NULL')
       .leftJoin('membership.organization', 'organization')

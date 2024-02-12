@@ -60,6 +60,7 @@ export class UploadsService {
       uploadType,
       url,
       path,
+      size,
       model,
       userId,
       postId,
@@ -77,6 +78,7 @@ export class UploadsService {
     upload.status = status;
     upload.userId = userId;
     upload.model = model;
+    upload.size = size;
     upload.organizationId = organizationId;
     upload.uploadType = uploadType;
     upload.uploadableId = uploadableId;
