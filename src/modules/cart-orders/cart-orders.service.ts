@@ -18,12 +18,12 @@ export class CartOrdersService {
   ) {}
 
   async findOneBy(selections: GetOneCartOrderSelections): Promise<CartOrder> {
-    const { cartOrderId, userId, organizationId } = selections;
+    const { cartOrderId, userId, organizationSellerId } = selections;
     let query = this.driver
       .createQueryBuilder('cartOrder')
       .select('cartOrder.id', 'id')
       .addSelect('cartOrder.userId', 'userId')
-      .addSelect('cartOrder.organizationId', 'organizationId')
+      .addSelect('cartOrder.organizationSellerId', 'organizationSellerId')
       .addSelect('cartOrder.model', 'model')
       .addSelect('cartOrder.createdAt', 'createdAt')
       .addSelect(
@@ -50,10 +50,13 @@ export class CartOrdersService {
       query = query.andWhere('cartOrder.userId = :userId', { userId });
     }
 
-    if (organizationId) {
-      query = query.andWhere('cartOrder.organizationId = :organizationId', {
-        organizationId,
-      });
+    if (organizationSellerId) {
+      query = query.andWhere(
+        'cartOrder.organizationSellerId = :organizationSellerId',
+        {
+          organizationSellerId,
+        },
+      );
     }
 
     const organization = await query.getRawOne();
@@ -63,12 +66,12 @@ export class CartOrdersService {
 
   /** Create one CartOrder to the database. */
   async createOne(options: CreateCartOrderOptions): Promise<CartOrder> {
-    const { userId, organizationId, model } = options;
+    const { userId, organizationSellerId, model } = options;
 
     const cartOrder = new CartOrder();
     cartOrder.userId = userId;
     cartOrder.model = model;
-    cartOrder.organizationId = organizationId;
+    cartOrder.organizationSellerId = organizationSellerId;
 
     const query = this.driver.save(cartOrder);
 

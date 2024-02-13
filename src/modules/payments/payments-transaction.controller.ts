@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { CommentsService } from '../comments/comments.service';
+import { OrdersUtil } from '../orders/orders.util';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { TransactionsService } from '../transactions/transactions.service';
 import { TransactionsUtil } from '../transactions/transactions.util';
@@ -24,6 +25,7 @@ export class PaymentsTransactionController {
     private readonly transactionsUtil: TransactionsUtil,
     private readonly subscribesUtil: SubscribesUtil,
     private readonly commentsService: CommentsService,
+    private readonly ordersUtil: OrdersUtil,
     private readonly transactionsService: TransactionsService,
   ) {}
 
@@ -282,19 +284,12 @@ export class PaymentsTransactionController {
   ) {
     const {
       amount,
-      organizationId,
+      organizationId: organizationSellerId,
       userReceiveId,
       userSendId,
       reference,
       cartOrderId,
-      paymentMethod,
     } = body;
-
-    const { summary, cartItems } = await this.paymentsService.cartExecution({
-      cartOrderId,
-      userSendId,
-      organizationId,
-    });
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -302,21 +297,23 @@ export class PaymentsTransactionController {
         value: amount?.value,
       });
 
-    console.log('body =======>', body);
-    console.log('summary =======>', summary);
-    console.log('amountValueConvert =======>', amountValueConvert);
+    const { order, user } = await this.ordersUtil.orderCreate({
+      userBeyerId: userSendId,
+      cartOrderId,
+      organizationSellerId,
+    });
 
     const transaction = await this.transactionsService.createOne({
-      userSendId: userSendId,
+      userSendId: user?.id,
       userReceiveId: userReceiveId,
       amount: amount?.value * 100,
       currency: amount?.currency.toUpperCase(),
-      organizationId: organizationId,
+      organizationId: organizationSellerId,
+      orderId: order?.id,
       type: 'PAYPAL',
       token: reference,
       model: 'PRODUCT',
-      fullName: 'Somebody',
-      description: 'purchasing items',
+      description: `Product shop userId: ${user?.id}`,
       amountConvert: amountValueConvert * 100,
     });
 
@@ -327,17 +324,97 @@ export class PaymentsTransactionController {
       });
     }
 
-    //   await this.commentsService.createOne({
-    //     model: transaction?.model,
-    //     color: transaction?.color,
-    //     email: transaction?.email,
-    //     userId: transaction?.userSendId,
-    //     fullName: transaction?.fullName,
-    //     description: transaction?.description,
-    //     userReceiveId: transaction?.userReceiveId,
-    //   });
-    // }
+    await this.commentsService.createOne({
+      model: transaction?.model,
+      color: transaction?.color,
+      email: transaction?.email,
+      userId: transaction?.userSendId,
+      fullName: transaction?.fullName,
+      description: transaction?.description,
+      userReceiveId: transaction?.userReceiveId,
+    });
 
-    return reply({ res, results: reference });
+    return reply({ res, results: { orderId: order?.id } });
+  }
+
+  /** Create Shop */
+  @Post(`/stripe/shop`)
+  async createOneStripeShop(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateSubscribePaymentsDto,
+  ) {
+    const {
+      amount,
+      organizationId: organizationSellerId,
+      userReceiveId,
+      userSendId,
+      reference,
+      cartOrderId,
+      paymentMethod,
+    } = body;
+
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: amount?.currency,
+        value: amount?.value,
+      });
+
+    const { order, user } = await this.ordersUtil.orderCreate({
+      userBeyerId: userSendId,
+      cartOrderId,
+      organizationSellerId,
+    });
+
+    const { paymentIntents } = await this.paymentsService.stripeMethod({
+      paymentMethod,
+      currency: amount?.currency.toUpperCase(),
+      amountDetail: amount,
+      token: reference,
+      description: `Product shop userId: ${user?.id}`,
+    });
+    if (!paymentIntents) {
+      throw new HttpException(
+        `Transaction not found please try again`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (paymentIntents) {
+      const transaction = await this.transactionsService.createOne({
+        userSendId: userSendId,
+        userReceiveId: userReceiveId,
+        amount: Number(paymentIntents?.amount_received),
+        currency: paymentIntents?.currency.toUpperCase(),
+        organizationId: organizationSellerId,
+        type: 'CARD',
+        token: reference,
+        model: 'PRODUCT',
+        email: user?.email,
+        fullName: `${user?.profile?.firstName} ${user?.profile?.lastName}`,
+        description: paymentIntents?.description,
+        amountConvert: amountValueConvert * 100,
+      });
+
+      if (transaction?.token) {
+        await this.walletsService.incrementOne({
+          amount: transaction?.amountConvert,
+          organizationId: transaction?.organizationId,
+        });
+
+        await this.commentsService.createOne({
+          model: transaction?.model,
+          color: transaction?.color,
+          email: transaction?.email,
+          userId: transaction?.userSendId,
+          fullName: transaction?.fullName,
+          description: transaction?.description,
+          userReceiveId: transaction?.userReceiveId,
+          organizationId: transaction?.organizationId,
+        });
+      }
+    }
+
+    return reply({ res, results: { orderId: order?.id } });
   }
 }

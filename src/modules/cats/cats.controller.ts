@@ -73,11 +73,11 @@ export class CartsController {
     const findOneCartOrder =
       (await this.cartOrdersService.findOneBy({
         userId: user?.id,
-        organizationId: findOneProduct?.organizationId,
+        organizationSellerId: findOneProduct?.organizationId,
       })) ??
       (await this.cartOrdersService.createOne({
         userId: user?.id,
-        organizationId: findOneProduct?.organizationId,
+        organizationSellerId: findOneProduct?.organizationId,
       }));
 
     const findOneProductCart = await this.cartsService.findOneBy({
@@ -85,7 +85,7 @@ export class CartsController {
       status: 'ADDED',
       userId: user?.id,
       currency: findOneProduct?.currency?.code,
-      organizationId: findOneProduct?.organizationId,
+      organizationSellerId: findOneProduct?.organizationId,
     });
 
     if (findOneProductCart) {
@@ -107,7 +107,7 @@ export class CartsController {
         cartOrderId: findOneCartOrder?.id,
         model: findOneProduct?.model,
         currency: findOneProduct?.currency?.code,
-        organizationId: findOneProduct?.organizationId,
+        organizationSellerId: findOneProduct?.organizationId,
       });
     }
 

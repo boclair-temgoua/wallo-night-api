@@ -25,10 +25,10 @@ export class CartOrder extends BaseDeleteEntity {
   model?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
+  organizationSellerId?: string;
   @ManyToOne(() => Organization, (organization) => organization.cartOrders, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn([{ name: 'organizationSellerId', referencedColumnName: 'id' }])
   organization?: Organization;
 }

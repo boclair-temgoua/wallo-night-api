@@ -10,7 +10,7 @@ type OnCart = {
   productId: string;
   commissionId: string;
   userId: string;
-  cardOrganizationId: string;
+  organizationSellerId: string;
   profileVendor: {
     color: string;
     image: string;
@@ -69,7 +69,7 @@ export type GetCartsSelections = {
   cartOrderId?: Cart['cartOrderId'];
   ipLocation?: Cart['ipLocation'];
   currency?: Cart['currency'];
-  organizationId?: Cart['organizationId'];
+  organizationSellerId?: Cart['organizationSellerId'];
 };
 
 export type GetOneCartsSelections = {
@@ -79,7 +79,7 @@ export type GetOneCartsSelections = {
   status?: StatusCart;
   currency?: Cart['currency'];
   cartOrderId?: Cart['cartOrderId'];
-  organizationId?: Cart['organizationId'];
+  organizationSellerId?: Cart['organizationSellerId'];
 };
 
 export type UpdateCartsSelections = {

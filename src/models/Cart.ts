@@ -57,5 +57,5 @@ export class Cart extends BaseDeleteEntity {
   ipLocation?: string;
 
   @Column({ type: 'uuid', nullable: true })
-  organizationId?: string;
+  organizationSellerId?: string;
 }

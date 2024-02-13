@@ -10,7 +10,7 @@ import {
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query';
 import { TransactionType } from '../modules/transactions/transactions.type';
-import { Contribution, Organization, Subscribe, User } from './index';
+import { Contribution, Order, Organization, Subscribe, User } from './index';
 
 @Entity('transaction')
 export class Transaction extends BaseDeleteEntity {
@@ -87,4 +87,12 @@ export class Transaction extends BaseDeleteEntity {
   })
   @JoinColumn()
   subscribe?: Relation<Subscribe>;
+
+  @Column({ type: 'uuid', nullable: true })
+  orderId?: string;
+  @OneToOne(() => Order, (order) => order.transaction, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  order?: Relation<Order>;
 }

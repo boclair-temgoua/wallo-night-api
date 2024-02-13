@@ -4,14 +4,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Repository, Brackets } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import Stripe from 'stripe';
-import { config } from '../../app/config/index';
-import { AmountModel } from '../wallets/wallets.type';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { useCatch } from 'src/app/utils/use-catch';
+import Stripe from 'stripe';
+import { Repository } from 'typeorm';
+import { config } from '../../app/config/index';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { Payment } from '../../models';
+import { CartsService } from '../cats/cats.service';
+import { AmountModel } from '../wallets/wallets.type';
 import {
   CreatePaymentsOptions,
   GetOnePaymentsSelections,
@@ -19,7 +20,6 @@ import {
   UpdatePaymentsOptions,
   UpdatePaymentsSelections,
 } from './payments.type';
-import { CartsService } from '../cats/cats.service';
 
 const apiVersion = '2023-10-16';
 const stripePrivate = new Stripe(
@@ -290,26 +290,27 @@ export class PaymentsService {
   }
 
   /** Cart execution */
-  async cartExecution(options: {
-    cartOrderId: string;
-    userSendId: string;
-    organizationId: string;
-  }): Promise<any> {
-    const { cartOrderId, userSendId, organizationId } = options;
+  // async cartExecution(options: {
+  //   cartOrderId: string;
+  //   userSendId: string;
+  //   organizationId: string;
+  // }): Promise<any> {
+  //   const { cartOrderId, userSendId, organizationId } = options;
 
-    const { summary, cartItems } = await this.cartsService.findAll({
-      userId: userSendId,
-      status: 'ADDED',
-      cartOrderId,
-    });
+  //   const { summary, cartItems } = await this.cartsService.findAll({
+  //     userId: userSendId,
+  //     status: 'ADDED',
+  //     cartOrderId,
+  //     organizationSellerId: organizationId,
+  //   });
 
-    if (!summary && cartItems) {
-      throw new HttpException(
-        `Cart not found please try again`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+  //   if (!summary && cartItems.length <= 0) {
+  //     throw new HttpException(
+  //       `Cart not found please try again`,
+  //       HttpStatus.NOT_FOUND,
+  //     );
+  //   }
 
-    return { summary, cartItems };
-  }
+  //   return { summary, cartItems };
+  // }
 }

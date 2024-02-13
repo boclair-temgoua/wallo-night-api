@@ -121,7 +121,7 @@ export class PostsService {
           AND "upl"."model" IN ('POST')
           AND "upl"."uploadType" IN ('IMAGE')
           GROUP BY "post"."id", "upl"."uploadableId"
-          ) AS "uploadsImage"`,
+          ) AS "uploadsImages"`,
       )
       .addSelect(
         /*sql*/ `(
@@ -138,7 +138,7 @@ export class PostsService {
           AND "upl"."model" IN ('POST')
           AND "upl"."uploadType" IN ('FILE')
           GROUP BY "post"."id", "upl"."uploadableId"
-          ) AS "uploadsFile"`,
+          ) AS "uploadsFiles"`,
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')
@@ -309,7 +309,7 @@ export class PostsService {
         AND "upl"."model" IN ('POST')
         AND "upl"."uploadType" IN ('IMAGE')
         GROUP BY "post"."id", "upl"."uploadableId"
-        ) AS "uploadsImage"`,
+        ) AS "uploadsImages"`,
       )
       .addSelect(
         /*sql*/ `(
@@ -326,7 +326,7 @@ export class PostsService {
         AND "upl"."model" IN ('POST')
         AND "upl"."uploadType" IN ('FILE')
         GROUP BY "post"."id", "upl"."uploadableId"
-        ) AS "uploadsFile"`,
+        ) AS "uploadsFiles"`,
       )
       .addSelect('post.description', 'description')
       .where('post.deletedAt IS NULL')

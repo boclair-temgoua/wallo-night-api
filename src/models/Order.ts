@@ -4,11 +4,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { OrderItem, User } from './index';
+import { OrderItem, Transaction, User } from './index';
 
 @Entity('order')
 export class Order extends BaseDeleteEntity {
@@ -32,6 +33,11 @@ export class Order extends BaseDeleteEntity {
   @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })
   @JoinColumn()
   user?: User;
+
+  @OneToOne(() => Transaction, (transaction) => transaction.order, {
+    onDelete: 'CASCADE',
+  })
+  transaction?: Transaction;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   orderItems: OrderItem[];

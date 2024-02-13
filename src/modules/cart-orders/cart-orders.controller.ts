@@ -12,12 +12,12 @@ export class CartOrderController {
   @UseGuards(JwtAuthGuard)
   async getOne(@Res() res, @Req() req, @Query() query: CartOrdersDto) {
     const { user } = req;
-    const { cartOrderId, organizationId } = query;
+    const { cartOrderId, organizationSellerId } = query;
 
     const findCartOrder = await this.cartOrdersService.findOneBy({
       userId: user?.id,
       cartOrderId,
-      organizationId,
+      organizationSellerId,
     });
 
     return reply({ res, results: findCartOrder });

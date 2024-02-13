@@ -3,7 +3,7 @@ import { CartOrder } from '../../models';
 export type GetOneCartOrderSelections = {
   cartOrderId?: CartOrder['id'];
   userId?: CartOrder['userId'];
-  organizationId?: CartOrder['organizationId'];
+  organizationSellerId?: CartOrder['organizationSellerId'];
 };
 
 export type GetOneCartsSelections = {

@@ -32,7 +32,7 @@ export class CartsService {
       cartOrderId,
       ipLocation,
       currency,
-      organizationId,
+      organizationSellerId,
     } = selections;
 
     let query = this.driver
@@ -42,7 +42,7 @@ export class CartsService {
       .addSelect('cart.productId', 'productId')
       .addSelect('cart.userId', 'userId')
       .addSelect('cart.model', 'model')
-      .addSelect('cart.organizationId', 'cardOrganizationId')
+      .addSelect('cart.organizationSellerId', 'organizationSellerId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'fullName', "profile"."fullName",
@@ -155,10 +155,13 @@ export class CartsService {
       query = query.andWhere('cart.currency = :currency', { currency });
     }
 
-    if (organizationId) {
-      query = query.andWhere('cart.organizationId = :organizationId', {
-        organizationId,
-      });
+    if (organizationSellerId) {
+      query = query.andWhere(
+        'cart.organizationSellerId = :organizationSellerId',
+        {
+          organizationSellerId,
+        },
+      );
     }
 
     if (userId) {
@@ -209,7 +212,7 @@ export class CartsService {
       userId,
       productId,
       cartOrderId,
-      organizationId,
+      organizationSellerId,
       currency,
       status,
     } = selections;
@@ -259,10 +262,13 @@ export class CartsService {
       });
     }
 
-    if (userId) {
-      query = query.andWhere('cart.organizationId = :organizationId', {
-        organizationId,
-      });
+    if (organizationSellerId) {
+      query = query.andWhere(
+        'cart.organizationSellerId = :organizationSellerId',
+        {
+          organizationSellerId,
+        },
+      );
     }
 
     if (userId) {
@@ -286,7 +292,7 @@ export class CartsService {
       quantity,
       ipLocation,
       cartOrderId,
-      organizationId,
+      organizationSellerId,
       productId,
       currency,
       model,
@@ -300,7 +306,7 @@ export class CartsService {
     cart.model = model;
     cart.ipLocation = ipLocation;
     cart.cartOrderId = cartOrderId;
-    cart.organizationId = organizationId;
+    cart.organizationSellerId = organizationSellerId;
     const query = this.driver.save(cart);
 
     const [error, result] = await useCatch(query);
