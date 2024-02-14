@@ -11,8 +11,11 @@ async function bootstrap() {
   const version = config.api.version;
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix(`/api/${version}`);
+  const whitelist = config.url.allowedOrigins?.split(',') || [
+    'http://localhost:3000',
+  ];
   app.enableCors({
-    origin: true,
+    origin: whitelist,
     credentials: true,
   });
   app.use(cookieParser());

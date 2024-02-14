@@ -8,6 +8,7 @@ export const config = {
    */
   url: {
     client: process.env.NODE_CLIENT_URL,
+    allowedOrigins: process.env.ALLOWED_ORIGINS,
     dashboard: process.env.NODE_DASHBOARD_URL,
   },
   /**
