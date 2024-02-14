@@ -1,22 +1,4 @@
-import {
-  Controller,
-  Post,
-  NotFoundException,
-  Body,
-  Param,
-  ParseUUIDPipe,
-  Delete,
-  UseGuards,
-  Put,
-  Res,
-  Req,
-  Get,
-  Query,
-  HttpStatus,
-  HttpException,
-} from '@nestjs/common';
-import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import axios from 'axios';
 
 @Controller('upload')
@@ -25,7 +7,7 @@ export class MediaController {
 
   /** Get one faq */
   @Get(`/user/:fileName`)
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(CookieAuthGuard)
   async getOneImageUser(@Res() res, @Param('fileName') fileName: string) {
     // const file = await getFile();
 

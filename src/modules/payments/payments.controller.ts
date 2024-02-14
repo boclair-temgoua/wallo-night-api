@@ -1,30 +1,30 @@
 import {
-  Controller,
-  Post,
   Body,
-  Res,
-  Req,
-  HttpStatus,
-  HttpException,
-  UseGuards,
-  Get,
-  Query,
+  Controller,
   Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
+import { PaginationType, addPagination } from '../../app/utils/pagination';
+import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import { reply } from '../../app/utils/reply';
-import { PaymentsService } from './payments.service';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { otpMessageSend, otpVerifySid } from '../integrations/twilio-otp';
+import { CookieAuthGuard } from '../users/middleware';
 import {
   CodeVerifyPaymentsDto,
   CreateOnePaymentDto,
   SendCodeVerifyPaymentsDto,
 } from './payments.dto';
-import { JwtAuthGuard } from '../users/middleware';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { PaginationType, addPagination } from '../../app/utils/pagination';
-import { otpMessageSend, otpVerifySid } from '../integrations/twilio-otp';
+import { PaymentsService } from './payments.service';
 
 @Controller('payments')
 export class PaymentsController {
@@ -32,7 +32,7 @@ export class PaymentsController {
 
   /** Get all Payments */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,
@@ -56,7 +56,7 @@ export class PaymentsController {
 
   /** resend code one payment */
   @Post(`/resend-code-verify-phone`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async sendCodeVerifyPhoneOne(
     @Res() res,
     @Req() req,
@@ -77,7 +77,7 @@ export class PaymentsController {
 
   /** Verify one payment */
   @Post(`/code-verify-phone`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async codeVerifyPhoneOne(
     @Res() res,
     @Req() req,
@@ -116,7 +116,7 @@ export class PaymentsController {
 
   /** Create one payment */
   @Post(`/create`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOne(@Res() res, @Req() req, @Body() body: CreateOnePaymentDto) {
     const { user } = req;
     const {
@@ -192,7 +192,7 @@ export class PaymentsController {
 
   /** Delete payment */
   @Delete(`/:paymentId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

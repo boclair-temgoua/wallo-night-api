@@ -67,6 +67,10 @@ export class CheckUserService {
     return sign(data, secret, { expiresIn: expiry });
   }
 
+  async createTokenCookie(data: JwtPayload, expiry: string) {
+    return sign(data, config.cookieKey, { expiresIn: expiry });
+  }
+
   async verifyTokenCookie(token: string) {
     const payload = verify(token, config.cookieKey);
     if (typeof payload == 'string')

@@ -1,31 +1,30 @@
 import {
-  Controller,
-  Post,
-  NotFoundException,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
+import { CookieAuthGuard } from '../users/middleware';
 import { CreateOrUpdateFaqsDto } from './faqs.dto';
-import { JwtAuthGuard } from '../users/middleware';
 
-import { FaqsService } from './faqs.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { FaqsService } from './faqs.service';
 
 @Controller('faqs')
 export class FaqsController {
@@ -50,7 +49,7 @@ export class FaqsController {
 
   /** Get one faq */
   @Get(`/show/:faqId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async getOneByUUID(@Res() res, @Param('faqId', ParseUUIDPipe) faqId: string) {
     const faq = await this.faqsService.findOneBy({ faqId });
 
@@ -59,7 +58,7 @@ export class FaqsController {
 
   /** Create Faq */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOne(@Res() res, @Req() req, @Body() body: CreateOrUpdateFaqsDto) {
     const { user } = req;
     const { title, status, description } = body;
@@ -76,7 +75,7 @@ export class FaqsController {
 
   /** Update faq */
   @Put(`/:faqId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async updateOne(
     @Res() res,
     @Req() req,
@@ -102,7 +101,7 @@ export class FaqsController {
 
   /** Delete faq */
   @Delete(`/:faqId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

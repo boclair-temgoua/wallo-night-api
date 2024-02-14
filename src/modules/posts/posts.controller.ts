@@ -18,7 +18,7 @@ import {
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 import {
   CreateOrUpdatePostsDto,
   CreateOrUpdatePostsGalleriesDto,
@@ -47,7 +47,7 @@ export class PostsController {
 
   /** Get all Posts */
   @Get(`/follows`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findAllFollow(
     @Res() res,
     @Req() req,
@@ -133,7 +133,7 @@ export class PostsController {
 
   /** Post one Galleries */
   @Post(`/galleries`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async createOneGallery(
     @Res() res,
@@ -179,7 +179,7 @@ export class PostsController {
 
   /** Create Posts */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
@@ -231,7 +231,7 @@ export class PostsController {
 
   /** Update Post */
   @Put(`/:postId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
     @Res() res,
@@ -291,7 +291,7 @@ export class PostsController {
 
   /** Delete postId */
   @Delete(`/:postId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

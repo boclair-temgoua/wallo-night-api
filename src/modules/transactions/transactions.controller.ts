@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
@@ -26,7 +26,7 @@ export class TransactionsController {
 
   /** Get all Transactions */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,
@@ -55,7 +55,7 @@ export class TransactionsController {
 
   /** Get Transaction statistic */
   @Get(`/statistics`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findGroupOrganization(
     @Res() res,
     @Req() req,
@@ -74,7 +74,7 @@ export class TransactionsController {
 
   /** Get one Transaction */
   @Get(`/show/:transactionId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async getOneByUUID(
     @Res() res,
     @Param('transactionId', ParseUUIDPipe) transactionId: string,

@@ -1,38 +1,38 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
-  UseInterceptors,
+  Req,
+  Res,
   UploadedFiles,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
+import {
+  PaginationType,
+  addPagination,
+} from '../../app/utils/pagination/with-pagination';
 import { reply } from '../../app/utils/reply';
-import { MembershipsService } from './memberships.service';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { CurrenciesService } from '../currencies/currencies.service';
+import { UploadsUtil } from '../uploads/uploads.util';
+import { CookieAuthGuard } from '../users/middleware';
 import {
   CreateOrUpdateMembershipsDto,
   GetMembershipDto,
   GetOneMembershipDto,
 } from './memberships.dto';
-import { JwtAuthGuard } from '../users/middleware';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import {
-  addPagination,
-  PaginationType,
-} from '../../app/utils/pagination/with-pagination';
-import { CurrenciesService } from '../currencies/currencies.service';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { UploadsUtil } from '../uploads/uploads.util';
+import { MembershipsService } from './memberships.service';
 
 @Controller('memberships')
 export class MembershipsController {
@@ -68,7 +68,7 @@ export class MembershipsController {
 
   /** Post one Memberships */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
@@ -105,7 +105,7 @@ export class MembershipsController {
 
   /** Post one Memberships */
   @Put(`/:membershipId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
     @Res() res,
@@ -189,7 +189,7 @@ export class MembershipsController {
 
   /** Active one Memberships */
   // @Get(`/status`)
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(CookieAuthGuard)
   // async changeStatusOne(
   //   @Res() res,
   //   @Req() req,
@@ -214,7 +214,7 @@ export class MembershipsController {
 
   /** Delete one Memberships */
   @Delete(`/:membershipId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

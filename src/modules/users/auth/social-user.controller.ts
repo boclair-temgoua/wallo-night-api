@@ -9,6 +9,7 @@ import {
 import { OAuth2Client } from 'google-auth-library';
 import { config } from '../../../app/config/index';
 import { generateLongUUID, generateNumber } from '../../../app/utils/commons';
+import { validation_login_cookie_setting } from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
 import { AuthProvidersService } from '../../auth-providers/auth-providers.service';
 import { CheckUserService } from '../middleware/check-user.service';
@@ -54,8 +55,16 @@ export class SocialUserController {
       organizationId: findOnUser.organizationId,
     };
 
-    const refreshToken =
-      await this.checkUserService.createJwtTokens(jwtPayload);
+    const tokenUser = await this.checkUserService.createTokenCookie(
+      jwtPayload,
+      config.cookie_access.accessExpire,
+    );
+
+    res.cookie(
+      config.cookie_access.nameLogin,
+      tokenUser,
+      validation_login_cookie_setting,
+    );
 
     return reply({
       res,
@@ -63,7 +72,6 @@ export class SocialUserController {
         id: findOnUser.id,
         nextStep: findOnUser?.nextStep,
         permission: findOnUser.permission,
-        accessToken: `Bearer ${refreshToken}`,
         organizationId: findOnUser.organizationId,
       },
     });
@@ -89,7 +97,7 @@ export class SocialUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    const { user, refreshToken } = await this.usersUtil.saveOrUpdate({
+    const { user } = await this.usersUtil.saveOrUpdate({
       email,
       provider: 'provider',
       email_verified,
@@ -110,7 +118,6 @@ export class SocialUserController {
     return reply({
       res,
       results: {
-        accessToken: `Bearer ${refreshToken}`,
         organizationId: user.organizationId,
       },
     });

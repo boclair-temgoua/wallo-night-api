@@ -26,7 +26,7 @@ import {
 } from '../../app/utils/pagination/with-pagination';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { UploadsUtil } from '../uploads/uploads.util';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 import {
   CreateOrUpdateCommissionsDto,
   GetCommissionsDto,
@@ -68,7 +68,7 @@ export class CommissionsController {
 
   /** Post one Commissions */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
@@ -115,7 +115,7 @@ export class CommissionsController {
 
   /** Post one Commissions */
   @Put(`/:commissionId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
     @Res() res,
@@ -178,7 +178,7 @@ export class CommissionsController {
 
   /** Post one Commissions */
   @Put(`/:commissionId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOneOld(
     @Res() res,
@@ -256,7 +256,7 @@ export class CommissionsController {
 
   /** Delete one Commissions */
   @Delete(`/:commissionId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

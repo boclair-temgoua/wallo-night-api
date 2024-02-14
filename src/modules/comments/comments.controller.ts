@@ -15,7 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 import { CommentsDto, CreateOrUpdateCommentsDto } from './comments.dto';
 
 import { isEmpty } from '../../app/utils/commons/is-empty';
@@ -105,7 +105,7 @@ export class CommentsController {
 
   /** Create Comment */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOneComment(
     @Res() res,
     @Req() req,
@@ -138,7 +138,7 @@ export class CommentsController {
 
   /** Create reply Comment */
   @Post(`/replies`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOneCommentReplies(
     @Res() res,
     @Req() req,
@@ -173,7 +173,7 @@ export class CommentsController {
 
   /** Update Comment */
   @Put(`/:commentId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async updateOneComment(
     @Res() res,
     @Req() req,
@@ -201,7 +201,7 @@ export class CommentsController {
 
   /** Delete Comment */
   @Delete(`/:commentId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOneComment(
     @Res() res,
     @Req() req,

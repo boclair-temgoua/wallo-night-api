@@ -27,7 +27,7 @@ import {
   SearchQueryDto,
 } from '../../app/utils/search-query/search-query.dto';
 import { ProfilesService } from '../profiles/profiles.service';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 import { CheckUserService } from '../users/middleware/check-user.service';
 import { UsersService } from '../users/users.service';
 import { generateLongUUID } from './../../app/utils/commons/generate-random';
@@ -49,7 +49,7 @@ export class ContributorsController {
   ) {}
 
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,
@@ -72,7 +72,7 @@ export class ContributorsController {
   }
 
   @Post(`/new-user`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOneNewUser(
     @Res() res,
     @Req() req,
@@ -145,7 +145,7 @@ export class ContributorsController {
   }
 
   @Get(`/show/:contributorId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async getOneById(
     @Res() res,
     @Req() req,
@@ -167,7 +167,7 @@ export class ContributorsController {
   }
 
   @Delete(`/:contributorId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,
@@ -197,7 +197,7 @@ export class ContributorsController {
   }
 
   @Put(`/role`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async updateOneRole(
     @Res() res,
     @Req() req,

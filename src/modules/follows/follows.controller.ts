@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
@@ -28,7 +28,7 @@ export class FollowsController {
 
   /** Get all Follows */
   @Get(`/followers`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findFollowers(
     @Res() res,
     @Req() req,
@@ -52,7 +52,7 @@ export class FollowsController {
 
   /** Get all Follows */
   @Get(`/followings`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findFollowings(
     @Res() res,
     @Req() req,
@@ -76,7 +76,7 @@ export class FollowsController {
 
   /** Create Follow */
   @Post(`/create/:followerId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
@@ -101,7 +101,7 @@ export class FollowsController {
 
   /** Delete Follow */
   @Post(`/delete/:followerId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

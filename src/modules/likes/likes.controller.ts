@@ -1,17 +1,15 @@
 import {
   Controller,
-  Post,
-  Param,
   Delete,
-  UseGuards,
-  Res,
+  Param,
+  Post,
   Req,
-  HttpStatus,
-  HttpException,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
+import { CookieAuthGuard } from '../users/middleware';
 import { CreateOrUpdateLikesDto } from './likes.dto';
-import { JwtAuthGuard } from '../users/middleware';
 
 import { LikesService } from './likes.service';
 
@@ -21,7 +19,7 @@ export class LikesController {
 
   /** Create Like */
   @Post(`/:type/:likeableId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOneLike(
     @Res() res,
     @Req() req,
@@ -41,7 +39,7 @@ export class LikesController {
 
   /** Delete Like */
   @Delete(`/:type/:likeableId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOneLike(
     @Res() res,
     @Req() req,

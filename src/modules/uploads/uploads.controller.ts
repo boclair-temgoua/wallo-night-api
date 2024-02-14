@@ -9,10 +9,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
 
 import { Readable } from 'stream';
 import { getFileToAws } from '../integrations/aws/aws-s3-service-adapter';
+import { CookieAuthGuard } from '../users/middleware';
 import { UploadsDto } from './uploads.dto';
 import { UploadsService } from './uploads.service';
 
@@ -36,7 +36,7 @@ export class UploadsController {
   }
 
   @Put(`/update`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteAndUpdate(@Res() res, @Req() req, @Query() query: UploadsDto) {
     const { user } = req;
     const { model, uploadableId } = query;

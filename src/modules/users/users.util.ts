@@ -11,7 +11,6 @@ import { SubscribesService } from '../subscribes/subscribes.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { CheckUserService } from './middleware/check-user.service';
 import { UsersService } from './users.service';
-import { JwtPayloadType } from './users.type';
 
 @Injectable()
 export class UsersUtil {
@@ -122,23 +121,6 @@ export class UsersUtil {
       { userId: user?.id },
     );
 
-    if (provider === 'default') {
-      // const queue = 'user-register';
-      // const connect = await amqplib.connect(config.implementations.amqp.link);
-      // const channel = await connect.createChannel();
-      // await channel.assertQueue(queue, { durable: false });
-      // await channel.sendToQueue(queue, Buffer.from(JSON.stringify(user)));
-      // await authRegisterJob({ channel, queue });
-    }
-
-    const jwtPayload: JwtPayloadType = {
-      id: user.id,
-      organizationId: user.organizationId,
-    };
-
-    const refreshToken =
-      await this.checkUserService.createJwtTokens(jwtPayload);
-
-    return { refreshToken, user };
+    return { user };
   }
 }

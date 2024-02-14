@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -25,8 +26,8 @@ import { reply } from '../../../app/utils/reply';
 import { ProfilesService } from '../../profiles/profiles.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
-import { JwtAuthGuard } from '../middleware';
 import { CheckUserService } from '../middleware/check-user.service';
+import { CookieAuthGuard } from '../middleware/cookie/cookie-auth.guard';
 import {
   CreateLoginUserDto,
   CreateRegisterUserDto,
@@ -104,10 +105,16 @@ export class AuthUserController {
       organizationId: findOnUser.organizationId,
     };
 
-    const refreshToken =
-      await this.checkUserService.createJwtTokens(jwtPayload);
+    const tokenUser = await this.checkUserService.createTokenCookie(
+      jwtPayload,
+      config.cookie_access.accessExpire,
+    );
 
-    res.cookie('x-cookies-login', jwtPayload, validation_login_cookie_setting);
+    res.cookie(
+      config.cookie_access.nameLogin,
+      tokenUser,
+      validation_login_cookie_setting,
+    );
 
     return reply({
       res,
@@ -115,7 +122,6 @@ export class AuthUserController {
         id: findOnUser.id,
         nextStep: findOnUser?.nextStep,
         permission: findOnUser.permission,
-        accessToken: `Bearer ${refreshToken}`,
         organizationId: findOnUser.organizationId,
       },
     });
@@ -208,7 +214,7 @@ export class AuthUserController {
 
   /** Update password */
   @Put(`/profile/update/:userId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async updateOneProfile(
     @Res() res,
     @Body() body: UpdateProfileDto,
@@ -276,7 +282,7 @@ export class AuthUserController {
 
     const codeGenerate = generateNumber(4);
     const { cookieKey } = config;
-    const expiresIn = config.cookie_access.user.firstStepExpire;
+    const expiresIn = config.cookie_access.firstStepExpire;
     const token = await this.checkUserService.createToken(
       { userId: userId, code: codeGenerate, isLogin: true },
       cookieKey,
@@ -303,7 +309,7 @@ export class AuthUserController {
 
   /** Resend code user */
   @Post(`/valid/code`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async validCode(
     @Res() res,
     @Req() req,
@@ -335,5 +341,19 @@ export class AuthUserController {
     res.clearCookie('x-code-verification', expire_cookie_setting);
 
     return reply({ res, results: 'Email confirmed successfully' });
+  }
+
+  /** Logout user */
+  @Delete(`/logout`)
+  async logout(@Res() res, @Req() req) {
+    if (!req.cookies[config.cookie_access.nameLogin])
+      throw new HttpException(
+        `Not valid token or expired`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    res.clearCookie(config.cookie_access.nameLogin, expire_cookie_setting);
+
+    return reply({ res, results: 'User logout successfully' });
   }
 }

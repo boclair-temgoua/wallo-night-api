@@ -1,33 +1,30 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { CategoriesService } from './categories.service';
-import {
-  PasswordBodyDto,
-  SearchQueryDto,
-} from '../../app/utils/search-query/search-query.dto';
-import { CreateOrUpdateCategoriesDto } from './categories.dto';
-import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
-  addPagination,
   PaginationType,
+  addPagination,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { CookieAuthGuard } from '../users/middleware';
+import { CreateOrUpdateCategoriesDto } from './categories.dto';
+import { CategoriesService } from './categories.service';
 
 @Controller('categories')
 export class CategoriesController {
@@ -62,7 +59,7 @@ export class CategoriesController {
 
   /** Post one Categories */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
@@ -83,7 +80,7 @@ export class CategoriesController {
 
   /** Post one Categories */
   @Put(`/:categoryId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async updateOneCategory(
     @Res() res,
     @Req() req,
@@ -111,7 +108,7 @@ export class CategoriesController {
 
   /** Get one Categories */
   @Get(`/show/:categoryId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async getOne(
     @Res() res,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
@@ -130,7 +127,7 @@ export class CategoriesController {
 
   /** Delete one CategoriesUs */
   @Delete(`/:categoryId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

@@ -1,30 +1,30 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 
-import { ProjectsService } from './projects.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { CreateOrUpdateProjectsDto } from './projects.dto';
+import { ProjectsService } from './projects.service';
 
 @Controller('projects')
 export class ProjectsController {
@@ -49,7 +49,7 @@ export class ProjectsController {
 
   /** Get one Project */
   @Get(`/show/:projectId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async getOneByUUIDProject(
     @Res() res,
     @Param('projectId', ParseUUIDPipe) projectId: string,
@@ -61,7 +61,7 @@ export class ProjectsController {
 
   /** Create Project */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOneProject(
     @Res() res,
     @Req() req,
@@ -82,7 +82,7 @@ export class ProjectsController {
 
   /** Update Project */
   @Put(`/:projectId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async updateOneProject(
     @Res() res,
     @Req() req,
@@ -108,7 +108,7 @@ export class ProjectsController {
 
   /** Delete Project */
   @Delete(`/:projectId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOneProject(
     @Res() res,
     @Req() req,

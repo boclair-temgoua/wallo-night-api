@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 
 import {
   addMonthsFormateDDMMYYDate,
@@ -20,8 +20,8 @@ import {
 } from '../../app/utils/commons/formate-date';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
-  addPagination,
   PaginationType,
+  addPagination,
 } from '../../app/utils/pagination/with-pagination';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { FollowsService } from '../follows/follows.service';
@@ -40,7 +40,7 @@ export class SubscribesController {
 
   /** Get all Follows */
   @Get(`/subscribers`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findFollowers(
     @Res() res,
     @Req() req,
@@ -64,7 +64,7 @@ export class SubscribesController {
 
   /** Get all Follows */
   // @Get(`/followings`)
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(CookieAuthGuard)
   // async findFollowings(
   //   @Res() res,
   //   @Req() req,
@@ -88,7 +88,7 @@ export class SubscribesController {
 
   /** Create Subscribe */
   @Post(`/create/:membershipId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,

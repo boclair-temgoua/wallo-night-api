@@ -17,7 +17,7 @@ import {
 import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query';
 import { ContributorsService } from '../contributors/contributors.service';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 import { OrganizationsService } from './organizations.service';
 
 @Controller('organizations')
@@ -28,7 +28,7 @@ export class OrganizationsController {
   ) {}
 
   @Get(`/contributes`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findAllContributorsBy(
     @Res() res,
     @Req() req,
@@ -52,7 +52,7 @@ export class OrganizationsController {
   }
 
   @Get(`/view`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async getOne(
     @Res() res,
     @Req() req,

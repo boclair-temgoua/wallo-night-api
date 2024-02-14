@@ -1,28 +1,27 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
-  Put,
-  Res,
-  Req,
-  Get,
+  Post,
   Query,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { ContactUsService } from './contact-us.service';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { CreateOrUpdateContactUsDto } from './contact-us.dto';
-import { JwtAuthGuard } from '../users/middleware';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { CookieAuthGuard } from '../users/middleware';
+import { CreateOrUpdateContactUsDto } from './contact-us.dto';
+import { ContactUsService } from './contact-us.service';
 
 @Controller('contact-us')
 export class ContactUsController {
@@ -71,7 +70,7 @@ export class ContactUsController {
 
   /** Get one ContactUs */
   @Get(`/show/:contactUsId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async getOneByIdUser(
     @Res() res,
     @Param('contactUsId', ParseUUIDPipe) contactUsId: string,
@@ -83,7 +82,7 @@ export class ContactUsController {
 
   /** Delete one ContactUs */
   @Delete(`/delete/:contactUsId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Param('contactUsId', ParseUUIDPipe) contactUsId: string,

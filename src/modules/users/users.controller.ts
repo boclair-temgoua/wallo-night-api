@@ -10,6 +10,7 @@ import {
   Query,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
@@ -22,7 +23,7 @@ import {
 import { SearchQueryDto } from '../../app/utils/search-query';
 import { ContributorsService } from '../contributors/contributors.service';
 import { ProfilesService } from '../profiles/profiles.service';
-import { JwtAuthGuard } from './middleware';
+import { CookieAuthGuard } from './middleware';
 import { Cookies } from './middleware/cookie.guard';
 import {
   GetOneUserDto,
@@ -42,7 +43,7 @@ export class UsersController {
 
   /** Get all users */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async findAllUsers(
     @Res() res,
     @Req() req,
@@ -64,7 +65,7 @@ export class UsersController {
 
   /** Get one user */
   @Get(`/show/:userId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async getOneByIdUser(
     @Res() res,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -135,8 +136,20 @@ export class UsersController {
   //   });
   // }
 
+  @Get(`/me`)
+  @UseGuards(CookieAuthGuard)
+  async getMe(@Res() res, @Req() req) {
+    const { user } = req;
+    const findOneUser = await this.usersService.findOneInfoBy({
+      userId: user?.id,
+    });
+    if (!findOneUser) throw new UnauthorizedException('Invalid user');
+
+    return reply({ res, results: findOneUser });
+  }
+
   @Get(`/profile/show/:profileId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async getOneByProfileId(
     @Res() res,
     @Param('profileId', ParseUUIDPipe) profileId: string,
@@ -149,7 +162,7 @@ export class UsersController {
   }
 
   @Put(`/update/profile/:profileId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async updateProfile(
     @Res() res,
     @Req() req,
@@ -195,7 +208,7 @@ export class UsersController {
   }
 
   @Put(`/update/enable/:profileId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async updateEnableProfile(
     @Res() res,
     @Req() req,
@@ -224,7 +237,7 @@ export class UsersController {
   }
 
   @Put(`/change-email`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async updateUserEmail(
     @Res() res,
     @Req() req,

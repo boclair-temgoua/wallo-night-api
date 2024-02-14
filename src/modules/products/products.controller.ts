@@ -26,7 +26,7 @@ import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { DiscountsService } from '../discounts/discounts.service';
 import { UploadsUtil } from '../uploads/uploads.util';
-import { JwtAuthGuard } from '../users/middleware';
+import { CookieAuthGuard } from '../users/middleware';
 import {
   CreateOrUpdateProductsDto,
   GetOneProductDto,
@@ -69,7 +69,7 @@ export class ProductsController {
 
   /** Post one Products */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
@@ -130,7 +130,7 @@ export class ProductsController {
 
   /** Post one Products */
   @Put(`/:productId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
     @Res() res,
@@ -222,7 +222,7 @@ export class ProductsController {
 
   /** Delete one Products */
   @Delete(`/:productId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CookieAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

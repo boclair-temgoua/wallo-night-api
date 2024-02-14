@@ -25,8 +25,8 @@ import { WalletsService } from '../wallets/wallets.service';
 import { AuthUserController } from './auth/auth-user.controller';
 import { SocialUserController } from './auth/social-user.controller';
 import { MailerService } from './mailer.service';
-import { JwtAuthStrategy } from './middleware';
 import { CheckUserService } from './middleware/check-user.service';
+import { CookieAuthStrategy } from './middleware/cookie/cookie-auth.strategy';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UsersUtil } from './users.util';
@@ -53,7 +53,7 @@ import { UsersUtil } from './users.util';
     WalletsService,
     ProfilesService,
     CheckUserService,
-    JwtAuthStrategy,
+    CookieAuthStrategy,
     DonationsService,
     ContributorsUtil,
     CurrenciesService,
