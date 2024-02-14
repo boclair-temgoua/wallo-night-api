@@ -21,7 +21,7 @@ export const config = {
   cookieKey: process.env.COOKIE_KEY || '@3%NE8IksyHK4yC5POFurDCAVW@FqxBe',
   cookie_access: {
     nameLogin: process.env.COOKIE_NAME_LOGIN || 'user',
-    accessExpire: process.env.COOKIE_ACCESS_EXPIRE || '10000000000', //32000000000
+    accessExpire: process.env.COOKIE_ACCESS_EXPIRE || '300000', //32000000000 10000000000
     refreshExpire: process.env.COOKIE_REFRESH_EXPIRE || '96400000',
     firstStepExpire: process.env.COOKIE_FIRST_STEP_EXPIRE || '300000',
     verificationExpire: process.env.COOKIE_VERIFICATION_EXPIRE || '300000',

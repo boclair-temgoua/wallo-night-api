@@ -72,6 +72,7 @@ export class SocialUserController {
         id: findOnUser.id,
         nextStep: findOnUser?.nextStep,
         permission: findOnUser.permission,
+        accessToken: `Bearer ${tokenUser}`,
         organizationId: findOnUser.organizationId,
       },
     });
