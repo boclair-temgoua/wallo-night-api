@@ -9,9 +9,8 @@ export const validation_code_verification_cookie_setting = {
 export const validation_login_cookie_setting = {
   maxAge: Number(config.cookie_access.accessExpire),
   httpOnly: false,
-  secure: false,
-  // domain: '',
-  sameSite: 'None',
+  secure: true,
+  sameSite: 'none',
 };
 
 export const expire_cookie_setting = {
