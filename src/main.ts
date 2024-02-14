@@ -2,7 +2,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { config } from './app/config';
@@ -16,15 +15,13 @@ async function bootstrap() {
   const whitelist = config.url.allowedOrigins?.split(',') || [
     'http://localhost:3000',
   ];
-  app.enableCors();
+  app.enableCors({
+    origin: whitelist,
+    credentials: true,
+    exposedHeaders: ['set-cookie'],
+  });
   app.use(cookieParser());
-  app.use(
-    cors({
-      origin: whitelist,
-      credentials: true,
-      exposedHeaders: ['set-cookie'],
-    }),
-  );
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

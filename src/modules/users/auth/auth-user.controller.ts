@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -344,14 +343,8 @@ export class AuthUserController {
   }
 
   /** Logout user */
-  @Delete(`/logout`)
+  @Get(`/logout`)
   async logout(@Res() res, @Req() req) {
-    if (!req.cookies[config.cookie_access.nameLogin])
-      throw new HttpException(
-        `Not valid token or expired`,
-        HttpStatus.NOT_FOUND,
-      );
-
     res.clearCookie(config.cookie_access.nameLogin, expire_cookie_setting);
 
     return reply({ res, results: 'User logout successfully' });
