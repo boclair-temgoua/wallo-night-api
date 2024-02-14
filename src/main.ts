@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
@@ -9,7 +10,10 @@ async function bootstrap() {
   // config.update({});
   const port = config.port;
   const version = config.api.version;
-  const app = await NestFactory.create(AppModule);
+  // const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
   app.setGlobalPrefix(`/api/${version}`);
   const whitelist = config.url.allowedOrigins?.split(',') || [
     'http://localhost:3000',
