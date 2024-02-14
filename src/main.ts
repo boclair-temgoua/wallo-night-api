@@ -11,9 +11,7 @@ async function bootstrap() {
   const port = config.port;
   const version = config.api.version;
   // const app = await NestFactory.create(AppModule);
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
-  });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix(`/api/${version}`);
   const whitelist = config.url.allowedOrigins?.split(',') || [
     'http://localhost:3000',
