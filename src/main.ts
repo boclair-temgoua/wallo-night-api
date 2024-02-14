@@ -2,9 +2,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
-import cors from 'cors';
+import * as cors from 'cors';
 import helmet from 'helmet';
-import * as passport from 'passport';
 import { AppModule } from './app.module';
 import { config } from './app/config';
 
@@ -17,11 +16,6 @@ async function bootstrap() {
   const whitelist = config.url.allowedOrigins?.split(',') || [
     'http://localhost:3000',
   ];
-  // app.enableCors({
-  //   origin: whitelist,
-  //   credentials: true,
-  //   exposedHeaders: ['set-cookie'],
-  // });
   app.enableCors();
   app.use(cookieParser());
   app.use(
@@ -39,9 +33,6 @@ async function bootstrap() {
   );
   app.use(helmet());
   // app.use(useragent.express());
-
-  app.use(passport.initialize());
-  app.use(passport.session());
 
   await app.listen(port, () => {
     console.log(`=============================================`);
