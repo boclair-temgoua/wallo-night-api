@@ -11,7 +11,7 @@ export const validation_code_verification_cookie_setting = {
 
 export const validation_login_cookie_setting = {
   maxAge: Number(config.cookie_access.accessExpire),
-  httpOnly: true,
+  httpOnly: false,
   sameSite: 'none',
   secure: true,
 };
