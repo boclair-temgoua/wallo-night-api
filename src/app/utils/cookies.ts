@@ -14,6 +14,7 @@ export const validation_login_cookie_setting = {
   httpOnly: false,
   sameSite: 'none',
   secure: true,
+  path: '/',
 };
 
 export const expire_cookie_setting = {
