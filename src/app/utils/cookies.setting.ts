@@ -6,16 +6,16 @@ export const getCookieSettings = (env: string) =>
 
 const settingsMap: {
   [Key in Env]: {
-    httpOnly: true;
+    httpOnly: boolean;
     secure: boolean;
     domain?: string;
     sameSite: 'none' | 'lax';
   };
 } = {
   local: {
-    httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
+    httpOnly: false,
+    secure: true,
+    sameSite: 'none',
   },
   dev: {
     httpOnly: true,
@@ -26,7 +26,7 @@ const settingsMap: {
     httpOnly: true,
     secure: true,
     domain: '.botipo.com',
-    sameSite: 'lax',
+    sameSite: 'none',
   },
   test: {
     httpOnly: true,
