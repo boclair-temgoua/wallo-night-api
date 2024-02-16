@@ -18,7 +18,7 @@ const settingsMap: {
     sameSite: 'none',
   },
   dev: {
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     sameSite: 'none',
   },
@@ -32,6 +32,6 @@ const settingsMap: {
     httpOnly: true,
     secure: true,
     domain: '.botipo.com',
-    sameSite: 'lax',
+    sameSite: 'none',
   },
 };

@@ -76,7 +76,6 @@ export class AuthUserController {
     return reply({
       res,
       results: {
-        accessToken: `Bearer ${refreshToken}`,
         organizationId: user.organizationId,
       },
     });
@@ -94,6 +93,9 @@ export class AuthUserController {
       email,
       provider: 'default',
     });
+    if (!findOnUser)
+      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
+
     if (!(await checkIfPasswordMatch(findOnUser?.password, password))) {
       await new Promise((resolve) => setTimeout(resolve, 1_000));
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
@@ -121,7 +123,6 @@ export class AuthUserController {
         id: findOnUser.id,
         nextStep: findOnUser?.nextStep,
         permission: findOnUser.permission,
-        accessToken: `Bearer ${tokenUser}`,
         organizationId: findOnUser.organizationId,
       },
     });
@@ -346,7 +347,10 @@ export class AuthUserController {
   /** Logout user */
   @Get(`/logout`)
   async logout(@Res() res, @Req() req) {
-    res.clearCookie(config.cookie_access.nameLogin, expire_cookie_setting);
+    res.clearCookie(
+      config.cookie_access.nameLogin,
+      validation_login_cookie_setting,
+    );
 
     return reply({ res, results: 'User logout successfully' });
   }
