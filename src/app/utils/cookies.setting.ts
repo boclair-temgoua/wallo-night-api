@@ -23,7 +23,7 @@ const settingsMap: {
     sameSite: 'none',
   },
   prod: {
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     domain: '.botipo.com',
     sameSite: 'none',
