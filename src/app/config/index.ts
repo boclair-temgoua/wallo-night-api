@@ -14,7 +14,7 @@ export const config = {
   /**
    * Node environment
    */
-  environment: process.env.NODE_ENV || 'development',
+  environment: process.env.NODE_ENV || 'dev',
   /**
    * Cookie configuration
    */
