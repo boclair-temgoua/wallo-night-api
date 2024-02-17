@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { UpdateDonationsDto } from './donations.dto';
 import { DonationsService } from './donations.service';
 
@@ -22,7 +22,7 @@ export class DonationsController {
 
   /** Post one Donation */
   @Put(`/:donationId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOne(
     @Res() res,
     @Req() req,

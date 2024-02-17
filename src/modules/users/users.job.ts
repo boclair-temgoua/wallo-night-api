@@ -61,6 +61,7 @@ export const authPasswordResetJob = async (options: { channel; queue }) => {
         '\x1b[33m%s\x1b[0m',
         '**** Processing reset password Job message user start ****',
       );
+
       authPasswordResetMail({ resetPassword: data });
       console.log(
         '\x1b[32m%s\x1b[0m',

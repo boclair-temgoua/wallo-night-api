@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "engines": {
-    "npm": ">=9.0.0 ",
-    "node": ">=20.0.0"
+    "npm": ">=10.0.0 ",
+    "node": ">=18.0.0"
   },
   "contributors": [
     "Boclair Temgoua (https://github.com/boclair-temgoua)"
@@ -70,7 +70,7 @@
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.3",
     "argon2": "^0.31.2",
-    "aws-sdk": "^2.1559.0",
+    "aws-sdk": "^2.1560.0",
     "axios": "^1.6.7",
     "chalk": "^5.3.0",
     "class-transformer": "^0.5.1",
@@ -89,7 +89,7 @@
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "luxon": "^3.4.4",
-    "mailgun.js": "^10.2.0",
+    "mailgun.js": "^10.2.1",
     "mime": "^4.0.1",
     "mime-types": "^2.1.35",
     "moment": "^2.30.1",
@@ -119,7 +119,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "18.6.1",
-    "@commitlint/config-conventional": "18.6.0",
+    "@commitlint/config-conventional": "18.6.2",
     "@faker-js/faker": "^8.4.1",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/schematics": "^10.1.1",

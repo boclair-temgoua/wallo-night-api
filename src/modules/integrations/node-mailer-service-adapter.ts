@@ -1,4 +1,3 @@
-import { createTransport } from 'nodemailer';
 import { config } from '../../app/config/index';
 
 import { Resend } from 'resend';
@@ -32,6 +31,25 @@ export const NodeMailServiceAdapter = async (options: {
   };
 
   const response = await resend.emails.send({ ...mailOptions });
+  // const transporter = createTransport({
+  //   // host: config.implementations.mailSMTP.host,
+  //   // port: config.implementations.mailSMTP.port,
+  //   // secure: true,
+  //   service: 'gmail',
+  //   host: 'smtp.gmail.com',
+  //   port: 587,
+  //   secure: false,
+  //   requireTLS: true,
+  //   auth: {
+  //     user: config.implementations.mailSMTP.user,
+  //     pass: config.implementations.mailSMTP.pass,
+  //   },
+  // });
+
+  // const response = await transporter.sendMail({
+  //   ...mailOptions,
+  // });
+
   console.log('response email send ====>', response);
   return response;
 };

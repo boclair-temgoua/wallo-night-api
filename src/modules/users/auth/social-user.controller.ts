@@ -14,7 +14,6 @@ import { reply } from '../../../app/utils/reply';
 import { AuthProvidersService } from '../../auth-providers/auth-providers.service';
 import { CheckUserService } from '../middleware/check-user.service';
 import { UsersService } from '../users.service';
-import { JwtPayloadType } from '../users.type';
 import { UsersUtil } from '../users.util';
 
 const clientId = config.implementations.google.clientId;
@@ -50,13 +49,8 @@ export class SocialUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    const jwtPayload: JwtPayloadType = {
-      id: findOnUser.id,
-      organizationId: findOnUser.organizationId,
-    };
-
-    const tokenUser = await this.checkUserService.createTokenCookie(
-      jwtPayload,
+    const tokenUser = await this.checkUserService.createToken(
+      { id: findOnUser.id, organizationId: findOnUser.organizationId },
       config.cookie_access.accessExpire,
     );
 

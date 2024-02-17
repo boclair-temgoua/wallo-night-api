@@ -19,7 +19,7 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { CreateOrUpdateContactUsDto } from './contact-us.dto';
 import { ContactUsService } from './contact-us.service';
 
@@ -70,7 +70,7 @@ export class ContactUsController {
 
   /** Get one ContactUs */
   @Get(`/show/:contactUsId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneByIdUser(
     @Res() res,
     @Param('contactUsId', ParseUUIDPipe) contactUsId: string,
@@ -82,7 +82,7 @@ export class ContactUsController {
 
   /** Delete one ContactUs */
   @Delete(`/delete/:contactUsId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Param('contactUsId', ParseUUIDPipe) contactUsId: string,

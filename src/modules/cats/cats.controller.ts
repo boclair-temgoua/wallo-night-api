@@ -20,7 +20,7 @@ import { reply } from '../../app/utils/reply';
 import { getIpRequest } from '../../app/utils/commons/get-ip-request';
 import { CartOrdersService } from '../cart-orders/cart-orders.service';
 import { ProductsService } from '../products/products.service';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { CartsDto, CreateOrUpdateCartsDto } from './cats.dto';
 import { CartsService } from './cats.service';
 
@@ -34,7 +34,7 @@ export class CartsController {
 
   /** Get all Carts */
   @Get(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAll(@Res() res, @Req() req, @Ip() ip, @Query() query: CartsDto) {
     const ipLocation = getIpRequest(req);
     const { user } = req;
@@ -51,7 +51,7 @@ export class CartsController {
 
   /** Post one Carts */
   @Post(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
@@ -116,7 +116,7 @@ export class CartsController {
 
   /** Post one Carts */
   @Put(`/:cartId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOne(
     @Res() res,
     @Body() body: CreateOrUpdateCartsDto,
@@ -164,7 +164,7 @@ export class CartsController {
 
   /** Delete one Carts */
   @Delete(`/:cartId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

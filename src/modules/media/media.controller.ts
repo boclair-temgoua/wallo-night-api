@@ -7,7 +7,7 @@ export class MediaController {
 
   /** Get one faq */
   @Get(`/user/:fileName`)
-  // @UseGuards(CookieAuthGuard)
+  // @UseGuards(UserAuthGuard)
   async getOneImageUser(@Res() res, @Param('fileName') fileName: string) {
     // const file = await getFile();
 

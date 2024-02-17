@@ -1,6 +1,6 @@
 import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { CartOrdersDto } from './cart-orders.dto';
 import { CartOrdersService } from './cart-orders.service';
 
@@ -9,7 +9,7 @@ export class CartOrderController {
   constructor(private readonly cartOrdersService: CartOrdersService) {}
 
   @Get(`/view`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOne(@Res() res, @Req() req, @Query() query: CartOrdersDto) {
     const { user } = req;
     const { cartOrderId, organizationSellerId } = query;

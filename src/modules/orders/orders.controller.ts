@@ -24,7 +24,7 @@ import { CartOrdersService } from '../cart-orders/cart-orders.service';
 import { CartsService } from '../cats/cats.service';
 import { OrderItemsService } from '../order-items/order-items.service';
 import { ProductsService } from '../products/products.service';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { GetOrderItemDto, UpdateOrderItemDto } from './orders.dto';
 import { OrdersService } from './orders.service';
 
@@ -39,7 +39,7 @@ export class OrdersController {
   ) {}
 
   @Get(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAllContributorsBy(
     @Res() res,
     @Req() req,
@@ -63,7 +63,7 @@ export class OrdersController {
 
   /** Get OrderItems */
   @Get(`/order-items`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAllOrderItems(
     @Res() res,
     @Req() req,
@@ -98,7 +98,7 @@ export class OrdersController {
 
   /** Create Order */
   @Post(`/:cartOrderId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
@@ -176,7 +176,7 @@ export class OrdersController {
 
   /** Create OrderItem */
   @Put(`/order-items/:orderItemId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOne(
     @Res() res,
     @Req() req,

@@ -18,7 +18,7 @@ import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { BullingService } from '../bulling/bulling.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { TransactionsService } from '../transactions/transactions.service';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { UsersService } from '../users/users.service';
 import { WalletsService } from '../wallets/wallets.service';
 import {
@@ -39,7 +39,7 @@ export class ContributionsController {
   ) {}
 
   @Get(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,

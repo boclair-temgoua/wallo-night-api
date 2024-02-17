@@ -22,7 +22,7 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { CreateOrUpdateAlbumsDto } from './albums.dto';
 import { AlbumsService } from './albums.service';
 
@@ -59,7 +59,7 @@ export class AlbumsController {
 
   /** Post one Albums */
   @Post(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
@@ -80,7 +80,7 @@ export class AlbumsController {
 
   /** Post one Albums */
   @Put(`/:albumId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOneAlbum(
     @Res() res,
     @Req() req,
@@ -108,7 +108,7 @@ export class AlbumsController {
 
   /** Get one Albums */
   @Get(`/show/:albumId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOne(@Res() res, @Param('albumId', ParseUUIDPipe) albumId: string) {
     const findOneAlbum = await this.albumsService.findOneBy({
       albumId,
@@ -124,7 +124,7 @@ export class AlbumsController {
 
   /** Delete one Album */
   @Delete(`/:albumId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

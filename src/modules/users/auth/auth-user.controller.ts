@@ -15,18 +15,13 @@ import {
 } from '@nestjs/common';
 import * as amqplib from 'amqplib';
 import { config } from '../../../app/config/index';
-import { dateTimeNowUtc, generateNumber } from '../../../app/utils/commons';
-import {
-  expire_cookie_setting,
-  validation_code_verification_cookie_setting,
-  validation_login_cookie_setting,
-} from '../../../app/utils/cookies';
+import { validation_login_cookie_setting } from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
 import { ProfilesService } from '../../profiles/profiles.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CheckUserService } from '../middleware/check-user.service';
-import { CookieAuthGuard } from '../middleware/cookie/cookie-auth.guard';
+import { UserAuthGuard } from '../middleware/cookie/user-auth.guard';
 import {
   CreateLoginUserDto,
   CreateRegisterUserDto,
@@ -34,9 +29,9 @@ import {
   UpdateProfileDto,
   UpdateResetPasswordUserDto,
 } from '../users.dto';
-import { authCodeConfirmationJob, authPasswordResetJob } from '../users.job';
+import { authPasswordResetJob } from '../users.job';
 import { UsersService } from '../users.service';
-import { JwtPayloadType, NextStep, checkIfPasswordMatch } from '../users.type';
+import { NextStep, checkIfPasswordMatch } from '../users.type';
 import { UsersUtil } from '../users.util';
 
 @Controller()
@@ -64,7 +59,7 @@ export class AuthUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    const { user, refreshToken } = await this.usersUtil.saveOrUpdate({
+    const { user } = await this.usersUtil.saveOrUpdate({
       email,
       password,
       firstName,
@@ -101,13 +96,8 @@ export class AuthUserController {
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
     }
 
-    const jwtPayload: JwtPayloadType = {
-      id: findOnUser.id,
-      organizationId: findOnUser.organizationId,
-    };
-
-    const tokenUser = await this.checkUserService.createTokenCookie(
-      jwtPayload,
+    const tokenUser = await this.checkUserService.createToken(
+      { id: findOnUser.id, organizationId: findOnUser.organizationId },
       config.cookie_access.accessExpire,
     );
 
@@ -146,19 +136,14 @@ export class AuthUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    const jwtPayload: JwtPayloadType = {
-      id: findOnUser.id,
-      organizationId: findOnUser.organizationId,
-    };
+    const tokenUser = await this.checkUserService.createToken(
+      { userId: findOnUser.id, organizationId: findOnUser.organizationId },
+      config.cookie_access.verifyExpire,
+    );
 
-    if (!findOnUser)
-      throw new HttpException(
-        `Email ${email} dons't exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
     const result = await this.resetPasswordsService.createOne({
       email,
-      accessToken: await this.checkUserService.createJwtTokens(jwtPayload),
+      accessToken: tokenUser,
     });
 
     /** Send information to Job */
@@ -170,7 +155,7 @@ export class AuthUserController {
     await authPasswordResetJob({ channel, queue });
     /** End send information to Job */
 
-    return reply({ res, results: 'Email reset password send successfully' });
+    return reply({ res, results: { token: result?.token } });
   }
 
   /** Update reset password */
@@ -188,9 +173,11 @@ export class AuthUserController {
     if (!findOnResetPassword) {
       throw new UnauthorizedException('Invalid user please change');
     }
+    await this.checkUserService.verifyToken(findOnResetPassword?.accessToken);
 
     const findOnUser = await this.usersService.findOneBy({
       email: findOnResetPassword?.email,
+      provider: 'default',
     });
     if (!findOnUser)
       throw new HttpException(
@@ -199,10 +186,6 @@ export class AuthUserController {
       );
 
     /** Check token */
-    await this.checkUserService.verifyJWTToken(
-      findOnResetPassword?.accessToken,
-    );
-
     await this.usersService.updateOne({ userId: findOnUser?.id }, { password });
 
     await this.resetPasswordsService.updateOne(
@@ -215,7 +198,7 @@ export class AuthUserController {
 
   /** Update password */
   @Put(`/profile/update/:userId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOneProfile(
     @Res() res,
     @Body() body: UpdateProfileDto,
@@ -281,36 +264,35 @@ export class AuthUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    const codeGenerate = generateNumber(4);
-    const { cookieKey } = config;
-    const expiresIn = config.cookie_access.firstStepExpire;
-    const token = await this.checkUserService.createToken(
-      { userId: userId, code: codeGenerate, isLogin: true },
-      cookieKey,
-      expiresIn,
-    );
-    res.cookie(
-      'x-code-verification',
-      token,
-      validation_code_verification_cookie_setting,
-    );
+    // const codeGenerate = generateNumber(4);
+    // const { cookieKey } = config;
+    // const expiresIn = config.cookie_access.firstStepExpire;
+    // const token = await this.checkUserService.createToken(
+    //   { userId: userId, code: codeGenerate, isLogin: true },
+    //   cookieKey,
+    //   expiresIn,
+    // );
+    // res.cookie(
+    //   'x-code-verification',
+    //   token,
+    //   validation_code_verification_cookie_setting,
+    // );
 
-    /** Send information to Job */
-    const result = { ...findOnUser, code: codeGenerate };
-    const queue = 'user-send-code';
-    const connect = await amqplib.connect(config.implementations.amqp.link);
-    const channel = await connect.createChannel();
-    await channel.assertQueue(queue, { durable: false });
-    await channel.sendToQueue(queue, Buffer.from(JSON.stringify(result)));
-    await authCodeConfirmationJob({ channel, queue });
+    // /** Send information to Job */
+    // const result = { ...findOnUser, code: codeGenerate };
+    // const queue = 'user-send-code';
+    // const connect = await amqplib.connect(config.implementations.amqp.link);
+    // const channel = await connect.createChannel();
+    // await channel.assertQueue(queue, { durable: false });
+    // await channel.sendToQueue(queue, Buffer.from(JSON.stringify(result)));
+    // await authCodeConfirmationJob({ channel, queue });
     /** End send information to Job */
-
     return reply({ res, results: 'Email send successfully' });
   }
 
   /** Resend code user */
   @Post(`/valid/code`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async validCode(
     @Res() res,
     @Req() req,
@@ -323,23 +305,23 @@ export class AuthUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    const payload = await this.checkUserService.verifyTokenCookie(
-      req.cookies['x-code-verification'],
-    );
+    // const payload = await this.checkUserService.verifyTokenCookie(
+    //   req.cookies['x-code-verification'],
+    // );
 
-    if (Number(payload?.code) !== Number(code)) {
-      throw new HttpException(
-        `Code ${code} not valid or expired`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    // if (Number(payload?.code) !== Number(code)) {
+    //   throw new HttpException(
+    //     `Code ${code} not valid or expired`,
+    //     HttpStatus.NOT_FOUND,
+    //   );
+    // }
 
-    await this.usersService.updateOne(
-      { userId: payload?.userId },
-      { nextStep, confirmedAt: dateTimeNowUtc() },
-    );
+    // await this.usersService.updateOne(
+    //   { userId: payload?.userId },
+    //   { nextStep, confirmedAt: dateTimeNowUtc() },
+    // );
 
-    res.clearCookie('x-code-verification', expire_cookie_setting);
+    // res.clearCookie('x-code-verification', expire_cookie_setting);
 
     return reply({ res, results: 'Email confirmed successfully' });
   }

@@ -22,7 +22,7 @@ import {
   addPagination,
 } from '../../app/utils/pagination/with-pagination';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { CreateOrUpdateCategoriesDto } from './categories.dto';
 import { CategoriesService } from './categories.service';
 
@@ -59,7 +59,7 @@ export class CategoriesController {
 
   /** Post one Categories */
   @Post(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
@@ -80,7 +80,7 @@ export class CategoriesController {
 
   /** Post one Categories */
   @Put(`/:categoryId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOneCategory(
     @Res() res,
     @Req() req,
@@ -108,7 +108,7 @@ export class CategoriesController {
 
   /** Get one Categories */
   @Get(`/show/:categoryId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOne(
     @Res() res,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
@@ -127,7 +127,7 @@ export class CategoriesController {
 
   /** Delete one CategoriesUs */
   @Delete(`/:categoryId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

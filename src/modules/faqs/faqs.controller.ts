@@ -15,7 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { CreateOrUpdateFaqsDto } from './faqs.dto';
 
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
@@ -49,7 +49,7 @@ export class FaqsController {
 
   /** Get one faq */
   @Get(`/show/:faqId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneByUUID(@Res() res, @Param('faqId', ParseUUIDPipe) faqId: string) {
     const faq = await this.faqsService.findOneBy({ faqId });
 
@@ -58,7 +58,7 @@ export class FaqsController {
 
   /** Create Faq */
   @Post(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOne(@Res() res, @Req() req, @Body() body: CreateOrUpdateFaqsDto) {
     const { user } = req;
     const { title, status, description } = body;
@@ -75,7 +75,7 @@ export class FaqsController {
 
   /** Update faq */
   @Put(`/:faqId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOne(
     @Res() res,
     @Req() req,
@@ -101,7 +101,7 @@ export class FaqsController {
 
   /** Delete faq */
   @Delete(`/:faqId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

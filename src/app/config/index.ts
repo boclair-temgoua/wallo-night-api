@@ -22,10 +22,8 @@ export const config = {
   cookie_access: {
     nameLogin: process.env.COOKIE_NAME_LOGIN || 'user',
     accessExpire: process.env.COOKIE_ACCESS_EXPIRE || '10000000000', //32000000000 10000000000
-    refreshExpire: process.env.COOKIE_REFRESH_EXPIRE || '96400000',
-    firstStepExpire: process.env.COOKIE_FIRST_STEP_EXPIRE || '300000',
-    verificationExpire: process.env.COOKIE_VERIFICATION_EXPIRE || '300000',
-    validationTokenExpire: process.env.COOKIE_VALIDATION_TOKEN_EXPIRE,
+    namVerify: process.env.COOKIE_NAME_VERIFY || 'verify',
+    verifyExpire: process.env.COOKIE_VERIFY_EXPIRE || '96400000',
   },
   /**
    * Site

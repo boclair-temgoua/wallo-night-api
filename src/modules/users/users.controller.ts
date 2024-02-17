@@ -23,7 +23,7 @@ import {
 import { SearchQueryDto } from '../../app/utils/search-query';
 import { ContributorsService } from '../contributors/contributors.service';
 import { ProfilesService } from '../profiles/profiles.service';
-import { CookieAuthGuard } from './middleware';
+import { UserAuthGuard } from './middleware';
 import { Cookies } from './middleware/cookie.guard';
 import {
   GetOneUserDto,
@@ -43,7 +43,7 @@ export class UsersController {
 
   /** Get all users */
   @Get(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAllUsers(
     @Res() res,
     @Req() req,
@@ -65,7 +65,7 @@ export class UsersController {
 
   /** Get one user */
   @Get(`/show/:userId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneByIdUser(
     @Res() res,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -137,7 +137,7 @@ export class UsersController {
   // }
 
   @Get(`/me`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getMe(@Res() res, @Req() req) {
     const { user } = req;
     const findOneUser = await this.usersService.findOneInfoBy({
@@ -149,7 +149,7 @@ export class UsersController {
   }
 
   @Get(`/profile/show/:profileId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneByProfileId(
     @Res() res,
     @Param('profileId', ParseUUIDPipe) profileId: string,
@@ -162,7 +162,7 @@ export class UsersController {
   }
 
   @Put(`/update/profile/:profileId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateProfile(
     @Res() res,
     @Req() req,
@@ -208,7 +208,7 @@ export class UsersController {
   }
 
   @Put(`/update/enable/:profileId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateEnableProfile(
     @Res() res,
     @Req() req,
@@ -237,7 +237,7 @@ export class UsersController {
   }
 
   @Put(`/change-email`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateUserEmail(
     @Res() res,
     @Req() req,

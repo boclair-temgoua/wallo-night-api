@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 
 import {
   addMonthsFormateDDMMYYDate,
@@ -40,7 +40,7 @@ export class SubscribesController {
 
   /** Get all Follows */
   @Get(`/subscribers`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findFollowers(
     @Res() res,
     @Req() req,
@@ -64,7 +64,7 @@ export class SubscribesController {
 
   /** Get all Follows */
   // @Get(`/followings`)
-  // @UseGuards(CookieAuthGuard)
+  // @UseGuards(UserAuthGuard)
   // async findFollowings(
   //   @Res() res,
   //   @Req() req,
@@ -88,7 +88,7 @@ export class SubscribesController {
 
   /** Create Subscribe */
   @Post(`/create/:membershipId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,

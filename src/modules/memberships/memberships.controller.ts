@@ -26,7 +26,7 @@ import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { UploadsUtil } from '../uploads/uploads.util';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import {
   CreateOrUpdateMembershipsDto,
   GetMembershipDto,
@@ -68,7 +68,7 @@ export class MembershipsController {
 
   /** Post one Memberships */
   @Post(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
@@ -105,7 +105,7 @@ export class MembershipsController {
 
   /** Post one Memberships */
   @Put(`/:membershipId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
     @Res() res,
@@ -189,7 +189,7 @@ export class MembershipsController {
 
   /** Active one Memberships */
   // @Get(`/status`)
-  // @UseGuards(CookieAuthGuard)
+  // @UseGuards(UserAuthGuard)
   // async changeStatusOne(
   //   @Res() res,
   //   @Req() req,
@@ -214,7 +214,7 @@ export class MembershipsController {
 
   /** Delete one Memberships */
   @Delete(`/:membershipId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

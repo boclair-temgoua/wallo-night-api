@@ -14,8 +14,6 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import * as amqplib from 'amqplib';
-import { config } from '../../app/config/index';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   PaginationType,
@@ -27,7 +25,7 @@ import {
   SearchQueryDto,
 } from '../../app/utils/search-query/search-query.dto';
 import { ProfilesService } from '../profiles/profiles.service';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { CheckUserService } from '../users/middleware/check-user.service';
 import { UsersService } from '../users/users.service';
 import { generateLongUUID } from './../../app/utils/commons/generate-random';
@@ -49,7 +47,7 @@ export class ContributorsController {
   ) {}
 
   @Get(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,
@@ -72,7 +70,7 @@ export class ContributorsController {
   }
 
   @Post(`/new-user`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOneNewUser(
     @Res() res,
     @Req() req,
@@ -121,13 +119,13 @@ export class ContributorsController {
       id: userSave?.id,
       organizationId: userSave?.organizationId,
     };
-    await this.usersService.updateOne(
-      { userId: userSave?.id },
-      { accessToken: await this.checkUserService.createJwtTokens(jwtPayload) },
-    );
+    // await this.usersService.updateOne(
+    //   { userId: userSave?.id },
+    //   { accessToken: await this.checkUserService.createJwtTokens(jwtPayload) },
+    // );
     /** Send notification to Contributor */
-    const queue = 'user-contributor-create';
-    const connect = await amqplib.connect(config.implementations.amqp.link);
+    // const queue = 'user-contributor-create';
+    // const connect = await amqplib.connect(config.implementations.amqp.link);
     // const channel = await connect.createChannel();
     // await channel.assertQueue(queue, { durable: false });
     // await channel.sendToQueue(
@@ -145,7 +143,7 @@ export class ContributorsController {
   }
 
   @Get(`/show/:contributorId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneById(
     @Res() res,
     @Req() req,
@@ -167,7 +165,7 @@ export class ContributorsController {
   }
 
   @Delete(`/:contributorId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,
@@ -197,7 +195,7 @@ export class ContributorsController {
   }
 
   @Put(`/role`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOneRole(
     @Res() res,
     @Req() req,

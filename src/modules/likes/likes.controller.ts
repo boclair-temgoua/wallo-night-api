@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { CreateOrUpdateLikesDto } from './likes.dto';
 
 import { LikesService } from './likes.service';
@@ -19,7 +19,7 @@ export class LikesController {
 
   /** Create Like */
   @Post(`/:type/:likeableId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOneLike(
     @Res() res,
     @Req() req,
@@ -39,7 +39,7 @@ export class LikesController {
 
   /** Delete Like */
   @Delete(`/:type/:likeableId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOneLike(
     @Res() res,
     @Req() req,

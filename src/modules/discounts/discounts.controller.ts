@@ -22,7 +22,7 @@ import {
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import { CreateOrUpdateDiscountsDto } from './discounts.dto';
 import { DiscountsService } from './discounts.service';
 
@@ -31,7 +31,7 @@ export class DiscountsController {
   constructor(private readonly discountsService: DiscountsService) {}
 
   @Get(`/user`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAllByUserId(@Res() res, @Req() req) {
     const { user } = req;
 
@@ -43,7 +43,7 @@ export class DiscountsController {
   }
 
   @Get(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAllByUserNotPaginate(
     @Res() res,
     @Req() req,
@@ -67,7 +67,7 @@ export class DiscountsController {
 
   /** Post one Discounts */
   @Post(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
@@ -86,7 +86,7 @@ export class DiscountsController {
 
   /** Post one Discounts */
   @Put(`/:discountId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOne(
     @Res() res,
     @Req() req,
@@ -119,7 +119,7 @@ export class DiscountsController {
 
   /** Get one Discounts */
   @Get(`/show/:discountId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOne(@Res() res, @Param('discountId') discountId: string) {
     const findOneDiscount = await this.discountsService.findOneBy({
       discountId,
@@ -135,7 +135,7 @@ export class DiscountsController {
 
   /** Delete one Discounts */
   @Delete(`/:discountId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

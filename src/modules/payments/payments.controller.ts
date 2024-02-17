@@ -18,7 +18,7 @@ import { RequestPaginationDto } from '../../app/utils/pagination/request-paginat
 import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { otpMessageSend, otpVerifySid } from '../integrations/twilio-otp';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 import {
   CodeVerifyPaymentsDto,
   CreateOnePaymentDto,
@@ -32,7 +32,7 @@ export class PaymentsController {
 
   /** Get all Payments */
   @Get(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,
@@ -56,7 +56,7 @@ export class PaymentsController {
 
   /** resend code one payment */
   @Post(`/resend-code-verify-phone`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async sendCodeVerifyPhoneOne(
     @Res() res,
     @Req() req,
@@ -77,7 +77,7 @@ export class PaymentsController {
 
   /** Verify one payment */
   @Post(`/code-verify-phone`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async codeVerifyPhoneOne(
     @Res() res,
     @Req() req,
@@ -116,7 +116,7 @@ export class PaymentsController {
 
   /** Create one payment */
   @Post(`/create`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOne(@Res() res, @Req() req, @Body() body: CreateOnePaymentDto) {
     const { user } = req;
     const {
@@ -192,7 +192,7 @@ export class PaymentsController {
 
   /** Delete payment */
   @Delete(`/:paymentId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

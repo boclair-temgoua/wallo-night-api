@@ -15,7 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { CookieAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
@@ -49,7 +49,7 @@ export class ProjectsController {
 
   /** Get one Project */
   @Get(`/show/:projectId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneByUUIDProject(
     @Res() res,
     @Param('projectId', ParseUUIDPipe) projectId: string,
@@ -61,7 +61,7 @@ export class ProjectsController {
 
   /** Create Project */
   @Post(`/`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOneProject(
     @Res() res,
     @Req() req,
@@ -82,7 +82,7 @@ export class ProjectsController {
 
   /** Update Project */
   @Put(`/:projectId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOneProject(
     @Res() res,
     @Req() req,
@@ -108,7 +108,7 @@ export class ProjectsController {
 
   /** Delete Project */
   @Delete(`/:projectId`)
-  @UseGuards(CookieAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOneProject(
     @Res() res,
     @Req() req,

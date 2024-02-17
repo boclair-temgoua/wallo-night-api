@@ -1,2 +1,2 @@
-export * from './cookie/cookie-auth.guard';
-export * from './cookie/cookie-auth.strategy';
+export * from './cookie/user-auth.guard';
+export * from './cookie/user-auth.strategy';
