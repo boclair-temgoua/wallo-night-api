@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "engines": {
     "npm": ">=10.0.0 ",
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "contributors": [
     "Boclair Temgoua (https://github.com/boclair-temgoua)"
