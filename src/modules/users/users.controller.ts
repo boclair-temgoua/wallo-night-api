@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -15,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
+import { config } from '../../app/config/index';
 import {
   PaginationType,
   RequestPaginationDto,
@@ -259,5 +261,30 @@ export class UsersController {
     await this.usersService.updateOne({ userId: user?.id }, { email: email });
 
     return reply({ res, results: 'User updated successfully' });
+  }
+
+  @Delete(`/:userId`)
+  @UseGuards(UserAuthGuard)
+  async deleteOnUser(
+    @Res() res,
+    @Req() req,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    const { user } = req;
+    const findOneUser = await this.usersService.findOneBy({
+      userId,
+    });
+
+    if (!findOneUser && userId !== user?.id)
+      throw new HttpException(
+        `User ${userId} already not exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.usersService.updateOne({ userId }, { deletedAt: new Date() });
+
+    res.clearCookie(config.cookie_access.nameLogin);
+
+    return reply({ res, results: 'User deleted successfully' });
   }
 }
