@@ -62,6 +62,7 @@ export class UsersUtil {
       firstName,
       image,
       currencyId: findOnCurrency?.id,
+      description: 'Welcome to my profile page',
     });
 
     /** Create Organization */

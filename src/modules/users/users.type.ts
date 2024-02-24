@@ -71,7 +71,7 @@ export const checkIfPasswordMatch = async (
 export const hashPassword = async (password: string) =>
   await argon2.hash(String(password), {
     type: argon2.argon2id,
-    saltLength: 32,
+    hashLength: 32,
     memoryCost: 2 ** 16,
     parallelism: 4,
   });
