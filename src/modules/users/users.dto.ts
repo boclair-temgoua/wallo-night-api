@@ -1,15 +1,12 @@
 import {
-  IsString,
-  MaxLength,
   IsEmail,
-  IsNotEmpty,
-  MinLength,
   IsInt,
+  IsNotEmpty,
   IsOptional,
+  IsString,
   IsUUID,
-  IsDate,
-  IsIn,
-  IsBoolean,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
 
@@ -247,4 +244,12 @@ export class GetOneUserDto {
   @IsOptional()
   @IsString()
   username: string;
+}
+
+export class CreateOrUpdateResetPasswordDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  @IsEmail()
+  email: string;
 }

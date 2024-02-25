@@ -1,26 +1,24 @@
-import { Contributor } from './../../models/Contributor';
 import {
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../models/User';
 import { Brackets, Repository } from 'typeorm';
+import { generateLongUUID } from '../../app/utils/commons/generate-random';
+import { withPagination } from '../../app/utils/pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { User } from '../../models/User';
 import {
   CreateUserOptions,
-  GetOneUserSelections,
   GetOnUserPublic,
+  GetOneUserSelections,
   GetUsersSelections,
   UpdateUserOptions,
   UpdateUserSelections,
+  hashPassword,
 } from './users.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { generateLongUUID } from '../../app/utils/commons/generate-random';
-import { withPagination } from '../../app/utils/pagination';
 
 @Injectable()
 export class UsersService {
@@ -204,7 +202,7 @@ export class UsersService {
     const user = new User();
     user.token = generateLongUUID(50);
     user.email = email.toLowerCase();
-    user.hashPassword(password);
+    user.password = await hashPassword(password);
     user.username = username;
     user.profileId = profileId;
     user.permission = permission;
@@ -253,7 +251,7 @@ export class UsersService {
     user.email = email;
     user.username = username;
     if (password) {
-      user.hashPassword(password);
+      user.password = await hashPassword(password);
     }
     user.accessToken = accessToken;
     user.refreshToken = refreshToken;

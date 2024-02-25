@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Brackets } from 'typeorm';
-import * as Slug from 'slug';
-import { useCatch } from '../../app/utils/use-catch';
+import { Brackets, Repository } from 'typeorm';
+import { Slug, generateNumber } from '../../app/utils/commons';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { generateNumber } from '../../app/utils/commons';
+import { useCatch } from '../../app/utils/use-catch';
+import { OurEvent } from '../../models';
 import {
   CreateOurEventsOptions,
   GetOneOurEventsSelections,
@@ -12,7 +12,6 @@ import {
   UpdateOurEventsOptions,
   UpdateOurEventsSelections,
 } from './our-events.type';
-import { OurEvent } from '../../models';
 
 @Injectable()
 export class OurEventsService {

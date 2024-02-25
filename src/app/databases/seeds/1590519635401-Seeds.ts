@@ -1,14 +1,12 @@
-import { generateNumber } from '../../utils/commons/generate-random';
+import { Slug, generateNumber } from '../../utils/commons/generate-random';
 // import { MigrationInterface, QueryRunner } from 'typeorm';
-import { Repository, MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 import { faker } from '@faker-js/faker';
-import { useCatch } from '../../utils/use-catch';
 import { Country } from '../../../models/Country';
 import { AppSeedDataSource } from '../orm/orm-config-seed';
 
 import { Faq } from '../../../models/Faq';
-import * as Slug from 'slug';
 
 export class Seeds1590519635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {

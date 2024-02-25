@@ -1,17 +1,18 @@
 import {
-  withPagination,
-  WithPaginationResponse,
-} from './../../app/utils/pagination/with-pagination';
-import {
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Faq } from '../../models/Faq';
 import { Repository } from 'typeorm';
+import { generateNumber, Slug } from '../../app/utils/commons/generate-random';
+import { useCatch } from '../../app/utils/use-catch';
+import { Faq } from '../../models/Faq';
+import {
+  withPagination,
+  WithPaginationResponse,
+} from './../../app/utils/pagination/with-pagination';
 import {
   CreateFaqOptions,
   GetFaqsSelections,
@@ -19,8 +20,6 @@ import {
   UpdateFaqOptions,
   UpdateFaqSelections,
 } from './faqs.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { generateNumber } from '../../app/utils/commons/generate-random';
 
 @Injectable()
 export class FaqsService {

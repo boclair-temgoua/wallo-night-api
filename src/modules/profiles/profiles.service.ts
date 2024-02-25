@@ -4,19 +4,18 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Profile } from '../../models/Profile';
-import { getRandomElement } from '../../app/utils/array/get-random-element';
 import { Repository } from 'typeorm';
+import { getRandomElement } from '../../app/utils/array/get-random-element';
+import { colorsArrays } from '../../app/utils/commons';
+import { useCatch } from '../../app/utils/use-catch';
+import { Profile } from '../../models/Profile';
 import {
   CreateProfileOptions,
   GetOneProfileSelections,
   UpdateProfileOptions,
   UpdateProfileSelections,
 } from './profiles.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { colorsArrays } from '../../app/utils/commons';
 
 @Injectable()
 export class ProfilesService {

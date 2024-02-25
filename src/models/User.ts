@@ -1,25 +1,22 @@
-import * as bcrypt from 'bcryptjs';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
-  OneToOne,
+  Entity,
   JoinColumn,
   ManyToOne,
-  Generated,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
 import {
-  Post,
   Comment,
-  Wallet,
-  Transaction,
   Contributor,
-  Profile,
-  OurEvent,
   Organization,
+  OurEvent,
+  Post,
+  Profile,
+  Transaction,
 } from './index';
 import { OrderEvent } from './OrderEvent';
 
@@ -87,15 +84,4 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor[];
-
-  async hashPassword(password: string) {
-    this.password = await bcrypt.hashSync(
-      String(password) || String(this.password),
-      8,
-    );
-  }
-
-  checkIfPasswordMatch(password: string) {
-    return bcrypt.compareSync(String(password), String(this.password));
-  }
 }

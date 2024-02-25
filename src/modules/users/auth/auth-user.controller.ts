@@ -1,27 +1,34 @@
-import { ContributorsService } from './../../contributors/contributors.service';
-import { ContributorRole } from './../../contributors/contributors.type';
 import {
-  Controller,
-  Post,
-  NotFoundException,
   Body,
-  Put,
-  Param,
-  Res,
-  Query,
+  Controller,
   Get,
-  Headers,
-  Req,
   HttpException,
   HttpStatus,
-  UnauthorizedException,
+  Param,
   ParseUUIDPipe,
+  Post,
+  Put,
+  Req,
+  Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { reply } from '../../../app/utils/reply';
-import { useCatch } from '../../../app/utils/use-catch';
 import * as amqplib from 'amqplib';
-import { UsersService } from '../users.service';
+import { config } from '../../../app/config/index';
+import { generateLongUUID, generateNumber } from '../../../app/utils/commons';
+import {
+  validation_code_verification_cookie_setting,
+  validation_login_cookie_setting,
+} from '../../../app/utils/cookies';
+import { reply } from '../../../app/utils/reply';
+import { OrganizationsService } from '../../organizations/organizations.service';
+import { ProfilesService } from '../../profiles/profiles.service';
+import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
+import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
+import { WalletsService } from '../../wallets/wallets.service';
+import { JwtAuthGuard } from '../middleware';
+import { CheckUserService } from '../middleware/check-user.service';
+import { GoogleAuthGuard } from '../middleware/google/google-auth.guard';
 import {
   CreateLoginUserDto,
   CreateRegisterUserDto,
@@ -29,28 +36,10 @@ import {
   UpdateProfileDto,
   UpdateResetPasswordUserDto,
 } from '../users.dto';
-import { ProfilesService } from '../../profiles/profiles.service';
-import { JwtPayloadType } from '../users.type';
-import { CheckUserService } from '../middleware/check-user.service';
-import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
-import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
-import { config } from '../../../app/config/index';
 import { authCodeConfirmationJob, authPasswordResetJob } from '../users.job';
-import { WalletsService } from '../../wallets/wallets.service';
-import {
-  addYearsFormateDDMMYYDate,
-  dateTimeNowUtc,
-  generateLongUUID,
-  generateNumber,
-} from '../../../app/utils/commons';
-import { JwtAuthGuard } from '../middleware';
-import { OrganizationsService } from '../../organizations/organizations.service';
-import {
-  expire_cookie_setting,
-  validation_code_verification_cookie_setting,
-  validation_login_cookie_setting,
-} from '../../../app/utils/cookies';
-import { GoogleAuthGuard } from '../middleware/google/google-auth.guard';
+import { UsersService } from '../users.service';
+import { JwtPayloadType, checkIfPasswordMatch } from '../users.type';
+import { ContributorsService } from './../../contributors/contributors.service';
 
 @Controller()
 export class AuthUserController {
@@ -169,8 +158,10 @@ export class AuthUserController {
     const { email, password } = createLoginUserDto;
 
     const findOnUser = await this.usersService.findOneBy({ email });
-    if (!findOnUser?.checkIfPasswordMatch(password))
+    if (!(await checkIfPasswordMatch(findOnUser?.password, password))) {
+      await new Promise((resolve) => setTimeout(resolve, 1_000));
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
+    }
 
     const jwtPayload: JwtPayloadType = {
       id: findOnUser.id,

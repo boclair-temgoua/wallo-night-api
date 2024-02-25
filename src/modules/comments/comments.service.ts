@@ -1,14 +1,14 @@
-import { withPagination } from '../../app/utils/pagination/with-pagination';
 import {
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Comment } from '../../models/Comment';
 import { Repository } from 'typeorm';
+import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { Comment } from '../../models/Comment';
 import {
   CreateCommentOptions,
   GetCommentsSelections,
@@ -16,7 +16,6 @@ import {
   UpdateCommentOptions,
   UpdateCommentSelections,
 } from './comments.type';
-import { useCatch } from '../../app/utils/use-catch';
 
 @Injectable()
 export class CommentsService {

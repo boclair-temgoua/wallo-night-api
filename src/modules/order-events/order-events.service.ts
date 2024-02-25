@@ -1,26 +1,20 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { generateNumber } from '../../app/utils/commons/generate-random';
 import {
   withPagination,
   WithPaginationResponse,
 } from '../../app/utils/pagination/with-pagination';
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import * as Slug from 'slug';
-import { InjectRepository } from '@nestjs/typeorm';
+import { useCatch } from '../../app/utils/use-catch';
 import { OrderEvent } from '../../models';
-import { Repository } from 'typeorm';
 import {
   CreateOrderEventOptions,
-  GetOrderEventsSelections,
   GetOneOrderEventSelections,
+  GetOrderEventsSelections,
   UpdateOrderEventOptions,
   UpdateOrderEventSelections,
 } from './order-events.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { generateNumber } from '../../app/utils/commons/generate-random';
 
 @Injectable()
 export class OrderEventsService {

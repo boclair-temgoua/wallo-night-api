@@ -1,5 +1,6 @@
-import { User } from '../../models/User';
+import * as argon2 from 'argon2';
 import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { User } from '../../models/User';
 
 export type JwtPayloadType = {
   id: string;
@@ -48,3 +49,16 @@ export type GetOnUserPublic = {
     currencyId: string;
   };
 };
+
+export const checkIfPasswordMatch = async (
+  userPassword: string,
+  password: string,
+) => await argon2.verify(String(userPassword), String(password));
+
+export const hashPassword = async (password: string) =>
+  await argon2.hash(String(password), {
+    type: argon2.argon2id,
+    saltLength: 32,
+    memoryCost: 2 ** 16,
+    parallelism: 4,
+  });

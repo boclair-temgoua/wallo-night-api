@@ -1,26 +1,25 @@
 import {
-  withPagination,
-  WithPaginationResponse,
-} from '../../app/utils/pagination/with-pagination';
-import {
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as Slug from 'slug';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Project } from '../../models/Project';
 import { Repository } from 'typeorm';
+import { generateNumber, Slug } from '../../app/utils/commons/generate-random';
+import {
+  withPagination,
+  WithPaginationResponse,
+} from '../../app/utils/pagination/with-pagination';
+import { useCatch } from '../../app/utils/use-catch';
+import { Project } from '../../models/Project';
 import {
   CreateProjectOptions,
-  GetProjectsSelections,
   GetOneProjectSelections,
+  GetProjectsSelections,
   UpdateProjectOptions,
   UpdateProjectSelections,
 } from './projects.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { generateNumber } from '../../app/utils/commons/generate-random';
 
 @Injectable()
 export class ProjectsService {
