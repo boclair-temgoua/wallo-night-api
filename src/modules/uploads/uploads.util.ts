@@ -32,7 +32,7 @@ export class UploadsUtil {
     membershipId?: string;
 
     folder: 'products' | 'commissions' | 'posts' | 'memberships';
-    files: Array<ExpressFile>;
+    files?: Array<ExpressFile>;
     file?: ExpressFile;
   }): Promise<any> {
     const {
