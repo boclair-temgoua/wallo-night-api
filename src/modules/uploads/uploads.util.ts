@@ -104,14 +104,14 @@ export class UploadsUtil {
   async uploadOneAWS(options: {
     file: ExpressFile;
     folder: string;
-    model: FilterQueryType;
-    userId: string;
-    postId: string;
-    productId: string;
-    commissionId: string;
-    membershipId: string;
-    organizationId: string;
-    uploadableId: string;
+    model?: FilterQueryType;
+    userId?: string;
+    postId?: string;
+    productId?: string;
+    commissionId?: string;
+    membershipId?: string;
+    organizationId?: string;
+    uploadableId?: string;
   }) {
     const {
       file,
