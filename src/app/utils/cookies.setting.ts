@@ -1,3 +1,4 @@
+import { config } from '../config/index';
 export type Env = 'local' | 'prod' | 'dev' | 'test';
 
 /** Get the correct cookie settings based on environment */
@@ -25,13 +26,13 @@ const settingsMap: {
   prod: {
     httpOnly: false,
     secure: true,
-    domain: '.botipo.com',
+    domain: config.cookie_access.domain,
     sameSite: 'none',
   },
   test: {
     httpOnly: false,
     secure: true,
-    domain: '.botipo.com',
+    domain: config.cookie_access.domain,
     sameSite: 'none',
   },
 };
