@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as mime from 'mime-types';
 import { formateNowDateYYMMDD } from '../../app/utils/commons/formate-date';
-import {
-  Slug,
-  generateLongUUID,
-} from '../../app/utils/commons/generate-random';
+import { generateLongUUID } from '../../app/utils/commons/generate-random';
 import { KeyAsString } from '../../app/utils/commons/key-as-string';
 import { FilterQueryType } from '../../app/utils/search-query';
 import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
@@ -130,9 +127,7 @@ export class UploadsUtil {
 
     if (file) {
       const extension = mime.extension(file.mimetype);
-      const nameFile = `${Slug(file?.originalname)}${formateNowDateYYMMDD(
-        new Date(),
-      )}-${generateLongUUID(4)}`;
+      const nameFile = `${formateNowDateYYMMDD(new Date())}-${generateLongUUID(6)}`;
       fileName = `${`${nameFile}.${extension === 'mpga' ? 'mp3' : extension}`}`;
 
       urlAWS = await awsS3ServiceAdapter({
