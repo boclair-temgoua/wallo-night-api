@@ -28,13 +28,20 @@ export class LikesController {
     const { user } = req;
     const { type, likeableId } = params;
 
-    const like = await this.likesService.createOne({
+    const findOneLike = await this.likesService.findOneBy({
       type,
       likeableId,
       userId: user?.id,
     });
 
-    return reply({ res, results: { id: like?.id } });
+    if (!findOneLike) {
+      await this.likesService.createOne({
+        type,
+        likeableId,
+        userId: user?.id,
+      });
+    }
+    return reply({ res, results: 'Like save successfully' });
   }
 
   /** Delete Like */
@@ -54,14 +61,12 @@ export class LikesController {
       userId: user?.id,
     });
 
-    Promise.all([
-      likes.map(async (like) => {
-        await this.likesService.updateOne(
-          { likeId: like?.id },
-          { deletedAt: new Date() },
-        );
-      }),
-    ]);
+    for (const like of likes) {
+      await this.likesService.updateOne(
+        { likeId: like?.id },
+        { deletedAt: new Date() },
+      );
+    }
 
     return reply({ res, results: `like deleted successfully` });
   }
