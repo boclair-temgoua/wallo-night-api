@@ -14,7 +14,10 @@ import { UsersService } from '../../users.service';
 
 export const JwtSecretTMP = 'secretTMP';
 @Injectable()
-export class UserAuthStrategy extends PassportStrategy(Strategy) {
+export class UserAuthStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-access-login',
+) {
   constructor(
     private readonly usersService: UsersService,
     private readonly contributorsUtil: ContributorsUtil,
