@@ -17,6 +17,7 @@ import {
 import { reply } from '../../app/utils/reply';
 
 import { config } from '../../app/config/index';
+import { getIpRequest } from '../../app/utils/commons/get-ip-request';
 import {
   PaginationType,
   RequestPaginationDto,
@@ -24,6 +25,7 @@ import {
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
 import { ContributorsService } from '../contributors/contributors.service';
+import { getOneLocationIpApi } from '../integrations/taux-live';
 import { ProfilesService } from '../profiles/profiles.service';
 import { UserAuthGuard } from './middleware';
 import { Cookies } from './middleware/cookie.guard';
@@ -142,12 +144,15 @@ export class UsersController {
   @UseGuards(UserAuthGuard)
   async getMe(@Res() res, @Req() req) {
     const { user } = req;
+    const ipLocation = await getOneLocationIpApi({
+      ipLocation: getIpRequest(req) ?? '101.56.0.0',
+    });
     const findOneUser = await this.usersService.findOneInfoBy({
       userId: user?.id,
     });
     if (!findOneUser) throw new UnauthorizedException('Invalid user');
 
-    return reply({ res, results: findOneUser });
+    return reply({ res, results: { ...findOneUser, ipLocation } });
   }
 
   @Get(`/profile/show/:profileId`)

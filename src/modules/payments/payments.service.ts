@@ -269,6 +269,15 @@ export class PaymentsService {
     };
     const customer: Stripe.Customer =
       await stripePrivate.customers.create(params);
+
+    const setupIntent = await stripePrivate.setupIntents.create({
+      customer: customer?.id,
+      payment_method_types: ['paypal'],
+      payment_method_data: {
+        type: 'paypal',
+      },
+    });
+
     const paymentIntents = await stripePrivate.paymentIntents.create({
       amount: Number(amountDetail?.value) * 100, // 25
       currency: currency,
@@ -287,6 +296,31 @@ export class PaymentsService {
     }
 
     return { paymentIntents };
+  }
+
+  /** Stripe billing */
+  async stripeConfirmPayPalSetup(options: {
+    description?: string;
+    email: string;
+  }): Promise<any> {
+    const { email, description } = options;
+
+    const params: Stripe.CustomerCreateParams = {
+      description: description,
+      email: email,
+    };
+    const customer: Stripe.Customer =
+      await stripePrivate.customers.create(params);
+
+    const setupIntent = await stripePrivate.setupIntents.create({
+      customer: customer?.id,
+      payment_method_types: ['paypal'],
+      payment_method_data: {
+        type: 'paypal',
+      },
+    });
+
+    return { setupIntent };
   }
 
   /** Cart execution */

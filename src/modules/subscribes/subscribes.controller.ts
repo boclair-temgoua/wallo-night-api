@@ -25,6 +25,7 @@ import {
 } from '../../app/utils/pagination/with-pagination';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { FollowsService } from '../follows/follows.service';
+import PayPalIntegration from '../integrations/paypal/paypal.integration';
 import { MembershipsService } from '../memberships/memberships.service';
 import { TransactionsService } from '../transactions/transactions.service';
 import { SubscribesService } from './subscribes.service';
@@ -175,5 +176,15 @@ export class SubscribesController {
     }
 
     return reply({ res, results: 'User Subscribe successfully' });
+  }
+
+  @Post(`/paypal-test`)
+  @UseGuards(UserAuthGuard)
+  async createPayPalOne(@Res() res, @Req() req) {
+    const paypal = new PayPalIntegration();
+    const data = await paypal.getAccessToken();
+    // const data = await getPayPalAccessToken();
+
+    return reply({ res, results: data });
   }
 }

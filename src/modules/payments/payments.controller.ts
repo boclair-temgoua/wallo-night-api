@@ -119,6 +119,7 @@ export class PaymentsController {
   @UseGuards(UserAuthGuard)
   async createOne(@Res() res, @Req() req, @Body() body: CreateOnePaymentDto) {
     const { user } = req;
+    let responseIntent = {};
     const {
       email,
       phone,
@@ -187,7 +188,16 @@ export class PaymentsController {
       });
     }
 
-    return reply({ res, results: 'payment created successfully' });
+    if (type === 'PAYPAL') {
+      const { setupIntent } =
+        await this.paymentsService.stripeConfirmPayPalSetup({
+          email: 'temgoua@gmail.com',
+          description: 'my subscribe',
+        });
+      responseIntent = setupIntent;
+    }
+
+    return reply({ res, results: responseIntent });
   }
 
   /** Delete payment */
@@ -205,4 +215,18 @@ export class PaymentsController {
 
     return reply({ res, results: 'payment deleted successfully' });
   }
+
+  // /** Delete payment */
+  // @Post(`/confirm-paypal-setup`)
+  // @UseGuards(UserAuthGuard)
+  // async confirmPayPalSetup(@Res() res, @Req() req) {
+  //   const { setupIntent } = await this.paymentsService.stripeConfirmPayPalSetup(
+  //     {
+  //       email: 'temgoua@gmail.com',
+  //       description: 'my subscribe',
+  //     },
+  //   );
+
+  //   return reply({ res, results: setupIntent });
+  // }
 }

@@ -201,6 +201,14 @@ export const config = {
       apiSecret: process.env.MJ_APIKEY_PRIVATE,
     },
     /**
+     * PayPal
+     */
+    paypal: {
+      url: process.env.PAYPAL_URL,
+      clientId: process.env.PAYPAL_CLIENT_ID,
+      clientSecret: process.env.PAYPAL_CLIENT_SECRET,
+    },
+    /**
      * Amazon s3
      */
     aws: {
