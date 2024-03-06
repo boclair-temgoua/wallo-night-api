@@ -15,8 +15,10 @@ import {
 } from '@nestjs/common';
 import * as amqplib from 'amqplib';
 import { config } from '../../../app/config/index';
+import { getIpRequest } from '../../../app/utils/commons/get-ip-request';
 import { validation_login_cookie_setting } from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
+import { getOneLocationIpApi } from '../../integrations/taux-live';
 import { ProfilesService } from '../../profiles/profiles.service';
 import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
 import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
@@ -324,6 +326,19 @@ export class AuthUserController {
     // res.clearCookie('x-code-verification', expire_cookie_setting);
 
     return reply({ res, results: 'Email confirmed successfully' });
+  }
+
+  /** IpLocation new user */
+  @Get(`/ip-location`)
+  async ipLocation(@Res() res, @Req() req) {
+    const ipLocation = await getOneLocationIpApi({
+      ipLocation: getIpRequest(req) ?? '101.56.0.0',
+    });
+
+    return reply({
+      res,
+      results: ipLocation,
+    });
   }
 
   /** Logout user */
