@@ -1,34 +1,32 @@
 import {
-  Controller,
-  Post,
-  NotFoundException,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { useCatch } from '../../app/utils/use-catch';
+import { UserAuthGuard } from '../users/middleware';
 import { CommentsDto, CreateOrUpdateCommentsDto } from './comments.dto';
-import { JwtAuthGuard } from '../users/middleware';
 
-import { CommentsService } from './comments.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { PostsService } from '../posts/posts.service';
 import { Cookies } from '../users/middleware/cookie.guard';
+import { CommentsService } from './comments.service';
 
 @Controller('comments')
 export class CommentsController {
@@ -110,7 +108,7 @@ export class CommentsController {
 
   /** Create Comment */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOneComment(
     @Res() res,
     @Req() req,
@@ -141,7 +139,7 @@ export class CommentsController {
 
   /** Create reply Comment */
   @Post(`/replies`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOneCommentReplies(
     @Res() res,
     @Req() req,
@@ -172,7 +170,7 @@ export class CommentsController {
 
   /** Update Comment */
   @Put(`/:commentId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOneComment(
     @Res() res,
     @Req() req,
@@ -200,7 +198,7 @@ export class CommentsController {
 
   /** Delete Comment */
   @Delete(`/:commentId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOneComment(
     @Res() res,
     @Req() req,

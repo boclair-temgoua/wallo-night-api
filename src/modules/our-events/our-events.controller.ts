@@ -1,38 +1,37 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
-  UseInterceptors,
+  Req,
+  Res,
   UploadedFiles,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { reply } from '../../app/utils/reply';
-import { OurEventsService } from './our-events.service';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { JwtAuthGuard } from '../users/middleware';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
-  addPagination,
   PaginationType,
+  addPagination,
 } from '../../app/utils/pagination/with-pagination';
+import { reply } from '../../app/utils/reply';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { UploadsUtil } from '../uploads/uploads.util';
+import { UserAuthGuard } from '../users/middleware';
 import {
   CreateOrUpdateOurEventsDto,
   GetOneOurEventDto,
   GetOurEventsDto,
 } from './our-events.dto';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { UploadsUtil } from '../uploads/uploads.util';
-import { generateNumber } from '../../app/utils/commons/generate-random';
+import { OurEventsService } from './our-events.service';
 
 @Controller('events')
 export class OurEventsController {
@@ -69,7 +68,7 @@ export class OurEventsController {
 
   /** Post one OurEvents */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
@@ -123,7 +122,7 @@ export class OurEventsController {
 
   /** Post one OurEvents */
   @Put(`/:eventId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
     @Res() res,
@@ -207,7 +206,7 @@ export class OurEventsController {
 
   /** Delete one OurEvents */
   @Delete(`/:eventId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

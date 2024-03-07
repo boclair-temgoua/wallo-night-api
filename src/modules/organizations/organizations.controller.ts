@@ -1,24 +1,24 @@
 import {
   Controller,
-  ParseUUIDPipe,
-  UseGuards,
-  Res,
   Get,
-  Req,
-  Query,
   HttpException,
   HttpStatus,
+  ParseUUIDPipe,
+  Query,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import {
-  addPagination,
   PaginationType,
   RequestPaginationDto,
+  addPagination,
 } from '../../app/utils/pagination';
-import { SearchQueryDto } from '../../app/utils/search-query';
 import { reply } from '../../app/utils/reply';
-import { OrganizationsService } from './organizations.service';
-import { JwtAuthGuard } from '../users/middleware';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { ContributorsService } from '../contributors/contributors.service';
+import { UserAuthGuard } from '../users/middleware';
+import { OrganizationsService } from './organizations.service';
 
 @Controller('organizations')
 export class OrganizationsController {
@@ -28,7 +28,7 @@ export class OrganizationsController {
   ) {}
 
   @Get(`/contributes`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAllContributorsBy(
     @Res() res,
     @Req() req,
@@ -52,7 +52,7 @@ export class OrganizationsController {
   }
 
   @Get(`/view`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOne(
     @Res() res,
     @Req() req,

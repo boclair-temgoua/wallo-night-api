@@ -1,25 +1,24 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
-  User,
-  Profile,
-  Organization,
-  ResetPassword,
   Contributor,
+  Organization,
+  Profile,
+  ResetPassword,
+  User,
   Wallet,
 } from '../../models';
+import { ContributorsService } from '../contributors/contributors.service';
+import { ContributorsUtil } from '../contributors/contributors.util';
+import { OrganizationsService } from '../organizations/organizations.service';
 import { ProfilesService } from '../profiles/profiles.service';
+import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
+import { WalletsService } from '../wallets/wallets.service';
 import { AuthUserController } from './auth/auth-user.controller';
-import { UsersService } from './users.service';
+import { UserAuthStrategy } from './middleware';
 import { CheckUserService } from './middleware/check-user.service';
 import { UsersController } from './users.controller';
-import { JwtAuthStrategy } from './middleware';
-import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
-import { ContributorsUtil } from '../contributors/contributors.util';
-import { ContributorsService } from '../contributors/contributors.service';
-import { WalletsService } from '../wallets/wallets.service';
-import { OrganizationsService } from '../organizations/organizations.service';
-import { GoogleAuthStrategy } from './middleware/google/google-auth.strategy';
+import { UsersService } from './users.service';
 
 @Module({
   imports: [
@@ -38,8 +37,7 @@ import { GoogleAuthStrategy } from './middleware/google/google-auth.strategy';
     WalletsService,
     ProfilesService,
     CheckUserService,
-    JwtAuthStrategy,
-    GoogleAuthStrategy,
+    UserAuthStrategy,
     ContributorsUtil,
     OrganizationsService,
     ContributorsService,

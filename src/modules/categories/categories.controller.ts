@@ -1,33 +1,33 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { CategoriesService } from './categories.service';
+import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
+import {
+  PaginationType,
+  addPagination,
+} from '../../app/utils/pagination/with-pagination';
 import {
   PasswordBodyDto,
   SearchQueryDto,
 } from '../../app/utils/search-query/search-query.dto';
+import { UserAuthGuard } from '../users/middleware';
 import { CreateOrUpdateCategoriesDto } from './categories.dto';
-import { JwtAuthGuard } from '../users/middleware';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import {
-  addPagination,
-  PaginationType,
-} from '../../app/utils/pagination/with-pagination';
+import { CategoriesService } from './categories.service';
 
 @Controller('categories')
 export class CategoriesController {
@@ -35,7 +35,7 @@ export class CategoriesController {
 
   /** Get all CategoriesUs */
   @Get(`/all`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,
@@ -58,7 +58,7 @@ export class CategoriesController {
   }
 
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAllByOrganizationId(
     @Res() res,
     @Req() req,
@@ -77,7 +77,7 @@ export class CategoriesController {
 
   /** Post one Categories */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOne(
     @Res() res,
     @Req() req,
@@ -97,7 +97,7 @@ export class CategoriesController {
 
   /** Post one Categories */
   @Put(`/:categoryId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOneCategory(
     @Res() res,
     @Req() req,
@@ -125,7 +125,7 @@ export class CategoriesController {
 
   /** Get one Categories */
   @Get(`/show/:categoryId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOne(
     @Res() res,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
@@ -144,7 +144,7 @@ export class CategoriesController {
 
   /** Delete one CategoriesUs */
   @Delete(`/delete/:categoryId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

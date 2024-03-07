@@ -1,41 +1,38 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
-  HttpStatus,
-  HttpException,
   Query,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
+import { PaginationType, addPagination } from '../../app/utils/pagination';
+import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import { reply } from '../../app/utils/reply';
-import { JwtPayloadType } from './../users/users.type';
-import { generateLongUUID } from './../../app/utils/commons/generate-random';
 import {
   PasswordBodyDto,
   SearchQueryDto,
 } from '../../app/utils/search-query/search-query.dto';
-import * as amqplib from 'amqplib';
 import { ProfilesService } from '../profiles/profiles.service';
+import { UserAuthGuard } from '../users/middleware';
 import { CheckUserService } from '../users/middleware/check-user.service';
 import { UsersService } from '../users/users.service';
-import { ContributorsService } from './contributors.service';
-import { JwtAuthGuard } from '../users/middleware';
-import { ContributorRole } from './contributors.type';
+import { generateLongUUID } from './../../app/utils/commons/generate-random';
+import { JwtPayloadType } from './../users/users.type';
 import {
   CreateOneNewUserContributorsDto,
-  GetContributorsDto,
   UpdateRoleContributorDto,
 } from './contributors.dto';
-import { config } from '../../app/config/index';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { PaginationType, addPagination } from '../../app/utils/pagination';
+import { ContributorsService } from './contributors.service';
+import { ContributorRole } from './contributors.type';
 
 @Controller('contributors')
 export class ContributorsController {
@@ -48,7 +45,7 @@ export class ContributorsController {
 
   /** Get all Contributors */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAll(
     @Res() res,
     @Req() req,
@@ -71,7 +68,7 @@ export class ContributorsController {
   }
 
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async createOneNewUser(
     @Res() res,
     @Req() req,
@@ -134,10 +131,10 @@ export class ContributorsController {
       profileId: profile?.id,
       organizationId: userSave.organizationId,
     };
-    await this.usersService.updateOne(
-      { userId: userSave?.id },
-      { accessToken: await this.checkUserService.createJwtTokens(jwtPayload) },
-    );
+    // await this.usersService.updateOne(
+    //   { userId: userSave?.id },
+    //   { accessToken: await this.checkUserService.createJwtTokens(jwtPayload) },
+    // );
     /** Send notification to Contributor */
     // const queue = 'user-contributor-create';
     // const connect = await amqplib.connect(config.implementations.amqp.link);
@@ -158,7 +155,7 @@ export class ContributorsController {
   }
 
   @Get(`/show/:contributorId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneById(
     @Res() res,
     @Req() req,
@@ -180,7 +177,7 @@ export class ContributorsController {
   }
 
   @Delete(`/delete/:contributorId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,
@@ -210,7 +207,7 @@ export class ContributorsController {
   }
 
   @Put(`/role`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOneRole(
     @Res() res,
     @Req() req,

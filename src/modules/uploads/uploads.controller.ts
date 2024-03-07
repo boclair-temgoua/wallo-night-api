@@ -1,22 +1,20 @@
 import {
   Controller,
-  Param,
-  ParseUUIDPipe,
-  Delete,
-  UseGuards,
-  Res,
-  Req,
   Get,
-  Query,
+  Param,
   Put,
+  Query,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 
-import { UploadsService } from './uploads.service';
+import { Readable } from 'stream';
 import { getFileToAws } from '../integrations/aws/aws-s3-service-adapter';
 import { UploadsDto } from './uploads.dto';
-import { Readable } from 'stream';
+import { UploadsService } from './uploads.service';
 
 @Controller('uploads')
 export class UploadsController {
@@ -38,7 +36,7 @@ export class UploadsController {
   }
 
   @Put(`/update`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteAndUpdate(@Res() res, @Req() req, @Query() query: UploadsDto) {
     const { model, organizationId, uploadableId } = query;
     const newFileLists = req?.body?.newFileLists;

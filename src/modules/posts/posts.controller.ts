@@ -1,40 +1,39 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
+  Post,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
-  UseInterceptors,
+  Req,
+  Res,
   UploadedFiles,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { reply } from '../../app/utils/reply';
+import { UserAuthGuard } from '../users/middleware';
 import {
   CreateOrUpdatePostsDto,
   GetGalleriesDto,
   GetOnePostDto,
 } from './posts.dto';
-import { JwtAuthGuard } from '../users/middleware';
 
-import { PostsService } from './posts.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
-import { Cookies } from '../users/middleware/cookie.guard';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { UploadsUtil } from '../uploads/uploads.util';
-import { isNotUndefined } from '../../app/utils/commons/generate-random';
+import { Cookies } from '../users/middleware/cookie.guard';
+import { PostsService } from './posts.service';
 
 @Controller('posts')
 export class PostsController {
@@ -99,7 +98,7 @@ export class PostsController {
 
   /** Create Posts */
   @Post(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async createOne(
     @Res() res,
@@ -132,7 +131,7 @@ export class PostsController {
 
   /** Update Post */
   @Put(`/:postId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   async updateOne(
     @Res() res,
@@ -182,7 +181,7 @@ export class PostsController {
 
   /** Delete postId */
   @Delete(`/:postId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOne(
     @Res() res,
     @Req() req,

@@ -1,35 +1,30 @@
 import {
+  Body,
   Controller,
-  Param,
-  Res,
-  Query,
   Get,
-  ParseUUIDPipe,
-  UseGuards,
   HttpException,
   HttpStatus,
-  Body,
-  Req,
+  Param,
+  ParseUUIDPipe,
   Put,
+  Query,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { UsersService } from './users.service';
-import { ProfilesService } from '../profiles/profiles.service';
-import { JwtAuthGuard } from './middleware';
 import {
+  PaginationType,
   RequestPaginationDto,
   addPagination,
-  PaginationType,
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
-import {
-  GetOneUserDto,
-  UpdateOneEmailUserDto,
-  UpdateProfileDto,
-} from './users.dto';
 import { ContributorsService } from '../contributors/contributors.service';
-import { Cookies } from './middleware/cookie.guard';
+import { ProfilesService } from '../profiles/profiles.service';
+import { UserAuthGuard } from './middleware';
+import { UpdateOneEmailUserDto, UpdateProfileDto } from './users.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -41,7 +36,7 @@ export class UsersController {
 
   /** Get all users */
   @Get(`/`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async findAllUsers(
     @Res() res,
     @Req() req,
@@ -65,7 +60,7 @@ export class UsersController {
 
   /** Get one user */
   @Get(`/show/:userId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneByIdUser(
     @Res() res,
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -89,7 +84,7 @@ export class UsersController {
   }
 
   @Get(`/profile/show/:profileId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneByProfileId(
     @Res() res,
     @Param('profileId', ParseUUIDPipe) profileId: string,
@@ -102,7 +97,7 @@ export class UsersController {
   }
 
   @Put(`/update/profile/:profileId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateProfile(
     @Res() res,
     @Body() body: UpdateProfileDto,
@@ -137,7 +132,7 @@ export class UsersController {
   }
 
   @Put(`/change-email`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateUserEmail(
     @Res() res,
     @Req() req,

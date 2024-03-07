@@ -1,33 +1,32 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
-  Delete,
-  UseGuards,
   Put,
-  Res,
-  Req,
-  Get,
   Query,
-  HttpStatus,
-  HttpException,
+  Req,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
-import { JwtAuthGuard } from '../users/middleware';
+import { UserAuthGuard } from '../users/middleware';
 
-import { OrderEventsService } from './order-events.service';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import {
   addPagination,
   PaginationType,
 } from '../../app/utils/pagination/with-pagination';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import {
   CreateOrUpdateOderEventsDto,
   GetOderEventsDto,
 } from './order-events.dto';
+import { OrderEventsService } from './order-events.service';
 
 @Controller('order-events')
 export class OrderEventsController {
@@ -59,7 +58,7 @@ export class OrderEventsController {
 
   /** OrderEvent one OurEvents */
   @Put(`/:orderEventId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async updateOne(
     @Res() res,
     @Req() req,
@@ -92,7 +91,7 @@ export class OrderEventsController {
 
   /** Get one OrderEvent */
   @Get(`/view`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async getOneByUUIDOrderEvent(
     @Res() res,
     @Req() req,
@@ -110,7 +109,7 @@ export class OrderEventsController {
 
   /** Delete OrderEvent */
   @Delete(`/:orderEventId`)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   async deleteOneOrderEvent(
     @Res() res,
     @Req() req,

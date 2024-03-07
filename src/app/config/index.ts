@@ -19,13 +19,13 @@ export const config = {
    */
   cookieKey: process.env.COOKIE_KEY || '@3%NE8IksyHK4yC5POFurDCAVW@FqxBe',
   cookie_access: {
-    user: {
-      accessExpire: process.env.COOKIE_ACCESS_EXPIRE || '86400000',
-      refreshExpire: process.env.COOKIE_REFRESH_EXPIRE || '96400000',
-      firstStepExpire: process.env.COOKIE_FIRST_STEP_EXPIRE || '300000',
-      verificationExpire: process.env.COOKIE_VERIFICATION_EXPIRE || '300000',
-      validationTokenExpire: process.env.COOKIE_VALIDATION_TOKEN_EXPIRE,
-    },
+    domain: process.env.COOKIE_DOMAIN || '.unopot.com',
+    name: process.env.COOKIE_NAME || 'user',
+    accessExpire: process.env.COOKIE_ACCESS_EXPIRE || '86400000',
+    refreshExpire: process.env.COOKIE_REFRESH_EXPIRE || '96400000',
+    firstStepExpire: process.env.COOKIE_FIRST_STEP_EXPIRE || '300000',
+    verificationExpire: process.env.COOKIE_VERIFICATION_EXPIRE || '300000',
+    validationTokenExpire: process.env.COOKIE_VALIDATION_TOKEN_EXPIRE,
   },
   /**
    * Site
