@@ -10,6 +10,7 @@ import {
   Query,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
@@ -94,6 +95,19 @@ export class UsersController {
     });
 
     return reply({ res, results: profile });
+  }
+
+  @Get(`/me`)
+  @UseGuards(UserAuthGuard)
+  async getMe(@Res() res, @Req() req) {
+    const { user } = req;
+
+    const findOneUser = await this.usersService.findOneInfoBy({
+      userId: user?.id,
+    });
+    if (!findOneUser) throw new UnauthorizedException('Invalid user');
+
+    return reply({ res, results: findOneUser });
   }
 
   @Put(`/update/profile/:profileId`)
