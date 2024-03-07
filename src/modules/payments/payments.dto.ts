@@ -1,19 +1,19 @@
 import {
-  IsString,
-  IsOptional,
+  IsIn,
+  IsInt,
   IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
   IsUUID,
   Max,
   Min,
-  IsPositive,
-  IsInt,
-  IsIn,
 } from 'class-validator';
-import { AmountModel } from '../wallets/wallets.type';
 import {
   TransactionType,
   transactionTypeArrays,
 } from '../transactions/transactions.type';
+import { AmountModel, CardModel } from '../wallets/wallets.type';
 
 export type StatusPayment = 'ACTIVE' | 'PENDING' | 'INVALID';
 
@@ -99,7 +99,7 @@ export class CreateSubscribePaymentsDto {
   reference: string;
 
   @IsOptional()
-  paymentMethod: any;
+  card: CardModel;
 
   @IsOptional()
   amount: AmountModel;

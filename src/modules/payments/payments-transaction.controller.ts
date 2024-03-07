@@ -13,6 +13,7 @@ import { OrdersUtil } from '../orders/orders.util';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { TransactionsService } from '../transactions/transactions.service';
 import { TransactionsUtil } from '../transactions/transactions.util';
+import { UsersService } from '../users/users.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { CreateSubscribePaymentsDto } from './payments.dto';
 import { PaymentsService } from './payments.service';
@@ -24,6 +25,7 @@ export class PaymentsTransactionController {
     private readonly walletsService: WalletsService,
     private readonly transactionsUtil: TransactionsUtil,
     private readonly subscribesUtil: SubscribesUtil,
+    private readonly usersService: UsersService,
     private readonly commentsService: CommentsService,
     private readonly ordersUtil: OrdersUtil,
     private readonly transactionsService: TransactionsService,
@@ -36,14 +38,7 @@ export class PaymentsTransactionController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const {
-      amount,
-      membershipId,
-      userReceiveId,
-      userSendId,
-      reference,
-      paymentMethod,
-    } = body;
+    const { amount, membershipId, userReceiveId, userSendId, reference } = body;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -85,14 +80,8 @@ export class PaymentsTransactionController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const {
-      amount,
-      membershipId,
-      userReceiveId,
-      userSendId,
-      reference,
-      paymentMethod,
-    } = body;
+    const { amount, membershipId, userReceiveId, userSendId, reference, card } =
+      body;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -101,7 +90,7 @@ export class PaymentsTransactionController {
       });
 
     const { paymentIntents } = await this.paymentsService.stripeMethod({
-      paymentMethod,
+      card,
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
       token: reference,
@@ -150,14 +139,8 @@ export class PaymentsTransactionController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const {
-      amount,
-      organizationId,
-      userReceiveId,
-      userSendId,
-      reference,
-      paymentMethod,
-    } = body;
+    const { amount, organizationId, userReceiveId, userSendId, reference } =
+      body;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -213,9 +196,8 @@ export class PaymentsTransactionController {
       userReceiveId,
       userSendId,
       reference,
-      paymentMethod,
+      card,
     } = body;
-    const { billing_details } = paymentMethod;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -224,7 +206,7 @@ export class PaymentsTransactionController {
       });
 
     const { paymentIntents } = await this.paymentsService.stripeMethod({
-      paymentMethod,
+      card,
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
       token: reference,
@@ -247,8 +229,8 @@ export class PaymentsTransactionController {
         type: 'CARD',
         token: reference,
         model: 'DONATION',
-        email: billing_details?.email,
-        fullName: billing_details?.name ?? 'Somebody',
+        email: card?.email,
+        fullName: card?.fullName ?? 'Somebody',
         description: paymentIntents?.description,
         amountConvert: amountValueConvert * 100,
       });
@@ -290,6 +272,15 @@ export class PaymentsTransactionController {
       reference,
       cartOrderId,
     } = body;
+    const findOneUser = await this.usersService.findOneBy({
+      userId: userSendId,
+    });
+    if (!findOneUser) {
+      throw new HttpException(
+        `This user ${userSendId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -297,14 +288,15 @@ export class PaymentsTransactionController {
         value: amount?.value,
       });
 
-    const { order, user } = await this.ordersUtil.orderCreate({
+    const { order } = await this.ordersUtil.orderCreate({
+      organizationBeyerId: findOneUser?.organizationId,
       userBeyerId: userSendId,
       cartOrderId,
       organizationSellerId,
     });
 
     const transaction = await this.transactionsService.createOne({
-      userSendId: user?.id,
+      userSendId: findOneUser?.id,
       userReceiveId: userReceiveId,
       amount: amount?.value * 100,
       currency: amount?.currency.toUpperCase(),
@@ -313,7 +305,8 @@ export class PaymentsTransactionController {
       type: 'PAYPAL',
       token: reference,
       model: 'PRODUCT',
-      description: `Product shop userId: ${user?.id}`,
+      email: findOneUser?.email,
+      description: `Product shop userId: ${findOneUser?.id}`,
       amountConvert: amountValueConvert * 100,
     });
 
@@ -324,17 +317,7 @@ export class PaymentsTransactionController {
       });
     }
 
-    await this.commentsService.createOne({
-      model: transaction?.model,
-      color: transaction?.color,
-      email: transaction?.email,
-      userId: transaction?.userSendId,
-      fullName: transaction?.fullName,
-      description: transaction?.description,
-      userReceiveId: transaction?.userReceiveId,
-    });
-
-    return reply({ res, results: { orderId: order?.id } });
+    return reply({ res, results: reference });
   }
 
   /** Create Shop */
@@ -351,27 +334,29 @@ export class PaymentsTransactionController {
       userSendId,
       reference,
       cartOrderId,
-      paymentMethod,
+      card,
     } = body;
-
+    const findOneUser = await this.usersService.findOneBy({
+      userId: userSendId,
+    });
+    if (!findOneUser) {
+      throw new HttpException(
+        `This user ${userSendId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
         currency: amount?.currency,
         value: amount?.value,
       });
 
-    const { order, user } = await this.ordersUtil.orderCreate({
-      userBeyerId: userSendId,
-      cartOrderId,
-      organizationSellerId,
-    });
-
     const { paymentIntents } = await this.paymentsService.stripeMethod({
-      paymentMethod,
+      card,
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
       token: reference,
-      description: `Product shop userId: ${user?.id}`,
+      description: `Product shop userId: ${findOneUser?.id}`,
     });
     if (!paymentIntents) {
       throw new HttpException(
@@ -381,18 +366,25 @@ export class PaymentsTransactionController {
     }
 
     if (paymentIntents) {
+      const { order } = await this.ordersUtil.orderCreate({
+        organizationBeyerId: findOneUser?.organizationId,
+        userBeyerId: userSendId,
+        cartOrderId,
+        organizationSellerId,
+      });
       const transaction = await this.transactionsService.createOne({
-        userSendId: userSendId,
+        userSendId: findOneUser?.id,
         userReceiveId: userReceiveId,
         amount: Number(paymentIntents?.amount_received),
         currency: paymentIntents?.currency.toUpperCase(),
         organizationId: organizationSellerId,
+        orderId: order?.id,
         type: 'CARD',
         token: reference,
         model: 'PRODUCT',
-        email: user?.email,
-        fullName: `${user?.profile?.firstName} ${user?.profile?.lastName}`,
-        description: paymentIntents?.description,
+        email: findOneUser?.email,
+        fullName: `${findOneUser?.profile?.firstName} ${findOneUser?.profile?.lastName}`,
+        description: `Product shop userId: ${findOneUser?.id}`,
         amountConvert: amountValueConvert * 100,
       });
 
@@ -401,20 +393,9 @@ export class PaymentsTransactionController {
           amount: transaction?.amountConvert,
           organizationId: transaction?.organizationId,
         });
-
-        await this.commentsService.createOne({
-          model: transaction?.model,
-          color: transaction?.color,
-          email: transaction?.email,
-          userId: transaction?.userSendId,
-          fullName: transaction?.fullName,
-          description: transaction?.description,
-          userReceiveId: transaction?.userReceiveId,
-          organizationId: transaction?.organizationId,
-        });
       }
     }
 
-    return reply({ res, results: { orderId: order?.id } });
+    return reply({ res, results: reference });
   }
 }

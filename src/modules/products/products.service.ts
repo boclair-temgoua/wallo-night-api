@@ -188,7 +188,7 @@ export class ProductsService {
     });
   }
 
-  async findOneBy(selections: GetOneProductsSelections): Promise<Product> {
+  async findOneBy(selections: GetOneProductsSelections): Promise<any> {
     const { productId, productSlug, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('product')

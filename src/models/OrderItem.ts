@@ -43,6 +43,9 @@ export class OrderItem extends BaseDeleteEntity {
   @Column({ type: 'uuid', nullable: true })
   organizationSellerId?: string;
 
+  @Column({ type: 'jsonb', array: false, nullable: true })
+  uploadFiles?: any[];
+
   @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'PRODUCT' })
   model?: FilterQueryType;
 

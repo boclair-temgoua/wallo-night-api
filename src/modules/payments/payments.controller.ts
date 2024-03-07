@@ -188,15 +188,6 @@ export class PaymentsController {
       });
     }
 
-    if (type === 'PAYPAL') {
-      const { setupIntent } =
-        await this.paymentsService.stripeConfirmPayPalSetup({
-          email: 'temgoua@gmail.com',
-          description: 'my subscribe',
-        });
-      responseIntent = setupIntent;
-    }
-
     return reply({ res, results: responseIntent });
   }
 

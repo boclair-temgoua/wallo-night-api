@@ -20,18 +20,15 @@ export class OrdersUtil {
   async orderCreate(options: {
     userBeyerId: string;
     cartOrderId: string;
+    organizationBeyerId: string;
     organizationSellerId: string;
   }): Promise<any> {
-    const { userBeyerId, organizationSellerId, cartOrderId } = options;
-    const findOneUser = await this.usersService.findOneBy({
-      userId: userBeyerId,
-    });
-    if (!findOneUser) {
-      throw new HttpException(
-        `This user ${userBeyerId} dons't exist please change`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    const {
+      userBeyerId,
+      organizationBeyerId,
+      organizationSellerId,
+      cartOrderId,
+    } = options;
 
     const findOneCartOrder = await this.cartOrdersService.findOneBy({
       cartOrderId,
@@ -71,6 +68,7 @@ export class OrdersUtil {
       if (!findOneProduct) {
         false;
       }
+
       const orderItemCreate = await this.orderItemsService.createOne({
         userId: order?.userId,
         currency: order?.currency,
@@ -78,12 +76,13 @@ export class OrdersUtil {
         percentDiscount: cart?.product?.discount?.percent,
         price: Number(cart?.product?.price) * 100,
         priceDiscount: Number(cart?.product?.priceDiscount) * 100,
-        organizationBeyerId: findOneUser?.organizationId,
+        organizationBeyerId: organizationBeyerId,
         organizationSellerId: cart?.product?.organizationId,
         model: cart?.model,
         commissionId: cart?.commissionId,
         productId: cart?.productId,
         orderId: order?.id,
+        uploadFiles: [...findOneProduct?.uploadsFiles],
         status:
           findOneProduct?.productType === 'DIGITAL' ? 'DELIVERED' : 'PENDING',
       });
@@ -99,6 +98,6 @@ export class OrdersUtil {
       }
     }
 
-    return { order, user: findOneUser };
+    return { order };
   }
 }

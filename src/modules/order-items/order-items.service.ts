@@ -97,24 +97,25 @@ export class OrderItemsService {
           GROUP BY "product"."id", "upl"."uploadableId"
           ) AS "uploadsImages"`,
       )
-      .addSelect(
-        /*sql*/ `(
-          SELECT array_agg(jsonb_build_object(
-            'name', "upl"."name",
-            'path', "upl"."path",
-            'model', "upl"."model",
-            'size', "upl"."size",
-            'uploadType', "upl"."uploadType"
-          )) 
-          FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "product"."id"
-          AND "upl"."productId" = "product"."id"
-          AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('PRODUCT')
-          AND "upl"."uploadType" IN ('FILE')
-          GROUP BY "product"."id", "upl"."uploadableId"
-          ) AS "uploadsFiles"`,
-      )
+      .addSelect('orderItem.uploadFiles', 'uploadsFiles')
+      // .addSelect(
+      //   /*sql*/ `(
+      //     SELECT array_agg(jsonb_build_object(
+      //       'name', "upl"."name",
+      //       'path', "upl"."path",
+      //       'model', "upl"."model",
+      //       'size', "upl"."size",
+      //       'uploadType', "upl"."uploadType"
+      //     ))
+      //     FROM "upload" "upl"
+      //     WHERE "upl"."uploadableId" = "product"."id"
+      //     AND "upl"."productId" = "product"."id"
+      //     AND "upl"."deletedAt" IS NULL
+      //     AND "upl"."model" IN ('PRODUCT')
+      //     AND "upl"."uploadType" IN ('FILE')
+      //     GROUP BY "product"."id", "upl"."uploadableId"
+      //     ) AS "uploadsFiles"`,
+      // )
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'id', "commission"."id",
@@ -167,14 +168,11 @@ export class OrderItemsService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const [error, orderProducts] = await useCatch(
-      query
-        .orderBy('orderItem.createdAt', pagination?.sort)
-        .limit(pagination.limit)
-        .offset(pagination.offset)
-        .getRawMany(),
-    );
-    if (error) throw new NotFoundException(error);
+    const orderProducts = await query
+      .orderBy('orderItem.createdAt', pagination?.sort)
+      .limit(pagination.limit)
+      .offset(pagination.offset)
+      .getRawMany();
 
     return withPagination({
       pagination,
@@ -231,6 +229,7 @@ export class OrderItemsService {
       commissionId,
       productId,
       orderId,
+      uploadFiles,
     } = options;
 
     const orderItem = new OrderItem();
@@ -245,6 +244,7 @@ export class OrderItemsService {
     orderItem.organizationSellerId = organizationSellerId;
     orderItem.model = model;
     orderItem.status = status;
+    orderItem.uploadFiles = uploadFiles;
     orderItem.commissionId = commissionId;
     orderItem.productId = productId;
     orderItem.orderId = orderId;

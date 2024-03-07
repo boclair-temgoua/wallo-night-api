@@ -7,6 +7,15 @@ export type AmountModel = {
   month?: number;
 };
 
+export type CardModel = {
+  cardNumber: string;
+  cardExpMonth: number;
+  cardExpYear: number;
+  cardCvc: string;
+  email: string;
+  fullName: string;
+};
+
 export type GetWalletsSelections = {
   search?: string;
 };

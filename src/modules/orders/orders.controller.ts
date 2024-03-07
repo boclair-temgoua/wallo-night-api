@@ -108,7 +108,7 @@ export class OrdersController {
 
     const findOneCartOrder = await this.cartOrdersService.findOneBy({
       cartOrderId,
-      userId: user?.id,
+      //userId: '53019e77-de96-4ac7-9464-da32a9a37d4b',
     });
     if (!findOneCartOrder) {
       throw new HttpException(
@@ -143,6 +143,7 @@ export class OrdersController {
       if (!findOneProduct) {
         false;
       }
+      console.log('findOneProduct =====>', findOneProduct);
       const orderItemCreate = await this.orderItemsService.createOne({
         userId: order?.userId,
         currency: order?.currency,
@@ -156,19 +157,20 @@ export class OrdersController {
         commissionId: cart?.commissionId,
         productId: cart?.productId,
         orderId: order?.id,
+        uploadFiles: [...findOneProduct?.uploadsFiles],
         status:
           findOneProduct?.productType === 'DIGITAL' ? 'ACCEPTED' : 'PENDING',
       });
 
-      if (orderItemCreate) {
-        await this.cartsService.updateOne(
-          { cartId: cart?.id },
-          {
-            status: 'COMPLETED',
-            deletedAt: new Date(),
-          },
-        );
-      }
+      // if (orderItemCreate) {
+      //   await this.cartsService.updateOne(
+      //     { cartId: cart?.id },
+      //     {
+      //       status: 'COMPLETED',
+      //       deletedAt: new Date(),
+      //     },
+      //   );
+      // }
     }
 
     return reply({ res, results: carts?.cartItems });

@@ -12,7 +12,7 @@ import { config } from '../../app/config/index';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { Payment } from '../../models';
 import { CartsService } from '../cats/cats.service';
-import { AmountModel } from '../wallets/wallets.type';
+import { AmountModel, CardModel } from '../wallets/wallets.type';
 import {
   CreatePaymentsOptions,
   GetOnePaymentsSelections,
@@ -225,30 +225,33 @@ export class PaymentsService {
   }): Promise<any> {
     const { name, email, cardNumber, cardExpMonth, cardExpYear, cardCvc } =
       options;
-
-    const paymentMethod = await stripePublic.tokens.create({
+    const billingDetails: Stripe.CustomerCreateParams = {
+      name: name,
+      email: email,
+    };
+    const paymentMethod = await stripePublic.paymentMethods.create({
+      type: 'card',
       card: {
         number: cardNumber.split(' ').join(''),
         exp_month: Number(cardExpMonth),
         exp_year: Number(cardExpYear),
         cvc: cardCvc,
-      } as any,
+      },
+      billing_details: billingDetails,
     });
+    if (!paymentMethod) {
+      throw new HttpException(`Invalid card`, HttpStatus.NOT_ACCEPTABLE);
+    }
 
-    const params: Stripe.CustomerCreateParams = {
-      name: name,
-      email: email,
-      source: paymentMethod?.id,
-    };
-    const card: Stripe.Customer = await stripePrivate.customers.create(params);
-    if (!paymentMethod && !card) {
+    const customer: Stripe.Customer =
+      await stripePrivate.customers.create(billingDetails);
+    if (!customer) {
       throw new HttpException(
         `Transaction not found please try again`,
         HttpStatus.NOT_FOUND,
       );
     }
-
-    return { paymentMethod };
+    return { paymentMethod, customer };
   }
 
   /** Stripe billing */
@@ -257,37 +260,31 @@ export class PaymentsService {
     amountDetail: AmountModel;
     token: string;
     currency: string;
-    paymentMethod: any;
+    card: CardModel;
   }): Promise<any> {
-    const { token, description, amountDetail, currency, paymentMethod } =
-      options;
+    const { token, description, amountDetail, currency, card } = options;
+    const { cardNumber, cardExpMonth, cardExpYear, cardCvc, email, fullName } =
+      card;
 
-    const params: Stripe.CustomerCreateParams = {
-      description: description,
-      email: paymentMethod?.billing_details?.email,
-      name: paymentMethod?.billing_details?.name,
-    };
-    const customer: Stripe.Customer =
-      await stripePrivate.customers.create(params);
-
-    const setupIntent = await stripePrivate.setupIntents.create({
-      customer: customer?.id,
-      payment_method_types: ['paypal'],
-      payment_method_data: {
-        type: 'paypal',
-      },
+    const { paymentMethod } = await this.stripeTokenCreate({
+      cardNumber,
+      cardExpMonth,
+      cardExpYear,
+      cardCvc,
+      email,
+      name: fullName,
     });
 
     const paymentIntents = await stripePrivate.paymentIntents.create({
       amount: Number(amountDetail?.value) * 100, // 25
       currency: currency,
-      description: customer?.description,
+      description: description,
       payment_method: paymentMethod?.id,
+      payment_method_types: [paymentMethod?.type],
       confirm: true,
       confirmation_method: 'manual', // For 3D Security
       return_url: `${config.url.client}/success?token=${token}`,
     });
-
     if (!paymentIntents) {
       throw new HttpException(
         `Transaction not found please try again`,
@@ -296,31 +293,6 @@ export class PaymentsService {
     }
 
     return { paymentIntents };
-  }
-
-  /** Stripe billing */
-  async stripeConfirmPayPalSetup(options: {
-    description?: string;
-    email: string;
-  }): Promise<any> {
-    const { email, description } = options;
-
-    const params: Stripe.CustomerCreateParams = {
-      description: description,
-      email: email,
-    };
-    const customer: Stripe.Customer =
-      await stripePrivate.customers.create(params);
-
-    const setupIntent = await stripePrivate.setupIntents.create({
-      customer: customer?.id,
-      payment_method_types: ['paypal'],
-      payment_method_data: {
-        type: 'paypal',
-      },
-    });
-
-    return { setupIntent };
   }
 
   /** Cart execution */
