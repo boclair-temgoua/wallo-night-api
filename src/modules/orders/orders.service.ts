@@ -33,6 +33,7 @@ export class OrdersService {
       .select('order.id', 'id')
       .addSelect('order.userId', 'userId')
       .addSelect('order.currency', 'currency')
+      .addSelect('order.address', 'address')
       .addSelect('order.orderNumber', 'orderNumber')
       .addSelect('order.totalPriceDiscount', 'totalPriceDiscount')
       .addSelect('order.totalPriceNoDiscount', 'totalPriceNoDiscount')

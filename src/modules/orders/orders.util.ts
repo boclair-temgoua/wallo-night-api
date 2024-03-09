@@ -3,7 +3,6 @@ import { CartOrdersService } from '../cart-orders/cart-orders.service';
 import { CartsService } from '../cats/cats.service';
 import { OrderItemsService } from '../order-items/order-items.service';
 import { ProductsService } from '../products/products.service';
-import { UsersService } from '../users/users.service';
 import { AmountModel } from '../wallets/wallets.type';
 import { OrdersService } from './orders.service';
 
@@ -12,12 +11,12 @@ export class OrdersUtil {
   constructor(
     private readonly ordersService: OrdersService,
     private readonly cartsService: CartsService,
-    private readonly usersService: UsersService,
     private readonly productsService: ProductsService,
     private readonly cartOrdersService: CartOrdersService,
     private readonly orderItemsService: OrderItemsService,
   ) {}
 
+  /** Create shop */
   async orderShopCreate(options: {
     userBeyerId: string;
     cartOrderId: string;
@@ -58,11 +57,11 @@ export class OrdersUtil {
     }
 
     const order = await this.ordersService.createOne({
+      address: userAddress,
       userId: carts?.summary?.userId,
       currency: carts?.summary?.currency,
-      address: userAddress,
-      totalPriceDiscount: carts?.summary?.totalPriceDiscount,
-      totalPriceNoDiscount: carts?.summary?.totalPriceNoDiscount,
+      totalPriceDiscount: Number(carts?.summary?.totalPriceDiscount) * 100,
+      totalPriceNoDiscount: Number(carts?.summary?.totalPriceNoDiscount) * 100,
     });
 
     for (const cart of carts?.cartItems) {
@@ -78,8 +77,9 @@ export class OrdersUtil {
         currency: order?.currency,
         quantity: Number(cart?.quantity),
         percentDiscount: cart?.product?.discount?.percent,
-        price: Number(cart?.product?.price) * 100,
-        priceDiscount: Number(cart?.product?.priceDiscount) * 100,
+        price: Number(cart?.product?.price) * Number(cart?.quantity) * 100,
+        priceDiscount:
+          Number(cart?.product?.priceDiscount) * Number(cart?.quantity) * 100,
         organizationBuyerId: organizationBuyerId,
         organizationSellerId: cart?.product?.organizationId,
         model: cart?.model,
@@ -105,7 +105,8 @@ export class OrdersUtil {
     return { order };
   }
 
-  async orderShopCommission(options: {
+  /** Create commission */
+  async orderCommissionCreate(options: {
     amount: AmountModel;
     userBeyerId: string;
     commissionId: string;
@@ -123,11 +124,11 @@ export class OrdersUtil {
     } = options;
 
     const order = await this.ordersService.createOne({
+      address: userAddress,
       userId: userBeyerId,
       currency: amount?.currency,
-      address: userAddress,
-      totalPriceDiscount: Number(amount?.value),
-      totalPriceNoDiscount: Number(amount?.value),
+      totalPriceDiscount: Number(amount?.value) * 100,
+      totalPriceNoDiscount: Number(amount?.value) * 100,
     });
     const orderItem = await this.orderItemsService.createOne({
       userId: order?.userId,

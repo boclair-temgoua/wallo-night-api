@@ -96,6 +96,29 @@ export class OrdersController {
     return reply({ res, results: orderItems });
   }
 
+  /** Get one Order */
+  @Get(`/:orderId`)
+  @UseGuards(UserAuthGuard)
+  async getOneOrder(
+    @Res() res,
+    @Req() req,
+    @Param('orderId', ParseUUIDPipe) orderId: string,
+  ) {
+    const findOneOrder = await this.ordersService.findOneBy({
+      orderId,
+    });
+    if (!findOneOrder)
+      throw new HttpException(
+        `Order ${orderId} don't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    return reply({
+      res,
+      results: findOneOrder,
+    });
+  }
+
   /** Create Order */
   @Post(`/:cartOrderId`)
   @UseGuards(UserAuthGuard)

@@ -54,7 +54,6 @@ export class OrderItemsService {
       .addSelect('orderItem.productId', 'productId')
       .addSelect('orderItem.orderId', 'orderId')
       .addSelect('orderItem.userId', 'userId')
-      .addSelect('orderItem.address', 'address')
       .addSelect('orderItem.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
