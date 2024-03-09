@@ -22,13 +22,18 @@ import { UserAuthGuard } from '../users/middleware';
 import {
   CodeVerifyPaymentsDto,
   CreateOnePaymentDto,
+  GetPaymentsDto,
   SendCodeVerifyPaymentsDto,
 } from './payments.dto';
 import { PaymentsService } from './payments.service';
+import { PaymentsUtil } from './payments.util';
 
 @Controller('payments')
 export class PaymentsController {
-  constructor(private readonly paymentsService: PaymentsService) {}
+  constructor(
+    private readonly paymentsUtil: PaymentsUtil,
+    private readonly paymentsService: PaymentsService,
+  ) {}
 
   /** Get all Payments */
   @Get(`/`)
@@ -36,16 +41,19 @@ export class PaymentsController {
   async findAll(
     @Res() res,
     @Req() req,
+    @Query() query: GetPaymentsDto,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
     const { user } = req;
+    const { type } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const payments = await this.paymentsService.findAll({
+      type,
       search,
       pagination,
       organizationId: user.organizationId,
@@ -53,6 +61,24 @@ export class PaymentsController {
 
     return reply({ res, results: payments });
   }
+
+  // /** Get one Payment */
+  // @Get(`/one-payment`)
+  // @UseGuards(UserAuthGuard)
+  // async getOne(
+  //   @Res() res,
+  //   @Req() req,
+  // ) {
+  //   const { user } = req;
+
+  //   const payment = await this.paymentsService.findOneBy({
+  //     organizationId: user.organizationId,
+  //     pagination,
+  //     organizationId: user.organizationId,
+  //   });
+
+  //   return reply({ res, results: payment });
+  // }
 
   /** resend code one payment */
   @Post(`/resend-code-verify-phone`)
@@ -143,7 +169,7 @@ export class PaymentsController {
           HttpStatus.NOT_FOUND,
         );
 
-      await this.paymentsService.stripeTokenCreate({
+      await this.paymentsUtil.stripeTokenCreate({
         name: fullName,
         email,
         cardNumber,
@@ -161,6 +187,7 @@ export class PaymentsController {
         cardCvc,
         type,
         action: 'PAYMENT',
+        status: 'ACTIVE',
         description,
         userId: user?.id,
         organizationId: user?.organizationId,

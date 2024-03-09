@@ -1,18 +1,10 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { useCatch } from 'src/app/utils/use-catch';
-import Stripe from 'stripe';
 import { Repository } from 'typeorm';
-import { config } from '../../app/config/index';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { Payment } from '../../models';
 import { CartsService } from '../cats/cats.service';
-import { AmountModel, CardModel } from '../wallets/wallets.type';
 import {
   CreatePaymentsOptions,
   GetOnePaymentsSelections,
@@ -20,21 +12,6 @@ import {
   UpdatePaymentsOptions,
   UpdatePaymentsSelections,
 } from './payments.type';
-
-const apiVersion = '2023-10-16';
-const stripePrivate = new Stripe(
-  String(config.implementations.stripe.privateKey),
-  {
-    apiVersion,
-  },
-);
-
-const stripePublic = new Stripe(
-  String(config.implementations.stripe.publicKey),
-  {
-    apiVersion,
-  },
-);
 
 @Injectable()
 export class PaymentsService {
@@ -45,7 +22,7 @@ export class PaymentsService {
   ) {}
 
   async findAll(selections: GetPaymentsSelections): Promise<any> {
-    const { search, pagination, userId, organizationId } = selections;
+    const { search, type, pagination, userId, organizationId } = selections;
 
     let query = this.driver
       .createQueryBuilder('payment')
@@ -60,6 +37,12 @@ export class PaymentsService {
       .addSelect('payment.cardExpYear', 'cardExpYear')
       .addSelect('payment.organizationId', 'organizationId')
       .where('payment.deletedAt IS NULL');
+
+    if (type) {
+      query = query.andWhere('payment.type = :type', {
+        type,
+      });
+    }
 
     if (userId) {
       query = query.andWhere('payment.userId = :userId', {
@@ -93,7 +76,16 @@ export class PaymentsService {
   }
 
   async findOneBy(selections: GetOnePaymentsSelections): Promise<Payment> {
-    const { organizationId, paymentId, cardNumber, phone } = selections;
+    const {
+      organizationId,
+      paymentId,
+      cardNumber,
+      cardExpMonth,
+      cardExpYear,
+      cardCvc,
+      phone,
+      status,
+    } = selections;
     let query = this.driver
       .createQueryBuilder('payment')
       .where('payment.deletedAt IS NULL');
@@ -102,8 +94,30 @@ export class PaymentsService {
       query = query.andWhere('payment.id = :id', { id: paymentId });
     }
 
+    if (status) {
+      query = query.andWhere('payment.status = :status', { status });
+    }
+
     if (phone) {
       query = query.andWhere('payment.phone = :phone', { phone });
+    }
+
+    if (cardExpMonth) {
+      query = query.andWhere('payment.cardExpMonth = :cardExpMonth', {
+        cardExpMonth,
+      });
+    }
+
+    if (cardExpYear) {
+      query = query.andWhere('payment.cardExpYear = :cardExpYear', {
+        cardExpYear,
+      });
+    }
+
+    if (cardCvc) {
+      query = query.andWhere('payment.cardCvc = :cardCvc', {
+        cardCvc,
+      });
     }
 
     if (cardNumber) {
@@ -212,111 +226,4 @@ export class PaymentsService {
 
     return result;
   }
-
-  /** Stripe billing */
-  async stripeTokenCreate(options: {
-    name: string;
-    email?: string;
-    cardNumber?: string;
-    cardExpMonth?: number;
-    cardExpYear?: number;
-    cardCvc?: string;
-    token?: string;
-  }): Promise<any> {
-    const { name, email, cardNumber, cardExpMonth, cardExpYear, cardCvc } =
-      options;
-    const billingDetails: Stripe.CustomerCreateParams = {
-      name: name,
-      email: email,
-    };
-    const paymentMethod = await stripePublic.paymentMethods.create({
-      type: 'card',
-      card: {
-        number: cardNumber.split(' ').join(''),
-        exp_month: Number(cardExpMonth),
-        exp_year: Number(cardExpYear),
-        cvc: cardCvc,
-      },
-      billing_details: billingDetails,
-    });
-    if (!paymentMethod) {
-      throw new HttpException(`Invalid card`, HttpStatus.NOT_ACCEPTABLE);
-    }
-
-    const customer: Stripe.Customer =
-      await stripePrivate.customers.create(billingDetails);
-    if (!customer) {
-      throw new HttpException(
-        `Transaction not found please try again`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return { paymentMethod, customer };
-  }
-
-  /** Stripe billing */
-  async stripeMethod(options: {
-    description?: string;
-    amountDetail: AmountModel;
-    token: string;
-    currency: string;
-    card: CardModel;
-  }): Promise<any> {
-    const { token, description, amountDetail, currency, card } = options;
-    const { cardNumber, cardExpMonth, cardExpYear, cardCvc, email, fullName } =
-      card;
-
-    const { paymentMethod } = await this.stripeTokenCreate({
-      cardNumber,
-      cardExpMonth,
-      cardExpYear,
-      cardCvc,
-      email,
-      name: fullName,
-    });
-
-    const paymentIntents = await stripePrivate.paymentIntents.create({
-      amount: Number(amountDetail?.value) * 100, // 25
-      currency: currency,
-      description: description,
-      payment_method: paymentMethod?.id,
-      payment_method_types: [paymentMethod?.type],
-      confirm: true,
-      confirmation_method: 'manual', // For 3D Security
-      return_url: `${config.url.client}/success?token=${token}`,
-    });
-    if (!paymentIntents) {
-      throw new HttpException(
-        `Transaction not found please try again`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    return { paymentIntents };
-  }
-
-  /** Cart execution */
-  // async cartExecution(options: {
-  //   cartOrderId: string;
-  //   userSendId: string;
-  //   organizationId: string;
-  // }): Promise<any> {
-  //   const { cartOrderId, userSendId, organizationId } = options;
-
-  //   const { summary, cartItems } = await this.cartsService.findAll({
-  //     userId: userSendId,
-  //     status: 'ADDED',
-  //     cartOrderId,
-  //     organizationSellerId: organizationId,
-  //   });
-
-  //   if (!summary && cartItems.length <= 0) {
-  //     throw new HttpException(
-  //       `Cart not found please try again`,
-  //       HttpStatus.NOT_FOUND,
-  //     );
-  //   }
-
-  //   return { summary, cartItems };
-  // }
 }

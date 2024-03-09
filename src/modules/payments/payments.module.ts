@@ -37,6 +37,7 @@ import { WalletsService } from '../wallets/wallets.service';
 import { PaymentsTransactionController } from './payments-transaction.controller';
 import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
+import { PaymentsUtil } from './payments.util';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -70,6 +71,7 @@ import { PaymentsService } from './payments.service';
     OrdersUtil,
     OrdersService,
     UsersService,
+    PaymentsUtil,
     CommissionsService,
     CartOrdersService,
     OrderItemsService,

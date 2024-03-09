@@ -18,10 +18,12 @@ import { UsersService } from '../users/users.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { CreateSubscribePaymentsDto } from './payments.dto';
 import { PaymentsService } from './payments.service';
+import { PaymentsUtil } from './payments.util';
 
 @Controller('payments')
 export class PaymentsTransactionController {
   constructor(
+    private readonly paymentsUtil: PaymentsUtil,
     private readonly paymentsService: PaymentsService,
     private readonly walletsService: WalletsService,
     private readonly transactionsUtil: TransactionsUtil,
@@ -40,7 +42,8 @@ export class PaymentsTransactionController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const { amount, membershipId, userReceiveId, userSendId, reference } = body;
+    const { amount, membershipId, userReceiveId, userBuyerId, reference } =
+      body;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -50,7 +53,7 @@ export class PaymentsTransactionController {
 
     const { transaction } =
       await this.subscribesUtil.createOrUpdateOneSubscribe({
-        userSendId: userSendId,
+        userBuyerId: userBuyerId,
         userReceiveId: userReceiveId,
         amount: {
           currency: amount?.currency.toUpperCase(),
@@ -82,8 +85,14 @@ export class PaymentsTransactionController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const { amount, membershipId, userReceiveId, userSendId, reference, card } =
-      body;
+    const {
+      amount,
+      membershipId,
+      userReceiveId,
+      userBuyerId,
+      reference,
+      card,
+    } = body;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -91,7 +100,7 @@ export class PaymentsTransactionController {
         value: amount?.value,
       });
 
-    const { paymentIntents } = await this.paymentsService.stripeMethod({
+    const { paymentIntents } = await this.paymentsUtil.stripeMethod({
       card,
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
@@ -108,7 +117,7 @@ export class PaymentsTransactionController {
     if (paymentIntents) {
       const { transaction } =
         await this.subscribesUtil.createOrUpdateOneSubscribe({
-          userSendId: userSendId,
+          userBuyerId: userBuyerId,
           userReceiveId: userReceiveId,
           amount: {
             currency: paymentIntents?.currency.toUpperCase(),
@@ -145,7 +154,7 @@ export class PaymentsTransactionController {
       amount,
       organizationBuyerId,
       userReceiveId,
-      userSendId,
+      userBuyerId,
       reference,
     } = body;
 
@@ -156,7 +165,7 @@ export class PaymentsTransactionController {
       });
 
     const transaction = await this.transactionsService.createOne({
-      userSendId: userSendId,
+      userBuyerId: userBuyerId,
       userReceiveId: userReceiveId,
       amount: amount?.value * 100,
       currency: amount?.currency.toUpperCase(),
@@ -179,7 +188,7 @@ export class PaymentsTransactionController {
         model: transaction?.model,
         color: transaction?.color,
         email: transaction?.email,
-        userId: transaction?.userSendId,
+        userId: transaction?.userBuyerId,
         fullName: transaction?.fullName,
         description: transaction?.description,
         userReceiveId: transaction?.userReceiveId,
@@ -201,7 +210,7 @@ export class PaymentsTransactionController {
       amount,
       organizationBuyerId,
       userReceiveId,
-      userSendId,
+      userBuyerId,
       reference,
       card,
     } = body;
@@ -212,7 +221,7 @@ export class PaymentsTransactionController {
         value: amount?.value,
       });
 
-    const { paymentIntents } = await this.paymentsService.stripeMethod({
+    const { paymentIntents } = await this.paymentsUtil.stripeMethod({
       card,
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
@@ -228,7 +237,7 @@ export class PaymentsTransactionController {
 
     if (paymentIntents) {
       const transaction = await this.transactionsService.createOne({
-        userSendId: userSendId,
+        userBuyerId: userBuyerId,
         userReceiveId: userReceiveId,
         amount: amount?.value * 100,
         currency: paymentIntents?.currency.toUpperCase(),
@@ -252,7 +261,7 @@ export class PaymentsTransactionController {
           model: transaction?.model,
           color: transaction?.color,
           email: transaction?.email,
-          userId: transaction?.userSendId,
+          userId: transaction?.userBuyerId,
           fullName: transaction?.fullName,
           description: transaction?.description,
           userReceiveId: transaction?.userReceiveId,
@@ -275,18 +284,18 @@ export class PaymentsTransactionController {
       amount,
       organizationSellerId,
       userReceiveId,
-      userSendId,
+      userBuyerId,
       reference,
       cartOrderId,
       card,
       userAddress,
     } = body;
     const findOneUser = await this.usersService.findOneBy({
-      userId: userSendId,
+      userId: userBuyerId,
     });
     if (!findOneUser) {
       throw new HttpException(
-        `This user ${userSendId} dons't exist please change`,
+        `This user ${userBuyerId} dons't exist please change`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -299,14 +308,14 @@ export class PaymentsTransactionController {
 
     const { order } = await this.ordersUtil.orderShopCreate({
       organizationBuyerId: findOneUser?.organizationId,
-      userBeyerId: userSendId,
+      userBuyerId: userBuyerId,
       cartOrderId,
       organizationSellerId,
       userAddress,
     });
 
     const transaction = await this.transactionsService.createOne({
-      userSendId: findOneUser?.id,
+      userBuyerId: findOneUser?.id,
       userReceiveId: userReceiveId,
       amount: amount?.value * 100,
       currency: amount?.currency.toUpperCase(),
@@ -341,18 +350,18 @@ export class PaymentsTransactionController {
       amount,
       organizationSellerId,
       userReceiveId,
-      userSendId,
+      userBuyerId,
       reference,
       cartOrderId,
       card,
       userAddress,
     } = body;
     const findOneUser = await this.usersService.findOneBy({
-      userId: userSendId,
+      userId: userBuyerId,
     });
     if (!findOneUser) {
       throw new HttpException(
-        `This user ${userSendId} dons't exist please change`,
+        `This user ${userBuyerId} dons't exist please change`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -362,7 +371,7 @@ export class PaymentsTransactionController {
         value: amount?.value,
       });
 
-    const { paymentIntents } = await this.paymentsService.stripeMethod({
+    const { paymentIntents } = await this.paymentsUtil.stripeMethod({
       card,
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
@@ -379,13 +388,13 @@ export class PaymentsTransactionController {
     if (paymentIntents) {
       const { order } = await this.ordersUtil.orderShopCreate({
         organizationBuyerId: findOneUser?.organizationId,
-        userBeyerId: userSendId,
+        userBuyerId: userBuyerId,
         cartOrderId,
         organizationSellerId,
         userAddress,
       });
       const transaction = await this.transactionsService.createOne({
-        userSendId: findOneUser?.id,
+        userBuyerId: findOneUser?.id,
         userReceiveId: userReceiveId,
         amount: Number(paymentIntents?.amount_received),
         currency: paymentIntents?.currency.toUpperCase(),
@@ -425,10 +434,11 @@ export class PaymentsTransactionController {
       userAddress,
       commissionId,
       userReceiveId,
-      userSendId,
+      userBuyerId,
       reference,
       card,
     } = body;
+    const { cardNumber, cardExpMonth, cardExpYear, cardCvc } = card;
 
     const findOneCommission = await this.commissionsService.findOneBy({
       commissionId: commissionId,
@@ -447,7 +457,7 @@ export class PaymentsTransactionController {
         value: amount?.value,
       });
 
-    const { paymentIntents } = await this.paymentsService.stripeMethod({
+    const { paymentIntents } = await this.paymentsUtil.stripeMethod({
       card,
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
@@ -467,11 +477,11 @@ export class PaymentsTransactionController {
         userAddress,
         organizationBuyerId,
         organizationSellerId,
-        userBeyerId: userSendId,
+        userBuyerId: userBuyerId,
         commissionId: findOneCommission?.id,
       });
       const transaction = await this.transactionsService.createOne({
-        userSendId,
+        userBuyerId,
         userReceiveId: userReceiveId,
         amount: Number(paymentIntents?.amount_received),
         currency: paymentIntents?.currency?.toUpperCase(),
@@ -492,6 +502,30 @@ export class PaymentsTransactionController {
       }
     }
 
+    const findOnePayment = await this.paymentsService.findOneBy({
+      cardCvc,
+      cardNumber,
+      cardExpYear,
+      cardExpMonth,
+      status: 'ACTIVE',
+      organizationId: organizationSellerId,
+    });
+    if (!findOnePayment) {
+      await this.paymentsService.createOne({
+        // email,
+        // fullName,
+        cardNumber,
+        cardExpMonth,
+        cardExpYear,
+        cardCvc,
+        type: 'CARD',
+        action: 'PAYMENT',
+        status: 'ACTIVE',
+        userId: userBuyerId,
+        organizationId: organizationBuyerId,
+      });
+    }
+
     return reply({ res, results: reference });
   }
 
@@ -508,7 +542,7 @@ export class PaymentsTransactionController {
       userAddress,
       commissionId,
       userReceiveId,
-      userSendId,
+      userBuyerId,
       reference,
     } = body;
     const findOneCommission = await this.commissionsService.findOneBy({
@@ -533,12 +567,12 @@ export class PaymentsTransactionController {
       userAddress,
       organizationBuyerId,
       organizationSellerId,
-      userBeyerId: userSendId,
+      userBuyerId: userBuyerId,
       commissionId: findOneCommission?.id,
     });
 
     const transaction = await this.transactionsService.createOne({
-      userSendId,
+      userBuyerId,
       userReceiveId,
       currency: amount?.currency.toUpperCase(),
       amount: Number(amount?.value) * 100,

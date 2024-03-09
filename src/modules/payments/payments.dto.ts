@@ -91,7 +91,7 @@ export class CreateSubscribePaymentsDto {
 
   @IsOptional()
   @IsString()
-  userSendId: string;
+  userBuyerId: string;
 
   @IsNotEmpty()
   @IsString()
@@ -131,4 +131,11 @@ export class CodeVerifyPaymentsDto {
   @IsNotEmpty()
   @IsString()
   code: string;
+}
+
+export class GetPaymentsDto {
+  @IsOptional()
+  @IsString()
+  @IsIn(['CARD', 'PHONE'])
+  type: string;
 }

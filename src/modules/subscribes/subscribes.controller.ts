@@ -149,7 +149,7 @@ export class SubscribesController {
 
       await this.transactionsService.createOne({
         organizationId: user?.organizationId,
-        userSendId: user?.id,
+        userBuyerId: user?.id,
         subscribeId: findOneSubscribe?.id,
         amount: Number(findOneMembership?.price),
         description: 'subscribe monthly',
@@ -168,7 +168,7 @@ export class SubscribesController {
 
       await this.transactionsService.createOne({
         organizationId: user?.organizationId,
-        userSendId: user?.id,
+        userBuyerId: user?.id,
         subscribeId: subscribe?.id,
         amount: Number(findOneMembership?.price),
         description: 'subscribe monthly',

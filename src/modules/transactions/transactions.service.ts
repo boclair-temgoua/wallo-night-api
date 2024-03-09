@@ -30,7 +30,7 @@ export class TransactionsService {
   async findAll(
     selections: GetTransactionsSelections,
   ): Promise<WithPaginationResponse | null> {
-    const { search, pagination, model, days, userSendId, organizationId } =
+    const { search, pagination, model, days, userBuyerId, organizationId } =
       selections;
 
     let query = this.driver
@@ -47,7 +47,7 @@ export class TransactionsService {
       .addSelect('transaction.color', 'color')
       .addSelect('transaction.userReceiveId', 'userReceiveId')
       .addSelect('transaction.fullName', 'fullName')
-      .addSelect('transaction.userSendId', 'userSendId')
+      .addSelect('transaction.userBuyerId', 'userBuyerId')
       .addSelect('transaction.organizationId', 'organizationId')
       .addSelect('transaction.amountConvert', 'amountConvert')
       .addSelect('transaction.orderId', 'orderId')
@@ -74,9 +74,9 @@ export class TransactionsService {
       query = query.andWhere('transaction.model = :model', { model });
     }
 
-    if (userSendId) {
-      query = query.andWhere('transaction.userSendId = :userSendId', {
-        userSendId,
+    if (userBuyerId) {
+      query = query.andWhere('transaction.userBuyerId = :userBuyerId', {
+        userBuyerId,
       });
     }
 
@@ -194,7 +194,7 @@ export class TransactionsService {
       currency,
       title,
       model,
-      userSendId,
+      userBuyerId,
       description,
       subscribeId,
       contributionId,
@@ -212,7 +212,7 @@ export class TransactionsService {
     transaction.title = title;
     transaction.model = model;
     transaction.currency = currency;
-    transaction.userSendId = userSendId;
+    transaction.userBuyerId = userBuyerId;
     transaction.amount = amount;
     transaction.type = type;
     transaction.token = token;

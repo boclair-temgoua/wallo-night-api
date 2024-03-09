@@ -34,7 +34,6 @@ import {
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { FollowsService } from '../follows/follows.service';
 import { UploadsUtil } from '../uploads/uploads.util';
-import { Cookies } from '../users/middleware/cookie.guard';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
@@ -87,7 +86,6 @@ export class PostsController {
     @Query() query: GetGalleriesDto,
     @Query() requestPaginationDto: RequestPaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Cookies('x-cookies-login') user: any,
   ) {
     const { type, albumId, organizationId, typeIds, status, userVisitorId } =
       query;

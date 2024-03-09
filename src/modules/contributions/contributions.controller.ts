@@ -74,7 +74,7 @@ export class ContributionsController {
     const {
       amount,
       currency,
-      userSendId,
+      userBuyerId,
       meanOfPayment,
       infoPaymentMethod,
       organizationId,
@@ -124,7 +124,7 @@ export class ContributionsController {
     //   description: `Donation ${amount} ${currency}`,
     //   amount: contribution?.amount,
     //   organizationId: organizationId,
-    //   userSendId: userSendId ?? null,
+    //   userBuyerId: userBuyerId ?? null,
     //   type: meanOfPayment,
     // });
 

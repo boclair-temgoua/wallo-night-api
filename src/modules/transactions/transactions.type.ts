@@ -10,7 +10,7 @@ export type GetTransactionsSelections = {
   model?: string;
   days?: number;
   pagination?: PaginationType;
-  userSendId?: Transaction['userSendId'];
+  userBuyerId?: Transaction['userBuyerId'];
   organizationId?: Transaction['organizationId'];
 };
 

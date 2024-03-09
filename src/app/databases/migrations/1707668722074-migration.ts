@@ -101,7 +101,7 @@ export class Migration1707668722074 implements MigrationInterface {
       `CREATE TABLE "wallet" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "accountId" character varying NOT NULL, "amount" double precision NOT NULL DEFAULT '0', "organizationId" uuid, CONSTRAINT "UQ_276aecaae66a8b798156f70fc4b" UNIQUE ("accountId"), CONSTRAINT "REL_c799f49d1f5e27b116957df945" UNIQUE ("organizationId"), CONSTRAINT "PK_bec464dd8d54c39c54fd32e2334" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "transaction" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "amount" double precision, "amountConvert" double precision, "title" character varying, "description" character varying, "fullName" character varying, "email" character varying, "color" character varying, "token" character varying, "currency" character varying, "model" character varying NOT NULL DEFAULT 'MEMBERSHIP', "contributionId" uuid, "type" character varying NOT NULL DEFAULT 'CARD', "userSendId" uuid, "userReceiveId" uuid, "organizationId" uuid, "subscribeId" uuid, CONSTRAINT "REL_57fdf097f80e305a3be60e96e5" UNIQUE ("contributionId"), CONSTRAINT "PK_89eadb93a89810556e1cbcd6ab9" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "transaction" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "amount" double precision, "amountConvert" double precision, "title" character varying, "description" character varying, "fullName" character varying, "email" character varying, "color" character varying, "token" character varying, "currency" character varying, "model" character varying NOT NULL DEFAULT 'MEMBERSHIP', "contributionId" uuid, "type" character varying NOT NULL DEFAULT 'CARD', "userBuyerId" uuid, "userReceiveId" uuid, "organizationId" uuid, "subscribeId" uuid, CONSTRAINT "REL_57fdf097f80e305a3be60e96e5" UNIQUE ("contributionId"), CONSTRAINT "PK_89eadb93a89810556e1cbcd6ab9" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `ALTER TABLE "auth_provider" ADD CONSTRAINT "FK_d9255ec09fddab3e47e84fd2a07" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -260,7 +260,7 @@ export class Migration1707668722074 implements MigrationInterface {
       `ALTER TABLE "transaction" ADD CONSTRAINT "FK_57fdf097f80e305a3be60e96e5b" FOREIGN KEY ("contributionId") REFERENCES "contribution"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "transaction" ADD CONSTRAINT "FK_54fceddb58a26773e187f80200c" FOREIGN KEY ("userSendId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "transaction" ADD CONSTRAINT "FK_54fceddb58a26773e187f80200c" FOREIGN KEY ("userBuyerId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "transaction" ADD CONSTRAINT "FK_13c1566a315a3adfa91f2e09266" FOREIGN KEY ("userReceiveId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,

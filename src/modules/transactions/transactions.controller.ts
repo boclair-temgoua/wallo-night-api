@@ -35,7 +35,7 @@ export class TransactionsController {
     @Query() query: FilterTransactionsDto,
   ) {
     const { user } = req;
-    const { model, userSendId, organizationId, days } = query;
+    const { model, userBuyerId, organizationId, days } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = requestPaginationDto;
@@ -45,7 +45,7 @@ export class TransactionsController {
       search,
       days: Number(days) > 0 ? Number(days) : null,
       model: model?.toLocaleUpperCase(),
-      userSendId,
+      userBuyerId,
       pagination,
       organizationId: organizationId ?? user.organizationId,
     });

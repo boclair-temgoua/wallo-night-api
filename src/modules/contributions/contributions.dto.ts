@@ -42,7 +42,7 @@ export class CreateOneContributionDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userSendId: string;
+  userBuyerId: string;
 
   @IsNotEmpty()
   @IsInt()
@@ -81,5 +81,5 @@ export class CreateOneContributionDonationDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userSendId: string;
+  userBuyerId: string;
 }

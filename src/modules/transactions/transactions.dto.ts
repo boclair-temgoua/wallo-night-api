@@ -13,7 +13,7 @@ export class FilterTransactionsDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  userSendId: string;
+  userBuyerId: string;
 
   @IsOptional()
   @IsString()

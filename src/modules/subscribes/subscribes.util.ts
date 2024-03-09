@@ -24,7 +24,7 @@ export class SubscribesUtil {
 
   async createOrUpdateOneSubscribe(options: {
     amount: AmountModel;
-    userSendId: string;
+    userBuyerId: string;
     userReceiveId: string;
     type?: TransactionType;
     model: FilterQueryType;
@@ -38,7 +38,7 @@ export class SubscribesUtil {
       amountValueConvert,
       description,
       type,
-      userSendId,
+      userBuyerId,
       userReceiveId,
       amount,
       model,
@@ -56,16 +56,16 @@ export class SubscribesUtil {
 
     const findOneFollow = await this.followsService.findOneBy({
       followerId: findOneMembership?.userId,
-      userId: userSendId,
+      userId: userBuyerId,
     });
     const findOneSubscribe = await this.subscribesService.findOneBy({
       subscriberId: findOneMembership?.userId,
-      userId: userSendId,
+      userId: userBuyerId,
     });
 
     if (!findOneFollow) {
       await this.followsService.createOne({
-        userId: userSendId,
+        userId: userBuyerId,
         followerId: findOneMembership?.userId,
       });
     }
@@ -80,7 +80,7 @@ export class SubscribesUtil {
         { subscribeId: findOneSubscribe?.id },
         {
           membershipId,
-          userId: userSendId,
+          userId: userBuyerId,
           organizationId: findOneMembership.organizationId,
           subscriberId: findOneMembership?.userId,
           expiredAt:
@@ -100,7 +100,7 @@ export class SubscribesUtil {
         token: token,
         currency: amount?.currency,
         model: model,
-        userSendId: userSendId,
+        userBuyerId: userBuyerId,
         subscribeId: findOneSubscribe?.id,
         amount: amount?.value,
         description: description,
@@ -112,7 +112,7 @@ export class SubscribesUtil {
     } else {
       const subscribe = await this.subscribesService.createOne({
         membershipId,
-        userId: userSendId,
+        userId: userBuyerId,
         organizationId: findOneMembership.organizationId,
         subscriberId: findOneMembership?.userId,
         expiredAt: addMonthsFormateDDMMYYDate({
@@ -126,7 +126,7 @@ export class SubscribesUtil {
         model: model,
         token: token,
         currency: amount?.currency,
-        userSendId: userSendId,
+        userBuyerId: userBuyerId,
         userReceiveId: userReceiveId,
         organizationId: findOneMembership?.organizationId,
         subscribeId: subscribe?.id,

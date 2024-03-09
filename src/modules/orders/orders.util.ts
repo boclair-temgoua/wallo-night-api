@@ -18,7 +18,7 @@ export class OrdersUtil {
 
   /** Create shop */
   async orderShopCreate(options: {
-    userBeyerId: string;
+    userBuyerId: string;
     cartOrderId: string;
     organizationBuyerId: string;
     organizationSellerId: string;
@@ -26,7 +26,7 @@ export class OrdersUtil {
   }): Promise<any> {
     const {
       userAddress,
-      userBeyerId,
+      userBuyerId,
       organizationBuyerId,
       organizationSellerId,
       cartOrderId,
@@ -34,7 +34,7 @@ export class OrdersUtil {
 
     const findOneCartOrder = await this.cartOrdersService.findOneBy({
       cartOrderId,
-      userId: userBeyerId,
+      userId: userBuyerId,
       organizationSellerId,
     });
     if (!findOneCartOrder) {
@@ -108,7 +108,7 @@ export class OrdersUtil {
   /** Create commission */
   async orderCommissionCreate(options: {
     amount: AmountModel;
-    userBeyerId: string;
+    userBuyerId: string;
     commissionId: string;
     organizationBuyerId: string;
     organizationSellerId: string;
@@ -118,14 +118,14 @@ export class OrdersUtil {
       amount,
       commissionId,
       userAddress,
-      userBeyerId,
+      userBuyerId,
       organizationBuyerId,
       organizationSellerId,
     } = options;
 
     const order = await this.ordersService.createOne({
       address: userAddress,
-      userId: userBeyerId,
+      userId: userBuyerId,
       currency: amount?.currency,
       totalPriceDiscount: Number(amount?.value) * 100,
       totalPriceNoDiscount: Number(amount?.value) * 100,
