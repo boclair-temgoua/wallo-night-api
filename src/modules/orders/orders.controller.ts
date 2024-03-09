@@ -75,7 +75,7 @@ export class OrdersController {
       orderId,
       userId,
       organizationSellerId,
-      organizationBeyerId,
+      organizationBuyerId,
       model,
     } = query;
     const { search } = searchQuery;
@@ -89,7 +89,7 @@ export class OrdersController {
       orderId,
       model,
       userId,
-      organizationBeyerId,
+      organizationBuyerId,
       organizationSellerId,
     });
 
@@ -151,7 +151,7 @@ export class OrdersController {
         percentDiscount: cart?.product?.discount?.percent,
         price: Number(cart?.product?.price) * 100,
         priceDiscount: Number(cart?.product?.priceDiscount) * 100,
-        organizationBeyerId: user?.organizationId,
+        organizationBuyerId: user?.organizationId,
         organizationSellerId: cart?.product?.organizationId,
         model: cart?.model,
         commissionId: cart?.commissionId,

@@ -34,7 +34,7 @@ export class OrderItemsService {
       orderId,
       model,
       organizationSellerId,
-      organizationBeyerId,
+      organizationBuyerId,
     } = selections;
 
     let query = this.driver
@@ -45,7 +45,7 @@ export class OrderItemsService {
       .addSelect('orderItem.percentDiscount', 'percentDiscount')
       .addSelect('orderItem.price', 'price')
       .addSelect('orderItem.priceDiscount', 'priceDiscount')
-      .addSelect('orderItem.organizationBeyerId', 'organizationBeyerId')
+      .addSelect('orderItem.organizationBuyerId', 'organizationBuyerId')
       .addSelect('orderItem.organizationSellerId', 'organizationSellerId')
       .addSelect('orderItem.model', 'model')
       .addSelect('orderItem.status', 'status')
@@ -54,6 +54,7 @@ export class OrderItemsService {
       .addSelect('orderItem.productId', 'productId')
       .addSelect('orderItem.orderId', 'orderId')
       .addSelect('orderItem.userId', 'userId')
+      .addSelect('orderItem.address', 'address')
       .addSelect('orderItem.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -147,10 +148,10 @@ export class OrderItemsService {
       query = query.andWhere('orderItem.model = :model', { model });
     }
 
-    if (organizationBeyerId) {
+    if (organizationBuyerId) {
       query = query.andWhere(
-        'orderItem.organizationBeyerId = :organizationBeyerId',
-        { organizationBeyerId },
+        'orderItem.organizationBuyerId = :organizationBuyerId',
+        { organizationBuyerId },
       );
     }
 
@@ -182,7 +183,7 @@ export class OrderItemsService {
   }
 
   async findOneBy(selections: GetOneOrderItemSelections): Promise<OrderItem> {
-    const { orderItemId, organizationBeyerId, organizationSellerId } =
+    const { orderItemId, organizationBuyerId, organizationSellerId } =
       selections;
     let query = this.driver
       .createQueryBuilder('orderItem')
@@ -192,10 +193,10 @@ export class OrderItemsService {
       query = query.andWhere('orderItem.id = :id', { id: orderItemId });
     }
 
-    if (organizationBeyerId) {
+    if (organizationBuyerId) {
       query = query.andWhere(
-        'orderItem.organizationBeyerId = :organizationBeyerId',
-        { organizationBeyerId },
+        'orderItem.organizationBuyerId = :organizationBuyerId',
+        { organizationBuyerId },
       );
     }
 
@@ -222,7 +223,7 @@ export class OrderItemsService {
       percentDiscount,
       price,
       priceDiscount,
-      organizationBeyerId,
+      organizationBuyerId,
       organizationSellerId,
       model,
       status,
@@ -240,7 +241,7 @@ export class OrderItemsService {
     orderItem.price = price;
     orderItem.orderNumber = generateNumber(10);
     orderItem.priceDiscount = priceDiscount;
-    orderItem.organizationBeyerId = organizationBeyerId;
+    orderItem.organizationBuyerId = organizationBuyerId;
     orderItem.organizationSellerId = organizationSellerId;
     orderItem.model = model;
     orderItem.status = status;

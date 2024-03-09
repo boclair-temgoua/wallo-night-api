@@ -23,13 +23,13 @@ export type GetOrderItemsSelections = {
   orderId?: OrderItem['orderId'];
   model?: OrderItem['model'];
   organizationSellerId?: OrderItem['organizationSellerId'];
-  organizationBeyerId?: OrderItem['organizationBeyerId'];
+  organizationBuyerId?: OrderItem['organizationBuyerId'];
 };
 
 export type GetOneOrderItemSelections = {
   orderItemId?: OrderItem['id'];
   organizationSellerId?: OrderItem['organizationSellerId'];
-  organizationBeyerId?: OrderItem['organizationBeyerId'];
+  organizationBuyerId?: OrderItem['organizationBuyerId'];
 };
 
 export type UpdateOrderItemSelections = {

@@ -30,4 +30,5 @@ export * from './Testimonial';
 export * from './Transaction';
 export * from './Upload';
 export * from './User';
+export * from './UserAddress';
 export * from './Wallet';

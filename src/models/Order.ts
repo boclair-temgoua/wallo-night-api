@@ -28,6 +28,9 @@ export class Order extends BaseDeleteEntity {
   @Column({ nullable: true })
   currency: string;
 
+  @Column({ type: 'jsonb', array: false, nullable: true })
+  address?: {};
+
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })

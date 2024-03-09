@@ -90,12 +90,18 @@ export class OrdersService {
 
   /** Create on to the database. */
   async createOne(options: CreateOrderOptions): Promise<Order> {
-    const { userId, currency, totalPriceDiscount, totalPriceNoDiscount } =
-      options;
+    const {
+      userId,
+      currency,
+      address,
+      totalPriceDiscount,
+      totalPriceNoDiscount,
+    } = options;
 
     const order = new Order();
     order.userId = userId;
     order.currency = currency;
+    order.address = address;
     order.orderNumber = generateNumber(10);
     order.totalPriceDiscount = totalPriceDiscount;
     order.totalPriceNoDiscount = totalPriceNoDiscount;

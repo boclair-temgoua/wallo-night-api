@@ -19,7 +19,7 @@ export class GetOrderItemDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  organizationBeyerId: string;
+  organizationBuyerId: string;
 
   @IsOptional()
   @IsString()

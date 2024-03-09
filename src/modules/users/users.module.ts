@@ -10,6 +10,7 @@ import {
   ResetPassword,
   Subscribe,
   User,
+  UserAddress,
   Wallet,
 } from '../../models';
 import { AuthProvidersService } from '../auth-providers/auth-providers.service';
@@ -21,6 +22,7 @@ import { OrganizationsService } from '../organizations/organizations.service';
 import { ProfilesService } from '../profiles/profiles.service';
 import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
 import { SubscribesService } from '../subscribes/subscribes.service';
+import { UserAddressService } from '../user-address/user-address.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { AuthUserController } from './auth/auth-user.controller';
 import { SocialUserController } from './auth/social-user.controller';
@@ -40,6 +42,7 @@ import { UsersUtil } from './users.util';
       Subscribe,
       Currency,
       Donation,
+      UserAddress,
       Organization,
       ResetPassword,
       Contributor,
@@ -59,6 +62,7 @@ import { UsersUtil } from './users.util';
     CurrenciesService,
     SubscribesService,
     MailerService,
+    UserAddressService,
     AuthProvidersService,
     ContributorsService,
     OrganizationsService,

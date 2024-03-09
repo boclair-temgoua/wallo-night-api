@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
+import { isNotUndefined } from '../../app/utils/commons/generate-random';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { Commission } from '../../models/Commission';
@@ -333,7 +334,7 @@ export class CommissionsService {
     commission.description = description;
     commission.userId = userId;
     commission.enableDiscount = enableDiscount;
-    commission.discountId = discountId;
+    commission.discountId = isNotUndefined(discountId) ? discountId : null;
     commission.organizationId = organizationId;
 
     const query = this.driver.save(commission);
@@ -386,7 +387,7 @@ export class CommissionsService {
     commission.urlMedia = urlMedia;
     commission.enableDiscount = enableDiscount;
     commission.description = description;
-    commission.discountId = discountId;
+    commission.discountId = isNotUndefined(discountId) ? discountId : null;
     commission.deletedAt = deletedAt;
 
     const query = this.driver.save(commission);

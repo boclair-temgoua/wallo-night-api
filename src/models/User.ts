@@ -29,6 +29,7 @@ import {
   Product,
   Profile,
   Transaction,
+  UserAddress,
 } from './index';
 
 @Entity('user')
@@ -130,6 +131,9 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   carts?: Cart[];
+
+  @OneToOne(() => UserAddress, (userAddress) => userAddress.user)
+  userAddress?: UserAddress;
 
   @OneToMany(() => AuthProvider, (authProvider) => authProvider.user, {
     onDelete: 'CASCADE',

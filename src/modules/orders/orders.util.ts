@@ -4,6 +4,7 @@ import { CartsService } from '../cats/cats.service';
 import { OrderItemsService } from '../order-items/order-items.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
+import { AmountModel } from '../wallets/wallets.type';
 import { OrdersService } from './orders.service';
 
 @Injectable()
@@ -17,15 +18,17 @@ export class OrdersUtil {
     private readonly orderItemsService: OrderItemsService,
   ) {}
 
-  async orderCreate(options: {
+  async orderShopCreate(options: {
     userBeyerId: string;
     cartOrderId: string;
-    organizationBeyerId: string;
+    organizationBuyerId: string;
     organizationSellerId: string;
+    userAddress?: any;
   }): Promise<any> {
     const {
+      userAddress,
       userBeyerId,
-      organizationBeyerId,
+      organizationBuyerId,
       organizationSellerId,
       cartOrderId,
     } = options;
@@ -57,6 +60,7 @@ export class OrdersUtil {
     const order = await this.ordersService.createOne({
       userId: carts?.summary?.userId,
       currency: carts?.summary?.currency,
+      address: userAddress,
       totalPriceDiscount: carts?.summary?.totalPriceDiscount,
       totalPriceNoDiscount: carts?.summary?.totalPriceNoDiscount,
     });
@@ -76,7 +80,7 @@ export class OrdersUtil {
         percentDiscount: cart?.product?.discount?.percent,
         price: Number(cart?.product?.price) * 100,
         priceDiscount: Number(cart?.product?.priceDiscount) * 100,
-        organizationBeyerId: organizationBeyerId,
+        organizationBuyerId: organizationBuyerId,
         organizationSellerId: cart?.product?.organizationId,
         model: cart?.model,
         commissionId: cart?.commissionId,
@@ -99,5 +103,45 @@ export class OrdersUtil {
     }
 
     return { order };
+  }
+
+  async orderShopCommission(options: {
+    amount: AmountModel;
+    userBeyerId: string;
+    commissionId: string;
+    organizationBuyerId: string;
+    organizationSellerId: string;
+    userAddress?: any;
+  }): Promise<any> {
+    const {
+      amount,
+      commissionId,
+      userAddress,
+      userBeyerId,
+      organizationBuyerId,
+      organizationSellerId,
+    } = options;
+
+    const order = await this.ordersService.createOne({
+      userId: userBeyerId,
+      currency: amount?.currency,
+      address: userAddress,
+      totalPriceDiscount: Number(amount?.value),
+      totalPriceNoDiscount: Number(amount?.value),
+    });
+    const orderItem = await this.orderItemsService.createOne({
+      userId: order?.userId,
+      currency: order?.currency,
+      quantity: 1,
+      price: Number(amount?.value) * 100,
+      organizationBuyerId: organizationBuyerId,
+      organizationSellerId: organizationSellerId,
+      model: 'COMMISSION',
+      commissionId: commissionId,
+      orderId: order?.id,
+      status: 'DELIVERED',
+    });
+
+    return { order, orderItem };
   }
 }

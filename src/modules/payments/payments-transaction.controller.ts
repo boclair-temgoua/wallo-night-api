@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { CommentsService } from '../comments/comments.service';
+import { CommissionsService } from '../commissions/commissions.service';
 import { OrdersUtil } from '../orders/orders.util';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { TransactionsService } from '../transactions/transactions.service';
@@ -28,6 +29,7 @@ export class PaymentsTransactionController {
     private readonly usersService: UsersService,
     private readonly commentsService: CommentsService,
     private readonly ordersUtil: OrdersUtil,
+    private readonly commissionsService: CommissionsService,
     private readonly transactionsService: TransactionsService,
   ) {}
 
@@ -139,8 +141,13 @@ export class PaymentsTransactionController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const { amount, organizationId, userReceiveId, userSendId, reference } =
-      body;
+    const {
+      amount,
+      organizationBuyerId,
+      userReceiveId,
+      userSendId,
+      reference,
+    } = body;
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -153,7 +160,7 @@ export class PaymentsTransactionController {
       userReceiveId: userReceiveId,
       amount: amount?.value * 100,
       currency: amount?.currency.toUpperCase(),
-      organizationId: organizationId,
+      organizationId: organizationBuyerId,
       type: 'PAYPAL',
       token: reference,
       model: 'DONATION',
@@ -192,7 +199,7 @@ export class PaymentsTransactionController {
   ) {
     const {
       amount,
-      organizationId,
+      organizationBuyerId,
       userReceiveId,
       userSendId,
       reference,
@@ -225,7 +232,7 @@ export class PaymentsTransactionController {
         userReceiveId: userReceiveId,
         amount: amount?.value * 100,
         currency: paymentIntents?.currency.toUpperCase(),
-        organizationId: organizationId,
+        organizationId: organizationBuyerId,
         type: 'CARD',
         token: reference,
         model: 'DONATION',
@@ -266,7 +273,7 @@ export class PaymentsTransactionController {
   ) {
     const {
       amount,
-      organizationId: organizationSellerId,
+      organizationSellerId,
       userReceiveId,
       userSendId,
       reference,
@@ -288,8 +295,8 @@ export class PaymentsTransactionController {
         value: amount?.value,
       });
 
-    const { order } = await this.ordersUtil.orderCreate({
-      organizationBeyerId: findOneUser?.organizationId,
+    const { order } = await this.ordersUtil.orderShopCreate({
+      organizationBuyerId: findOneUser?.organizationId,
       userBeyerId: userSendId,
       cartOrderId,
       organizationSellerId,
@@ -329,12 +336,13 @@ export class PaymentsTransactionController {
   ) {
     const {
       amount,
-      organizationId: organizationSellerId,
+      organizationSellerId,
       userReceiveId,
       userSendId,
       reference,
       cartOrderId,
       card,
+      userAddress,
     } = body;
     const findOneUser = await this.usersService.findOneBy({
       userId: userSendId,
@@ -366,11 +374,12 @@ export class PaymentsTransactionController {
     }
 
     if (paymentIntents) {
-      const { order } = await this.ordersUtil.orderCreate({
-        organizationBeyerId: findOneUser?.organizationId,
+      const { order } = await this.ordersUtil.orderShopCreate({
+        organizationBuyerId: findOneUser?.organizationId,
         userBeyerId: userSendId,
         cartOrderId,
         organizationSellerId,
+        userAddress,
       });
       const transaction = await this.transactionsService.createOne({
         userSendId: findOneUser?.id,
@@ -395,6 +404,169 @@ export class PaymentsTransactionController {
         });
       }
     }
+
+    return reply({ res, results: reference });
+  }
+
+  /** Create Commission */
+  @Post(`/stripe/commission`)
+  async createOneCommission(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateSubscribePaymentsDto,
+  ) {
+    const {
+      amount,
+      organizationSellerId,
+      organizationBuyerId,
+      userAddress,
+      commissionId,
+      userReceiveId,
+      userSendId,
+      reference,
+      card,
+    } = body;
+
+    const findOneCommission = await this.commissionsService.findOneBy({
+      commissionId: commissionId,
+      organizationId: organizationSellerId,
+    });
+    if (!findOneCommission) {
+      throw new HttpException(
+        `This commission ${commissionId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: amount?.currency,
+        value: amount?.value,
+      });
+
+    const { paymentIntents } = await this.paymentsService.stripeMethod({
+      card,
+      currency: amount?.currency.toUpperCase(),
+      amountDetail: amount,
+      token: reference,
+      description: `Commission ${findOneCommission?.title}`,
+    });
+    if (!paymentIntents) {
+      throw new HttpException(
+        `Transaction not found please try again`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (paymentIntents) {
+      const { order } = await this.ordersUtil.orderShopCommission({
+        amount,
+        userAddress,
+        organizationBuyerId,
+        organizationSellerId,
+        userBeyerId: userSendId,
+        commissionId: findOneCommission?.id,
+      });
+      const transaction = await this.transactionsService.createOne({
+        userSendId,
+        userReceiveId: userReceiveId,
+        amount: Number(paymentIntents?.amount_received),
+        currency: paymentIntents?.currency?.toUpperCase(),
+        organizationId: organizationSellerId,
+        orderId: order?.id,
+        type: 'CARD',
+        token: reference,
+        model: 'COMMISSION',
+        description: paymentIntents?.description,
+        amountConvert: amountValueConvert * 100,
+      });
+
+      if (transaction?.token) {
+        await this.walletsService.incrementOne({
+          amount: transaction?.amountConvert,
+          organizationId: transaction?.organizationId,
+        });
+      }
+    }
+
+    return reply({ res, results: reference });
+  }
+
+  @Post(`/paypal/commission`)
+  async createOnePayPalCommission(
+    @Res() res,
+    @Req() req,
+    @Body() body: CreateSubscribePaymentsDto,
+  ) {
+    const {
+      amount,
+      organizationSellerId,
+      organizationBuyerId,
+      userAddress,
+      commissionId,
+      userReceiveId,
+      userSendId,
+      reference,
+      card,
+    } = body;
+    const findOneCommission = await this.commissionsService.findOneBy({
+      userId: commissionId,
+      organizationId: organizationSellerId,
+    });
+    if (!findOneCommission) {
+      throw new HttpException(
+        `This commission ${commissionId} dons't exist please change`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: amount?.currency,
+        value: amount?.value,
+      });
+
+    console.log('findOneCommission =====>', findOneCommission);
+    console.log('amountValueConvert =====>', amountValueConvert);
+    // const { paymentIntents } = await this.paymentsService.stripeMethod({
+    //   card,
+    //   currency: amount?.currency.toUpperCase(),
+    //   amountDetail: amount,
+    //   token: reference,
+    //   description: `Subscription ${amount?.month} month`,
+    // });
+    // if (!paymentIntents) {
+    //   throw new HttpException(
+    //     `Transaction not found please try again`,
+    //     HttpStatus.NOT_FOUND,
+    //   );
+    // }
+
+    // if (paymentIntents) {
+    //   const { transaction } =
+    //     await this.subscribesUtil.createOrUpdateOneSubscribe({
+    //       userSendId: userSendId,
+    //       userReceiveId: userReceiveId,
+    //       amount: {
+    //         currency: paymentIntents?.currency.toUpperCase(),
+    //         value: amount?.value * 100,
+    //         month: amount?.month,
+    //       }, // Pas besoin de multiplier pas 100 stipe le fais deja
+    //       membershipId,
+    //       type: 'CARD',
+    //       token: reference,
+    //       model: 'MEMBERSHIP',
+    //       description: paymentIntents?.description,
+    //       amountValueConvert: amountValueConvert * 100,
+    //     });
+
+    //   if (transaction?.token) {
+    //     await this.walletsService.incrementOne({
+    //       amount: transaction?.amountConvert,
+    //       organizationId: transaction?.organizationId,
+    //     });
+    //   }
+    // }
 
     return reply({ res, results: reference });
   }

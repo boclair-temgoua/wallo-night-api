@@ -36,6 +36,7 @@ import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.
 import { SubscribesModule } from './modules/subscribes/subscribes.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { UserAddressModule } from './modules/user-address/user-address.module';
 import { UsersModule } from './modules/users/users.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
 
@@ -71,6 +72,7 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     AlbumsModule,
     JobsModule,
     OrdersModule,
+    UserAddressModule,
     OrderItemsModule,
     CartOrdersModule,
     OrganizationsModule,

@@ -38,7 +38,7 @@ export class OrderItem extends BaseDeleteEntity {
   priceDiscount: number;
 
   @Column({ type: 'uuid', nullable: true })
-  organizationBeyerId?: string;
+  organizationBuyerId?: string;
 
   @Column({ type: 'uuid', nullable: true })
   organizationSellerId?: string;

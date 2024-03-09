@@ -6,8 +6,8 @@ import { CurrenciesService } from '../currencies/currencies.service';
 import { DonationsService } from '../donations/donations.service';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { ProfilesService } from '../profiles/profiles.service';
-import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
 import { SubscribesService } from '../subscribes/subscribes.service';
+import { UserAddressService } from '../user-address/user-address.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { CheckUserService } from './middleware/check-user.service';
 import { UsersService } from './users.service';
@@ -24,7 +24,7 @@ export class UsersUtil {
     private readonly subscribesService: SubscribesService,
     private readonly organizationsService: OrganizationsService,
     private readonly contributorsService: ContributorsService,
-    private readonly resetPasswordsService: ResetPasswordsService,
+    private readonly userAddressService: UserAddressService,
   ) {}
 
   async saveOrUpdate(options: {
@@ -121,6 +121,14 @@ export class UsersUtil {
       { organizationId: organization?.id },
       { userId: user?.id },
     );
+
+    /** Create UserAddress */
+    await this.userAddressService.createOne({
+      firstName: firstName,
+      lastName: lastName,
+      userId: user?.id,
+      organizationId: organization?.id,
+    });
 
     return { user };
   }

@@ -17,6 +17,7 @@ import {
   Subscribe,
   Transaction,
   User,
+  UserAddress,
   Wallet,
 } from './index';
 
@@ -79,4 +80,7 @@ export class Organization extends BaseEntity {
 
   @OneToMany(() => CartOrder, (cartOrder) => cartOrder.organization)
   cartOrders?: CartOrder[];
+
+  @OneToMany(() => UserAddress, (userAddress) => userAddress.organization)
+  userAddress?: UserAddress;
 }

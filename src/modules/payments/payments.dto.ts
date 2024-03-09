@@ -78,6 +78,10 @@ export class CreateSubscribePaymentsDto {
 
   @IsOptional()
   @IsString()
+  commissionId: string;
+
+  @IsOptional()
+  @IsString()
   cartOrderId: string;
 
   @IsOptional()
@@ -92,11 +96,19 @@ export class CreateSubscribePaymentsDto {
   @IsNotEmpty()
   @IsString()
   @IsUUID()
-  organizationId: string;
+  organizationSellerId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  organizationBuyerId: string;
 
   @IsOptional()
   @IsString()
   reference: string;
+
+  @IsOptional()
+  userAddress: any;
 
   @IsOptional()
   card: CardModel;
