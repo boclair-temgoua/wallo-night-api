@@ -95,6 +95,8 @@ export class CommissionsController {
       urlMedia,
       description,
       discountId,
+      userId: user?.id,
+      organizationId: user?.organizationId,
       messageAfterPayment,
       currencyId: user?.profile?.currencyId,
       limitSlot: Number(limitSlot),
@@ -177,68 +179,6 @@ export class CommissionsController {
 
     return reply({ res, results: 'commission updated successfully' });
   }
-
-  /** Post one Commissions */
-  // @Put(`/:commissionId`)
-  // @UseGuards(UserAuthGuard)
-  // @UseInterceptors(AnyFilesInterceptor())
-  // async updateOneOld(
-  //   @Res() res,
-  //   @Req() req,
-  //   @Body() body: CreateOrUpdateCommissionsDto,
-  //   @UploadedFiles() files: Array<Express.Multer.File>,
-  //   @Param('commissionId', ParseUUIDPipe) commissionId: string,
-  // ) {
-  //   const { user } = req;
-  //   const {
-  //     title,
-  //     price,
-  //     discountId,
-  //     description,
-  //     enableLimitSlot,
-  //     enableDiscount,
-  //     messageAfterPayment,
-  //     urlMedia,
-  //   } = body;
-
-  //   console.log('body ======>', body);
-
-  //   // const findOneCommission = await this.commissionsService.findOneBy({
-  //   //   commissionId,
-  //   //   organizationId: user?.organizationId,
-  //   // });
-  //   // if (!findOneCommission)
-  //   //   throw new HttpException(
-  //   //     `Commission ${commissionId} don't exists please change`,
-  //   //     HttpStatus.NOT_FOUND,
-  //   //   );
-
-  //   // await this.commissionsService.updateOne(
-  //   //   { commissionId: findOneCommission?.id },
-  //   //   {
-  //   //     title,
-  //   //     price: Number(price),
-  //   //     urlMedia,
-  //   //     discountId,
-  //   //     description,
-  //   //     enableDiscount: enableDiscount === 'true' ? true : false,
-  //   //     enableLimitSlot: enableLimitSlot === 'true' ? true : false,
-  //   //     messageAfterPayment,
-  //   //   },
-  //   // );
-
-  //   // await this.uploadsUtil.saveOrUpdateAws({
-  //   //   model: 'COMMISSION',
-  //   //   commissionId: commissionId,
-  //   //   uploadableId: commissionId,
-  //   //   userId: findOneCommission?.userId,
-  //   //   folder: 'commissions',
-  //   //   files,
-  //   //   organizationId: findOneCommission?.organizationId,
-  //   // });
-
-  //   return reply({ res, results: 'commission updated successfully' });
-  // }
 
   /** Get one Commissions */
   @Get(`/view`)

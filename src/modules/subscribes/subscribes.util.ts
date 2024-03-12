@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   addMonthsFormateDDMMYYDate,
+  dateTimeNowUtc,
   formateNowDateUnixInteger,
 } from '../../app/utils/commons/formate-date';
 import { FilterQueryType } from '../../app/utils/search-query';
@@ -74,7 +75,7 @@ export class SubscribesUtil {
       const dateExpired = formateNowDateUnixInteger(
         findOneSubscribe?.expiredAt,
       );
-      const dateNow = formateNowDateUnixInteger(new Date());
+      const dateNow = formateNowDateUnixInteger(dateTimeNowUtc());
 
       await this.subscribesService.updateOne(
         { subscribeId: findOneSubscribe?.id },
@@ -116,7 +117,7 @@ export class SubscribesUtil {
         organizationId: findOneMembership.organizationId,
         subscriberId: findOneMembership?.userId,
         expiredAt: addMonthsFormateDDMMYYDate({
-          date: new Date(),
+          date: dateTimeNowUtc(),
           monthNumber: amount?.month,
         }),
       });

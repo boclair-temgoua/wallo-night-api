@@ -1,7 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 import { config } from '../../app/config/index';
+import { SubscribesUtil } from '../subscribes/subscribes.util';
+import { TransactionsUtil } from '../transactions/transactions.util';
+import { WalletsService } from '../wallets/wallets.service';
 import { AmountModel, CardModel } from '../wallets/wallets.type';
+import { PaymentsService } from './payments.service';
 
 const apiVersion = '2023-10-16';
 const stripePrivate = new Stripe(
@@ -16,7 +20,12 @@ const stripePublic = new Stripe(
 
 @Injectable()
 export class PaymentsUtil {
-  constructor() {}
+  constructor(
+    private readonly paymentsService: PaymentsService,
+    private readonly subscribesUtil: SubscribesUtil,
+    private readonly walletsService: WalletsService,
+    private readonly transactionsUtil: TransactionsUtil,
+  ) {}
 
   /** Stripe billing */
   async stripeTokenCreate(options: {
@@ -66,8 +75,18 @@ export class PaymentsUtil {
     token: string;
     currency: string;
     card: CardModel;
+    userBuyerId: string;
+    organizationBuyerId: string;
   }): Promise<any> {
-    const { token, description, amountDetail, currency, card } = options;
+    const {
+      token,
+      userBuyerId,
+      organizationBuyerId,
+      description,
+      amountDetail,
+      currency,
+      card,
+    } = options;
     const { cardNumber, cardExpMonth, cardExpYear, cardCvc, email, fullName } =
       card;
 
@@ -97,31 +116,101 @@ export class PaymentsUtil {
       );
     }
 
+    const findOnePayment = await this.paymentsService.findOneBy({
+      cardCvc,
+      cardNumber,
+      cardExpYear,
+      cardExpMonth,
+      status: 'ACTIVE',
+      organizationId: organizationBuyerId,
+    });
+    if (!findOnePayment) {
+      await this.paymentsService.createOne({
+        // email,
+        // fullName,
+        cardNumber,
+        cardExpMonth,
+        cardExpYear,
+        cardCvc,
+        type: 'CARD',
+        action: 'PAYMENT',
+        status: 'ACTIVE',
+        userId: userBuyerId,
+        organizationId: organizationBuyerId,
+      });
+    }
+
     return { paymentIntents };
   }
 
-  /** Cart execution */
-  // async cartExecution(options: {
-  //   cartOrderId: string;
-  //   userBuyerId: string;
-  //   organizationId: string;
-  // }): Promise<any> {
-  //   const { cartOrderId, userBuyerId, organizationId } = options;
+  /** Stripe billing */
+  async paymentsTransactionStripe(options: {
+    amount: AmountModel;
+    reference: string;
+    userBuyerId: string;
+    card: CardModel;
+    organizationBuyerId: string;
+    userReceiveId: string;
+    membershipId: string;
+  }): Promise<any> {
+    const {
+      amount,
+      reference,
+      userBuyerId,
+      card,
+      organizationBuyerId,
+      userReceiveId,
+      membershipId,
+    } = options;
 
-  //   const { summary, cartItems } = await this.cartsService.findAll({
-  //     userId: userBuyerId,
-  //     status: 'ADDED',
-  //     cartOrderId,
-  //     organizationSellerId: organizationId,
-  //   });
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: amount?.currency,
+        value: amount?.value,
+      });
 
-  //   if (!summary && cartItems.length <= 0) {
-  //     throw new HttpException(
-  //       `Cart not found please try again`,
-  //       HttpStatus.NOT_FOUND,
-  //     );
-  //   }
+    const { paymentIntents } = await this.stripeMethod({
+      card,
+      currency: amount?.currency.toUpperCase(),
+      amountDetail: amount,
+      token: reference,
+      userBuyerId,
+      organizationBuyerId,
+      description: `Subscription ${amount?.month} month`,
+    });
+    if (!paymentIntents) {
+      throw new HttpException(
+        `Transaction not found please try again`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
-  //   return { summary, cartItems };
-  // }
+    if (paymentIntents) {
+      const { transaction } =
+        await this.subscribesUtil.createOrUpdateOneSubscribe({
+          userBuyerId: userBuyerId,
+          userReceiveId: userReceiveId,
+          amount: {
+            currency: paymentIntents?.currency.toUpperCase(),
+            value: amount?.value * 100,
+            month: amount?.month,
+          }, // Pas besoin de multiplier pas 100 stipe le fais deja
+          membershipId,
+          type: 'CARD',
+          token: reference,
+          model: 'MEMBERSHIP',
+          description: paymentIntents?.description,
+          amountValueConvert: amountValueConvert * 100,
+        });
+
+      if (transaction?.token) {
+        await this.walletsService.incrementOne({
+          amount: transaction?.amountConvert,
+          organizationId: transaction?.organizationId,
+        });
+      }
+    }
+
+    return { paymentIntents };
+  }
 }

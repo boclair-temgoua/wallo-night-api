@@ -344,8 +344,14 @@ export class AuthUserController {
   /** Logout user */
   @Get(`/logout`)
   async logout(@Res() res, @Req() req) {
-    res.clearCookie(config.cookie_access.nameLogin);
-    res.clearCookie(config.cookie_access.namVerify);
+    res.clearCookie(
+      config.cookie_access.nameLogin,
+      validation_login_cookie_setting,
+    );
+    res.clearCookie(
+      config.cookie_access.namVerify,
+      validation_login_cookie_setting,
+    );
 
     return reply({ res, results: 'User logout successfully' });
   }

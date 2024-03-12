@@ -91,54 +91,19 @@ export class PaymentsTransactionController {
       userReceiveId,
       userBuyerId,
       reference,
+      organizationBuyerId,
       card,
     } = body;
 
-    const { value: amountValueConvert } =
-      await this.transactionsUtil.convertedValue({
-        currency: amount?.currency,
-        value: amount?.value,
-      });
-
-    const { paymentIntents } = await this.paymentsUtil.stripeMethod({
+    await this.paymentsUtil.paymentsTransactionStripe({
+      amount,
+      reference,
+      userBuyerId,
       card,
-      currency: amount?.currency.toUpperCase(),
-      amountDetail: amount,
-      token: reference,
-      description: `Subscription ${amount?.month} month`,
+      organizationBuyerId,
+      userReceiveId,
+      membershipId,
     });
-    if (!paymentIntents) {
-      throw new HttpException(
-        `Transaction not found please try again`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    if (paymentIntents) {
-      const { transaction } =
-        await this.subscribesUtil.createOrUpdateOneSubscribe({
-          userBuyerId: userBuyerId,
-          userReceiveId: userReceiveId,
-          amount: {
-            currency: paymentIntents?.currency.toUpperCase(),
-            value: amount?.value * 100,
-            month: amount?.month,
-          }, // Pas besoin de multiplier pas 100 stipe le fais deja
-          membershipId,
-          type: 'CARD',
-          token: reference,
-          model: 'MEMBERSHIP',
-          description: paymentIntents?.description,
-          amountValueConvert: amountValueConvert * 100,
-        });
-
-      if (transaction?.token) {
-        await this.walletsService.incrementOne({
-          amount: transaction?.amountConvert,
-          organizationId: transaction?.organizationId,
-        });
-      }
-    }
 
     return reply({ res, results: reference });
   }
@@ -226,6 +191,8 @@ export class PaymentsTransactionController {
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
       token: reference,
+      userBuyerId,
+      organizationBuyerId,
       description: amount?.description || 'bought un pot',
     });
     if (!paymentIntents) {
@@ -287,7 +254,6 @@ export class PaymentsTransactionController {
       userBuyerId,
       reference,
       cartOrderId,
-      card,
       userAddress,
     } = body;
     const findOneUser = await this.usersService.findOneBy({
@@ -376,6 +342,8 @@ export class PaymentsTransactionController {
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
       token: reference,
+      userBuyerId,
+      organizationBuyerId: findOneUser?.organizationId,
       description: `Product shop userId: ${findOneUser?.id}`,
     });
     if (!paymentIntents) {
@@ -438,7 +406,6 @@ export class PaymentsTransactionController {
       reference,
       card,
     } = body;
-    const { cardNumber, cardExpMonth, cardExpYear, cardCvc } = card;
 
     const findOneCommission = await this.commissionsService.findOneBy({
       commissionId: commissionId,
@@ -462,6 +429,8 @@ export class PaymentsTransactionController {
       currency: amount?.currency.toUpperCase(),
       amountDetail: amount,
       token: reference,
+      userBuyerId,
+      organizationBuyerId,
       description: `Commission ${findOneCommission?.title}`,
     });
     if (!paymentIntents) {
@@ -500,30 +469,6 @@ export class PaymentsTransactionController {
           organizationId: transaction?.organizationId,
         });
       }
-    }
-
-    const findOnePayment = await this.paymentsService.findOneBy({
-      cardCvc,
-      cardNumber,
-      cardExpYear,
-      cardExpMonth,
-      status: 'ACTIVE',
-      organizationId: organizationSellerId,
-    });
-    if (!findOnePayment) {
-      await this.paymentsService.createOne({
-        // email,
-        // fullName,
-        cardNumber,
-        cardExpMonth,
-        cardExpYear,
-        cardCvc,
-        type: 'CARD',
-        action: 'PAYMENT',
-        status: 'ACTIVE',
-        userId: userBuyerId,
-        organizationId: organizationBuyerId,
-      });
     }
 
     return reply({ res, results: reference });
