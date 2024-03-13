@@ -8,6 +8,7 @@ export const config = {
    */
   url: {
     client: process.env.NODE_CLIENT_URL,
+    serverUrl: process.env.NODE_SERVER_URL,
     allowedOrigins: process.env.ALLOWED_ORIGINS,
     dashboard: process.env.NODE_DASHBOARD_URL,
   },
@@ -81,16 +82,6 @@ export const config = {
    */
   database: {
     url: process.env.DATABASE_URL,
-    mysql: {
-      type: 'mysql' as TypeDatabase,
-      host: process.env.MYSQL_HOST,
-      port: Number(process.env.MYSQL_PORT),
-      username: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASSWORD,
-      name: process.env.MYSQL_DB,
-      ssl: process.env.MYSQL_SSL,
-      logging: process.env.MYSQL_LOG,
-    },
     postgres: {
       type: 'postgres' as TypeDatabase,
       host: process.env.PG_HOST,
@@ -106,16 +97,6 @@ export const config = {
    * Show or not console.log
    */
   showLog: true,
-  /**
-   * Jwt configuration
-   */
-  jwt: {
-    secret: process.env.JWT_SECRET,
-    expiration: process.env.JWT_EXPIRATION,
-    expirationPw: process.env.JWT_EXPIRATION_PW,
-    refreshSecret: process.env.JWT_REFRESH_SECRET,
-    refreshExpiration: process.env.JWT_REFRESH_EXPIRATION,
-  },
 
   /**
    * External implementations

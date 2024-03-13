@@ -34,6 +34,8 @@ export class PaymentsService {
       .addSelect('payment.action', 'action')
       .addSelect('payment.cardNumber', 'cardNumber')
       .addSelect('payment.type', 'type')
+      .addSelect('payment.brand', 'brand')
+      .addSelect('payment.cardExpMonth', 'cardExpMonth')
       .addSelect('payment.cardExpYear', 'cardExpYear')
       .addSelect('payment.organizationId', 'organizationId')
       .where('payment.deletedAt IS NULL');
@@ -144,6 +146,7 @@ export class PaymentsService {
       email,
       fullName,
       phone,
+      brand,
       cardNumber,
       cardExpMonth,
       cardExpYear,
@@ -163,6 +166,7 @@ export class PaymentsService {
     payment.cardExpYear = cardExpYear;
     payment.cardCvc = cardCvc;
     payment.type = type;
+    payment.brand = brand;
     payment.action = action;
     payment.description = description;
     payment.userId = userId;

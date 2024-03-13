@@ -160,7 +160,11 @@ export class PaymentsController {
 
     if (type === 'CARD') {
       const findOnePayment = await this.paymentsService.findOneBy({
+        cardCvc,
         cardNumber,
+        cardExpYear,
+        cardExpMonth,
+        status: 'ACTIVE',
         organizationId: user?.organizationId,
       });
       if (findOnePayment)
@@ -169,13 +173,13 @@ export class PaymentsController {
           HttpStatus.NOT_FOUND,
         );
 
-      await this.paymentsUtil.stripeTokenCreate({
-        name: fullName,
-        email,
+      const { paymentMethod } = await this.paymentsUtil.stripeTokenCheck({
         cardNumber,
         cardExpMonth,
         cardExpYear,
         cardCvc,
+        email,
+        name: fullName,
       });
 
       await this.paymentsService.createOne({
@@ -185,11 +189,11 @@ export class PaymentsController {
         cardExpMonth,
         cardExpYear,
         cardCvc,
-        type,
+        type: 'CARD',
         action: 'PAYMENT',
         status: 'ACTIVE',
-        description,
         userId: user?.id,
+        brand: paymentMethod?.card?.display_brand,
         organizationId: user?.organizationId,
       });
     }

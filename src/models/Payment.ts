@@ -31,6 +31,9 @@ export class Payment extends BaseDeleteEntity {
   @Column({ nullable: true })
   phone?: string;
 
+  @Column({ nullable: true })
+  brand?: string;
+
   @Column({ type: 'enum', enum: statusPaymentArray, default: 'PENDING' })
   status?: StatusPayment;
 

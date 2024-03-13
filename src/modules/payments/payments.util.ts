@@ -28,7 +28,7 @@ export class PaymentsUtil {
   ) {}
 
   /** Stripe billing */
-  async stripeTokenCreate(options: {
+  async stripeTokenCheck(options: {
     name: string;
     email?: string;
     cardNumber?: string;
@@ -97,7 +97,7 @@ export class PaymentsUtil {
       fullName,
     } = card;
 
-    const { paymentMethod } = await this.stripeTokenCreate({
+    const { paymentMethod } = await this.stripeTokenCheck({
       cardNumber,
       cardExpMonth,
       cardExpYear,
@@ -143,6 +143,7 @@ export class PaymentsUtil {
         action: 'PAYMENT',
         status: 'ACTIVE',
         userId: userBuyerId,
+        brand: paymentMethod?.card?.display_brand,
         organizationId: organizationBuyerId,
       });
     }
