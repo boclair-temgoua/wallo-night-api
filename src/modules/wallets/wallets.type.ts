@@ -13,6 +13,7 @@ export type CardModel = {
   cardExpYear: number;
   cardCvc: string;
   email: string;
+  isSaveCard: boolean;
   fullName: string;
 };
 

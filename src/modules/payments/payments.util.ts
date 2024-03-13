@@ -87,8 +87,15 @@ export class PaymentsUtil {
       currency,
       card,
     } = options;
-    const { cardNumber, cardExpMonth, cardExpYear, cardCvc, email, fullName } =
-      card;
+    const {
+      cardNumber,
+      cardExpMonth,
+      isSaveCard,
+      cardExpYear,
+      cardCvc,
+      email,
+      fullName,
+    } = card;
 
     const { paymentMethod } = await this.stripeTokenCreate({
       cardNumber,
@@ -124,7 +131,7 @@ export class PaymentsUtil {
       status: 'ACTIVE',
       organizationId: organizationBuyerId,
     });
-    if (!findOnePayment) {
+    if (!findOnePayment && isSaveCard) {
       await this.paymentsService.createOne({
         // email,
         // fullName,
