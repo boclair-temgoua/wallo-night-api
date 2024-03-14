@@ -117,7 +117,7 @@ export class PaymentsTransactionController {
   ) {
     const {
       amount,
-      organizationBuyerId,
+      organizationSellerId,
       userReceiveId,
       userBuyerId,
       reference,
@@ -134,7 +134,7 @@ export class PaymentsTransactionController {
       userReceiveId: userReceiveId,
       amount: amount?.value * 100,
       currency: amount?.currency.toUpperCase(),
-      organizationId: organizationBuyerId,
+      organizationId: organizationSellerId,
       type: 'PAYPAL',
       token: reference,
       model: 'DONATION',
@@ -173,6 +173,7 @@ export class PaymentsTransactionController {
   ) {
     const {
       amount,
+      organizationSellerId,
       organizationBuyerId,
       userReceiveId,
       userBuyerId,
@@ -208,7 +209,7 @@ export class PaymentsTransactionController {
         userReceiveId: userReceiveId,
         amount: amount?.value * 100,
         currency: paymentIntents?.currency.toUpperCase(),
-        organizationId: organizationBuyerId,
+        organizationId: organizationSellerId,
         type: 'CARD',
         token: reference,
         model: 'DONATION',

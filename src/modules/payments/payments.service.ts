@@ -4,7 +4,6 @@ import { useCatch } from 'src/app/utils/use-catch';
 import { Repository } from 'typeorm';
 import { withPagination } from '../../app/utils/pagination/with-pagination';
 import { Payment } from '../../models';
-import { CartsService } from '../cats/cats.service';
 import {
   CreatePaymentsOptions,
   GetOnePaymentsSelections,
@@ -18,7 +17,6 @@ export class PaymentsService {
   constructor(
     @InjectRepository(Payment)
     private driver: Repository<Payment>,
-    private readonly cartsService: CartsService,
   ) {}
 
   async findAll(selections: GetPaymentsSelections): Promise<any> {
@@ -61,14 +59,11 @@ export class PaymentsService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    const [error, payments] = await useCatch(
-      query
-        .orderBy('payment.createdAt', pagination?.sort)
-        .limit(pagination.limit)
-        .offset(pagination.offset)
-        .getRawMany(),
-    );
-    if (error) throw new NotFoundException(error);
+    const payments = await query
+      .orderBy('payment.createdAt', pagination?.sort)
+      .limit(pagination.limit)
+      .offset(pagination.offset)
+      .getRawMany();
 
     return withPagination({
       pagination,

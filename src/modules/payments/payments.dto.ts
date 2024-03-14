@@ -98,7 +98,7 @@ export class CreateSubscribePaymentsDto {
   @IsUUID()
   organizationSellerId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsUUID()
   organizationBuyerId: string;
