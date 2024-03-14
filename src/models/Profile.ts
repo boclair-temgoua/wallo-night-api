@@ -43,10 +43,13 @@ export class Profile extends BaseDeleteEntity {
   countryId?: string;
 
   @Column({ nullable: true })
-  image?: string;
-
-  @Column({ nullable: true })
   color?: string;
+
+  @Column({ type: 'jsonb', array: false, nullable: true })
+  social?: [];
+
+  @Column({ type: 'jsonb', array: false, nullable: true })
+  image?: { id: 'aws' | 'provider'; patch: string };
 
   @Column({ type: 'boolean', default: false })
   enableCommission: boolean;

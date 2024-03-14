@@ -33,6 +33,11 @@ export class UpdateResetPasswordUserDto {
   @IsNotEmpty()
   @MinLength(8)
   @IsString()
+  oldPassword: string;
+
+  @IsNotEmpty()
+  @MinLength(8)
+  @IsString()
   password: string;
 
   @IsString()
@@ -90,10 +95,6 @@ export class CreateLoginUserDto {
   @MinLength(8)
   @IsString()
   password: string;
-
-  @IsOptional()
-  @IsString()
-  ipLocation: string;
 }
 
 export class CreateRegisterUserDto {
@@ -180,10 +181,10 @@ export class UpdateOneEmailUserDto {
 }
 
 export class UpdateProfileDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @MaxLength(50)
-  fullName: string;
+  username: string;
 
   @IsOptional()
   @IsString()
@@ -194,11 +195,6 @@ export class UpdateProfileDto {
   @IsString()
   @MaxLength(50)
   lastName: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  username: string;
 
   @IsOptional()
   @IsString()

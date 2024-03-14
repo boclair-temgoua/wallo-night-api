@@ -21,6 +21,7 @@ export const config = {
    */
   cookieKey: process.env.COOKIE_KEY || '@3%NE8IksyHK4yC5POFurDCAVW@FqxBe',
   cookie_access: {
+    jwtUser: process.env.COOKIE_JWT_USER || 'jwt-access-user',
     domain: process.env.COOKIE_DOMAIN || '.unopot.com',
     nameLogin: process.env.COOKIE_NAME_LOGIN || 'user',
     accessExpire: process.env.COOKIE_ACCESS_EXPIRE || '10000000000', //32000000000 10000000000

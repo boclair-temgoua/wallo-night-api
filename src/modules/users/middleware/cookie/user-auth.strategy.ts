@@ -16,7 +16,7 @@ export const JwtSecretTMP = 'secretTMP';
 @Injectable()
 export class UserAuthStrategy extends PassportStrategy(
   Strategy,
-  'jwt-access-login',
+  config.cookie_access.jwtUser,
 ) {
   constructor(
     private readonly usersService: UsersService,
@@ -60,6 +60,6 @@ export class UserAuthStrategy extends PassportStrategy(
       });
     if (!contributor) throw new UnauthorizedException('Invalid organization');
 
-    return user;
+    return { ...user, contributor };
   }
 }

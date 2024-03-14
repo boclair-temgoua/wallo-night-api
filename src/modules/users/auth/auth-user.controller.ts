@@ -208,11 +208,9 @@ export class AuthUserController {
   ) {
     const {
       username,
-      fullName,
       description,
       birthday,
       countryId,
-      image,
       color,
       url,
       currencyId,
@@ -240,12 +238,10 @@ export class AuthUserController {
     await this.profilesService.updateOne(
       { profileId: findOnUser?.profileId },
       {
-        fullName,
         description,
         countryId,
         birthday,
         currencyId,
-        image,
         color,
         url,
       },
@@ -334,10 +330,19 @@ export class AuthUserController {
     const ipLocation = await getOneLocationIpApi({
       ipLocation: getIpRequest(req) ?? '101.56.0.0',
     });
+    const { continent, country, countryCode, timezone, query, currency } =
+      ipLocation;
 
     return reply({
       res,
-      results: ipLocation,
+      results: {
+        continent,
+        country,
+        countryCode,
+        timezone,
+        query,
+        currency,
+      },
     });
   }
 

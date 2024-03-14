@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { addYearsFormateDDMMYYDate } from '../../app/utils/commons/formate-date';
 import { generateNumber } from '../../app/utils/commons/generate-random';
+import { Profile } from '../../models';
 import { ContributorsService } from '../contributors/contributors.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { DonationsService } from '../donations/donations.service';
@@ -9,7 +10,6 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { SubscribesService } from '../subscribes/subscribes.service';
 import { UserAddressService } from '../user-address/user-address.service';
 import { WalletsService } from '../wallets/wallets.service';
-import { CheckUserService } from './middleware/check-user.service';
 import { UsersService } from './users.service';
 
 @Injectable()
@@ -19,7 +19,6 @@ export class UsersUtil {
     private readonly donationsService: DonationsService,
     private readonly walletsService: WalletsService,
     private readonly profilesService: ProfilesService,
-    private readonly checkUserService: CheckUserService,
     private readonly currenciesService: CurrenciesService,
     private readonly subscribesService: SubscribesService,
     private readonly organizationsService: OrganizationsService,
@@ -34,7 +33,7 @@ export class UsersUtil {
     firstName: string;
     lastName: string;
     username: string;
-    image?: string;
+    image?: Profile['image'];
     email_verified?: boolean;
   }): Promise<any> {
     const {

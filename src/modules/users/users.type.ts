@@ -55,11 +55,11 @@ export type GetOnUserPublic = {
     id: string;
     url: string;
     color: string;
-    image: string;
     userId: string;
     countryId: string;
     fullName: string;
     currencyId: string;
+    image: any;
   };
 };
 

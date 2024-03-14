@@ -152,7 +152,6 @@ export class PaymentsService {
       cardExpYear,
       cardCvc,
       type,
-      description,
       userId,
       organizationId,
     } = options;
@@ -168,7 +167,6 @@ export class PaymentsService {
     payment.type = type;
     payment.brand = brand;
     payment.action = action;
-    payment.description = description;
     payment.userId = userId;
     payment.organizationId = organizationId;
 
@@ -197,7 +195,6 @@ export class PaymentsService {
       cardCvc,
       type,
       status,
-      description,
       deletedAt,
     } = options;
 
@@ -220,7 +217,6 @@ export class PaymentsService {
     payment.type = type;
     payment.action = action;
     payment.status = status;
-    payment.description = description;
     payment.deletedAt = deletedAt;
 
     const query = this.driver.save(payment);

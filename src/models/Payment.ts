@@ -55,9 +55,6 @@ export class Payment extends BaseDeleteEntity {
   @Column({ default: 'CARD' })
   type?: TransactionType;
 
-  @Column({ type: 'text', nullable: true })
-  description?: string;
-
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @ManyToOne(() => User, (user) => user.payments, {

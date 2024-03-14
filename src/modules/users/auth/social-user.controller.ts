@@ -99,7 +99,7 @@ export class SocialUserController {
       firstName: family_name,
       lastName: given_name,
       username: `${given_name}-${family_name}-${generateNumber(6)}`,
-      image: picture,
+      image: { id: 'provider', patch: picture },
     });
 
     await this.authProvidersService.createOne({

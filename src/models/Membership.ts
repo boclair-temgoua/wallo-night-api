@@ -13,7 +13,14 @@ import {
   FilterQueryType,
   filterQueryTypeArrays,
 } from '../app/utils/search-query';
-import { Contribution, Currency, Organization, Subscribe, User } from './index';
+import {
+  Contribution,
+  Currency,
+  Organization,
+  Subscribe,
+  Upload,
+  User,
+} from './index';
 
 @Entity('membership')
 export class Membership extends BaseDeleteEntity {
@@ -72,4 +79,9 @@ export class Membership extends BaseDeleteEntity {
 
   @OneToMany(() => Subscribe, (subscribe) => subscribe.membership)
   subscribes?: Subscribe[];
+
+  @OneToMany(() => Upload, (upload) => upload.membership, {
+    onDelete: 'CASCADE',
+  })
+  uploads?: Upload;
 }

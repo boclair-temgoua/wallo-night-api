@@ -169,6 +169,7 @@ export class UsersService {
       .addSelect('user.profileId', 'profileId')
       .addSelect('user.nextStep', 'nextStep')
       .addSelect('user.organizationId', 'organizationId')
+      .addSelect('user.provider', 'provider')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -347,6 +348,7 @@ export class UsersService {
       .addSelect('user.username', 'username')
       .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
+      .addSelect('user.provider', 'provider')
       .addSelect('user.organizationId', 'organizationId')
       .addSelect('user.nextStep', 'nextStep')
       .addSelect(

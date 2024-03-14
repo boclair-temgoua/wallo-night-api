@@ -14,7 +14,7 @@ import {
   filterQueryTypeArrays,
 } from '../app/utils/search-query';
 import { Currency } from './Currency';
-import { Cart, Comment, Discount, OrderItem, User } from './index';
+import { Cart, Comment, Discount, OrderItem, Upload, User } from './index';
 @Entity('commission')
 export class Commission extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -77,9 +77,14 @@ export class Commission extends BaseDeleteEntity {
   @OneToMany(() => Comment, (comment) => comment.commission)
   comments?: Comment[];
 
-  @OneToMany(() => Cart, (cart) => cart.product)
+  @OneToMany(() => Cart, (cart) => cart.commission)
   carts: Cart[];
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.user)
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.commission)
   orderItems?: OrderItem[];
+
+  @OneToMany(() => Upload, (upload) => upload.commission, {
+    onDelete: 'CASCADE',
+  })
+  uploads?: Upload;
 }

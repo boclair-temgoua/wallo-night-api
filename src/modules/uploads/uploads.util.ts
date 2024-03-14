@@ -20,6 +20,7 @@ export class UploadsUtil {
 
   async saveOrUpdateAws(options: {
     userId?: string;
+    profileId?: string;
     model: FilterQueryType;
     uploadableId: string;
     organizationId: string;
@@ -28,7 +29,7 @@ export class UploadsUtil {
     commissionId?: string;
     membershipId?: string;
 
-    folder: 'products' | 'commissions' | 'posts' | 'memberships';
+    folder: 'products' | 'commissions' | 'posts' | 'memberships' | 'profiles';
     files?: Array<ExpressFile>;
     file?: ExpressFile;
   }): Promise<any> {
@@ -42,6 +43,7 @@ export class UploadsUtil {
       folder,
       postId,
       productId,
+      profileId,
       commissionId,
       membershipId,
     } = options;
@@ -53,6 +55,7 @@ export class UploadsUtil {
         model,
         userId,
         postId,
+        profileId,
         productId,
         commissionId,
         membershipId,
@@ -104,6 +107,7 @@ export class UploadsUtil {
     model?: FilterQueryType;
     userId?: string;
     postId?: string;
+    profileId?: string;
     productId?: string;
     commissionId?: string;
     membershipId?: string;
@@ -116,6 +120,7 @@ export class UploadsUtil {
       model,
       userId,
       postId,
+      profileId,
       productId,
       commissionId,
       membershipId,
@@ -143,6 +148,7 @@ export class UploadsUtil {
       model,
       userId,
       postId,
+      profileId,
       productId,
       commissionId,
       membershipId,

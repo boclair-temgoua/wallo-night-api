@@ -43,6 +43,8 @@ export type FilterQueryType =
   | 'HELP'
   | 'POST'
   | 'GALLERY'
+  | 'PROFILE'
+  | 'PROFILE'
   | 'COMMENT';
 
 export const filterQueryTypeArrays = [
@@ -52,6 +54,7 @@ export const filterQueryTypeArrays = [
   'PRODUCT',
   'HELP',
   'POST',
+  'PROFILE',
   'GALLERY',
   'COMMENT',
 ];

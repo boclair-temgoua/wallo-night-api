@@ -28,6 +28,7 @@ import {
   Currency,
   OrderItem,
   Organization,
+  Upload,
   User,
 } from './index';
 
@@ -133,4 +134,9 @@ export class Product extends BaseDeleteEntity {
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
   orderItems: OrderItem[];
+
+  @OneToMany(() => Upload, (upload) => upload.product, {
+    onDelete: 'CASCADE',
+  })
+  uploads?: Upload;
 }

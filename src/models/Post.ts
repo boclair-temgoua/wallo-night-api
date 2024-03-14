@@ -17,7 +17,7 @@ import {
 } from '../app/utils/search-query';
 import { PostType, postTypeArrays } from '../modules/posts/posts.type';
 import { User } from './User';
-import { Album, Category, Comment, Organization } from './index';
+import { Album, Category, Comment, Organization, Upload } from './index';
 
 @Entity('post')
 export class Post extends BaseDeleteEntity {
@@ -86,4 +86,9 @@ export class Post extends BaseDeleteEntity {
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments?: Comment[];
+
+  @OneToMany(() => Upload, (upload) => upload.post, {
+    onDelete: 'CASCADE',
+  })
+  uploads?: Upload;
 }

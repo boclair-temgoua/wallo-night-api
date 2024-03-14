@@ -5,17 +5,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Profile } from '../../models/Profile';
-import { getRandomElement } from '../../app/utils/array/get-random-element';
 import { Repository } from 'typeorm';
+import { getRandomElement } from '../../app/utils/array/get-random-element';
+import { colorsArrays, isNotUndefined } from '../../app/utils/commons';
+import { useCatch } from '../../app/utils/use-catch';
+import { Profile } from '../../models';
 import {
   CreateProfileOptions,
   GetOneProfileSelections,
   UpdateProfileOptions,
   UpdateProfileSelections,
 } from './profiles.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { colorsArrays } from '../../app/utils/commons';
 
 @Injectable()
 export class ProfilesService {
@@ -48,8 +48,9 @@ export class ProfilesService {
       currencyId,
       countryId,
       url,
-      image,
       phone,
+      social,
+      image,
       firstAddress,
       secondAddress,
       birthday,
@@ -59,9 +60,10 @@ export class ProfilesService {
     } = options;
 
     const profile = new Profile();
-    profile.image = image;
     profile.fullName = fullName;
+    profile.social = social;
     profile.phone = phone;
+    profile.image = image;
     profile.firstName = firstName;
     profile.lastName = lastName;
     profile.firstAddress = firstAddress;
@@ -95,14 +97,15 @@ export class ProfilesService {
       lastName,
       currencyId,
       countryId,
-      image,
       url,
       phone,
+      social,
       firstAddress,
       description,
       secondAddress,
       birthday,
       color,
+      image,
       enableCommission,
       enableShop,
       enableGallery,
@@ -120,10 +123,13 @@ export class ProfilesService {
     const [errorFind, profile] = await useCatch(findQuery.getOne());
     if (errorFind) throw new NotFoundException(errorFind);
 
-    profile.image = image;
     profile.url = url;
     profile.phone = phone;
     profile.color = color;
+    profile.social = social;
+    if (isNotUndefined(String(image))) {
+      profile.image = image;
+    }
     profile.firstName = firstName;
     profile.lastName = lastName;
     profile.description = description;

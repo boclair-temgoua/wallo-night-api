@@ -16,6 +16,7 @@ import {
   Product,
   Subscribe,
   Transaction,
+  Upload,
   User,
   UserAddress,
   Wallet,
@@ -83,4 +84,9 @@ export class Organization extends BaseEntity {
 
   @OneToMany(() => UserAddress, (userAddress) => userAddress.organization)
   userAddress?: UserAddress;
+
+  @OneToMany(() => Upload, (upload) => upload.organization, {
+    onDelete: 'CASCADE',
+  })
+  uploads?: Upload;
 }

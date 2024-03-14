@@ -1,10 +1,18 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Relation,
+} from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common/index';
 import {
   FilterQueryType,
   filterQueryTypeArrays,
 } from '../app/utils/search-query/search-query.dto';
 import { UploadType } from '../modules/uploads/uploads.type';
+import { Commission, Membership, Organization, Post, Product } from './index';
 
 @Entity('upload')
 export class Upload extends BaseDeleteEntity {
@@ -40,16 +48,39 @@ export class Upload extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.uploads, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Relation<Organization>;
 
   @Column({ type: 'uuid', nullable: true })
   postId?: string;
+  @ManyToOne(() => Post, (post) => post.uploads, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  post?: Relation<Post>;
 
   @Column({ type: 'uuid', nullable: true })
   productId?: string;
+  @ManyToOne(() => Product, (product) => product.uploads, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  product?: Relation<Product>;
 
   @Column({ type: 'uuid', nullable: true })
   commissionId?: string;
+  @ManyToOne(() => Commission, (commission) => commission.uploads, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  commission?: Relation<Commission>;
 
   @Column({ type: 'uuid', nullable: true })
   membershipId?: string;
+  @ManyToOne(() => Membership, (membership) => membership.uploads, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  membership?: Relation<Membership>;
 }
