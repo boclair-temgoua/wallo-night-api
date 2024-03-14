@@ -11,7 +11,7 @@ import {
 import { reply } from '../../app/utils/reply';
 
 import { Readable } from 'stream';
-import { getFileToAws } from '../integrations/aws/aws-s3-service-adapter';
+import { getFileToAws } from '../integrations/aws-s3-service-adapter';
 import { UserAuthGuard } from '../users/middleware';
 import { UploadsDto } from './uploads.dto';
 import { UploadsService } from './uploads.service';

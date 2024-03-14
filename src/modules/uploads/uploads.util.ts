@@ -4,7 +4,7 @@ import { formateNowDateYYMMDD } from '../../app/utils/commons/formate-date';
 import { generateLongUUID } from '../../app/utils/commons/generate-random';
 import { KeyAsString } from '../../app/utils/commons/key-as-string';
 import { FilterQueryType } from '../../app/utils/search-query';
-import { awsS3ServiceAdapter } from '../integrations/aws/aws-s3-service-adapter';
+import { awsS3ServiceAdapter } from '../integrations/aws-s3-service-adapter';
 import { UploadsService } from './uploads.service';
 import { UploadType } from './uploads.type';
 

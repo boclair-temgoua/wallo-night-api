@@ -18,7 +18,6 @@ import { CountriesModule } from './modules/countries/countries.module';
 import { CurrenciesModule } from './modules/currencies/currencies.module';
 import { DiscountsModule } from './modules/discounts/discounts.module';
 import { DonationsModule } from './modules/donations/donations.module';
-import { FaqsModule } from './modules/faqs/faqs.module';
 import { FollowsModule } from './modules/follows/follows.module';
 import { JobsModule } from './modules/jobs/jobs.module';
 import { LikesModule } from './modules/likes/likes.module';
@@ -46,7 +45,6 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     TypeOrmModule.forRoot(AppDataSource.options),
     TypeOrmModule.forRoot(AppSeedDataSource.options),
     ScheduleModule.forRoot(),
-    FaqsModule,
     ProfilesModule,
     UsersModule,
     ProjectsModule,

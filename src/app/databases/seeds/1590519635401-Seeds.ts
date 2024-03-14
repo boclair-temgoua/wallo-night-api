@@ -1,16 +1,12 @@
-import { generateNumber } from '../../utils/commons/generate-random';
-import { Repository, MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 import { faker } from '@faker-js/faker';
-import { useCatch } from '../../utils/use-catch';
-import { Currency } from '../../../models/Currency';
 import { Country } from '../../../models/Country';
+import { Currency } from '../../../models/Currency';
 import { AppSeedDataSource } from '../orm/orm-config-seed';
 
-import { Faq } from '../../../models/Faq';
-import slugify from 'slugify';
-import { getValueCurrencyLiveApi } from '../../../modules/integrations/taux-live';
 import { CurrencySymbolMap } from '../../../modules/currencies/currencies.type';
+import { getValueCurrencyLiveApi } from '../../../modules/integrations/taux-live';
 
 export class Seeds1590519635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
@@ -69,21 +65,6 @@ export class Seeds1590519635401 implements MigrationInterface {
       ])
       .execute();
     console.log('\x1b[32m%s\x1b[0m', '**** Currencies seed finish ****');
-
-    for (let i = 0; i < 100; i++) {
-      await driver
-        .createQueryBuilder()
-        .insert()
-        .into(Faq)
-        .values({
-          slug: `${slugify(title)}-${generateNumber(4)}`,
-          title: title,
-          status: faker.datatype.boolean(),
-          description: faker.lorem.lines(),
-        })
-        .execute();
-    }
-    console.log('\x1b[32m%s\x1b[0m', '**** faqs seed finish ****');
 
     await driver
       .createQueryBuilder()

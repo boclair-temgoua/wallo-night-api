@@ -1,7 +1,7 @@
 import { PutObjectCommandInput } from '@aws-sdk/client-s3';
 import { S3 } from 'aws-sdk';
 import axios from 'axios';
-import { config } from '../../../app/config';
+import { config } from '../../app/config';
 
 export const awsS3ServiceAdapter = async (data: {
   file: PutObjectCommandInput['Body'];
