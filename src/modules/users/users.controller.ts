@@ -195,7 +195,7 @@ export class UsersController {
     return reply({ res, results: 'Profile updated successfully' });
   }
 
-  @Put(`/update/enable`)
+  @Put(`/update/enable/:profileId`)
   @UseGuards(UserAuthGuard)
   async updateEnableProfile(
     @Res() res,
