@@ -555,8 +555,6 @@ export class UsersService {
       username,
       password,
       organizationId,
-      accessToken,
-      refreshToken,
       deletedAt,
       nextStep,
       confirmedAt,
@@ -582,9 +580,7 @@ export class UsersService {
     if (password) {
       user.password = await hashPassword(password);
     }
-    user.accessToken = accessToken;
     user.nextStep = nextStep;
-    user.refreshToken = refreshToken;
     user.deletedAt = deletedAt;
     user.organizationId = organizationId;
     user.confirmedAt = confirmedAt;

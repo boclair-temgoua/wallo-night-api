@@ -43,12 +43,6 @@ export class User extends BaseDeleteEntity {
   @Column({ nullable: true })
   email?: string;
 
-  @Column('simple-array', { nullable: true })
-  accessToken?: string[];
-
-  @Column('simple-array', { nullable: true })
-  refreshToken?: string[];
-
   @Column({ nullable: true })
   username?: string;
 
