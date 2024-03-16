@@ -31,6 +31,7 @@ export class UserAddressService {
       .addSelect('userAddress.country', 'country')
       .addSelect('userAddress.phone', 'phone')
       .addSelect('userAddress.region', 'region')
+      .addSelect('userAddress.isUpdated', 'isUpdated')
       .addSelect('userAddress.street1', 'street1')
       .addSelect('userAddress.street2', 'street2')
       .where('userAddress.deletedAt IS NULL');
@@ -109,6 +110,7 @@ export class UserAddressService {
       region,
       street1,
       street2,
+      isUpdated,
       organizationId,
       deletedAt,
     } = options;
@@ -134,6 +136,7 @@ export class UserAddressService {
     userAddress.region = region;
     userAddress.street1 = street1;
     userAddress.street2 = street2;
+    userAddress.isUpdated = isUpdated;
     userAddress.organizationId = organizationId;
     userAddress.deletedAt = deletedAt;
 

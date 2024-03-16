@@ -115,6 +115,7 @@ export class UserAddressController {
         region,
         street1,
         street2,
+        isUpdated: true,
       },
     );
 

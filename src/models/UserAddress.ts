@@ -41,6 +41,9 @@ export class UserAddress extends BaseDeleteEntity {
   @Column({ nullable: true })
   street2?: string;
 
+  @Column({ default: false })
+  isUpdated?: boolean;
+
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
   @OneToOne(() => User, (user) => user.userAddress, { onDelete: 'CASCADE' })
