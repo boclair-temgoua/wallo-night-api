@@ -12,7 +12,7 @@ export type EmailMessage = {
   text: string;
   attachments?: any[];
 };
-export const NodeMailServiceAdapter = async (options: {
+export const nodeMailServiceAdapter = async (options: {
   description?: string;
   from: string;
   html: string;
@@ -23,7 +23,7 @@ export const NodeMailServiceAdapter = async (options: {
   const { attachments, to, from, html, subject, description } = options;
 
   const mailOptions: EmailMessage = {
-    from: `${config.datasite.name} <no-reply@${config.implementations.resendSMTP.email}>`, // sender address
+    from: `${config.datasite.name} <${from}>`, // sender address
     to,
     subject: subject,
     text: description,
@@ -32,7 +32,7 @@ export const NodeMailServiceAdapter = async (options: {
   };
 
   const response = await resend.emails.send({ ...mailOptions });
-
   console.log('response email send ====>', response);
+
   return response;
 };

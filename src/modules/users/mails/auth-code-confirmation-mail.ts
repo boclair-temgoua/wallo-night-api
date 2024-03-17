@@ -1,6 +1,6 @@
 import { config } from '../../../app/config/index';
 
-import { NodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
+import { nodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
 
 export const authCodeConfirmationMail = async (options: { user: any }) => {
   const { user } = options;
@@ -125,8 +125,8 @@ export const authCodeConfirmationMail = async (options: { user: any }) => {
   </body>
   </html>
       `;
-  await NodeMailServiceAdapter({
-    from: `no-reply@${config.implementations.resendSMTP.email}`,
+  await nodeMailServiceAdapter({
+    from: `${config.implementations.resendSMTP.noReplayFrom}`,
     to: [`${user.email}`],
     subject: `${config.datasite.name} - Verification`,
     html: output,

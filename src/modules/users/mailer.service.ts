@@ -21,13 +21,14 @@ export class MailerService {
     description?: string;
     html: string;
     subject: string;
+    from: string;
     to: string[];
     attachments?: any[];
   }): Promise<any> {
-    const { attachments, to, html, subject, description } = options;
+    const { attachments, to, html, subject, from, description } = options;
 
     const mailOptions: MailerMessage = {
-      from: `${config.datasite.name} <${config.implementations.resendSMTP.email}>`, // sender address
+      from: `${config.datasite.name} <${from}>`, // sender address
       to,
       subject: subject,
       text: description,

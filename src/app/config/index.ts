@@ -112,13 +112,6 @@ export const config = {
       verifySid: process.env.TWILIO_VERIFY_SID,
     },
     /**
-     * Birevo marketplace
-     */
-    ivemo: {
-      link: process.env.IVEMO_LINK,
-      token: process.env.IVEMO_ACCESS_TOKEN,
-    },
-    /**
      * Stripe
      */
     stripe: {
@@ -149,39 +142,12 @@ export const config = {
      */
     sentry: process.env.SENTRY_DNS,
     /**
-     * Mailtrap
-     */
-    mailSMTP: {
-      host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT),
-      user: process.env.MAIL_USERNAME,
-      pass: process.env.MAIL_PASSWORD,
-      email: process.env.MAIL_SMTP_EMAIL,
-    },
-    /**
-     * Mailgun smtp
-     */
-    mailgunSMTP: {
-      host: process.env.MAIL_MAILGUN_HOST,
-      port: Number(process.env.MAIL_MAILGUN_PORT),
-      user: process.env.MAIL_MAILGUN_USERNAME,
-      pass: process.env.MAIL_MAILGUN_PASSWORD,
-      domain: process.env.MAIL_MAILGUN_DOMAIN,
-      key: process.env.MAIL_MAILGUN_API,
-    },
-    /**
      * Resend smtp
      */
     resendSMTP: {
       apiKey: process.env.RESEND_SMTP_API_KEY,
-      email: process.env.RESEND_SMTP_EMAIL,
-    },
-    /**
-     * Mailtrap
-     */
-    mailjet: {
-      apiKey: process.env.MJ_APIKEY_PUBLIC,
-      apiSecret: process.env.MJ_APIKEY_PRIVATE,
+      noReplayFrom:
+        process.env.RESEND_FROM_NO_REPLAY_ADDRESS || 'no-reply@unopot.com',
     },
     /**
      * PayPal
