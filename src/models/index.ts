@@ -22,8 +22,6 @@ export * from './Payment';
 export * from './Post';
 export * from './Product';
 export * from './Profile';
-export * from './Project';
-export * from './ResetPassword';
 export * from './Subscribe';
 export * from './Transaction';
 export * from './Upload';

@@ -11,7 +11,7 @@ export class CheckUserService {
     return sign(data, config.cookieKey, { expiresIn: expiry });
   }
 
-  async verifyToken(token: string) {
+  async verifyToken(token: string): Promise<any> {
     try {
       return verify(token, config.cookieKey);
     } catch (error) {

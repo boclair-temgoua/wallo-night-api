@@ -7,7 +7,6 @@ import {
   User,
   Wallet,
 } from '../../models';
-import { BullingService } from '../bulling/bulling.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { TransactionsService } from '../transactions/transactions.service';
 import { UsersService } from '../users/users.service';
@@ -30,7 +29,6 @@ import { ContributionsService } from './contributions.service';
     ContributionsService,
     UsersService,
     WalletsService,
-    BullingService,
     CurrenciesService,
     TransactionsService,
   ],

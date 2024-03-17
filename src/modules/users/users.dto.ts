@@ -97,6 +97,19 @@ export class CreateLoginUserDto {
   password: string;
 }
 
+export class CreateOrUpdateResetPasswordDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @MinLength(8)
+  @IsString()
+  password: string;
+}
+
 export class CreateRegisterUserDto {
   @IsNotEmpty()
   @IsString()

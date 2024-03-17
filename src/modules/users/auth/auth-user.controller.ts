@@ -11,7 +11,6 @@ import {
   Query,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import * as amqplib from 'amqplib';
@@ -21,12 +20,11 @@ import { validation_login_cookie_setting } from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
 import { getOneLocationIpApi } from '../../integrations/taux-live';
 import { ProfilesService } from '../../profiles/profiles.service';
-import { CreateOrUpdateResetPasswordDto } from '../../reset-passwords/reset-passwords.dto';
-import { ResetPasswordsService } from '../../reset-passwords/reset-passwords.service';
 import { CheckUserService } from '../middleware/check-user.service';
 import { UserAuthGuard } from '../middleware/cookie/user-auth.guard';
 import {
   CreateLoginUserDto,
+  CreateOrUpdateResetPasswordDto,
   CreateRegisterUserDto,
   TokenUserDto,
   UpdateProfileDto,
@@ -44,7 +42,6 @@ export class AuthUserController {
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
-    private readonly resetPasswordsService: ResetPasswordsService,
   ) {}
 
   /** Register new user */
@@ -144,21 +141,19 @@ export class AuthUserController {
       config.cookie_access.verifyExpire,
     );
 
-    const result = await this.resetPasswordsService.createOne({
-      email,
-      accessToken: tokenUser,
-    });
-
     /** Send information to Job */
     const queue = 'user-password-reset';
     const connect = await amqplib.connect(config.implementations.amqp.link);
     const channel = await connect.createChannel();
     await channel.assertQueue(queue, { durable: false });
-    await channel.sendToQueue(queue, Buffer.from(JSON.stringify(result)));
+    await channel.sendToQueue(
+      queue,
+      Buffer.from(JSON.stringify({ email, token: tokenUser })),
+    );
     await authPasswordResetJob({ channel, queue });
     /** End send information to Job */
 
-    return reply({ res, results: { token: result?.token } });
+    return reply({ res, results: { token: tokenUser } });
   }
 
   /** Update reset password */
@@ -169,17 +164,10 @@ export class AuthUserController {
     @Param() params: TokenUserDto,
   ) {
     const { password } = body;
-
-    const findOnResetPassword = await this.resetPasswordsService.findOneBy({
-      token: params?.token,
-    });
-    if (!findOnResetPassword) {
-      throw new UnauthorizedException('Invalid user please change');
-    }
-    await this.checkUserService.verifyToken(findOnResetPassword?.accessToken);
+    const payload = await this.checkUserService.verifyToken(params?.token);
 
     const findOnUser = await this.usersService.findOneBy({
-      email: findOnResetPassword?.email,
+      userId: payload?.id,
       provider: 'default',
     });
     if (!findOnUser)
@@ -190,11 +178,6 @@ export class AuthUserController {
 
     /** Check token */
     await this.usersService.updateOne({ userId: findOnUser?.id }, { password });
-
-    await this.resetPasswordsService.updateOne(
-      { token: findOnResetPassword?.token },
-      { deletedAt: new Date() },
-    );
 
     return reply({ res, results: 'Password updated successfully' });
   }

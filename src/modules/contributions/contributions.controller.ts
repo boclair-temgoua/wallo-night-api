@@ -15,12 +15,7 @@ import {
 } from '../../app/utils/pagination/with-pagination';
 import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
-import { BullingService } from '../bulling/bulling.service';
-import { CurrenciesService } from '../currencies/currencies.service';
-import { TransactionsService } from '../transactions/transactions.service';
 import { UserAuthGuard } from '../users/middleware';
-import { UsersService } from '../users/users.service';
-import { WalletsService } from '../wallets/wallets.service';
 import {
   CreateOneContributionDonationDto,
   SearchContributionDto,
@@ -29,14 +24,7 @@ import { ContributionsService } from './contributions.service';
 
 @Controller('contributions')
 export class ContributionsController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly bullingService: BullingService,
-    private readonly walletsService: WalletsService,
-    private readonly currenciesService: CurrenciesService,
-    private readonly transactionsService: TransactionsService,
-    private readonly contributionsService: ContributionsService,
-  ) {}
+  constructor(private readonly contributionsService: ContributionsService) {}
 
   @Get(`/`)
   @UseGuards(UserAuthGuard)

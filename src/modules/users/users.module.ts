@@ -7,7 +7,6 @@ import {
   Donation,
   Organization,
   Profile,
-  ResetPassword,
   Subscribe,
   Upload,
   User,
@@ -21,7 +20,6 @@ import { CurrenciesService } from '../currencies/currencies.service';
 import { DonationsService } from '../donations/donations.service';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { ProfilesService } from '../profiles/profiles.service';
-import { ResetPasswordsService } from '../reset-passwords/reset-passwords.service';
 import { SubscribesService } from '../subscribes/subscribes.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { UploadsUtil } from '../uploads/uploads.util';
@@ -47,7 +45,6 @@ import { UsersUtil } from './users.util';
       Donation,
       UserAddress,
       Organization,
-      ResetPassword,
       Contributor,
       Upload,
       AuthProvider,
@@ -72,7 +69,6 @@ import { UsersUtil } from './users.util';
     AuthProvidersService,
     ContributorsService,
     OrganizationsService,
-    ResetPasswordsService,
   ],
 })
 export class UsersModule {}

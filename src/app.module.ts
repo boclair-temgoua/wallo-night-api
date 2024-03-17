@@ -21,7 +21,6 @@ import { DonationsModule } from './modules/donations/donations.module';
 import { FollowsModule } from './modules/follows/follows.module';
 import { JobsModule } from './modules/jobs/jobs.module';
 import { LikesModule } from './modules/likes/likes.module';
-import { MediaModule } from './modules/media/media.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
 import { OrderItemsModule } from './modules/order-items/order-items.module';
 import { OrdersModule } from './modules/orders/orders.module';
@@ -30,8 +29,6 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { ProductsModule } from './modules/products/products.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
-import { ProjectsModule } from './modules/projects/projects.module';
-import { ResetPasswordsModule } from './modules/reset-passwords/reset-passwords.module';
 import { SubscribesModule } from './modules/subscribes/subscribes.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
@@ -47,17 +44,14 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     ScheduleModule.forRoot(),
     ProfilesModule,
     UsersModule,
-    ProjectsModule,
     ContributorsModule,
     CategoriesModule,
     CountriesModule,
     TransactionsModule,
-    ResetPasswordsModule,
     ProductsModule,
     DiscountsModule,
     CartsModule,
     WalletsModule,
-    MediaModule,
     PostsModule,
     DonationsModule,
     CommentsModule,
