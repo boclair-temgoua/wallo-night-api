@@ -126,6 +126,7 @@ export const authCodeConfirmationMail = async (options: { user: any }) => {
   </html>
       `;
   await NodeMailServiceAdapter({
+    from: `no-reply@${config.implementations.resendSMTP.email}`,
     to: [`${user.email}`],
     subject: `${config.datasite.name} - Verification`,
     html: output,

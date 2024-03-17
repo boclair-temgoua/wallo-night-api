@@ -106,6 +106,7 @@ export class UsersUtil {
       userCreatedId: user?.id,
       role: 'ADMIN',
       organizationId: organization?.id,
+      confirmedAt: new Date(),
     });
 
     /** Create Donation */

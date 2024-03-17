@@ -14,16 +14,14 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { config } from '../../app/config/index';
 import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   PaginationType,
   addPagination,
 } from '../../app/utils/pagination/with-pagination';
 import { reply } from '../../app/utils/reply';
-import {
-  PasswordBodyDto,
-  SearchQueryDto,
-} from '../../app/utils/search-query/search-query.dto';
+import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 import { ProfilesService } from '../profiles/profiles.service';
 import { UserAuthGuard } from '../users/middleware';
 import { CheckUserService } from '../users/middleware/check-user.service';
@@ -67,6 +65,82 @@ export class ContributorsController {
     });
 
     return reply({ res, results: contributors });
+  }
+
+  @Get(`/invited/:userId`)
+  @UseGuards(UserAuthGuard)
+  async createOneOrganization(
+    @Res() res,
+    @Req() req,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    const { user } = req;
+    await this.contributorsService.canCheckPermissionContributor({
+      userId: user?.id,
+    });
+    const findOneUser = await this.usersService.findOneBy({
+      userId,
+    });
+    if (!findOneUser && findOneUser?.id === user?.id)
+      throw new HttpException(
+        `User ${userId} invalid please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const findOneContributor = await this.contributorsService.findOneBy({
+      userId,
+      organizationId: user?.organizationId,
+    });
+
+    if (!findOneContributor) {
+      /** Create Contributor */
+      await this.contributorsService.createOne({
+        userId,
+        userCreatedId: user?.id,
+        organizationId: user?.organizationId,
+        role: 'MODERATOR',
+      });
+    }
+
+    const tokenUser = await this.checkUserService.createToken(
+      {
+        userId: findOneUser.id,
+        organizationId: findOneUser.organizationId,
+        action: 'INVITED',
+        user: {
+          email: user?.email,
+          organizationName: user?.organization?.name,
+          firstName: user?.profile?.firstName,
+          lastName: user?.profile?.lastName,
+        },
+      },
+      config.cookie_access.verifyExpire,
+    );
+
+    console.log('findOneContributor ===>', tokenUser);
+
+    /** Update User */
+    // await this.usersService.updateOne(
+    //   { userId: userSave?.id },
+    //   { accessToken: await this.checkUserService.createJwtTokens(jwtPayload) },
+    // );
+    /** Send notification to Contributor */
+    // const queue = 'user-contributor-create';
+    // const connect = await amqplib.connect(config.implementations.amqp.link);
+    // const channel = await connect.createChannel();
+    // await channel.assertQueue(queue, { durable: false });
+    // await channel.sendToQueue(
+    //   queue,
+    //   Buffer.from(
+    //     JSON.stringify({
+    //       email: userSave?.email,
+    //       organization: findOneUserAdmin?.organization,
+    //     }),
+    //   ),
+    // );
+    // await userContributorCreateJob({ channel, queue });
+
+    return reply({ res, results: 'Contributor save successfully' });
   }
 
   @Post(`/new-user`)
@@ -169,15 +243,13 @@ export class ContributorsController {
   async deleteOne(
     @Res() res,
     @Req() req,
-    @Body() body: PasswordBodyDto,
     @Param('contributorId', ParseUUIDPipe) contributorId: string,
   ) {
     const { user } = req;
-    if (!user?.checkIfPasswordMatch(body.password))
-      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
 
     const findOneContributor = await this.contributorsService.findOneBy({
       contributorId,
+      organizationId: user?.organizationId,
     });
 
     if (!findOneContributor)

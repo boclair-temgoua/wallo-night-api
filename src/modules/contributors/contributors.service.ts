@@ -35,6 +35,7 @@ export class ContributorsService {
       .createQueryBuilder('contributor')
       .select('contributor.id', 'id')
       .addSelect('contributor.userCreatedId', 'userCreatedId')
+      .addSelect('contributor.confirmedAt', 'confirmedAt')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
       .addSelect(
@@ -55,7 +56,9 @@ export class ContributorsService {
       ) AS "role"`,
       )
       .addSelect('contributor.createdAt', 'createdAt')
-      .where('contributor.deletedAt IS NULL');
+      .where('contributor.deletedAt IS NULL')
+      .leftJoin('contributor.user', 'user')
+      .leftJoin('user.profile', 'profile');
 
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
@@ -85,10 +88,6 @@ export class ContributorsService {
       );
     }
 
-    query = query
-      .leftJoin('contributor.user', 'user')
-      .leftJoin('user.profile', 'profile');
-
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
@@ -108,34 +107,6 @@ export class ContributorsService {
     });
   }
 
-  async findAllNotPaginate(
-    selections: GetContributorsSelections,
-  ): Promise<GetContributorsSelections | any> {
-    const { userId, organizationId } = selections;
-
-    let query = this.driver
-      .createQueryBuilder('contributor')
-      .addSelect('contributor.createdAt', 'createdAt')
-      .where('contributor.deletedAt IS NULL');
-
-    if (userId) {
-      query = query.andWhere('contributor.userId = :userId', { userId });
-    }
-
-    if (userId) {
-      query = query.andWhere('contributor.organizationId = :organizationId', {
-        organizationId,
-      });
-    }
-
-    const [error, contributors] = await useCatch(
-      query.orderBy('contributor.createdAt', 'DESC').getMany(),
-    );
-    if (error) throw new NotFoundException(error);
-
-    return contributors;
-  }
-
   async findOneBy(selections: GetOneContributorSelections): Promise<any> {
     const { type, userId, contributorId, organizationId } = selections;
 
@@ -146,6 +117,7 @@ export class ContributorsService {
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
       .addSelect('contributor.organizationId', 'organizationId')
+      .addSelect('contributor.confirmedAt', 'confirmedAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'fullName', "profile"."fullName",
@@ -182,21 +154,21 @@ export class ContributorsService {
       });
     }
 
-    const [error, result] = await useCatch(query.getRawOne());
-    if (error)
-      throw new HttpException('contributor not found', HttpStatus.NOT_FOUND);
+    const contributor = await query.getRawOne();
 
-    return result;
+    return contributor;
   }
 
   /** Create one Contributor to the database. */
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
-    const { userId, role, userCreatedId, organizationId, type } = options;
+    const { userId, confirmedAt, role, userCreatedId, organizationId, type } =
+      options;
 
     const contributor = new Contributor();
     contributor.userId = userId;
     contributor.type = type;
     contributor.role = role;
+    contributor.confirmedAt = confirmedAt;
     contributor.organizationId = organizationId;
     contributor.userCreatedId = userCreatedId;
 
@@ -213,7 +185,7 @@ export class ContributorsService {
     selections: UpdateContributorSelections,
     options: UpdateContributorOptions,
   ): Promise<Contributor> {
-    const { role, deletedAt } = options;
+    const { role, confirmedAt, deletedAt } = options;
     const { contributorId } = selections;
 
     let findQuery = this.driver.createQueryBuilder('contributor');
@@ -228,6 +200,7 @@ export class ContributorsService {
     if (errorFind) throw new NotFoundException(errorFind);
 
     contributor.role = role;
+    contributor.confirmedAt = confirmedAt;
     contributor.deletedAt = deletedAt;
 
     const query = this.driver.save(contributor);

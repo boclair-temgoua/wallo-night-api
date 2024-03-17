@@ -159,14 +159,15 @@ export const config = {
       email: process.env.MAIL_SMTP_EMAIL,
     },
     /**
-     * Aws smtp
+     * Mailgun smtp
      */
-    awsSMTP: {
-      host: process.env.AWS_SMTP_HOST,
-      port: Number(process.env.AWS_SMTP_PORT),
-      user: process.env.AWS_SMTP_USERNAME,
-      pass: process.env.AWS_SMTP_PASSWORD,
-      email: process.env.AWS_SMTP_EMAIL,
+    mailgunSMTP: {
+      host: process.env.MAIL_MAILGUN_HOST,
+      port: Number(process.env.MAIL_MAILGUN_PORT),
+      user: process.env.MAIL_MAILGUN_USERNAME,
+      pass: process.env.MAIL_MAILGUN_PASSWORD,
+      domain: process.env.MAIL_MAILGUN_DOMAIN,
+      key: process.env.MAIL_MAILGUN_API,
     },
     /**
      * Resend smtp

@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UnauthorizedException,
@@ -343,6 +344,19 @@ export class AuthUserController {
         query,
         currency,
       },
+    });
+  }
+
+  /** Verify token new user */
+  @Get(`/verify-token`)
+  async verifyToken(@Res() res, @Req() req, @Query('token') token: string) {
+    const payload = await this.checkUserService.verifyToken(token);
+
+    console.log('payload ===>', payload);
+
+    return reply({
+      res,
+      results: payload,
     });
   }
 

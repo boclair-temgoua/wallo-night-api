@@ -36,10 +36,9 @@ export class UsersService {
       .createQueryBuilder('user')
       .select('user.id', 'id')
       .addSelect('user.email', 'email')
-      .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect('user.profileId', 'profileId')
       .addSelect('user.createdAt', 'createdAt')
-      .addSelect('user.nextStep', 'nextStep')
+      .addSelect('user.confirmedAt', 'confirmedAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -89,7 +88,9 @@ export class UsersService {
           qb.where('user.email ::text ILIKE :search', {
             search: `%${search}%`,
           }).orWhere(
-            'profile.fullName ::text ILIKE :search OR profile.fullName ::text ILIKE :search OR profile.phone ::text ILIKE :search',
+            `profile.lastName ::text ILIKE :search 
+              OR profile.phone ::text ILIKE :search 
+              OR profile.firstName ::text ILIKE :search`,
             {
               search: `%${search}%`,
             },
@@ -123,7 +124,8 @@ export class UsersService {
     let query = this.driver
       .createQueryBuilder('user')
       .where('user.deletedAt IS NULL')
-      .leftJoinAndSelect('user.profile', 'profile');
+      .leftJoinAndSelect('user.profile', 'profile')
+      .leftJoinAndSelect('user.organization', 'organization');
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });

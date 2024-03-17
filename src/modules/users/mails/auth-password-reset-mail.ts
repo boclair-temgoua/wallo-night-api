@@ -137,6 +137,7 @@ export const authPasswordResetMail = async (options: { resetPassword }) => {
       `;
   // create reusable transporter object using the default SMTP transport
   await NodeMailServiceAdapter({
+    from: `no-reply@${config.implementations.resendSMTP.email}`,
     to: [`${resetPassword.email}`],
     subject: `${config.datasite.name} - Reset password`,
     html: output,

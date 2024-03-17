@@ -28,6 +28,9 @@ export class Contributor extends BaseDeleteEntity {
   @Column({ default: 'ADMIN' })
   role?: ContributorRole;
 
+  @Column({ nullable: true })
+  confirmedAt?: Date;
+
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
 

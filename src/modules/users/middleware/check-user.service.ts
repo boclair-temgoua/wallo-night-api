@@ -12,13 +12,13 @@ export class CheckUserService {
   }
 
   async verifyToken(token: string) {
-    const payload = verify(token, config.cookieKey);
-    if (typeof payload == 'string')
-      throw new HttpException(`Token not verified`, HttpStatus.NOT_FOUND);
-
-    if (!payload)
-      throw new HttpException(`Token invalid`, HttpStatus.NOT_FOUND);
-
-    return payload;
+    try {
+      return verify(token, config.cookieKey);
+    } catch (error) {
+      throw new HttpException(
+        `Token not valid or expired`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 }

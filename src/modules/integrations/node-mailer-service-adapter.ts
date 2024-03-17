@@ -14,21 +14,37 @@ export type EmailMessage = {
 };
 export const NodeMailServiceAdapter = async (options: {
   description?: string;
+  from: string;
   html: string;
   subject: string;
   to: string[];
   attachments?: any[];
 }): Promise<any> => {
-  const { attachments, to, html, subject, description } = options;
+  const { attachments, to, from, html, subject, description } = options;
 
   const mailOptions: EmailMessage = {
-    from: `${config.datasite.name} <${config.implementations.resendSMTP.email}>`, // sender address
+    from: `${config.datasite.name} <no-reply@${config.implementations.resendSMTP.email}>`, // sender address
     to,
     subject: subject,
     text: description,
     html: html,
     attachments,
   };
+
+  // try {
+  //   const sendResult = await mg.messages.create(domain, {
+  //     from: 'Excited User <support@unopot.com>',
+  //     to: ['temgoua2013@gmail.com'],
+  //     subject: 'Hello',
+  //     html: '<img src="cid:mailgun.png" width="200px"><br><h3>Testing some Mailgun awesomness!</h3>',
+  //     text: 'Testing some Mailgun awesomness!',
+  //     attachment: attachments,
+  //   });
+  //   console.log('sendResult =====>', sendResult);
+  //   return sendResult;
+  // } catch (error) {
+  //   console.error(error);
+  // }
 
   const response = await resend.emails.send({ ...mailOptions });
   // const transporter = createTransport({
