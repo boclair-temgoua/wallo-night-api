@@ -2,29 +2,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 // import { faker } from '@faker-js/faker';
-import { Country } from '../../../models/Country';
 import { AppSeedDataSource } from '../orm/orm-config-seed';
-
-import slugify from 'slugify';
-import {
-  Contributor,
-  Post,
-  Profile,
-  Follow,
-  User,
-  Comment,
-  Subscribe,
-  Wallet,
-  Currency,
-} from '../../../models';
-import { getRandomElement } from '../../utils/array/get-random-element';
-import { colorsArrays } from '../../utils/commons/get-colors';
-import {
-  addYearsFormateDDMMYYDate,
-  formateNowDateYYMMDD,
-} from '../../utils/commons/formate-date';
-import { generateNumber } from '../../../app/utils/commons';
-import { hashPassword } from '../../../modules/users/users.type';
 
 export class Seeds1590629635401 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
@@ -73,7 +51,6 @@ export class Seeds1590629635401 implements MigrationInterface {
     //       password: await hashPassword(password),
     //       profileId: profile?.id,
     //       confirmedAt: new Date(),
-    //       nextStep: 'COMPLETE_REGISTRATION',
     //     })
     //     .execute();
     //   const user = { ...saveUser['0'] };

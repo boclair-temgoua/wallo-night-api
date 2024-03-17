@@ -31,7 +31,6 @@ import { ContributorsService } from '../contributors/contributors.service';
 import { ProfilesService } from '../profiles/profiles.service';
 import { UploadsUtil } from '../uploads/uploads.util';
 import { UserAuthGuard } from './middleware';
-import { Cookies } from './middleware/cookie.guard';
 import {
   GetOneUserDto,
   UpdateEnableProfileDto,
@@ -74,11 +73,7 @@ export class UsersController {
   }
 
   @Get(`/view`)
-  async getOneByIdUserPublic(
-    @Res() res,
-    @Query() query: GetOneUserDto,
-    @Cookies('x-cookies-login') user: any,
-  ) {
+  async getOneByIdUserPublic(@Res() res, @Query() query: GetOneUserDto) {
     const { userId, username, userVisitorId } = query;
 
     const findOneUser = await this.usersService.findOnePublicBy({

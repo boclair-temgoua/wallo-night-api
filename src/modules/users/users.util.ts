@@ -27,7 +27,7 @@ export class UsersUtil {
   ) {}
 
   async saveOrUpdate(options: {
-    provider: 'google' | 'github' | 'provider' | 'default';
+    provider: 'DEFAULT' | 'PROVIDER';
     email: string;
     password: string;
     firstName: string;

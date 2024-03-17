@@ -1,6 +1,5 @@
 import {
   IsEmail,
-  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -10,7 +9,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
-import { NextStep, nextStepArrays } from './users.type';
 export class UpdateInfoUserDto {
   @IsNotEmpty()
   @IsString()
@@ -103,19 +101,9 @@ export class CreateOrUpdateResetPasswordDto {
   @MaxLength(100)
   @IsEmail()
   email: string;
-
-  @IsNotEmpty()
-  @MinLength(8)
-  @IsString()
-  password: string;
 }
 
 export class CreateRegisterUserDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(nextStepArrays)
-  nextStep: NextStep;
-
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
@@ -238,11 +226,6 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   secondAddress: string;
-
-  @IsOptional()
-  @IsString()
-  @IsIn(nextStepArrays)
-  nextStep: NextStep;
 
   @IsOptional()
   @IsString()

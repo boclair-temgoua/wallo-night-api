@@ -32,7 +32,7 @@ import {
 } from '../users.dto';
 import { authPasswordResetJob } from '../users.job';
 import { UsersService } from '../users.service';
-import { NextStep, checkIfPasswordMatch } from '../users.type';
+import { checkIfPasswordMatch } from '../users.type';
 import { UsersUtil } from '../users.util';
 
 @Controller()
@@ -51,7 +51,7 @@ export class AuthUserController {
 
     const findOnUser = await this.usersService.findOneBy({
       email,
-      provider: 'default',
+      provider: 'DEFAULT',
     });
     if (findOnUser)
       throw new HttpException(
@@ -65,7 +65,7 @@ export class AuthUserController {
       firstName,
       lastName,
       username,
-      provider: 'default',
+      provider: 'DEFAULT',
     });
 
     return reply({
@@ -86,7 +86,7 @@ export class AuthUserController {
 
     const findOnUser = await this.usersService.findOneBy({
       email,
-      provider: 'default',
+      provider: 'DEFAULT',
     });
     if (!findOnUser)
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
@@ -111,7 +111,6 @@ export class AuthUserController {
       res,
       results: {
         id: findOnUser.id,
-        nextStep: findOnUser?.nextStep,
         permission: findOnUser.permission,
         organizationId: findOnUser.organizationId,
       },
@@ -128,7 +127,7 @@ export class AuthUserController {
 
     const findOnUser = await this.usersService.findOneBy({
       email,
-      provider: 'default',
+      provider: 'DEFAULT',
     });
     if (!findOnUser)
       throw new HttpException(
@@ -168,7 +167,7 @@ export class AuthUserController {
 
     const findOnUser = await this.usersService.findOneBy({
       userId: payload?.id,
-      provider: 'default',
+      provider: 'DEFAULT',
     });
     if (!findOnUser)
       throw new HttpException(
@@ -198,7 +197,6 @@ export class AuthUserController {
       color,
       url,
       currencyId,
-      nextStep,
     } = body;
 
     const findOnUser = await this.usersService.findOneBy({ userId });
@@ -231,7 +229,7 @@ export class AuthUserController {
       },
     );
 
-    await this.usersService.updateOne({ userId }, { nextStep, username });
+    await this.usersService.updateOne({ userId }, { username });
 
     return reply({ res, results: 'Profile updated successfully' });
   }
@@ -275,12 +273,7 @@ export class AuthUserController {
   /** Resend code user */
   @Post(`/valid/code`)
   @UseGuards(UserAuthGuard)
-  async validCode(
-    @Res() res,
-    @Req() req,
-    @Body('code') code: string,
-    @Body('nextStep') nextStep: NextStep,
-  ) {
+  async validCode(@Res() res, @Req() req, @Body('code') code: string) {
     if (!req.cookies['x-code-verification'])
       throw new HttpException(
         `Code ${code} not valid or expired`,
@@ -297,11 +290,6 @@ export class AuthUserController {
     //     HttpStatus.NOT_FOUND,
     //   );
     // }
-
-    // await this.usersService.updateOne(
-    //   { userId: payload?.userId },
-    //   { nextStep, confirmedAt: dateTimeNowUtc() },
-    // );
 
     // res.clearCookie('x-code-verification', expire_cookie_setting);
 

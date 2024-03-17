@@ -9,13 +9,17 @@ import {
 
 import { BaseDeleteEntity } from '../app/databases/common';
 import { User } from './index';
-@Entity('auth_provider')
-export class AuthProvider extends BaseDeleteEntity {
+@Entity('provider')
+export class Provider extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column({ nullable: true })
-  name?: string;
+  @Column({
+    type: 'enum',
+    enum: ['GOOGLE', 'FACEBOOK', 'GITHUB'],
+    default: 'GOOGLE',
+  })
+  name?: 'GOOGLE' | 'FACEBOOK' | 'GITHUB';
 
   @Column({ nullable: true })
   email?: string;
@@ -25,7 +29,9 @@ export class AuthProvider extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
-  @ManyToOne(() => User, (user) => user.authProviders)
+  @ManyToOne(() => User, (user) => user.providers, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   user?: Relation<User>;
 }

@@ -1,5 +1,4 @@
 export * from './Album';
-export * from './AuthProvider';
 export * from './Cart';
 export * from './CartOrder';
 export * from './Category';
@@ -22,6 +21,7 @@ export * from './Payment';
 export * from './Post';
 export * from './Product';
 export * from './Profile';
+export * from './Provider';
 export * from './Subscribe';
 export * from './Transaction';
 export * from './Upload';

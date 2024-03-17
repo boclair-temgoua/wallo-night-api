@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import {
@@ -153,8 +148,7 @@ export class UsersService {
       query = query.andWhere('user.token = :token', { token });
     }
 
-    const [error, result] = await useCatch(query.getOne());
-    if (error) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const result = await query.getOne();
 
     return result;
   }
@@ -169,7 +163,6 @@ export class UsersService {
       .select('user.id', 'id')
       .addSelect('user.username', 'username')
       .addSelect('user.profileId', 'profileId')
-      .addSelect('user.nextStep', 'nextStep')
       .addSelect('user.organizationId', 'organizationId')
       .addSelect('user.provider', 'provider')
       .addSelect(
@@ -352,7 +345,6 @@ export class UsersService {
       .addSelect('user.profileId', 'profileId')
       .addSelect('user.provider', 'provider')
       .addSelect('user.organizationId', 'organizationId')
-      .addSelect('user.nextStep', 'nextStep')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'id', "profile"."id",
@@ -524,7 +516,6 @@ export class UsersService {
       password,
       profileId,
       organizationId,
-      nextStep,
     } = options;
 
     const user = new User();
@@ -535,7 +526,6 @@ export class UsersService {
     user.provider = provider;
     user.profileId = profileId;
     user.organizationId = organizationId;
-    user.nextStep = nextStep;
     user.confirmedAt = confirmedAt;
 
     const query = this.driver.save(user);
@@ -558,7 +548,6 @@ export class UsersService {
       password,
       organizationId,
       deletedAt,
-      nextStep,
       confirmedAt,
     } = options;
 
@@ -582,7 +571,6 @@ export class UsersService {
     if (password) {
       user.password = await hashPassword(password);
     }
-    user.nextStep = nextStep;
     user.deletedAt = deletedAt;
     user.organizationId = organizationId;
     user.confirmedAt = confirmedAt;

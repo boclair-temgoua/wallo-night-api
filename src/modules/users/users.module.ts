@@ -1,25 +1,25 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
-  AuthProvider,
   Contributor,
   Currency,
   Donation,
   Organization,
   Profile,
+  Provider,
   Subscribe,
   Upload,
   User,
   UserAddress,
   Wallet,
 } from '../../models';
-import { AuthProvidersService } from '../auth-providers/auth-providers.service';
 import { ContributorsService } from '../contributors/contributors.service';
 import { ContributorsUtil } from '../contributors/contributors.util';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { DonationsService } from '../donations/donations.service';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { ProfilesService } from '../profiles/profiles.service';
+import { ProvidersService } from '../providers/providers.service';
 import { SubscribesService } from '../subscribes/subscribes.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { UploadsUtil } from '../uploads/uploads.util';
@@ -47,7 +47,7 @@ import { UsersUtil } from './users.util';
       Organization,
       Contributor,
       Upload,
-      AuthProvider,
+      Provider,
     ]),
   ],
   controllers: [AuthUserController, UsersController, SocialUserController],
@@ -66,7 +66,7 @@ import { UsersUtil } from './users.util';
     UploadsUtil,
     UploadsService,
     UserAddressService,
-    AuthProvidersService,
+    ProvidersService,
     ContributorsService,
     OrganizationsService,
   ],

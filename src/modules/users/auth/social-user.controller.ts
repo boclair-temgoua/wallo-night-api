@@ -11,7 +11,7 @@ import { config } from '../../../app/config/index';
 import { generateLongUUID, generateNumber } from '../../../app/utils/commons';
 import { validation_login_cookie_setting } from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
-import { AuthProvidersService } from '../../auth-providers/auth-providers.service';
+import { ProvidersService } from '../../providers/providers.service';
 import { CheckUserService } from '../middleware/check-user.service';
 import { UsersService } from '../users.service';
 import { UsersUtil } from '../users.util';
@@ -26,7 +26,7 @@ export class SocialUserController {
     private readonly usersUtil: UsersUtil,
     private readonly usersService: UsersService,
     private readonly checkUserService: CheckUserService,
-    private readonly authProvidersService: AuthProvidersService,
+    private readonly providersService: ProvidersService,
   ) {}
 
   /** Google login new user */
@@ -36,13 +36,22 @@ export class SocialUserController {
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-
-    const { email } = ticket.getPayload();
+    const { email, sub } = ticket.getPayload();
+    const findOneProvider = await this.providersService.findOneBy({
+      name: 'GOOGLE',
+      email: email,
+    });
+    if (!findOneProvider)
+      throw new HttpException(
+        `User dons't exists please try again`,
+        HttpStatus.NOT_FOUND,
+      );
 
     const findOnUser = await this.usersService.findOneBy({
-      email,
-      provider: 'provider',
+      provider: 'PROVIDER',
+      userId: findOneProvider?.userId,
     });
+
     if (!findOnUser)
       throw new HttpException(
         `user dons't exists please try again`,
@@ -62,12 +71,7 @@ export class SocialUserController {
 
     return reply({
       res,
-      results: {
-        id: findOnUser.id,
-        nextStep: findOnUser?.nextStep,
-        permission: findOnUser.permission,
-        organizationId: findOnUser.organizationId,
-      },
+      results: { id: findOnUser.id },
     });
   }
 
@@ -81,19 +85,20 @@ export class SocialUserController {
     const { given_name, family_name, picture, email, email_verified, sub } =
       ticket.getPayload();
 
-    const findOnUser = await this.usersService.findOneBy({
-      email,
-      provider: 'provider',
+    const findOneProvider = await this.providersService.findOneBy({
+      name: 'GOOGLE',
+      email: email,
     });
-    if (findOnUser)
+
+    if (findOneProvider)
       throw new HttpException(
-        `Email ${email} already exists please change`,
+        `Email ${findOneProvider?.email} already exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
     const { user } = await this.usersUtil.saveOrUpdate({
       email,
-      provider: 'provider',
+      provider: 'PROVIDER',
       email_verified,
       password: generateLongUUID(8),
       firstName: family_name,
@@ -102,18 +107,16 @@ export class SocialUserController {
       image: { id: 'provider', patch: picture },
     });
 
-    await this.authProvidersService.createOne({
+    await this.providersService.createOne({
       providerId: sub,
       email: user?.email,
       userId: user?.id,
-      name: 'google',
+      name: 'GOOGLE',
     });
 
     return reply({
       res,
-      results: {
-        organizationId: user.organizationId,
-      },
+      results: { organizationId: user?.id },
     });
   }
 }

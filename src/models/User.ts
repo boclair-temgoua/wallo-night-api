@@ -9,14 +9,12 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { NextStep } from '../modules/users/users.type';
 import { Follow } from './Follow';
 import { Like } from './Like';
 import { Membership } from './Membership';
 import { Payment } from './Payment';
 import { Subscribe } from './Subscribe';
 import {
-  AuthProvider,
   Cart,
   Comment,
   Contributor,
@@ -28,6 +26,7 @@ import {
   Post,
   Product,
   Profile,
+  Provider,
   Transaction,
   UserAddress,
 } from './index';
@@ -54,12 +53,6 @@ export class User extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   password?: string;
-
-  @Column({ nullable: true })
-  provider?: string;
-
-  @Column({ default: 'SETTING_PROFILE' })
-  nextStep?: NextStep;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
@@ -129,10 +122,16 @@ export class User extends BaseDeleteEntity {
   @OneToOne(() => UserAddress, (userAddress) => userAddress.user)
   userAddress?: UserAddress;
 
-  @OneToMany(() => AuthProvider, (authProvider) => authProvider.user, {
+  @Column({
+    type: 'enum',
+    enum: ['PROVIDER', 'DEFAULT'],
+    default: 'DEFAULT',
+  })
+  provider?: 'PROVIDER' | 'DEFAULT';
+  @OneToMany(() => Provider, (provider) => provider.user, {
     onDelete: 'CASCADE',
   })
-  authProviders?: AuthProvider[];
+  providers?: Provider[];
 
   @OneToMany(() => Payment, (payment) => payment.user, {
     onDelete: 'CASCADE',

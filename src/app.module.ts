@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './app/databases/orm';
 import { AppSeedDataSource } from './app/databases/orm/orm-config-seed';
 import { AlbumsModule } from './modules/albums/albums.module';
-import { AuthProvidersModule } from './modules/auth-providers/auth-providers.module';
 import { CartOrdersModule } from './modules/cart-orders/cart-orders.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { CartsModule } from './modules/cats/cats.module';
@@ -29,6 +28,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { ProductsModule } from './modules/products/products.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
+import { ProvidersModule } from './modules/providers/providers.module';
 import { SubscribesModule } from './modules/subscribes/subscribes.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
@@ -70,7 +70,7 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     OrganizationsModule,
     SubscribesModule,
     CommissionsModule,
-    AuthProvidersModule,
+    ProvidersModule,
     ContributionsModule,
     ContactUsModule,
   ],
