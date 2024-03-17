@@ -1,6 +1,5 @@
 import {
   IsEmail,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -9,16 +8,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { Match } from '../../app/utils/decorators';
-export class UpdateInfoUserDto {
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  @IsEmail()
-  email?: string;
-
-  @IsOptional()
-  user: any;
-}
 
 export class TokenUserDto {
   @IsNotEmpty()
@@ -44,22 +33,7 @@ export class UpdateResetPasswordUserDto {
   passwordConfirm: string;
 }
 
-export class UpdateEmailUserDto {
-  @IsNotEmpty()
-  @MaxLength(200)
-  @IsEmail()
-  @IsString()
-  newEmail: string;
-
-  @IsNotEmpty()
-  @MaxLength(200)
-  @MinLength(8)
-  passwordConfirm: string;
-
-  @IsOptional()
-  user: any;
-}
-export class UpdateChangePasswordUserDto {
+export class PasswordUpdatedDto {
   @IsNotEmpty()
   @MaxLength(100)
   @MinLength(8)
@@ -69,17 +43,8 @@ export class UpdateChangePasswordUserDto {
   @IsString()
   @MaxLength(100)
   @MinLength(8)
-  newPassword: string;
-
-  @IsString()
-  @MaxLength(100)
-  @MinLength(8)
-  @Match('newPassword')
+  @Match('password')
   passwordConfirm: string;
-
-  @IsOptional()
-  @IsInt()
-  userId: number;
 }
 
 export class CreateLoginUserDto {
@@ -95,7 +60,7 @@ export class CreateLoginUserDto {
   password: string;
 }
 
-export class CreateOrUpdateResetPasswordDto {
+export class PasswordResetDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
@@ -147,27 +112,6 @@ export class CreateRegisterUserDto {
   // passwordConfirm: string;
 }
 
-export class ConfirmOneRegisterCreateUserDto {
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  fullName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  token: string;
-
-  @IsNotEmpty()
-  @MinLength(8)
-  @IsString()
-  password: string;
-
-  @IsString()
-  @MinLength(8)
-  @Match('password')
-  passwordConfirm: string;
-}
 export class UpdateOneEmailUserDto {
   @IsNotEmpty()
   @IsString()

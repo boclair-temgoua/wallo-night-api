@@ -24,11 +24,11 @@ import { CheckUserService } from '../middleware/check-user.service';
 import { UserAuthGuard } from '../middleware/cookie/user-auth.guard';
 import {
   CreateLoginUserDto,
-  CreateOrUpdateResetPasswordDto,
   CreateRegisterUserDto,
+  PasswordResetDto,
+  PasswordUpdatedDto,
   TokenUserDto,
   UpdateProfileDto,
-  UpdateResetPasswordUserDto,
 } from '../users.dto';
 import { authPasswordResetJob } from '../users.job';
 import { UsersService } from '../users.service';
@@ -78,11 +78,8 @@ export class AuthUserController {
 
   /** Login user */
   @Post(`/login`)
-  async createOneLogin(
-    @Res() res,
-    @Body() createLoginUserDto: CreateLoginUserDto,
-  ) {
-    const { email, password } = createLoginUserDto;
+  async createOneLogin(@Res() res, @Body() body: CreateLoginUserDto) {
+    const { email, password } = body;
 
     const findOnUser = await this.usersService.findOneBy({
       email,
@@ -119,10 +116,7 @@ export class AuthUserController {
 
   /** Reset password */
   @Post(`/password/reset`)
-  async createOneResetPassword(
-    @Res() res,
-    @Body() body: CreateOrUpdateResetPasswordDto,
-  ) {
+  async createOneResetPassword(@Res() res, @Body() body: PasswordResetDto) {
     const { email } = body;
 
     const findOnUser = await this.usersService.findOneBy({
@@ -159,7 +153,7 @@ export class AuthUserController {
   @Put(`/password/update/:token`)
   async updateOneResetPassword(
     @Res() res,
-    @Body() body: UpdateResetPasswordUserDto,
+    @Body() body: PasswordUpdatedDto,
     @Param() params: TokenUserDto,
   ) {
     const { password } = body;

@@ -50,7 +50,7 @@ export const config = {
    */
   organizationAddress: {
     name: 'UnPot',
-    company: 'Birevo',
+    company: 'UnPot',
     street1: 'Via della costa 13',
     street2: '',
     city: 'Vigevano',
