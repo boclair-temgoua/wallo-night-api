@@ -202,12 +202,19 @@ export const confirmInvitationMail = async ({
                             height="50px"
                           />
                         </div>
-                        <h2 style="text-align: center">Invitation to join</h2>
-  
+                        <h2 style="
+                        text-align: center;
+                        color: #0d0c22;
+                        font-family: Helvetica Neue Roman, Arial, sans-serif,
+                          'Open Sans';
+                      ">Invitation to join</h2>
+
+                      <div style="text-align: center">
                         <span style="font-size: 16px">
-                          ${fullNameInviter} has invited you to join the ${nameOrganization}
-                          organization </span
-                        ><br /><br />
+                            ${fullNameInviter} has invited you to join the ${nameOrganization}
+                            organization </span
+                          >
+                      </div><br />
   
                         <table
                           class="subcopy"
@@ -220,7 +227,7 @@ export const confirmInvitationMail = async ({
                             <td colspan="2">
                               <div style="text-align: center">
                                 <a
-                                  href="${config.datasite.urlClient}/confirm-account?token=${token}"
+                                  href="${config.datasite.urlClient}/verify/confirm-contributor?token=${token}"
                                   style="
                                     font-family: 'Google Sans', Roboto,
                                       RobotoDraft, Helvetica, Arial, sans-serif;
@@ -322,7 +329,7 @@ export const confirmInvitationMail = async ({
                                 >
                                   <a
                                     target="_blank"
-                                    href="${config.datasite.urlClient}/confirm-account?token=${token}"
+                                    href="${config.datasite.urlClient}/verify/confirm-contributor?token=${token}"
                                     style="
                                       box-sizing: border-box;
                                       font-family: -apple-system,
@@ -334,7 +341,7 @@ export const confirmInvitationMail = async ({
                                       color: #3869d4;
                                     "
                                   >
-                                    ${config.datasite.urlClient}/confirm-account?token=${token}
+                                    ${config.datasite.urlClient}/verify/confirm-contributor?token=${token}
                                   </a></span
                                 >
                               </p>

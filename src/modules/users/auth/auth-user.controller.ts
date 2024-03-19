@@ -16,7 +16,10 @@ import {
 import { config } from '../../../app/config/index';
 import { generateNumber } from '../../../app/utils/commons';
 import { getIpRequest } from '../../../app/utils/commons/get-ip-request';
-import { validation_login_cookie_setting } from '../../../app/utils/cookies';
+import {
+  validation_login_cookie_setting,
+  validation_verify_cookie_setting,
+} from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
 import { getOneLocationIpApi } from '../../integrations/taux-live';
 import { ProfilesService } from '../../profiles/profiles.service';
@@ -30,7 +33,7 @@ import {
   TokenUserDto,
   UpdateProfileDto,
 } from '../users.dto';
-import { passwordResetJob } from '../users.job';
+import { codeConfirmationJob, passwordResetJob } from '../users.job';
 import { UsersService } from '../users.service';
 import { checkIfPasswordMatch } from '../users.type';
 import { UsersUtil } from '../users.util';
@@ -69,6 +72,24 @@ export class AuthUserController {
       role: 'ADMIN',
     });
 
+    const codeGenerate = generateNumber(6);
+    const tokenVerify = await this.checkUserService.createToken(
+      { userId: findOnUser.id, organizationId: findOnUser.organizationId },
+      config.cookie_access.accessExpire,
+    );
+
+    res.cookie(
+      config.cookie_access.namVerify,
+      tokenVerify,
+      validation_verify_cookie_setting,
+    );
+
+    /** Send information to Job */
+    await codeConfirmationJob({
+      email: findOnUser?.email,
+      code: codeGenerate,
+    });
+
     return reply({
       res,
       results: {
@@ -94,22 +115,40 @@ export class AuthUserController {
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
     }
 
-    const tokenUser = await this.checkUserService.createToken(
-      { id: findOnUser.id, organizationId: findOnUser.organizationId },
-      config.cookie_access.accessExpire,
-    );
-
-    res.cookie(
-      config.cookie_access.nameLogin,
-      tokenUser,
-      validation_login_cookie_setting,
-    );
+    if (findOnUser?.confirmedAt) {
+      const tokenUser = await this.checkUserService.createToken(
+        { userId: findOnUser.id, organizationId: findOnUser.organizationId },
+        config.cookie_access.accessExpire,
+      );
+      res.cookie(
+        config.cookie_access.nameLogin,
+        tokenUser,
+        validation_login_cookie_setting,
+      );
+    } else {
+      const codeGenerate = generateNumber(6);
+      const tokenVerify = await this.checkUserService.createToken(
+        { userId: findOnUser.id, organizationId: findOnUser.organizationId },
+        config.cookie_access.accessExpire,
+      );
+      res.cookie(
+        config.cookie_access.namVerify,
+        tokenVerify,
+        validation_verify_cookie_setting,
+      );
+      /** Send information to Job */
+      await codeConfirmationJob({
+        email: findOnUser?.email,
+        code: codeGenerate,
+      });
+    }
 
     return reply({
       res,
       results: {
         id: findOnUser.id,
         permission: findOnUser.permission,
+        confirmedAt: findOnUser.confirmedAt,
         organizationId: findOnUser.organizationId,
       },
     });
@@ -230,7 +269,7 @@ export class AuthUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    // const codeGenerate = generateNumber(4);
+    // const codeGenerate = generateNumber(6);
     // const { cookieKey } = config;
     // const expiresIn = config.cookie_access.firstStepExpire;
     // const token = await this.checkUserService.createToken(
@@ -324,7 +363,7 @@ export class AuthUserController {
     );
     res.clearCookie(
       config.cookie_access.namVerify,
-      validation_login_cookie_setting,
+      validation_verify_cookie_setting,
     );
 
     return reply({ res, results: 'User logout successfully' });

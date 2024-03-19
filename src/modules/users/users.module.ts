@@ -29,6 +29,7 @@ import { AuthUserController } from './auth/auth-user.controller';
 import { ContributorUserController } from './auth/contributor-user.controller';
 import { SocialUserController } from './auth/social-user.controller';
 import { MailerService } from './mailer.service';
+import { UserVerifyStrategy } from './middleware';
 import { CheckUserService } from './middleware/check-user.service';
 import { UserAuthStrategy } from './middleware/cookie/user-auth.strategy';
 import { UsersController } from './users.controller';
@@ -64,6 +65,7 @@ import { UsersUtil } from './users.util';
     ProfilesService,
     CheckUserService,
     UserAuthStrategy,
+    UserVerifyStrategy,
     DonationsService,
     ContributorsUtil,
     CurrenciesService,

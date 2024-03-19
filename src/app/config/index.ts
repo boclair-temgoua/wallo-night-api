@@ -1,7 +1,9 @@
 import * as dotenv from 'dotenv';
 import { TypeDatabase } from '../databases/orm';
 dotenv.config();
+
 export type Env = 'local' | 'prod' | 'dev' | 'test';
+
 export const config = {
   /**
    * Url site
@@ -25,6 +27,7 @@ export const config = {
     domain: process.env.COOKIE_DOMAIN || '.unopot.com',
     nameLogin: process.env.COOKIE_NAME_LOGIN || 'user',
     accessExpire: process.env.COOKIE_ACCESS_EXPIRE || '10000000000', //32000000000 10000000000
+    jwtVerify: process.env.COOKIE_JWT_USER || 'jwt-access-verify',
     namVerify: process.env.COOKIE_NAME_VERIFY || 'verify',
     verifyExpire: process.env.COOKIE_VERIFY_EXPIRE || '96400000',
   },

@@ -1,13 +1,13 @@
 import { config } from '../../../app/config/index';
-import { nodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
-// import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
 
-export const passwordResetMail = async ({
+import { nodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
+
+export const codeConfirmationMail = async ({
+  code,
   email,
-  token,
 }: {
+  code: string;
   email: string;
-  token: string;
 }) => {
   const output = `
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -35,23 +35,23 @@ export const passwordResetMail = async ({
         width: 100% !important;
       "
     >
-    <style>
-    @media only screen and (max-width: 600px) {
-      .inner-body {
-        width: 100% !important;
-      }
-
-      .footer {
-        width: 100% !important;
-      }
-    }
-
-    @media only screen and (max-width: 500px) {
-      .button {
-        width: 100% !important;
-      }
-    }
-  </style>
+      <style>
+        @media only screen and (max-width: 600px) {
+          .inner-body {
+            width: 100% !important;
+          }
+  
+          .footer {
+            width: 100% !important;
+          }
+        }
+  
+        @media only screen and (max-width: 500px) {
+          .button {
+            width: 100% !important;
+          }
+        }
+      </style>
       <table
         class="wrapper"
         width="100%"
@@ -196,50 +196,38 @@ export const passwordResetMail = async ({
                             height="50px"
                           />
                         </div>
-                        <h2 style="
-                        text-align: center;
-                        color: #0d0c22;
-                        font-family: Helvetica Neue Roman, Arial, sans-serif,
-                          'Open Sans';
-                      ">Reset your password</h2>
-  
-                        <span style="font-size: 16px">
-                          You are receiving this email because we received a
-                          password reset request for your account </span
-                        ><br /><br />
-  
-                        <table
-                          class="subcopy"
-                          width="100%"
-                          cellpadding="0"
-                          cellspacing="0"
-                          role="presentation"
+                        <h2
+                          style="
+                            text-align: center;
+                            color: #0d0c22;
+                            font-family: Helvetica Neue Roman, Arial, sans-serif,
+                              'Open Sans';
+                          "
                         >
-                          <tr>
-                            <td colspan="2">
-                              <div style="text-align: center">
-                              <a
-                                  href="${config.datasite.urlClient}/reset-password/${token}"                                style="
-                                  font-family: 'Google Sans', Roboto,
-                                    RobotoDraft, Helvetica, Arial, sans-serif;
-                                  line-height: 16px;
-                                  color: #ffffff;
-                                  font-weight: 400;
-                                  text-decoration: none;
-                                  font-size: 14px;
-                                  display: inline-block;
-                                  padding: 15px 30px;
-                                  background-color: #4184f3;
-                                  border-radius: 5px;
-                                  min-width: 90px;
-                                "
-                                target="_blank"
-                                >Reset Password</a
-                              >
-                            </div>
-                            </td>
-                          </tr>
-                        </table>
+                          Code verification
+                        </h2>
+                        <div style="text-align: center">
+                          <span style="font-size: 16px">
+                            Please enter the code: ${code} to activate your
+                            account.</span
+                          >
+                        </div>
+                        <br />
+  
+                        <div style="text-align: center">
+                          <span
+                            style="
+                              text-align: center;
+                              margin: 0;
+                              color: #0d0c22;
+                              font-weight: bold;
+                              font-size: 30px;
+                              font-family: Helvetica Neue Roman, Arial, sans-serif,
+                                'Open Sans';
+                            "
+                            >${code}</span
+                          >
+                        </div>
                         <br /><br />
   
                         <p
@@ -256,105 +244,8 @@ export const passwordResetMail = async ({
                             text-align: left;
                           "
                         >
-                          If you did not request a password reset, no further
-                          action is required.
-                        </p>
-                        <p
-                          style="
-                            box-sizing: border-box;
-                            font-family: -apple-system, BlinkMacSystemFont,
-                              'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-                              'Apple Color Emoji', 'Segoe UI Emoji',
-                              'Segoe UI Symbol';
-                            position: relative;
-                            font-size: 16px;
-                            line-height: 1.5em;
-                            margin-top: 0;
-                            text-align: left;
-                          "
-                        >
                           Thanks,<br />The ${config.datasite.name} Team
                         </p>
-  
-                        <table
-                          class="subcopy"
-                          width="100%"
-                          cellpadding="0"
-                          cellspacing="0"
-                          role="presentation"
-                          style="
-                            box-sizing: border-box;
-                            font-family: -apple-system, BlinkMacSystemFont,
-                              'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-                              'Apple Color Emoji', 'Segoe UI Emoji',
-                              'Segoe UI Symbol';
-                            position: relative;
-                            border-top: 1px solid #e8e5ef;
-                            margin-top: 25px;
-                            padding-top: 25px;
-                          "
-                        >
-                          <tr>
-                            <td
-                              style="
-                                box-sizing: border-box;
-                                font-family: -apple-system, BlinkMacSystemFont,
-                                  'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-                                  'Apple Color Emoji', 'Segoe UI Emoji',
-                                  'Segoe UI Symbol';
-                                position: relative;
-                              "
-                            >
-                              <p
-                                style="
-                                  box-sizing: border-box;
-                                  font-family: -apple-system, BlinkMacSystemFont,
-                                    'Segoe UI', Roboto, Helvetica, Arial,
-                                    sans-serif, 'Apple Color Emoji',
-                                    'Segoe UI Emoji', 'Segoe UI Symbol';
-                                  position: relative;
-                                  line-height: 1.5em;
-                                  margin-top: 0;
-                                  text-align: left;
-                                  font-size: 14px;
-                                "
-                              >
-                                If you’re having trouble clicking the "Reset
-                                Password" button, copy and paste the URL below
-                                into your web browser is valid for 30 minutes:
-                                <span
-                                  class="break-all"
-                                  style="
-                                    box-sizing: border-box;
-                                    font-family: -apple-system, BlinkMacSystemFont,
-                                      'Segoe UI', Roboto, Helvetica, Arial,
-                                      sans-serif, 'Apple Color Emoji',
-                                      'Segoe UI Emoji', 'Segoe UI Symbol';
-                                    position: relative;
-                                    word-break: break-all;
-                                  "
-                                >
-                                  <a
-                                  target="_blank"
-                                    href="${config.datasite.urlClient}/reset-password/${token}"
-                                    style="
-                                      box-sizing: border-box;
-                                      font-family: -apple-system,
-                                        BlinkMacSystemFont, 'Segoe UI', Roboto,
-                                        Helvetica, Arial, sans-serif,
-                                        'Apple Color Emoji', 'Segoe UI Emoji',
-                                        'Segoe UI Symbol';
-                                      position: relative;
-                                      color: #3869d4;
-                                    "
-                                  >
-                                    ${config.datasite.urlClient}/reset-password/${token}
-                                  </a></span
-                                >
-                              </p>
-                            </td>
-                          </tr>
-                        </table>
                       </td>
                     </tr>
                   </table>
@@ -398,14 +289,14 @@ export const passwordResetMail = async ({
                       <td
                         style="
                           font-family: Montserrat, -apple-system, 'Segoe UI',
-                          sans-serif;
-                        font-size: 12px;
-                        padding-left: 48px;
-                        padding-right: 48px;
-                        --text-opacity: 1;
-                        color: #eceff1;
-                        color: rgba(236, 239, 241, var(--text-opacity));
-                        padding: 20px;
+                            sans-serif;
+                          font-size: 12px;
+                          padding-left: 48px;
+                          padding-right: 48px;
+                          --text-opacity: 1;
+                          color: #eceff1;
+                          color: rgba(236, 239, 241, var(--text-opacity));
+                          padding: 20px;
                         "
                       >
                         <p
@@ -441,24 +332,24 @@ export const passwordResetMail = async ({
                           >.
                         </p>
                         <p
-                        style="
-                        box-sizing: border-box;
-                        font-family: -apple-system, BlinkMacSystemFont,
-                          'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-                          'Apple Color Emoji', 'Segoe UI Emoji',
-                          'Segoe UI Symbol';
-                        position: relative;
-                        line-height: 1.5em;
-                        margin-top: 0;
-                        color: #b0adc5;
-                        font-size: 12px;
-                        text-align: center;
-                        "
-                      >
-                        © 2024 - ${new Date().getFullYear()} ${
-                          config.datasite.name
-                        }. All rights reserved.
-                      </p>
+                          style="
+                            box-sizing: border-box;
+                            font-family: -apple-system, BlinkMacSystemFont,
+                              'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+                              'Apple Color Emoji', 'Segoe UI Emoji',
+                              'Segoe UI Symbol';
+                            position: relative;
+                            line-height: 1.5em;
+                            margin-top: 0;
+                            color: #b0adc5;
+                            font-size: 12px;
+                            text-align: center;
+                          "
+                        >
+                          © 2024 - ${new Date().getFullYear()} ${
+                            config.datasite.name
+                          }. All rights reserved.
+                        </p>
                       </td>
                     </tr>
                   </table>
@@ -469,13 +360,13 @@ export const passwordResetMail = async ({
         </tr>
       </table>
     </body>
-  </html>
+  </html>  
       `;
-  // create reusable transporter object using the default SMTP transport
+
   await nodeMailServiceAdapter({
     from: `${config.implementations.resendSMTP.noReplayFrom}`,
     to: [`${email}`],
-    subject: `${config.datasite.name} - Reset password`,
+    subject: `${config.datasite.name} - Login to your account with code: ${code}`,
     html: output,
   });
 };
