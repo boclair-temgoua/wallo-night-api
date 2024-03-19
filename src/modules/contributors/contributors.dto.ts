@@ -1,12 +1,20 @@
 import {
-  IsString,
+  IsEmail,
+  IsIn,
   IsNotEmpty,
   IsOptional,
+  IsString,
   IsUUID,
-  IsIn,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
-import { ContributorRole, contributorRoleArrays } from './contributors.type';
-import { MaxLength, IsEmail } from 'class-validator';
+import { Match } from '../../app/utils/decorators/match.decorator';
+import {
+  ContributorRole,
+  ContributorStatus,
+  contributorRoleArrays,
+  contributorStatusArrays,
+} from './contributors.type';
 
 export class CreateOneContributorOrganizationDto {
   @IsNotEmpty()
@@ -31,11 +39,15 @@ export class CreateOneNewUserContributorsDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
-  fullName: string;
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
 
   @IsOptional()
   @IsString()
-  codeVoucher: string;
+  action: string;
 
   @IsNotEmpty()
   @IsString()
@@ -47,4 +59,44 @@ export class CreateOneNewUserContributorsDto {
   @IsString()
   @IsIn(contributorRoleArrays)
   role: ContributorRole;
+}
+
+export class UpdateRoleContributorsDto {
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(contributorRoleArrays)
+  role: ContributorRole;
+}
+
+export class ConfirmInvitationContributorsDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50)
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  contributorId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(contributorStatusArrays)
+  contributorStatus: ContributorStatus;
+
+  @IsOptional()
+  @MaxLength(100)
+  @MinLength(8)
+  @IsString()
+  password: string;
+
+  @IsOptional()
+  @MaxLength(100)
+  @MinLength(8)
+  @Match('password')
+  passwordConfirm: string;
 }

@@ -13,8 +13,8 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import * as amqplib from 'amqplib';
 import { config } from '../../../app/config/index';
+import { generateNumber } from '../../../app/utils/commons';
 import { getIpRequest } from '../../../app/utils/commons/get-ip-request';
 import { validation_login_cookie_setting } from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
@@ -30,7 +30,7 @@ import {
   TokenUserDto,
   UpdateProfileDto,
 } from '../users.dto';
-import { authPasswordResetJob } from '../users.job';
+import { passwordResetJob } from '../users.job';
 import { UsersService } from '../users.service';
 import { checkIfPasswordMatch } from '../users.type';
 import { UsersUtil } from '../users.util';
@@ -47,7 +47,7 @@ export class AuthUserController {
   /** Register new user */
   @Post(`/register`)
   async createOneRegister(@Res() res, @Body() body: CreateRegisterUserDto) {
-    const { email, password, firstName, lastName, username } = body;
+    const { email, password, firstName, lastName } = body;
 
     const findOnUser = await this.usersService.findOneBy({
       email,
@@ -64,8 +64,9 @@ export class AuthUserController {
       password,
       firstName,
       lastName,
-      username,
+      username: `${firstName}-${lastName}-${generateNumber(4)}`,
       provider: 'DEFAULT',
+      role: 'ADMIN',
     });
 
     return reply({
@@ -135,16 +136,7 @@ export class AuthUserController {
     );
 
     /** Send information to Job */
-    const queue = 'user-password-reset';
-    const connect = await amqplib.connect(config.implementations.amqp.link);
-    const channel = await connect.createChannel();
-    await channel.assertQueue(queue, { durable: false });
-    await channel.sendToQueue(
-      queue,
-      Buffer.from(JSON.stringify({ email, token: tokenUser })),
-    );
-    await authPasswordResetJob({ channel, queue });
-    /** End send information to Job */
+    await passwordResetJob({ email, token: tokenUser });
 
     return reply({ res, results: { token: tokenUser } });
   }
@@ -316,8 +308,6 @@ export class AuthUserController {
   @Get(`/verify-token`)
   async verifyToken(@Res() res, @Req() req, @Query('token') token: string) {
     const payload = await this.checkUserService.verifyToken(token);
-
-    console.log('payload ===>', payload);
 
     return reply({
       res,

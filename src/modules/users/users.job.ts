@@ -1,7 +1,8 @@
 import {
   authLoginNotificationMail,
-  authPasswordResetMail,
   authUserVerifyIsConfirmMail,
+  confirmInvitationMail,
+  passwordResetMail,
 } from './mails';
 import { authCodeConfirmationMail } from './mails/auth-code-confirmation-mail';
 import { authNewUserCreateMail } from './mails/auth-new-user-create-mail';
@@ -50,27 +51,29 @@ export const authLoginJob = async (options: { channel; queue }) => {
 };
 
 /** Send Job Reset password */
-export const authPasswordResetJob = async (options: { channel; queue }) => {
-  const { channel, queue } = options;
+export const passwordResetJob = async ({
+  email,
+  token,
+}: {
+  email: string;
+  token: string;
+}) => passwordResetMail({ email, token });
 
-  await channel.consume(
-    queue,
-    async (msg) => {
-      const data = JSON.parse(msg.content.toString());
-      console.log(
-        '\x1b[33m%s\x1b[0m',
-        '**** Processing reset password Job message user start ****',
-      );
-
-      authPasswordResetMail({ resetPassword: data });
-      console.log(
-        '\x1b[32m%s\x1b[0m',
-        '**** Processed reset password Job message user finish ****',
-      );
-    },
-    { noAck: true },
-  );
-};
+/** Send Job Reset password */
+export const confirmInvitationJod = async ({
+  code,
+  email,
+  token,
+  nameOrganization,
+  fullNameInviter,
+}: {
+  code?: string;
+  email: string;
+  token: string;
+  fullNameInviter: string;
+  nameOrganization: string;
+}) =>
+  confirmInvitationMail({ email, token, nameOrganization, fullNameInviter });
 
 /** Send Job Reset password */
 export const authCodeConfirmationJob = async (options: { channel; queue }) => {

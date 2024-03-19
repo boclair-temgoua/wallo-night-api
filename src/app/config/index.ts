@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import { TypeDatabase } from '../databases/orm';
 dotenv.config();
-
+export type Env = 'local' | 'prod' | 'dev' | 'test';
 export const config = {
   /**
    * Url site
@@ -117,6 +117,15 @@ export const config = {
     stripe: {
       privateKey: process.env.STRIPE_PRIVATE_KEY,
       publicKey: process.env.STRIPE_PUBLIC_KEY,
+    },
+    /**
+     * mailSMTP
+     */
+    mailSMTP: {
+      host: process.env.MAIL_HOST,
+      port: Number(process.env.MAIL_PORT),
+      user: process.env.MAIL_USERNAME,
+      pass: process.env.MAIL_PASSWORD,
     },
     /**
      * Amqp

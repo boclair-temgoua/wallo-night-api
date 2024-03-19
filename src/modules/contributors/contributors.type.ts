@@ -1,19 +1,24 @@
-import { Contributor } from '../../models/Contributor';
 import { PaginationType } from '../../app/utils/pagination';
+import { Contributor } from '../../models/Contributor';
 
-export type ContributorRole =
-  | 'ADMIN'
-  | 'MODERATOR'
-  | 'EDITOR'
-  | 'GHOST'
-  | 'ANALYST';
+export type ContributorRole = 'ADMIN' | 'MEMBER' | 'SUPERADMIN' | 'MODERATOR';
+
+export type ContributorStatus =
+  | 'CONTRIBUTOR'
+  | 'INVITED-CONTRIBUTOR'
+  | 'NEW-CONTRIBUTOR';
+
+export const contributorStatusArrays = [
+  'CONTRIBUTOR',
+  'INVITED-CONTRIBUTOR',
+  'NEW-CONTRIBUTOR',
+];
 
 export const contributorRoleArrays = [
   'ADMIN',
+  'MEMBER',
+  'SUPERADMIN',
   'MODERATOR',
-  'EDITOR',
-  'GHOST',
-  'ANALYST',
 ];
 
 export type GetContributorsSelections = {

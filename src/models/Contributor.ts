@@ -8,8 +8,12 @@ import {
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
-import { ContributorRole } from '../modules/contributors/contributors.type';
-import { User } from './User';
+import {
+  ContributorRole,
+  ContributorStatus,
+  contributorStatusArrays,
+} from '../modules/contributors/contributors.type';
+import { Organization, User } from './index';
 
 @Entity('contributor')
 export class Contributor extends BaseDeleteEntity {
@@ -25,6 +29,13 @@ export class Contributor extends BaseDeleteEntity {
   @Column({ default: 'ORGANIZATION' })
   type?: FilterQueryType;
 
+  @Column({
+    type: 'enum',
+    enum: contributorStatusArrays,
+    default: 'CONTRIBUTOR',
+  })
+  status?: ContributorStatus;
+
   @Column({ default: 'ADMIN' })
   role?: ContributorRole;
 
@@ -33,6 +44,11 @@ export class Contributor extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
+  @ManyToOne(() => Organization, (organization) => organization.contributors, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  organization?: Organization;
 
   @Column({ type: 'uuid', nullable: true })
   userCreatedId?: string;

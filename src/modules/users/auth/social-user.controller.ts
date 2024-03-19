@@ -98,12 +98,13 @@ export class SocialUserController {
 
     const { user } = await this.usersUtil.saveOrUpdate({
       email,
+      role: 'ADMIN',
       provider: 'PROVIDER',
       email_verified,
       password: generateLongUUID(8),
       firstName: family_name,
       lastName: given_name,
-      username: `${given_name}-${family_name}-${generateNumber(6)}`,
+      username: `${given_name}-${family_name}-${generateNumber(4)}`,
       image: { id: 'provider', patch: picture },
     });
 

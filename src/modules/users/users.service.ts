@@ -235,7 +235,7 @@ export class UsersService {
         )
         FROM "post" "po"
         WHERE "po"."organizationId" = "user"."organizationId"
-        AND "po"."type" IN ('AUDIO', 'VIDEO')
+        AND "po"."type" IN ('AUDIO', 'VIDEO', 'ARTICLE')
         AND "po"."deletedAt" IS NULL
         GROUP BY "po"."organizationId", "user"."organizationId"
         ) AS "post"`,

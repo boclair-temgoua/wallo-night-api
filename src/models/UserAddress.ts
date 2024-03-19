@@ -50,12 +50,6 @@ export class UserAddress extends BaseDeleteEntity {
   @JoinColumn()
   user?: User;
 
-  // @Column({ type: 'uuid', nullable: true })
-  // profileId?: string;
-  // @OneToOne(() => Profile, (profile) => profile.user, { onDelete: 'CASCADE' })
-  // @JoinColumn()
-  // profile?: Profile;
-
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
   @OneToOne(() => Organization, (organization) => organization.userAddress, {

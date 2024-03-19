@@ -38,6 +38,7 @@ export class ContributorsService {
       .addSelect('contributor.confirmedAt', 'confirmedAt')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
+      .addSelect('contributor.status', 'status')
       .addSelect(
         /*sql*/ `jsonb_build_object(
           'username', "user"."username",
@@ -116,6 +117,7 @@ export class ContributorsService {
       .addSelect('contributor.userCreatedId', 'userCreatedId')
       .addSelect('contributor.userId', 'userId')
       .addSelect('contributor.type', 'type')
+      .addSelect('contributor.status', 'status')
       .addSelect('contributor.organizationId', 'organizationId')
       .addSelect('contributor.confirmedAt', 'confirmedAt')
       .addSelect(
@@ -161,13 +163,21 @@ export class ContributorsService {
 
   /** Create one Contributor to the database. */
   async createOne(options: CreateContributorOptions): Promise<Contributor> {
-    const { userId, confirmedAt, role, userCreatedId, organizationId, type } =
-      options;
+    const {
+      userId,
+      confirmedAt,
+      status,
+      role,
+      userCreatedId,
+      organizationId,
+      type,
+    } = options;
 
     const contributor = new Contributor();
     contributor.userId = userId;
     contributor.type = type;
     contributor.role = role;
+    contributor.status = status;
     contributor.confirmedAt = confirmedAt;
     contributor.organizationId = organizationId;
     contributor.userCreatedId = userCreatedId;

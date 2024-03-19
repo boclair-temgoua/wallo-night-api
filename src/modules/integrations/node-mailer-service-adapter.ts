@@ -1,3 +1,4 @@
+import { createTransport } from 'nodemailer';
 import { config } from '../../app/config/index';
 
 import { Resend } from 'resend';
@@ -20,6 +21,7 @@ export const nodeMailServiceAdapter = async (options: {
   to: string[];
   attachments?: any[];
 }): Promise<any> => {
+  let result: any = {};
   const { attachments, to, from, html, subject, description } = options;
 
   const mailOptions: EmailMessage = {
@@ -31,8 +33,30 @@ export const nodeMailServiceAdapter = async (options: {
     attachments,
   };
 
-  const response = await resend.emails.send({ ...mailOptions });
-  console.log('response email send ====>', response);
+  if (config.environment === 'prod') {
+    console.log('environment ===>', config.environment);
+    result = await resend.emails.send({ ...mailOptions });
+    console.log('response ====>', result);
+  }
 
-  return response;
+  if (config.environment === 'local') {
+    console.log('environment ===>', config.environment);
+    const transporter = createTransport({
+      host: config.implementations.mailSMTP.host,
+      port: config.implementations.mailSMTP.port,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: config.implementations.mailSMTP.user, // generated ethereal user
+        pass: config.implementations.mailSMTP.pass, // generated ethereal password
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    result = await transporter.sendMail({ ...mailOptions });
+    console.log('response ====>', result);
+  }
+
+  return result;
 };

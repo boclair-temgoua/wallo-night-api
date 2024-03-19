@@ -11,6 +11,7 @@ import { Payment } from './Payment';
 import {
   CartOrder,
   Comment,
+  Contributor,
   Membership,
   Post,
   Product,
@@ -39,8 +40,8 @@ export class Organization extends BaseEntity {
   @Column({ nullable: true })
   color?: string;
 
-  @Column({ nullable: true })
-  image?: string;
+  @Column({ type: 'jsonb', array: false, nullable: true })
+  image?: { id: 'aws' | 'provider'; patch: string };
 
   @OneToOne(() => Wallet, (wallet) => wallet.organization, {
     onDelete: 'CASCADE',
@@ -89,4 +90,9 @@ export class Organization extends BaseEntity {
     onDelete: 'CASCADE',
   })
   uploads?: Upload;
+
+  @OneToMany(() => Contributor, (contributor) => contributor.organization, {
+    onDelete: 'CASCADE',
+  })
+  contributors?: Contributor;
 }

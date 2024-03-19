@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { addYearsFormateDDMMYYDate } from '../../app/utils/commons/formate-date';
-import { generateNumber } from '../../app/utils/commons/generate-random';
-import { Profile } from '../../models';
+import { Contributor, Profile } from '../../models';
 import { ContributorsService } from '../contributors/contributors.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { DonationsService } from '../donations/donations.service';
@@ -34,22 +33,21 @@ export class UsersUtil {
     lastName: string;
     username: string;
     image?: Profile['image'];
+    role: Contributor['role'];
     email_verified?: boolean;
   }): Promise<any> {
     const {
+      username,
       email,
+      role,
       provider,
       email_verified,
       password,
       firstName,
       lastName,
-      username,
       image,
     } = options;
 
-    const findOnUserByUsername = await this.usersService.findOneBy({
-      username,
-    });
     const findOnCurrency = await this.currenciesService.findOneBy({
       code: 'USD',
     });
@@ -70,18 +68,13 @@ export class UsersUtil {
     });
 
     /** Create User */
-    const usernameGenerate = `${firstName}-${lastName}-${generateNumber(6)}`;
     const user = await this.usersService.createOne({
       email,
       provider,
       password,
       confirmedAt: email_verified === true ? new Date() : null,
       profileId: profile?.id,
-      username: username
-        ? findOnUserByUsername
-          ? usernameGenerate
-          : username
-        : usernameGenerate,
+      username,
       organizationId: organization?.id,
     });
 
@@ -91,7 +84,7 @@ export class UsersUtil {
       subscriberId: user?.id,
       expiredAt: addYearsFormateDDMMYYDate({
         date: new Date(),
-        yearNumber: 50,
+        yearNumber: 70,
       }),
     });
 
@@ -104,9 +97,9 @@ export class UsersUtil {
     await this.contributorsService.createOne({
       userId: user?.id,
       userCreatedId: user?.id,
-      role: 'ADMIN',
+      role: role,
       organizationId: organization?.id,
-      confirmedAt: new Date(),
+      confirmedAt: email_verified === true ? new Date() : null,
     });
 
     /** Create Donation */

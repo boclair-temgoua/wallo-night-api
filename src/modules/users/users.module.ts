@@ -26,6 +26,7 @@ import { UploadsUtil } from '../uploads/uploads.util';
 import { UserAddressService } from '../user-address/user-address.service';
 import { WalletsService } from '../wallets/wallets.service';
 import { AuthUserController } from './auth/auth-user.controller';
+import { ContributorUserController } from './auth/contributor-user.controller';
 import { SocialUserController } from './auth/social-user.controller';
 import { MailerService } from './mailer.service';
 import { CheckUserService } from './middleware/check-user.service';
@@ -50,7 +51,12 @@ import { UsersUtil } from './users.util';
       Provider,
     ]),
   ],
-  controllers: [AuthUserController, UsersController, SocialUserController],
+  controllers: [
+    AuthUserController,
+    ContributorUserController,
+    UsersController,
+    SocialUserController,
+  ],
   providers: [
     UsersUtil,
     UsersService,
