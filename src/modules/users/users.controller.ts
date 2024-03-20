@@ -98,7 +98,6 @@ export class UsersController {
   @UseGuards(UserAuthGuard)
   async getMe(@Res() res, @Req() req) {
     const { user } = req;
-
     const findOneUser = await this.usersService.findOneInfoBy({
       userId: user?.id,
     });

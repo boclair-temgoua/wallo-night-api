@@ -24,7 +24,10 @@ import { reply } from '../../../app/utils/reply';
 import { getOneLocationIpApi } from '../../integrations/taux-live';
 import { ProfilesService } from '../../profiles/profiles.service';
 import { UserVerifyGuard } from '../middleware';
-import { CheckUserService } from '../middleware/check-user.service';
+import {
+  CheckUserService,
+  TokenJwtModel,
+} from '../middleware/check-user.service';
 import { Cookies } from '../middleware/cookie.guard';
 import { UserAuthGuard } from '../middleware/cookie/user-auth.guard';
 import {
@@ -58,6 +61,7 @@ export class AuthUserController {
       email,
       provider: 'DEFAULT',
     });
+    console.log('findOnUser ===> ' + findOnUser);
     if (findOnUser)
       throw new HttpException(
         `Email ${email} already exists please change`,
@@ -80,7 +84,7 @@ export class AuthUserController {
         code: codeGenerate,
         userId: user.id,
         organizationId: user.organizationId,
-      },
+      } as TokenJwtModel,
       config.cookie_access.accessExpire,
     );
 
@@ -123,7 +127,10 @@ export class AuthUserController {
 
     if (findOnUser?.confirmedAt) {
       const tokenUser = await this.checkUserService.createToken(
-        { userId: findOnUser.id, organizationId: findOnUser.organizationId },
+        {
+          userId: findOnUser.id,
+          organizationId: findOnUser.organizationId,
+        } as TokenJwtModel,
         config.cookie_access.accessExpire,
       );
       res.cookie(
@@ -131,14 +138,16 @@ export class AuthUserController {
         tokenUser,
         validation_login_cookie_setting,
       );
-    } else {
+    }
+
+    if (!findOnUser?.confirmedAt) {
       const codeGenerate = generateNumber(6);
       const tokenVerify = await this.checkUserService.createToken(
         {
           code: codeGenerate,
           userId: findOnUser.id,
           organizationId: findOnUser.organizationId,
-        },
+        } as TokenJwtModel,
         config.cookie_access.accessExpire,
       );
       res.cookie(
@@ -180,7 +189,10 @@ export class AuthUserController {
       );
 
     const tokenUser = await this.checkUserService.createToken(
-      { userId: findOnUser.id, organizationId: findOnUser.organizationId },
+      {
+        userId: findOnUser.id,
+        organizationId: findOnUser.organizationId,
+      } as TokenJwtModel,
       config.cookie_access.verifyExpire,
     );
 
@@ -287,7 +299,7 @@ export class AuthUserController {
         code: codeGenerate,
         userId: findOnUser.id,
         organizationId: findOnUser.organizationId,
-      },
+      } as TokenJwtModel,
       config.cookie_access.accessExpire,
     );
     res.cookie(
@@ -324,7 +336,10 @@ export class AuthUserController {
     }
 
     const tokenUser = await this.checkUserService.createToken(
-      { userId: payload.userId, organizationId: payload.organizationId },
+      {
+        userId: payload.userId,
+        organizationId: payload.organizationId,
+      } as TokenJwtModel,
       config.cookie_access.accessExpire,
     );
 

@@ -11,6 +11,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { config } from '../../../../app/config';
 import { ContributorsUtil } from '../../../contributors/contributors.util';
 import { UsersService } from '../../users.service';
+import { TokenJwtModel } from '../check-user.service';
 
 @Injectable()
 export class UserAuthStrategy extends PassportStrategy(
@@ -47,8 +48,8 @@ export class UserAuthStrategy extends PassportStrategy(
     return null;
   }
 
-  async validate(payload): Promise<any> {
-    const user = await this.usersService.findOneBy({ userId: payload?.id });
+  async validate(payload: TokenJwtModel): Promise<any> {
+    const user = await this.usersService.findOneBy({ userId: payload?.userId });
     if (!user) throw new UnauthorizedException('Invalid user');
 
     /** Check permission contributor */
