@@ -23,7 +23,9 @@ import {
 import { reply } from '../../../app/utils/reply';
 import { getOneLocationIpApi } from '../../integrations/taux-live';
 import { ProfilesService } from '../../profiles/profiles.service';
+import { UserVerifyGuard } from '../middleware';
 import { CheckUserService } from '../middleware/check-user.service';
+import { Cookies } from '../middleware/cookie.guard';
 import { UserAuthGuard } from '../middleware/cookie/user-auth.guard';
 import {
   CreateLoginUserDto,
@@ -74,7 +76,11 @@ export class AuthUserController {
 
     const codeGenerate = generateNumber(6);
     const tokenVerify = await this.checkUserService.createToken(
-      { userId: findOnUser.id, organizationId: findOnUser.organizationId },
+      {
+        code: codeGenerate,
+        userId: user.id,
+        organizationId: user.organizationId,
+      },
       config.cookie_access.accessExpire,
     );
 
@@ -86,7 +92,7 @@ export class AuthUserController {
 
     /** Send information to Job */
     await codeConfirmationJob({
-      email: findOnUser?.email,
+      email: user?.email,
       code: codeGenerate,
     });
 
@@ -128,7 +134,11 @@ export class AuthUserController {
     } else {
       const codeGenerate = generateNumber(6);
       const tokenVerify = await this.checkUserService.createToken(
-        { userId: findOnUser.id, organizationId: findOnUser.organizationId },
+        {
+          code: codeGenerate,
+          userId: findOnUser.id,
+          organizationId: findOnUser.organizationId,
+        },
         config.cookie_access.accessExpire,
       );
       res.cookie(
@@ -260,63 +270,79 @@ export class AuthUserController {
   }
 
   /** Resend code user */
-  @Get(`/resend/code/:userId`)
-  async resendCode(@Res() res, @Param('userId', ParseUUIDPipe) userId: string) {
-    const findOnUser = await this.usersService.findOneBy({ userId });
+  @Get(`/resend/code`)
+  @UseGuards(UserVerifyGuard)
+  async resendCode(@Res() res, @Req() req) {
+    const { user } = req;
+    const findOnUser = await this.usersService.findOneBy({ userId: user?.id });
     if (!findOnUser)
       throw new HttpException(
-        `User ${userId} dons't exists please change`,
+        `User dons't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
-    // const codeGenerate = generateNumber(6);
-    // const { cookieKey } = config;
-    // const expiresIn = config.cookie_access.firstStepExpire;
-    // const token = await this.checkUserService.createToken(
-    //   { userId: userId, code: codeGenerate, isLogin: true },
-    //   cookieKey,
-    //   expiresIn,
-    // );
-    // res.cookie(
-    //   'x-code-verification',
-    //   token,
-    //   validation_code_verification_cookie_setting,
-    // );
+    const codeGenerate = generateNumber(6);
+    const tokenVerify = await this.checkUserService.createToken(
+      {
+        code: codeGenerate,
+        userId: findOnUser.id,
+        organizationId: findOnUser.organizationId,
+      },
+      config.cookie_access.accessExpire,
+    );
+    res.cookie(
+      config.cookie_access.namVerify,
+      tokenVerify,
+      validation_verify_cookie_setting,
+    );
+    /** Send information to Job */
+    await codeConfirmationJob({
+      email: findOnUser?.email,
+      code: codeGenerate,
+    });
 
-    // /** Send information to Job */
-    // const result = { ...findOnUser, code: codeGenerate };
-    // const queue = 'user-send-code';
-    // const connect = await amqplib.connect(config.implementations.amqp.link);
-    // const channel = await connect.createChannel();
-    // await channel.assertQueue(queue, { durable: false });
-    // await channel.sendToQueue(queue, Buffer.from(JSON.stringify(result)));
-    // await authCodeConfirmationJob({ channel, queue });
-    /** End send information to Job */
     return reply({ res, results: 'Email send successfully' });
   }
 
   /** Resend code user */
   @Post(`/valid/code`)
-  @UseGuards(UserAuthGuard)
-  async validCode(@Res() res, @Req() req, @Body('code') code: string) {
-    if (!req.cookies['x-code-verification'])
+  @UseGuards(UserVerifyGuard)
+  async validCode(@Res() res, @Body('code') code: string, @Cookies() cookies) {
+    const token = cookies[config.cookie_access.namVerify];
+    if (!token) {
       throw new HttpException(
-        `Code ${code} not valid or expired`,
+        `Token not valid or expired`,
         HttpStatus.NOT_FOUND,
       );
+    }
+    const payload = await this.checkUserService.verifyToken(token);
+    if (Number(payload?.code) !== Number(code)) {
+      throw new HttpException(
+        `Code ${code} not valid or expired try resend`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
-    // const payload = await this.checkUserService.verifyTokenCookie(
-    //   req.cookies['x-code-verification'],
-    // );
+    const tokenUser = await this.checkUserService.createToken(
+      { userId: payload.userId, organizationId: payload.organizationId },
+      config.cookie_access.accessExpire,
+    );
 
-    // if (Number(payload?.code) !== Number(code)) {
-    //   throw new HttpException(
-    //     `Code ${code} not valid or expired`,
-    //     HttpStatus.NOT_FOUND,
-    //   );
-    // }
+    await this.usersService.updateOne(
+      { userId: payload.userId },
+      { confirmedAt: new Date() },
+    );
 
-    // res.clearCookie('x-code-verification', expire_cookie_setting);
+    res.cookie(
+      config.cookie_access.nameLogin,
+      tokenUser,
+      validation_login_cookie_setting,
+    );
+
+    res.clearCookie(
+      config.cookie_access.namVerify,
+      validation_verify_cookie_setting,
+    );
 
     return reply({ res, results: 'Email confirmed successfully' });
   }
