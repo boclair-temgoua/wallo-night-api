@@ -25,10 +25,10 @@ export const config = {
   cookie_access: {
     jwtUser: process.env.COOKIE_JWT_USER || 'jwt-access-user',
     domain: process.env.COOKIE_DOMAIN || '.unopot.com',
-    nameLogin: process.env.COOKIE_NAME_LOGIN || 'user',
+    nameLogin: process.env.COOKIE_NAME_LOGIN || 'x-user',
     accessExpire: process.env.COOKIE_ACCESS_EXPIRE || '10000000000', //32000000000 10000000000
     jwtVerify: process.env.COOKIE_JWT_USER || 'jwt-access-verify',
-    namVerify: process.env.COOKIE_NAME_VERIFY || 'verify',
+    namVerify: process.env.COOKIE_NAME_VERIFY || 'x-verify',
     verifyExpire: process.env.COOKIE_VERIFY_EXPIRE || '96400000',
   },
   /**
