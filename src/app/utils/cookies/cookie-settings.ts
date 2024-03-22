@@ -18,13 +18,13 @@ const settingsMap: {
     sameSite: 'none',
   },
   prod: {
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     domain: config.cookie_access.domain,
     sameSite: 'none',
   },
   test: {
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     domain: config.cookie_access.domain,
     sameSite: 'none',
