@@ -5,7 +5,7 @@ const cookieSettings = (env: string) =>
 
 const settingsMap: {
   [Key in Env]: {
-    httpOnly: false;
+    httpOnly: boolean;
     secure: boolean;
     domain?: string;
     sameSite: 'none' | 'lax';
@@ -17,18 +17,18 @@ const settingsMap: {
     sameSite: 'none',
   },
   dev: {
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     sameSite: 'none',
   },
   prod: {
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     domain: config.cookie_access.domain,
     sameSite: 'none',
   },
   test: {
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     domain: config.cookie_access.domain,
     sameSite: 'none',
