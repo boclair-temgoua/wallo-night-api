@@ -13,7 +13,7 @@ import {
   generateLongUUID,
   generateNumber,
 } from '../../../app/utils/commons';
-import { validation_login_cookie_setting } from '../../../app/utils/cookies';
+import { validation_login_cookie_setting } from '../../../app/utils/cookies/index';
 import { reply } from '../../../app/utils/reply';
 import { ProvidersService } from '../../providers/providers.service';
 import { CheckUserService } from '../middleware/check-user.service';
