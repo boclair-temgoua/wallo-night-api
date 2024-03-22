@@ -21,7 +21,7 @@ import { reply } from '../../app/utils/reply';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { config } from '../../app/config';
 import { dateTimeNowUtc } from '../../app/utils/commons';
-import { validation_login_cookie_setting } from '../../app/utils/cookies';
+import { validation_login_cookie_setting } from '../../app/utils/cookies/cookies';
 import {
   PaginationType,
   RequestPaginationDto,

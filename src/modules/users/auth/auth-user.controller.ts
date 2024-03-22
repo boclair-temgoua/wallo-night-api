@@ -22,7 +22,7 @@ import {
 import {
   validation_login_cookie_setting,
   validation_verify_cookie_setting,
-} from '../../../app/utils/cookies';
+} from '../../../app/utils/cookies/cookies';
 import { reply } from '../../../app/utils/reply';
 import { getOneLocationIpApi } from '../../integrations/taux-live';
 import { ProfilesService } from '../../profiles/profiles.service';
@@ -137,12 +137,15 @@ export class AuthUserController {
         } as TokenJwtModel,
         config.cookie_access.accessExpire,
       );
+
       res.cookie(
         config.cookie_access.nameLogin,
         tokenUser,
         validation_login_cookie_setting,
       );
-    } else {
+    }
+
+    if (!findOnUser?.confirmedAt) {
       const codeGenerate = generateNumber(6);
       const tokenVerify = await this.checkUserService.createToken(
         {
@@ -152,6 +155,7 @@ export class AuthUserController {
         } as TokenJwtModel,
         config.cookie_access.accessExpire,
       );
+
       res.cookie(
         config.cookie_access.namVerify,
         tokenVerify,
