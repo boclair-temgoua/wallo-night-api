@@ -34,13 +34,11 @@ export const nodeMailServiceAdapter = async (options: {
   };
 
   if (config.environment === 'prod') {
-    console.log('environment ===>', config.environment);
     result = await resend.emails.send({ ...mailOptions });
     console.log('response ====>', result);
   }
 
   if (config.environment === 'local') {
-    console.log('environment ===>', config.environment);
     const transporter = createTransport({
       host: config.implementations.mailSMTP.host,
       port: config.implementations.mailSMTP.port,

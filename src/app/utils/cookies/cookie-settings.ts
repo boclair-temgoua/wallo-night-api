@@ -1,8 +1,8 @@
 import { config } from '../../config/index';
 
-type Env = 'local' | 'prod' | 'test';
-export const cookieSettings = (env: string) =>
-  env in settingsMap ? settingsMap[(env as Env) ?? 'prod'] : settingsMap.local;
+export type Env = 'local' | 'prod' | 'test';
+export const cookieSettings = (env: Env) =>
+  env in settingsMap ? settingsMap[(env as Env) ?? 'local'] : settingsMap.local;
 
 const settingsMap: {
   [Key in Env]: {

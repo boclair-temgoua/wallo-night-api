@@ -1,6 +1,6 @@
 import { config } from '../../config/index';
-import { cookieSettings } from './cookie-settings';
-const cookieSetting = cookieSettings(config?.environment);
+import { Env, cookieSettings } from './cookie-settings';
+const cookieSetting = cookieSettings(config?.environment as Env);
 
 /*************** Setting user cookie *************************/
 export const validation_verify_cookie_setting = {
