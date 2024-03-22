@@ -26,7 +26,6 @@ import {
 import { reply } from '../../../app/utils/reply';
 import { getOneLocationIpApi } from '../../integrations/taux-live';
 import { ProfilesService } from '../../profiles/profiles.service';
-import { UserVerifyGuard } from '../middleware';
 import {
   CheckUserService,
   TokenJwtModel,
@@ -284,10 +283,18 @@ export class AuthUserController {
 
   /** Resend code user */
   @Get(`/resend/code`)
-  @UseGuards(UserVerifyGuard)
-  async resendCode(@Res() res, @Req() req) {
-    const { user } = req;
-    const findOnUser = await this.usersService.findOneBy({ userId: user?.id });
+  async resendCode(@Res() res, @Req() req, @Cookies() cookies) {
+    const token = cookies[config.cookie_access.namVerify];
+    if (!token) {
+      throw new HttpException(
+        `Token not valid or expired`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const payload = await this.checkUserService.verifyToken(token);
+    const findOnUser = await this.usersService.findOneBy({
+      userId: payload?.userId,
+    });
     if (!findOnUser)
       throw new HttpException(
         `User dons't exists please change`,
@@ -319,7 +326,6 @@ export class AuthUserController {
 
   /** Resend code user */
   @Post(`/valid/code`)
-  @UseGuards(UserVerifyGuard)
   async validCode(@Res() res, @Body('code') code: string, @Cookies() cookies) {
     const token = cookies[config.cookie_access.namVerify];
     if (!token) {
