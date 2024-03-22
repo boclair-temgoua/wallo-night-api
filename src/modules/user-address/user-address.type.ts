@@ -1,4 +1,4 @@
-import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { PaginationType } from '../../app/utils/pagination';
 import { UserAddress } from '../../models';
 
 export type GetUserAddressSelections = {

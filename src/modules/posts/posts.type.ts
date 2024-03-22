@@ -1,4 +1,4 @@
-import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { PaginationType } from '../../app/utils/pagination';
 import { Post } from '../../models/Post';
 
 export type PostType = 'AUDIO' | 'VIDEO' | 'ARTICLE' | 'GALLERY';

@@ -13,9 +13,12 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { config } from '../../../app/config/index';
-import { generateNumber } from '../../../app/utils/commons';
-import { getIpRequest } from '../../../app/utils/commons/get-ip-request';
+import { config } from '../../../app/config';
+import {
+  dateTimeNowUtc,
+  generateNumber,
+  getIpRequest,
+} from '../../../app/utils/commons';
 import {
   validation_login_cookie_setting,
   validation_verify_cookie_setting,
@@ -61,7 +64,6 @@ export class AuthUserController {
       email,
       provider: 'DEFAULT',
     });
-    console.log('findOnUser ===> ' + findOnUser);
     if (findOnUser)
       throw new HttpException(
         `Email ${email} already exists please change`,
@@ -76,6 +78,7 @@ export class AuthUserController {
       username: `${firstName}-${lastName}-${generateNumber(4)}`,
       provider: 'DEFAULT',
       role: 'ADMIN',
+      confirmedAt: null,
     });
 
     const codeGenerate = generateNumber(6);
@@ -103,6 +106,7 @@ export class AuthUserController {
     return reply({
       res,
       results: {
+        confirmedAt: user.confirmedAt,
         organizationId: user.organizationId,
       },
     });
@@ -138,9 +142,7 @@ export class AuthUserController {
         tokenUser,
         validation_login_cookie_setting,
       );
-    }
-
-    if (!findOnUser?.confirmedAt) {
+    } else {
       const codeGenerate = generateNumber(6);
       const tokenVerify = await this.checkUserService.createToken(
         {
@@ -213,7 +215,7 @@ export class AuthUserController {
     const payload = await this.checkUserService.verifyToken(params?.token);
 
     const findOnUser = await this.usersService.findOneBy({
-      userId: payload?.id,
+      userId: payload?.userId,
       provider: 'DEFAULT',
     });
     if (!findOnUser)
@@ -345,7 +347,7 @@ export class AuthUserController {
 
     await this.usersService.updateOne(
       { userId: payload.userId },
-      { confirmedAt: new Date() },
+      { confirmedAt: dateTimeNowUtc() },
     );
 
     res.cookie(

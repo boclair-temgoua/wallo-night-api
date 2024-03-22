@@ -2,7 +2,7 @@ import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 import {
   FilterQueryType,
   filterQueryTypeArrays,
-} from '../../app/utils/search-query/search-query.dto';
+} from '../../app/utils/search-query';
 
 export class FilterTransactionsDto {
   @IsOptional()

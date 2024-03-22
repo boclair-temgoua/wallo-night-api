@@ -5,8 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Brackets, Repository } from 'typeorm';
+import { getRandomElement } from '../../app/utils/array';
+import { Slug, colorsArrays, generateNumber } from '../../app/utils/commons';
+import { withPagination } from '../../app/utils/pagination';
+import { useCatch } from '../../app/utils/use-catch';
 import { Category } from '../../models/Category';
-import { Repository, Brackets } from 'typeorm';
 import {
   CreateCategoriesOptions,
   GetCategoriesSelections,
@@ -14,10 +18,6 @@ import {
   UpdateCategoriesOptions,
   UpdateCategoriesSelections,
 } from './categories.type';
-import { useCatch } from '../../app/utils/use-catch';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
-import { getRandomElement } from '../../app/utils/array/get-random-element';
-import { Slug, colorsArrays, generateNumber } from '../../app/utils/commons';
 
 @Injectable()
 export class CategoriesService {

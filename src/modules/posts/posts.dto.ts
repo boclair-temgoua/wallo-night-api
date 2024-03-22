@@ -10,7 +10,7 @@ import { ProductStatus } from '../../app/utils/pagination';
 import {
   WhoCanSeeType,
   whoCanSeeTypeArrays,
-} from '../../app/utils/search-query/search-query.dto';
+} from '../../app/utils/search-query';
 import { PostType, postTypeArrays } from './posts.type';
 
 export class CreateOrUpdatePostsGalleriesDto {

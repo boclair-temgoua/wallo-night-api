@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common/index';
-import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
+import { FilterQueryType } from '../app/utils/search-query';
 import { User } from './User';
 
 @Entity('like')

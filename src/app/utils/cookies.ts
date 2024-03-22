@@ -1,6 +1,39 @@
-import { config } from '../config/index';
-import { getCookieSettings } from './cookies.setting';
-const cookieSettings = getCookieSettings(config.environment);
+import { Env, config } from '../config/index';
+
+const cookieSettings = (env: string) =>
+  env in settingsMap ? settingsMap[(env as Env) ?? 'dev'] : settingsMap.dev;
+
+const settingsMap: {
+  [Key in Env]: {
+    httpOnly: false;
+    secure: boolean;
+    domain?: string;
+    sameSite: 'none' | 'lax';
+  };
+} = {
+  local: {
+    httpOnly: false,
+    secure: true,
+    sameSite: 'none',
+  },
+  dev: {
+    httpOnly: false,
+    secure: true,
+    sameSite: 'none',
+  },
+  prod: {
+    httpOnly: false,
+    secure: true,
+    domain: config.cookie_access.domain,
+    sameSite: 'none',
+  },
+  test: {
+    httpOnly: false,
+    secure: true,
+    domain: config.cookie_access.domain,
+    sameSite: 'none',
+  },
+};
 
 /*************** Setting user cookie *************************/
 export const validation_verify_cookie_setting = {

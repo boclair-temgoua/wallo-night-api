@@ -11,11 +11,11 @@ import {
   generateLongUUID,
   generateNumber,
   isNotUndefined,
-} from '../../app/utils/commons/generate-random';
+} from '../../app/utils/commons';
 import {
   WithPaginationResponse,
   withPagination,
-} from '../../app/utils/pagination/with-pagination';
+} from '../../app/utils/pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { Post } from '../../models/Post';
 import {

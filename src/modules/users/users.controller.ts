@@ -19,8 +19,9 @@ import {
 import { reply } from '../../app/utils/reply';
 
 import { FileInterceptor } from '@nestjs/platform-express';
-import { validation_login_cookie_setting } from 'src/app/utils/cookies';
-import { config } from '../../app/config/index';
+import { config } from '../../app/config';
+import { dateTimeNowUtc } from '../../app/utils/commons';
+import { validation_login_cookie_setting } from '../../app/utils/cookies';
 import {
   PaginationType,
   RequestPaginationDto,
@@ -281,7 +282,10 @@ export class UsersController {
         HttpStatus.NOT_FOUND,
       );
 
-    await this.usersService.updateOne({ userId }, { deletedAt: new Date() });
+    await this.usersService.updateOne(
+      { userId },
+      { deletedAt: dateTimeNowUtc() },
+    );
 
     res.clearCookie(
       config.cookie_access.nameLogin,

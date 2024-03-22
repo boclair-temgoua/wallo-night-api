@@ -1,5 +1,5 @@
+import { PaginationType } from '../../app/utils/pagination';
 import { ContactUs } from '../../models/ContactUs';
-import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetContactUsSelections = {
   search?: string;

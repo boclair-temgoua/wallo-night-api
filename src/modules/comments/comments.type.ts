@@ -1,4 +1,4 @@
-import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { PaginationType } from '../../app/utils/pagination';
 import { Comment } from '../../models/Comment';
 
 export type GetCommentsSelections = {

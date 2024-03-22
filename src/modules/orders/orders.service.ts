@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import { generateNumber } from '../../app/utils/commons';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { withPagination } from '../../app/utils/pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { Order } from '../../models';
 import {

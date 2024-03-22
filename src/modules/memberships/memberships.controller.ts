@@ -17,13 +17,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   PaginationType,
+  RequestPaginationDto,
   addPagination,
-} from '../../app/utils/pagination/with-pagination';
+} from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { UploadsUtil } from '../uploads/uploads.util';
 import { UserAuthGuard } from '../users/middleware';

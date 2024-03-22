@@ -17,13 +17,13 @@ import { UserAuthGuard } from '../users/middleware';
 import {
   addMonthsFormateDDMMYYDate,
   formateNowDateUnixInteger,
-} from '../../app/utils/commons/formate-date';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
+} from '../../app/utils/formate-date';
 import {
   PaginationType,
+  RequestPaginationDto,
   addPagination,
-} from '../../app/utils/pagination/with-pagination';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+} from '../../app/utils/pagination';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { FollowsService } from '../follows/follows.service';
 import { MembershipsService } from '../memberships/memberships.service';
 import { TransactionsService } from '../transactions/transactions.service';

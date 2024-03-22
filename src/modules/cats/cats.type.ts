@@ -1,4 +1,4 @@
-import { FilterQueryType } from '../../app/utils/search-query/search-query.dto';
+import { FilterQueryType } from '../../app/utils/search-query';
 import { Cart } from '../../models/Cart';
 import { StatusCart } from './cats.dto';
 

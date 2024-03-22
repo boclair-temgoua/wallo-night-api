@@ -5,8 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Brackets, Repository } from 'typeorm';
+import {
+  WithPaginationResponse,
+  withPagination,
+} from '../../app/utils/pagination';
+import { useCatch } from '../../app/utils/use-catch';
 import { ContactUs } from '../../models/ContactUs';
-import { Repository, Brackets } from 'typeorm';
 import {
   CreateContactUsOptions,
   GetContactUsSelections,
@@ -14,11 +19,6 @@ import {
   UpdateContactUsOptions,
   UpdateContactUsSelections,
 } from './contact-us.type';
-import { useCatch } from '../../app/utils/use-catch';
-import {
-  WithPaginationResponse,
-  withPagination,
-} from '../../app/utils/pagination/with-pagination';
 
 @Injectable()
 export class ContactUsService {

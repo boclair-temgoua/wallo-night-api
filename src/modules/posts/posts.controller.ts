@@ -26,12 +26,12 @@ import {
   GetOnePostDto,
 } from './posts.dto';
 
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   addPagination,
   PaginationType,
-} from '../../app/utils/pagination/with-pagination';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+  RequestPaginationDto,
+} from '../../app/utils/pagination';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { FollowsService } from '../follows/follows.service';
 import { UploadsUtil } from '../uploads/uploads.util';
 import { PostsService } from './posts.service';

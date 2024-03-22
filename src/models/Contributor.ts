@@ -7,7 +7,7 @@ import {
   Relation,
 } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
-import { FilterQueryType } from '../app/utils/search-query/search-query.dto';
+import { FilterQueryType } from '../app/utils/search-query';
 import {
   ContributorRole,
   ContributorStatus,

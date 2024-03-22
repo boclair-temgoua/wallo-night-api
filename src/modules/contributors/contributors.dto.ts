@@ -69,12 +69,12 @@ export class UpdateRoleContributorsDto {
 }
 
 export class ConfirmInvitationContributorsDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(50)
   firstName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   lastName: string;
 

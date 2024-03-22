@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { getRandomElement } from '../../app/utils/array/get-random-element';
+import { getRandomElement } from '../../app/utils/array';
 import { colorsArrays } from '../../app/utils/commons';
 import { useCatch } from '../../app/utils/use-catch';
 import { Organization } from '../../models/Organization';

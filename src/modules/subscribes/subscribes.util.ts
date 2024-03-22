@@ -3,7 +3,7 @@ import {
   addMonthsFormateDDMMYYDate,
   dateTimeNowUtc,
   formateNowDateUnixInteger,
-} from '../../app/utils/commons/formate-date';
+} from '../../app/utils/formate-date';
 import { FilterQueryType } from '../../app/utils/search-query';
 import { FollowsService } from '../follows/follows.service';
 import { MembershipsService } from '../memberships/memberships.service';

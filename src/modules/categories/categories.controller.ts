@@ -16,12 +16,12 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   PaginationType,
+  RequestPaginationDto,
   addPagination,
-} from '../../app/utils/pagination/with-pagination';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+} from '../../app/utils/pagination';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { UserAuthGuard } from '../users/middleware';
 import { CreateOrUpdateCategoriesDto } from './categories.dto';
 import { CategoriesService } from './categories.service';

@@ -2,18 +2,12 @@ import { config } from '../../../app/config/index';
 
 import { nodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
 
-export const confirmInvitationMail = async ({
+export const codeConfirmationMail = async ({
   code,
   email,
-  token,
-  nameOrganization,
-  fullNameInviter,
 }: {
-  code?: string;
+  code: string;
   email: string;
-  token: string;
-  fullNameInviter: string;
-  nameOrganization: string;
 }) => {
   const output = `
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -202,54 +196,44 @@ export const confirmInvitationMail = async ({
                             height="50px"
                           />
                         </div>
-                        <h2 style="
-                        text-align: center;
-                        color: #0d0c22;
-                        font-family: Helvetica Neue Roman, Arial, sans-serif,
-                          'Open Sans';
-                      ">Invitation to join</h2>
-
-                      <div style="text-align: center">
-                        <span style="font-size: 16px">
-                            ${fullNameInviter} has invited you to join the ${nameOrganization}
-                            organization </span
-                          >
-                      </div><br />
-  
-                        <table
-                          class="subcopy"
-                          width="100%"
-                          cellpadding="0"
-                          cellspacing="0"
-                          role="presentation"
+                        <h2
+                          style="
+                            text-align: center;
+                            color: #0d0c22;
+                            font-family: Helvetica Neue Roman, Arial, sans-serif,
+                              'Open Sans';
+                          "
                         >
-                          <tr>
-                            <td colspan="2">
-                              <div style="text-align: center">
-                                <a
-                                  href="${config.datasite.urlClient}/verify/confirm-contributor?token=${token}"
-                                  style="
-                                    font-family: 'Google Sans', Roboto,
-                                      RobotoDraft, Helvetica, Arial, sans-serif;
-                                    line-height: 16px;
-                                    color: #ffffff;
-                                    font-weight: 400;
-                                    text-decoration: none;
-                                    font-size: 14px;
-                                    display: inline-block;
-                                    padding: 15px 30px;
-                                    background-color: #4184f3;
-                                    border-radius: 5px;
-                                    min-width: 90px;
-                                  "
-                                  target="_blank"
-                                  >Join ${nameOrganization}</a
-                                >
-                              </div>
-                            </td>
-                          </tr>
-                        </table>
-                        <br /><br />
+                          Code verification
+                        </h2>
+                        <div style="text-align: center">
+                        <span style="font-size: 16px">
+                        Please use this code
+                        <span style="color: #0d0c22; font-weight: bold"
+                          >${code}</span
+                        >
+                        to verify your email and complete your account
+                        set up. The code will be valid for the next 2
+                        days.</span
+                      >
+                        </div>
+                        <br />
+  
+                        <div style="text-align: center">
+                          <span
+                            style="
+                              text-align: center;
+                              margin: 0;
+                              color: #0d0c22;
+                              font-weight: bold;
+                              font-size: 30px;
+                              font-family: Helvetica Neue Roman, Arial, sans-serif,
+                                'Open Sans';
+                            "
+                            >${code}</span
+                          >
+                        </div>
+                        <br />
   
                         <p
                           style="
@@ -262,92 +246,11 @@ export const confirmInvitationMail = async ({
                             font-size: 16px;
                             line-height: 1.5em;
                             margin-top: 0;
-                            text-align: left;
+                            text-align: center;
                           "
                         >
                           Thanks,<br />The ${config.datasite.name} Team
                         </p>
-  
-                        <table
-                          class="subcopy"
-                          width="100%"
-                          cellpadding="0"
-                          cellspacing="0"
-                          role="presentation"
-                          style="
-                            box-sizing: border-box;
-                            font-family: -apple-system, BlinkMacSystemFont,
-                              'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-                              'Apple Color Emoji', 'Segoe UI Emoji',
-                              'Segoe UI Symbol';
-                            position: relative;
-                            border-top: 1px solid #e8e5ef;
-                            margin-top: 25px;
-                            padding-top: 25px;
-                          "
-                        >
-                          <tr>
-                            <td
-                              style="
-                                box-sizing: border-box;
-                                font-family: -apple-system, BlinkMacSystemFont,
-                                  'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-                                  'Apple Color Emoji', 'Segoe UI Emoji',
-                                  'Segoe UI Symbol';
-                                position: relative;
-                              "
-                            >
-                              <p
-                                style="
-                                  box-sizing: border-box;
-                                  font-family: -apple-system, BlinkMacSystemFont,
-                                    'Segoe UI', Roboto, Helvetica, Arial,
-                                    sans-serif, 'Apple Color Emoji',
-                                    'Segoe UI Emoji', 'Segoe UI Symbol';
-                                  position: relative;
-                                  line-height: 1.5em;
-                                  margin-top: 0;
-                                  text-align: left;
-                                  font-size: 14px;
-                                "
-                              >
-                                If you’re having trouble clicking the "Join
-                                ${nameOrganization}" button, copy and paste the URL
-                                below into your web browser is valid for 30
-                                minutes:
-                                <span
-                                  class="break-all"
-                                  style="
-                                    box-sizing: border-box;
-                                    font-family: -apple-system, BlinkMacSystemFont,
-                                      'Segoe UI', Roboto, Helvetica, Arial,
-                                      sans-serif, 'Apple Color Emoji',
-                                      'Segoe UI Emoji', 'Segoe UI Symbol';
-                                    position: relative;
-                                    word-break: break-all;
-                                  "
-                                >
-                                  <a
-                                    target="_blank"
-                                    href="${config.datasite.urlClient}/verify/confirm-contributor?token=${token}"
-                                    style="
-                                      box-sizing: border-box;
-                                      font-family: -apple-system,
-                                        BlinkMacSystemFont, 'Segoe UI', Roboto,
-                                        Helvetica, Arial, sans-serif,
-                                        'Apple Color Emoji', 'Segoe UI Emoji',
-                                        'Segoe UI Symbol';
-                                      position: relative;
-                                      color: #3869d4;
-                                    "
-                                  >
-                                    ${config.datasite.urlClient}/verify/confirm-contributor?token=${token}
-                                  </a></span
-                                >
-                              </p>
-                            </td>
-                          </tr>
-                        </table>
                       </td>
                     </tr>
                   </table>
@@ -411,6 +314,7 @@ export const confirmInvitationMail = async ({
                           Use of our service and website is subject to our
                           <a
                             href="${config.datasite.urlClient}/terms-condition"
+                            data-saferedirecturl="${config.datasite.urlClient}/terms-condition"
                             class="hover-underline"
                             style="
                               --text-opacity: 1;
@@ -423,6 +327,7 @@ export const confirmInvitationMail = async ({
                           and
                           <a
                             href="${config.datasite.urlClient}/privacy-policy"
+                            data-saferedirecturl="${config.datasite.urlClient}/privacy-policy"
                             class="hover-underline"
                             style="
                               --text-opacity: 1;
@@ -462,14 +367,13 @@ export const confirmInvitationMail = async ({
         </tr>
       </table>
     </body>
-  </html>
-  
+  </html>  
       `;
 
   await nodeMailServiceAdapter({
     from: `${config.implementations.resendSMTP.noReplayFrom}`,
     to: [`${email}`],
-    subject: `${config.datasite.name} - ${fullNameInviter} has invited you to join the ${nameOrganization}`,
+    subject: `${config.datasite.name} - Login to your account with code: ${code}`,
     html: output,
   });
 };

@@ -10,7 +10,7 @@ import { BaseDeleteEntity } from '../app/databases/common/index';
 import {
   FilterQueryType,
   filterQueryTypeArrays,
-} from '../app/utils/search-query/search-query.dto';
+} from '../app/utils/search-query';
 import { UploadType } from '../modules/uploads/uploads.type';
 import { Commission, Membership, Organization, Post, Product } from './index';
 

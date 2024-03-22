@@ -8,13 +8,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   PaginationType,
+  RequestPaginationDto,
   addPagination,
-} from '../../app/utils/pagination/with-pagination';
+} from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { UserAuthGuard } from '../users/middleware';
 import {
   CreateOneContributionDonationDto,

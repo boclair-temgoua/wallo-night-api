@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { withPagination } from '../../app/utils/pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { Comment } from '../../models/Comment';
 import {

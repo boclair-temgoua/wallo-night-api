@@ -1,7 +1,7 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { CurrenciesService } from './currencies.service';
 import { CurrenciesUtil } from './currencies.util';
 

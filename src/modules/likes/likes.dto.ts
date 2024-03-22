@@ -1,17 +1,14 @@
-import { User } from '../../models/User';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import {
   FilterQueryType,
   filterQueryTypeArrays,
-} from '../../app/utils/search-query/search-query.dto';
-import {
-  IsString,
-  IsNotEmpty,
-  MaxLength,
-  MinLength,
-  IsOptional,
-  IsIn,
-  IsUUID,
-} from 'class-validator';
+} from '../../app/utils/search-query';
 
 export class CreateOrUpdateLikesDto {
   @IsNotEmpty()

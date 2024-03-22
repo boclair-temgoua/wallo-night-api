@@ -1,5 +1,5 @@
 import * as argon2 from 'argon2';
-import { PaginationType } from '../../app/utils/pagination/with-pagination';
+import { PaginationType } from '../../app/utils/pagination';
 import { User } from '../../models/User';
 
 export type JwtPayloadType = {

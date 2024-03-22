@@ -7,9 +7,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import {
-  withPagination,
   WithPaginationResponse,
-} from '../../app/utils/pagination/with-pagination';
+  withPagination,
+} from '../../app/utils/pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { Subscribe } from '../../models/Subscribe';
 import {

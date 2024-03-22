@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as mime from 'mime-types';
-import { formateNowDateYYMMDD } from '../../app/utils/commons/formate-date';
-import { generateLongUUID } from '../../app/utils/commons/generate-random';
-import { KeyAsString } from '../../app/utils/commons/key-as-string';
+import { KeyAsString, generateLongUUID } from '../../app/utils/commons';
+import { formateNowDateYYMMDD } from '../../app/utils/formate-date';
 import { FilterQueryType } from '../../app/utils/search-query';
 import { awsS3ServiceAdapter } from '../integrations/aws-s3-service-adapter';
 import { UploadsService } from './uploads.service';

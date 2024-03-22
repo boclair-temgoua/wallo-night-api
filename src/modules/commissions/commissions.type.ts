@@ -1,6 +1,5 @@
-import { Category } from '../../models/Category';
+import { PaginationType } from '../../app/utils/pagination';
 import { Commission } from '../../models/Commission';
-import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetCommissionsSelections = {
   search?: string;

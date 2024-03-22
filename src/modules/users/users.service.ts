@@ -1,10 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
-import {
-  Slug,
-  generateLongUUID,
-} from '../../app/utils/commons/generate-random';
+import { Slug, generateLongUUID } from '../../app/utils/commons';
 import { withPagination } from '../../app/utils/pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { User } from '../../models/User';

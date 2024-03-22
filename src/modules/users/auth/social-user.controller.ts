@@ -8,7 +8,11 @@ import {
 } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { config } from '../../../app/config/index';
-import { generateLongUUID, generateNumber } from '../../../app/utils/commons';
+import {
+  dateTimeNowUtc,
+  generateLongUUID,
+  generateNumber,
+} from '../../../app/utils/commons';
 import { validation_login_cookie_setting } from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
 import { ProvidersService } from '../../providers/providers.service';
@@ -106,6 +110,7 @@ export class SocialUserController {
       lastName: given_name,
       username: `${given_name}-${family_name}-${generateNumber(4)}`,
       image: { id: 'provider', patch: picture },
+      confirmedAt: dateTimeNowUtc(),
     });
 
     await this.providersService.createOne({

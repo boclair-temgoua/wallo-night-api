@@ -14,24 +14,26 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { config } from '../../../app/config/index';
+import { config } from '../../../app/config';
 import {
+  dateTimeNowUtc,
   generateLongUUID,
   generateNumber,
-} from '../../../app/utils/commons/generate-random';
-import { RequestPaginationDto } from '../../../app/utils/pagination/request-pagination.dto';
+} from '../../../app/utils/commons';
 import {
   PaginationType,
+  RequestPaginationDto,
   addPagination,
-} from '../../../app/utils/pagination/with-pagination';
+} from '../../../app/utils/pagination';
 import { reply } from '../../../app/utils/reply';
-import { SearchQueryDto } from '../../../app/utils/search-query/search-query.dto';
+import { SearchQueryDto } from '../../../app/utils/search-query';
 import {
   ConfirmInvitationContributorsDto,
   CreateOneNewUserContributorsDto,
   UpdateRoleContributorsDto,
 } from '../../contributors/contributors.dto';
 import { ContributorsService } from '../../contributors/contributors.service';
+import { TokenContributorModel } from '../../contributors/contributors.type';
 import { ProfilesService } from '../../profiles/profiles.service';
 import { CheckUserService } from '../middleware/check-user.service';
 import { UserAuthGuard } from '../middleware/cookie/user-auth.guard';
@@ -158,15 +160,17 @@ export class ContributorUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    const { user: newUser } = await this.usersUtil.saveOrUpdate({
-      role: 'ADMIN',
-      email,
-      lastName,
-      firstName,
-      provider: 'DEFAULT',
-      password: generateLongUUID(10),
-      username: `${firstName}-${lastName}-${generateNumber(4)}`,
-    });
+    const { user: newUser, contributor: userContributor } =
+      await this.usersUtil.saveOrUpdate({
+        role: 'ADMIN',
+        email,
+        lastName,
+        firstName,
+        provider: 'DEFAULT',
+        password: generateLongUUID(10),
+        username: `${firstName}-${lastName}-${generateNumber(4)}`,
+        confirmedAt: null,
+      });
 
     const contributor = await this.contributorsService.createOne({
       role,
@@ -185,6 +189,7 @@ export class ContributorUserController {
       {
         userId: newUser.id,
         contributorId: contributor.id,
+        userContributorId: userContributor.id,
         contributorStatus: contributor?.status,
         guest: {
           lastName: lastName,
@@ -196,7 +201,7 @@ export class ContributorUserController {
           firstName: user?.profile?.firstName,
           organizationName: user?.organization?.name,
         },
-      },
+      } as TokenContributorModel,
       config.cookie_access.verifyExpire,
     );
 
@@ -218,9 +223,10 @@ export class ContributorUserController {
     @Body() body: ConfirmInvitationContributorsDto,
     @Param() params: TokenUserDto,
   ) {
-    const { firstName, lastName, password, contributorId, contributorStatus } =
-      body;
-    const payload = await this.checkUserService.verifyToken(params?.token);
+    const { firstName, lastName, password } = body;
+    const payload = (await this.checkUserService.verifyToken(
+      params?.token,
+    )) as TokenContributorModel;
 
     const findOnUser = await this.usersService.findOneBy({
       userId: payload?.userId,
@@ -233,12 +239,19 @@ export class ContributorUserController {
 
     await this.usersService.updateOne(
       { userId: findOnUser?.id },
-      { password, confirmedAt: new Date() },
+      { password, confirmedAt: dateTimeNowUtc() },
     );
 
+    // Update contributor created by investor
     await this.contributorsService.updateOne(
       { contributorId: payload?.contributorId },
-      { confirmedAt: new Date() },
+      { confirmedAt: dateTimeNowUtc() },
+    );
+
+    // Update contributor
+    await this.contributorsService.updateOne(
+      { contributorId: payload?.userContributorId },
+      { confirmedAt: dateTimeNowUtc() },
     );
 
     await this.profilesService.updateOne(
@@ -289,16 +302,29 @@ export class ContributorUserController {
       contributorId,
       organizationId: user?.organizationId,
     });
-
     if (!findOneContributor)
       throw new HttpException(
         `This contributor dons't exists please change`,
         HttpStatus.NOT_FOUND,
       );
 
+    const findOneOrganization = await this.contributorsService.findOneBy({
+      userId: findOneContributor?.userId,
+    });
+    if (!findOneOrganization)
+      throw new HttpException(
+        `This organization dons't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
     await this.contributorsService.updateOne(
       { contributorId },
-      { deletedAt: new Date() },
+      { deletedAt: dateTimeNowUtc() },
+    );
+
+    await this.usersService.updateOne(
+      { userId: findOneOrganization?.userId },
+      { organizationId: findOneOrganization?.id },
     );
 
     return reply({ res, results: 'Contributor deleted successfully' });

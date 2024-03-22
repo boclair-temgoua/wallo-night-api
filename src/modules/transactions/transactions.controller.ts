@@ -11,12 +11,12 @@ import {
 import { reply } from '../../app/utils/reply';
 import { UserAuthGuard } from '../users/middleware';
 
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
 import {
   addPagination,
   PaginationType,
-} from '../../app/utils/pagination/with-pagination';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+  RequestPaginationDto,
+} from '../../app/utils/pagination';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { FilterTransactionsDto } from './transactions.dto';
 import { TransactionsService } from './transactions.service';
 

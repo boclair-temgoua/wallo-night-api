@@ -219,7 +219,9 @@ export const passwordResetMail = async ({
                             <td colspan="2">
                               <div style="text-align: center">
                               <a
-                                  href="${config.datasite.urlClient}/reset-password/${token}"                                style="
+                                  href="${config.datasite.urlClient}/reset-password/${token}"
+                                  data-saferedirecturl="${config.datasite.urlClient}/reset-password/${token}"
+                                  style="
                                   font-family: 'Google Sans', Roboto,
                                     RobotoDraft, Helvetica, Arial, sans-serif;
                                   line-height: 16px;
@@ -321,7 +323,7 @@ export const passwordResetMail = async ({
                               >
                                 If you’re having trouble clicking the "Reset
                                 Password" button, copy and paste the URL below
-                                into your web browser is valid for 30 minutes:
+                                into your web browser is valid for 2 days:
                                 <span
                                   class="break-all"
                                   style="
@@ -337,6 +339,7 @@ export const passwordResetMail = async ({
                                   <a
                                   target="_blank"
                                     href="${config.datasite.urlClient}/reset-password/${token}"
+                                    data-saferedirecturl="${config.datasite.urlClient}/reset-password/${token}"
                                     style="
                                       box-sizing: border-box;
                                       font-family: -apple-system,
@@ -418,6 +421,7 @@ export const passwordResetMail = async ({
                           Use of our service and website is subject to our
                           <a
                             href="${config.datasite.urlClient}/terms-condition"
+                            data-saferedirecturl="${config.datasite.urlClient}/terms-condition"
                             class="hover-underline"
                             style="
                               --text-opacity: 1;
@@ -430,6 +434,7 @@ export const passwordResetMail = async ({
                           and
                           <a
                             href="${config.datasite.urlClient}/privacy-policy"
+                            data-saferedirecturl="${config.datasite.urlClient}/privacy-policy"
                             class="hover-underline"
                             style="
                               --text-opacity: 1;

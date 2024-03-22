@@ -472,6 +472,9 @@ export class PaymentsTransactionController {
       }
     }
 
+    // send email to buyer
+    // await orderCommissionJob({ email: findOneUser?.email, token: '' });
+
     return reply({ res, results: reference });
   }
 

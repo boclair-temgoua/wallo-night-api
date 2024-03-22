@@ -17,7 +17,7 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
-import { getIpRequest } from '../../app/utils/commons/get-ip-request';
+import { getIpRequest } from '../../app/utils/commons';
 import { CartOrdersService } from '../cart-orders/cart-orders.service';
 import { ProductsService } from '../products/products.service';
 import { UserAuthGuard } from '../users/middleware';

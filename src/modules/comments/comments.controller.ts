@@ -18,13 +18,13 @@ import { reply } from '../../app/utils/reply';
 import { UserAuthGuard } from '../users/middleware';
 import { CommentsDto, CreateOrUpdateCommentsDto } from './comments.dto';
 
-import { isEmpty } from '../../app/utils/commons/is-empty';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
+import { isEmpty } from '../../app/utils/commons';
 import {
   addPagination,
   PaginationType,
-} from '../../app/utils/pagination/with-pagination';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+  RequestPaginationDto,
+} from '../../app/utils/pagination';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { CommentsService } from './comments.service';
 
 @Controller('comments')

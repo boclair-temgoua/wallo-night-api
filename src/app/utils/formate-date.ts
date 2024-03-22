@@ -6,9 +6,8 @@ export const subtractYears = (numOfYears: number, date: Date) => {
   return dateSub;
 };
 
-export const formateYYMMDDDate = (date: Date) => {
-  return DateTime.fromJSDate(date).toFormat('yyyy/LL/dd');
-};
+export const formateYYMMDDDate = (date: Date) =>
+  DateTime.fromJSDate(date).toFormat('yyyy/LL/dd');
 
 export const formateDDMMYYDate = (date: Date) =>
   DateTime.fromJSDate(date).toFormat('dd/MM/yyyy');
@@ -24,21 +23,17 @@ export const dateTimeNowUtc = () => DateTime.utc().toJSDate();
 export const addMinutesToDateTimeNowUtc = (minutes: number) =>
   DateTime.utc().plus({ minutes: minutes }).toJSDate();
 
-export const stringDateFormateYYMMDDUtc = (date: string) => {
-  return DateTime.fromFormat(date, 'dd/MM/yyyy').toISO() as unknown as Date;
-};
+export const stringDateFormateYYMMDDUtc = (date: string) =>
+  DateTime.fromFormat(date, 'dd/MM/yyyy').toISO() as unknown as Date;
 
-export const addDaysToTimeNowUtcDate = (dayNumber: number) => {
-  return DateTime.utc().plus({ days: dayNumber }).toJSDate();
-};
+export const addDaysToTimeNowUtcDate = (dayNumber: number) =>
+  DateTime.utc().plus({ days: dayNumber }).toJSDate();
 
-export const addMonthsToTimeNowUtcDate = (dayNumber: number) => {
-  return DateTime.utc().plus({ months: dayNumber }).toJSDate();
-};
+export const addMonthsToTimeNowUtcDate = (dayNumber: number) =>
+  DateTime.utc().plus({ months: dayNumber }).toJSDate();
 
-export const addDaysToTimeNowUtcUnixInteger = (dayNumber: number) => {
-  return DateTime.utc().plus({ days: dayNumber }).toUnixInteger();
-};
+export const addDaysToTimeNowUtcUnixInteger = (dayNumber: number) =>
+  DateTime.utc().plus({ days: dayNumber }).toUnixInteger();
 
 export const addDaysToDateUtcUnixInteger = (options: {
   date: Date;
@@ -69,31 +64,25 @@ export const addYearsFormateDDMMYYDate = (options: {
   return DateTime.fromISO(dateFormate).plus({ years: yearNumber }).toJSDate();
 };
 
-export const substrateDaysToTimeNowUtcDate = (value: number) => {
-  return DateTime.utc().minus({ days: value }).toJSDate();
-};
+export const substrateDaysToTimeNowUtcDate = (value: number) =>
+  DateTime.utc().minus({ days: value }).toJSDate();
 
-export const substrateDaysToTimeNowUtcUnixInteger = (value: number) => {
-  return DateTime.utc().minus({ days: value }).toUnixInteger();
-};
+export const substrateDaysToTimeNowUtcUnixInteger = (value: number) =>
+  DateTime.utc().minus({ days: value }).toUnixInteger();
 
-export const formateNowDateUnixInteger = (date: Date) => {
-  return DateTime.fromJSDate(date).toUnixInteger() as unknown as number;
-};
-export const fromIsoToYYYYMMDD = (date: Date) => {
-  return DateTime.fromISO(date as unknown as string).toFormat('yyyy/LL/dd');
-};
+export const formateNowDateUnixInteger = (date: Date) =>
+  DateTime.fromJSDate(date).toUnixInteger() as unknown as number;
+export const fromIsoToYYYYMMDD = (date: Date) =>
+  DateTime.fromISO(date as unknown as string).toFormat('yyyy/LL/dd');
 
 export const dateTimeNowUtcUnixInteger = () =>
   DateTime.fromISO(DateTime.utc().toISO() as string).toUnixInteger();
 
-export const formatDateToUtc = (date: string) => {
-  return DateTime.fromFormat(date, 'yyyy-mm-dd').toISO() as unknown as Date;
-};
+export const formatDateToUtc = (date: string) =>
+  DateTime.fromFormat(date, 'yyyy-mm-dd').toISO() as unknown as Date;
 
-export const formatDateJsToUtc = (date: Date) => {
-  return DateTime.fromJSDate(date).toUTC().toJSDate();
-};
+export const formatDateJsToUtc = (date: Date) =>
+  DateTime.fromJSDate(date).toUTC().toJSDate();
 
 export const addToDateUtc = ({
   date,
@@ -101,12 +90,11 @@ export const addToDateUtc = ({
 }: {
   date: Date;
   plus: DurationLike;
-}) => {
-  return DateTime.fromISO(DateTime.fromJSDate(date).toString())
+}) =>
+  DateTime.fromISO(DateTime.fromJSDate(date).toString())
     .plus(plus)
     .toUTC()
     .toJSDate();
-};
 
 const timeMult = { days: 86_400, hrs: 3_600, min: 60, sec: 1 };
 type OffsetUnit = keyof typeof timeMult;

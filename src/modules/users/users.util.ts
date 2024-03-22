@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { addYearsFormateDDMMYYDate } from '../../app/utils/commons/formate-date';
+import { addYearsFormateDDMMYYDate } from '../../app/utils/formate-date';
 import { Contributor, Profile } from '../../models';
 import { ContributorsService } from '../contributors/contributors.service';
 import { CurrenciesService } from '../currencies/currencies.service';
@@ -35,6 +35,7 @@ export class UsersUtil {
     image?: Profile['image'];
     role: Contributor['role'];
     email_verified?: boolean;
+    confirmedAt: Date;
   }): Promise<any> {
     const {
       username,
@@ -46,6 +47,7 @@ export class UsersUtil {
       firstName,
       lastName,
       image,
+      confirmedAt,
     } = options;
 
     const findOnCurrency = await this.currenciesService.findOneBy({
@@ -72,7 +74,7 @@ export class UsersUtil {
       email,
       provider,
       password,
-      confirmedAt: email_verified === true ? new Date() : null,
+      confirmedAt: confirmedAt,
       profileId: profile?.id,
       username,
       organizationId: organization?.id,
@@ -94,19 +96,19 @@ export class UsersUtil {
     });
 
     /** Create Subscribe */
-    await this.contributorsService.createOne({
+    const contributor = await this.contributorsService.createOne({
       userId: user?.id,
       userCreatedId: user?.id,
       role: role,
       organizationId: organization?.id,
-      confirmedAt: email_verified === true ? new Date() : null,
+      confirmedAt: confirmedAt,
     });
 
     /** Create Donation */
     await this.donationsService.createOne({
       price: 5, // USD
       userId: user?.id,
-      messageWelcome: 'Thank you for the support! 🎉',
+      messageWelcome: '🎉 Thank you for the support! 🎉',
     });
 
     /** Update Organization */
@@ -123,6 +125,6 @@ export class UsersUtil {
       organizationId: organization?.id,
     });
 
-    return { user };
+    return { user, contributor };
   }
 }

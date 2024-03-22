@@ -1,5 +1,5 @@
+import { PaginationType } from '../../app/utils/pagination';
 import { Category } from '../../models/Category';
-import { PaginationType } from '../../app/utils/pagination/with-pagination';
 
 export type GetCategoriesSelections = {
   search?: string;

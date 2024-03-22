@@ -13,10 +13,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { PaginationType, addPagination } from '../../app/utils/pagination';
-import { RequestPaginationDto } from '../../app/utils/pagination/request-pagination.dto';
+import {
+  PaginationType,
+  RequestPaginationDto,
+  addPagination,
+} from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { otpMessageSend, otpVerifySid } from '../integrations/twilio-otp';
 import { UserAuthGuard } from '../users/middleware';
 import {

@@ -1,8 +1,8 @@
-import { Controller, Res, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 
+import { SearchQueryDto } from '../../app/utils/search-query';
 import { CountriesService } from './countries.service';
-import { SearchQueryDto } from '../../app/utils/search-query/search-query.dto';
 
 @Controller('countries')
 export class CountriesController {

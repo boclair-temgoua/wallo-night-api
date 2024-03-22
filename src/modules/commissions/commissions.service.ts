@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
-import { isNotUndefined } from '../../app/utils/commons/generate-random';
-import { withPagination } from '../../app/utils/pagination/with-pagination';
+import { isNotUndefined } from '../../app/utils/commons';
+import { withPagination } from '../../app/utils/pagination';
 import { useCatch } from '../../app/utils/use-catch';
 import { Commission } from '../../models/Commission';
 import {

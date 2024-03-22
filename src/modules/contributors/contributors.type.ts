@@ -21,6 +21,22 @@ export const contributorRoleArrays = [
   'MODERATOR',
 ];
 
+export type TokenContributorModel = {
+  userId: string;
+  contributorId: string;
+  userContributorId: string;
+  contributorStatus: ContributorStatus;
+  guest: {
+    lastName: string;
+    firstName: string;
+  };
+  user: {
+    email: string;
+    lastName: string;
+    firstName: string;
+    organizationName: string;
+  };
+};
 export type GetContributorsSelections = {
   search?: string;
   pagination?: PaginationType;

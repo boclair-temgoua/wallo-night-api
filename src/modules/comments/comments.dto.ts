@@ -8,7 +8,7 @@ import {
 import {
   FilterQueryType,
   filterQueryTypeArrays,
-} from '../../app/utils/search-query/search-query.dto';
+} from '../../app/utils/search-query';
 
 export class CreateOrUpdateCommentsDto {
   @IsNotEmpty()
