@@ -140,9 +140,7 @@ export class AuthUserController {
         tokenUser,
         validation_login_cookie_setting,
       );
-    }
-
-    if (!findOnUser?.confirmedAt) {
+    } else {
       const codeGenerate = generateNumber(6);
       const tokenVerify = await this.checkUserService.createToken(
         {
