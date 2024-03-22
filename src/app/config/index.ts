@@ -2,8 +2,6 @@ import * as dotenv from 'dotenv';
 import { TypeDatabase } from '../databases/orm';
 dotenv.config();
 
-export type Env = 'local' | 'prod' | 'test';
-
 export const config = {
   /**
    * Url site
