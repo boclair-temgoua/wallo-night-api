@@ -285,7 +285,6 @@ export class AuthUserController {
   @Get(`/resend/code`)
   async resendCode(@Res() res, @Req() req, @Cookies() cookies) {
     const token = cookies[config.cookie_access.namVerify];
-    console.log('token resend====>', token);
     if (!token) {
       throw new HttpException(
         `Token not valid or expired`,
@@ -329,7 +328,6 @@ export class AuthUserController {
   @Post(`/valid/code`)
   async validCode(@Res() res, @Body('code') code: string, @Cookies() cookies) {
     const token = cookies[config.cookie_access.namVerify];
-    console.log('token valid====>', token);
     if (!token) {
       throw new HttpException(
         `Token not valid or expired`,
