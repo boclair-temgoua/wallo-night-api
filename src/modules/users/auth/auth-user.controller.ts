@@ -22,7 +22,7 @@ import {
 import {
   validation_login_cookie_setting,
   validation_verify_cookie_setting,
-} from '../../../app/utils/cookies/cookies';
+} from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
 import { getOneLocationIpApi } from '../../integrations/taux-live';
 import { ProfilesService } from '../../profiles/profiles.service';

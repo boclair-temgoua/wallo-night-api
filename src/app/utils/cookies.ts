@@ -1,11 +1,11 @@
-import { Env, config } from '../../config/index';
+import { Env, config } from '../config/index';
 
-export const cookieSettings = (env: string) =>
+const cookieSettings = (env: string) =>
   env in settingsMap ? settingsMap[(env as Env) ?? 'local'] : settingsMap.local;
 
 const settingsMap: {
   [Key in Env]: {
-    httpOnly: false;
+    httpOnly: boolean;
     secure: boolean;
     domain?: string;
     sameSite: 'none' | 'lax';
@@ -16,16 +16,27 @@ const settingsMap: {
     secure: true,
     sameSite: 'none',
   },
-  test: {
-    httpOnly: false,
-    secure: true,
-    domain: config.cookie_access.domain,
-    sameSite: 'none',
-  },
   prod: {
     httpOnly: false,
     secure: true,
     domain: config.cookie_access.domain,
     sameSite: 'none',
   },
+  test: {
+    httpOnly: false,
+    secure: true,
+    domain: config.cookie_access.domain,
+    sameSite: 'none',
+  },
+};
+
+/*************** Setting user cookie *************************/
+export const validation_verify_cookie_setting = {
+  maxAge: Number(config.cookie_access.verifyExpire),
+  ...cookieSettings,
+};
+
+export const validation_login_cookie_setting = {
+  maxAge: Number(config.cookie_access.accessExpire),
+  ...cookieSettings,
 };
