@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { config } from '../../app/config/index';
 import { addYearsFormateDDMMYYDate } from '../../app/utils/formate-date';
 import { Contributor, Profile } from '../../models';
 import { ContributorsService } from '../contributors/contributors.service';
@@ -9,6 +10,10 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { SubscribesService } from '../subscribes/subscribes.service';
 import { UserAddressService } from '../user-address/user-address.service';
 import { WalletsService } from '../wallets/wallets.service';
+import {
+  CheckUserService,
+  TokenJwtModel,
+} from './middleware/check-user.service';
 import { UsersService } from './users.service';
 
 @Injectable()
@@ -20,6 +25,7 @@ export class UsersUtil {
     private readonly profilesService: ProfilesService,
     private readonly currenciesService: CurrenciesService,
     private readonly subscribesService: SubscribesService,
+    private readonly checkUserService: CheckUserService,
     private readonly organizationsService: OrganizationsService,
     private readonly contributorsService: ContributorsService,
     private readonly userAddressService: UserAddressService,
@@ -126,5 +132,21 @@ export class UsersUtil {
     });
 
     return { user, contributor };
+  }
+
+  async createTokenLogin(options: {
+    userId: string;
+    organizationId: string;
+  }): Promise<any> {
+    const { userId, organizationId } = options;
+
+    const tokenUser = await this.checkUserService.createToken(
+      {
+        userId: userId,
+        organizationId: organizationId,
+      } as TokenJwtModel,
+      config.cookie_access.accessExpire,
+    );
+    return tokenUser;
   }
 }

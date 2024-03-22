@@ -130,13 +130,10 @@ export class AuthUserController {
     }
 
     if (findOnUser?.confirmedAt) {
-      const tokenUser = await this.checkUserService.createToken(
-        {
-          userId: findOnUser.id,
-          organizationId: findOnUser.organizationId,
-        } as TokenJwtModel,
-        config.cookie_access.accessExpire,
-      );
+      const tokenUser = await this.usersUtil.createTokenLogin({
+        userId: findOnUser?.id,
+        organizationId: findOnUser?.organizationId,
+      });
 
       res.cookie(
         config.cookie_access.nameLogin,

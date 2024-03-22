@@ -62,10 +62,10 @@ export class SocialUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    const tokenUser = await this.checkUserService.createToken(
-      { id: findOnUser.id, organizationId: findOnUser.organizationId },
-      config.cookie_access.accessExpire,
-    );
+    const tokenUser = await this.usersUtil.createTokenLogin({
+      userId: findOnUser?.id,
+      organizationId: findOnUser?.organizationId,
+    });
 
     res.cookie(
       config.cookie_access.nameLogin,
