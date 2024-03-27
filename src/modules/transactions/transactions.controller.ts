@@ -12,9 +12,9 @@ import { reply } from '../../app/utils/reply';
 import { UserAuthGuard } from '../users/middleware';
 
 import {
-  addPagination,
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
+  addPagination,
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
 import { FilterTransactionsDto } from './transactions.dto';
@@ -30,7 +30,7 @@ export class TransactionsController {
   async findAll(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: FilterTransactionsDto,
   ) {
@@ -38,7 +38,7 @@ export class TransactionsController {
     const { model, userBuyerId, organizationId, days } = query;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const transactions = await this.transactionsService.findAll({

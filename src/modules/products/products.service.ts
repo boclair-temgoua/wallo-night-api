@@ -21,7 +21,8 @@ export class ProductsService {
   ) {}
 
   async findAll(selections: GetProductsSelections): Promise<any> {
-    const { search, pagination, status, organizationId } = selections;
+    const { search, pagination, isVisible, status, organizationId } =
+      selections;
 
     let query = this.driver
       .createQueryBuilder('product')
@@ -29,6 +30,7 @@ export class ProductsService {
       .addSelect('product.title', 'title')
       .addSelect('product.subTitle', 'subTitle')
       .addSelect('product.slug', 'slug')
+      .addSelect('product.isVisible', 'isVisible')
       .addSelect('product.whoCanSee', 'whoCanSee')
       .addSelect('product.productType', 'productType')
       .addSelect('product.userId', 'userId')
@@ -156,6 +158,12 @@ export class ProductsService {
       });
     }
 
+    if (isVisible) {
+      query = query.andWhere('product.isVisible = :isVisible', {
+        isVisible,
+      });
+    }
+
     if (status) {
       query = query.andWhere('product.status = :status', { status });
     }
@@ -189,13 +197,14 @@ export class ProductsService {
   }
 
   async findOneBy(selections: GetOneProductsSelections): Promise<any> {
-    const { productId, productSlug, organizationId } = selections;
+    const { productId, isVisible, productSlug, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('product')
       .select('product.id', 'id')
       .addSelect('product.title', 'title')
       .addSelect('product.subTitle', 'subTitle')
       .addSelect('product.slug', 'slug')
+      .addSelect('product.isVisible', 'isVisible')
       .addSelect('product.userId', 'userId')
       .addSelect('product.urlMedia', 'urlMedia')
       .addSelect('product.whoCanSee', 'whoCanSee')
@@ -290,7 +299,7 @@ export class ProductsService {
             WHEN ("discount"."expiredAt" < now()::date
             AND "discount"."deletedAt" IS NULL
             AND "discount"."enableExpiredAt" IS TRUE) THEN false
-            ELSE true
+            ELSE false
             END
         ) AS "discount"`,
       )
@@ -330,6 +339,12 @@ export class ProductsService {
       });
     }
 
+    if (isVisible) {
+      query = query.andWhere('product.isVisible = :isVisible', {
+        isVisible,
+      });
+    }
+
     if (productSlug) {
       query = query.andWhere('product.slug = :slug', { slug: productSlug });
     }
@@ -363,6 +378,7 @@ export class ProductsService {
       enableUrlRedirect,
       messageAfterPayment,
       enableChooseQuantity,
+      isVisible,
       userId,
     } = options;
 
@@ -378,6 +394,7 @@ export class ProductsService {
     product.moreDescription = moreDescription;
     product.limitSlot = limitSlot;
     product.status = status;
+    product.isVisible = isVisible;
     product.currencyId = currencyId;
     product.organizationId = organizationId;
     product.enableLimitSlot = enableLimitSlot;
@@ -425,6 +442,7 @@ export class ProductsService {
       enableUrlRedirect,
       enableLimitSlot,
       enableDiscount,
+      isVisible,
       messageAfterPayment,
       enableChooseQuantity,
     } = options;
@@ -448,6 +466,7 @@ export class ProductsService {
     product.productType = productType;
     product.currencyId = currencyId;
     product.limitSlot = limitSlot;
+    product.isVisible = isVisible;
     product.urlRedirect = urlRedirect;
     product.enableUrlRedirect = enableUrlRedirect;
     product.enableLimitSlot = enableLimitSlot;

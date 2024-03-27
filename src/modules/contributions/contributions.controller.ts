@@ -9,8 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
   addPagination,
 } from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
@@ -31,7 +31,7 @@ export class ContributionsController {
   async findAll(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: SearchContributionDto,
   ) {
@@ -39,7 +39,7 @@ export class ContributionsController {
     const { userId } = query;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const contributions = await this.contributionsService.findAll({

@@ -45,7 +45,9 @@ export class PostsService {
       followerIds,
       typeIds,
       albumId,
+      isVisible,
       categoryId,
+      model,
       organizationId,
     } = selections;
 
@@ -55,6 +57,7 @@ export class PostsService {
       .addSelect('post.status', 'status')
       .addSelect('post.id', 'id')
       .addSelect('post.slug', 'slug')
+      .addSelect('post.isVisible', 'isVisible')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
@@ -179,6 +182,12 @@ export class PostsService {
       query = query.andWhere('post.type IN (:...typeIds)', { typeIds });
     }
 
+    if (isVisible) {
+      query = query.andWhere('post.isVisible = :isVisible', {
+        isVisible,
+      });
+    }
+
     if (organizationId) {
       query = query.andWhere('post.organizationId = :organizationId', {
         organizationId,
@@ -197,6 +206,10 @@ export class PostsService {
 
     if (status) {
       query = query.andWhere('post.status = :status', { status });
+    }
+
+    if (model) {
+      query = query.andWhere('post.model = :model', { model });
     }
 
     if (type) {
@@ -235,14 +248,22 @@ export class PostsService {
   }
 
   async findOneBy(selections: GetOnePostSelections): Promise<Post> {
-    const { postId, organizationId, postSlug, likeUserId, type, status } =
-      selections;
+    const {
+      postId,
+      isVisible,
+      organizationId,
+      postSlug,
+      likeUserId,
+      type,
+      status,
+    } = selections;
     let query = this.driver
       .createQueryBuilder('post')
       .select('post.title', 'title')
       .addSelect('post.status', 'status')
       .addSelect('post.id', 'id')
       .addSelect('post.slug', 'slug')
+      .addSelect('post.isVisible', 'isVisible')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
@@ -367,6 +388,12 @@ export class PostsService {
       });
     }
 
+    if (isVisible) {
+      query = query.andWhere('post.isVisible = :isVisible', {
+        isVisible,
+      });
+    }
+
     if (type) {
       query = query.andWhere('post.type = :type', { type });
     }
@@ -397,6 +424,7 @@ export class PostsService {
       albumId,
       urlMedia,
       whoCanSee,
+      isVisible,
       enableUrlMedia,
       allowDownload,
       description,
@@ -411,6 +439,7 @@ export class PostsService {
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
     post.albumId = albumId;
+    post.isVisible = isVisible;
     post.allowDownload = allowDownload;
     post.enableUrlMedia = enableUrlMedia;
     post.slug = `${
@@ -446,6 +475,7 @@ export class PostsService {
       description,
       urlMedia,
       albumId,
+      isVisible,
       deletedAt,
       categoryId,
     } = options;
@@ -468,6 +498,7 @@ export class PostsService {
     post.allowDownload = allowDownload;
     post.status = status;
     post.albumId = albumId;
+    post.isVisible = isVisible;
     post.description = description;
     post.enableUrlMedia = enableUrlMedia;
     post.deletedAt = deletedAt;

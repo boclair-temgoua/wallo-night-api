@@ -1,3 +1,4 @@
+export * from './Affiliation';
 export * from './Album';
 export * from './Cart';
 export * from './CartOrder';

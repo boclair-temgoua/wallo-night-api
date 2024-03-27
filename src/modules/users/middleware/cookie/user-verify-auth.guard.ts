@@ -4,7 +4,9 @@ import { JsonWebTokenError } from 'jsonwebtoken';
 import { config } from '../../../../app/config';
 
 @Injectable()
-export class UserAuthGuard extends AuthGuard(config.cookie_access.jwtUser) {
+export class UserVerifyAuthGuard extends AuthGuard(
+  config.cookie_access.jwtVerify,
+) {
   handleRequest(err: any, user: any, info: any, context: any, status: any) {
     if (info instanceof JsonWebTokenError) {
       throw new UnauthorizedException(

@@ -19,8 +19,8 @@ import {
   formateNowDateUnixInteger,
 } from '../../app/utils/formate-date';
 import {
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
   addPagination,
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
@@ -44,13 +44,13 @@ export class SubscribesController {
   async findFollowers(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
     const { user } = req;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const subscribers = await this.subscribesService.findAll({
@@ -68,13 +68,13 @@ export class SubscribesController {
   // async findFollowings(
   //   @Res() res,
   //   @Req() req,
-  //   @Query() requestPaginationDto: RequestPaginationDto,
+  //   @Query() PaginationDto: PaginationDto,
   //   @Query() searchQuery: SearchQueryDto,
   // ) {
   //   const { user } = req;
   //   const { search } = searchQuery;
 
-  //   const { take, page, sort } = requestPaginationDto;
+  //   const { take, page, sort } = PaginationDto;
   //   const pagination: PaginationType = addPagination({ page, take, sort });
 
   //   const follows = await this.followsService.findAll({

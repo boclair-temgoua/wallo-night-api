@@ -1,4 +1,5 @@
 import {
+  IsIBAN,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -40,6 +41,11 @@ export class CreateOnePaymentDto {
   @IsOptional()
   @IsString()
   fullName: string;
+
+  @IsOptional()
+  @IsIBAN({ message: 'IBAN not valid' })
+  @IsString()
+  iban: string;
 
   @IsOptional()
   @IsString()

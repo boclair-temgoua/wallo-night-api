@@ -31,6 +31,7 @@ import { SocialUserController } from './auth/social-user.controller';
 import { MailerService } from './mailer.service';
 import { CheckUserService } from './middleware/check-user.service';
 import { UserAuthStrategy } from './middleware/cookie/user-auth.strategy';
+import { UserVerifyAuthStrategy } from './middleware/cookie/user-verify-auth.strategy';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UsersUtil } from './users.util';
@@ -64,13 +65,14 @@ import { UsersUtil } from './users.util';
     ProfilesService,
     CheckUserService,
     UserAuthStrategy,
+    UserVerifyAuthStrategy,
     DonationsService,
-    ContributorsUtil,
     CurrenciesService,
     SubscribesService,
     MailerService,
     UploadsUtil,
     UploadsService,
+    ContributorsUtil,
     UserAddressService,
     ProvidersService,
     ContributorsService,

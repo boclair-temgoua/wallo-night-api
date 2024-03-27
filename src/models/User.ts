@@ -9,24 +9,25 @@ import {
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
-import { Follow } from './Follow';
-import { Like } from './Like';
-import { Membership } from './Membership';
-import { Payment } from './Payment';
-import { Subscribe } from './Subscribe';
 import {
+  Affiliation,
   Cart,
   Comment,
   Contributor,
   Discount,
   Donation,
+  Follow,
+  Like,
+  Membership,
   Order,
   OrderItem,
   Organization,
+  Payment,
   Post,
   Product,
   Profile,
   Provider,
+  Subscribe,
   Transaction,
   UserAddress,
 } from './index';
@@ -142,4 +143,9 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   memberships?: Membership[];
+
+  @OneToMany(() => Affiliation, (affiliation) => affiliation.user, {
+    onDelete: 'CASCADE',
+  })
+  affiliations?: Affiliation;
 }

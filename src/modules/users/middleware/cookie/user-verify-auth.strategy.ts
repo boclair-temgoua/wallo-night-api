@@ -8,14 +8,14 @@ import { ContributorsUtil } from '../../../contributors/contributors.util';
 import { TokenJwtModel } from '../check-user.service';
 
 @Injectable()
-export class UserAuthStrategy extends PassportStrategy(
+export class UserVerifyAuthStrategy extends PassportStrategy(
   Strategy,
-  config.cookie_access.jwtUser,
+  config.cookie_access.jwtVerify,
 ) {
   constructor(private readonly contributorsUtil: ContributorsUtil) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        UserAuthStrategy.extractJwt,
+        UserVerifyAuthStrategy.extractJwt,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
@@ -26,10 +26,10 @@ export class UserAuthStrategy extends PassportStrategy(
   private static extractJwt(req: Request): string | null {
     if (
       req.cookies &&
-      config.cookie_access.nameLogin in req.cookies &&
-      req.cookies[config.cookie_access.nameLogin].length > 0
+      config.cookie_access.namVerify in req.cookies &&
+      req.cookies[config.cookie_access.namVerify].length > 0
     ) {
-      const token = req.cookies[config.cookie_access.nameLogin];
+      const token = req.cookies[config.cookie_access.namVerify];
       const payload = verify(token, config.cookieKey);
       if (!payload)
         throw new HttpException(`Token invalid`, HttpStatus.NOT_FOUND);

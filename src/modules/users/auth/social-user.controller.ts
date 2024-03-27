@@ -109,7 +109,7 @@ export class SocialUserController {
       firstName: family_name,
       lastName: given_name,
       username: `${given_name}-${family_name}-${generateNumber(4)}`,
-      image: { id: 'provider', patch: picture },
+      image: { key: 'provider', patch: picture },
       confirmedAt: dateTimeNowUtc(),
     });
 

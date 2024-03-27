@@ -24,6 +24,8 @@ import {
   validation_verify_cookie_setting,
 } from '../../../app/utils/cookies';
 import { reply } from '../../../app/utils/reply';
+import { ContributorsService } from '../../contributors/contributors.service';
+import { ContributorsUtil } from '../../contributors/contributors.util';
 import { getOneLocationIpApi } from '../../integrations/taux-live';
 import { ProfilesService } from '../../profiles/profiles.service';
 import {
@@ -32,6 +34,7 @@ import {
 } from '../middleware/check-user.service';
 import { Cookies } from '../middleware/cookie.guard';
 import { UserAuthGuard } from '../middleware/cookie/user-auth.guard';
+import { UserVerifyAuthGuard } from '../middleware/cookie/user-verify-auth.guard';
 import {
   CreateLoginUserDto,
   CreateRegisterUserDto,
@@ -50,6 +53,8 @@ export class AuthUserController {
   constructor(
     private readonly usersUtil: UsersUtil,
     private readonly usersService: UsersService,
+    private readonly contributorsUtil: ContributorsUtil,
+    private readonly contributorsService: ContributorsService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
   ) {}
@@ -69,7 +74,7 @@ export class AuthUserController {
         HttpStatus.NOT_FOUND,
       );
 
-    const { user } = await this.usersUtil.saveOrUpdate({
+    const { user, contributor } = await this.usersUtil.saveOrUpdate({
       email,
       password,
       firstName,
@@ -86,6 +91,7 @@ export class AuthUserController {
         code: codeGenerate,
         userId: user.id,
         organizationId: user.organizationId,
+        contributorId: contributor?.id,
       } as TokenJwtModel,
       config.cookie_access.accessExpire,
     );
@@ -123,6 +129,13 @@ export class AuthUserController {
     if (!findOnUser)
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
 
+    const findOnContributor = await this.contributorsService.findOneBy({
+      userId: findOnUser.id,
+      organizationId: findOnUser.organizationId,
+    });
+    if (!findOnContributor)
+      throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
+
     if (!(await checkIfPasswordMatch(findOnUser?.password, password))) {
       await new Promise((resolve) => setTimeout(resolve, 1_000));
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
@@ -145,6 +158,7 @@ export class AuthUserController {
         {
           code: codeGenerate,
           userId: findOnUser.id,
+          contributorId: findOnContributor?.id,
           organizationId: findOnUser.organizationId,
         } as TokenJwtModel,
         config.cookie_access.accessExpire,
@@ -283,6 +297,7 @@ export class AuthUserController {
 
   /** Resend code user */
   @Get(`/resend/code`)
+  @UseGuards(UserVerifyAuthGuard)
   async resendCode(@Res() res, @Req() req, @Cookies() cookies) {
     const token = cookies[config.cookie_access.namVerify];
     if (!token) {
@@ -305,8 +320,8 @@ export class AuthUserController {
     const tokenVerify = await this.checkUserService.createToken(
       {
         code: codeGenerate,
-        userId: findOnUser.id,
-        organizationId: findOnUser.organizationId,
+        userId: payload.userId,
+        organizationId: payload.organizationId,
       } as TokenJwtModel,
       config.cookie_access.accessExpire,
     );
@@ -326,6 +341,7 @@ export class AuthUserController {
 
   /** Resend code user */
   @Post(`/valid/code`)
+  @UseGuards(UserVerifyAuthGuard)
   async validCode(@Res() res, @Body('code') code: string, @Cookies() cookies) {
     const token = cookies[config.cookie_access.namVerify];
     if (!token) {
@@ -341,29 +357,35 @@ export class AuthUserController {
         HttpStatus.NOT_FOUND,
       );
     }
-
-    const tokenUser = await this.checkUserService.createToken(
-      {
+    const { user, contributor } =
+      await this.contributorsUtil.findOneUserOrganizationContributor({
         userId: payload.userId,
-        organizationId: payload.organizationId,
-      } as TokenJwtModel,
-      config.cookie_access.accessExpire,
-    );
+      });
 
     await this.usersService.updateOne(
-      { userId: payload.userId },
+      { userId: user.id },
       { confirmedAt: dateTimeNowUtc() },
     );
 
-    res.cookie(
-      config.cookie_access.nameLogin,
-      tokenUser,
-      validation_login_cookie_setting,
+    // Update contributor
+    await this.contributorsService.updateOne(
+      { contributorId: contributor?.id },
+      { confirmedAt: dateTimeNowUtc() },
     );
 
     res.clearCookie(
       config.cookie_access.namVerify,
       validation_verify_cookie_setting,
+    );
+
+    const tokenUser = await this.usersUtil.createTokenLogin({
+      userId: payload.userId,
+      organizationId: payload.organizationId,
+    });
+    res.cookie(
+      config.cookie_access.nameLogin,
+      tokenUser,
+      validation_login_cookie_setting,
     );
 
     return reply({ res, results: 'Email confirmed successfully' });
@@ -372,11 +394,18 @@ export class AuthUserController {
   /** IpLocation new user */
   @Get(`/ip-location`)
   async ipLocation(@Res() res, @Req() req) {
-    const ipLocation = await getOneLocationIpApi({
+    const ip = await getOneLocationIpApi({
       ipLocation: getIpRequest(req) ?? '101.56.0.0',
     });
-    const { continent, country, countryCode, timezone, query, currency } =
-      ipLocation;
+    const {
+      continent,
+      country,
+      countryCode,
+      continentCode,
+      timezone,
+      query,
+      currency,
+    } = ip;
 
     return reply({
       res,
@@ -386,6 +415,7 @@ export class AuthUserController {
         countryCode,
         timezone,
         query,
+        continentCode,
         currency,
       },
     });

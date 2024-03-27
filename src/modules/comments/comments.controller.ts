@@ -20,9 +20,9 @@ import { CommentsDto, CreateOrUpdateCommentsDto } from './comments.dto';
 
 import { isEmpty } from '../../app/utils/commons';
 import {
-  addPagination,
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
+  addPagination,
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
 import { CommentsService } from './comments.service';
@@ -36,7 +36,7 @@ export class CommentsController {
   async findAllComments(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
@@ -50,7 +50,7 @@ export class CommentsController {
     } = query;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const comments = await this.commentsService.findAll({
@@ -71,14 +71,14 @@ export class CommentsController {
   async findAllCommentsReplies(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() PaginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: CommentsDto,
   ) {
     const { commentId, userVisitorId, organizationId, modelIds } = query;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = PaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const findOneComment = await this.commentsService.findOneBy({

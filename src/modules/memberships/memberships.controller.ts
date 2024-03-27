@@ -18,8 +18,8 @@ import {
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import {
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
   addPagination,
 } from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
@@ -48,12 +48,12 @@ export class MembershipsController {
     @Req() req,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: GetMembershipDto,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
   ) {
     const { userId, organizationId } = query;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const memberships = await this.membershipsService.findAll({

@@ -48,6 +48,9 @@ export class Membership extends BaseDeleteEntity {
   @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'MEMBERSHIP' })
   model?: FilterQueryType;
 
+  @Column({ type: 'boolean', default: true })
+  isVisible: boolean;
+
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
   @ManyToOne(() => Organization, (organization) => organization.memberships, {

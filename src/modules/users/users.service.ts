@@ -116,8 +116,7 @@ export class UsersService {
     let query = this.driver
       .createQueryBuilder('user')
       .where('user.deletedAt IS NULL')
-      .leftJoinAndSelect('user.profile', 'profile')
-      .leftJoinAndSelect('user.organization', 'organization');
+      .leftJoinAndSelect('user.profile', 'profile');
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });

@@ -49,7 +49,7 @@ export class Profile extends BaseDeleteEntity {
   social?: [];
 
   @Column({ type: 'jsonb', array: false, nullable: true })
-  image?: { id: 'aws' | 'provider'; patch: string };
+  image?: { key: 'aws' | 'provider'; patch: string };
 
   @Column({ type: 'boolean', default: false })
   enableCommission: boolean;

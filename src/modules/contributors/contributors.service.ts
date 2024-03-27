@@ -239,6 +239,25 @@ export class ContributorsService {
     return result;
   }
 
+  async getAuthorizationToContributor({
+    userId,
+    organizationId,
+  }: {
+    userId: string;
+    organizationId: string;
+  }): Promise<any> {
+    if (userId) {
+      const contributor = await this.findOneBy({
+        userId,
+        organizationId,
+        type: 'ORGANIZATION',
+      });
+      return { contributor };
+    }
+
+    return null;
+  }
+
   /** Permission. project */
   async canCheckPermissionContributor(options: {
     userId: string;

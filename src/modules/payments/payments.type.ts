@@ -10,11 +10,12 @@ export type GetPaymentsSelections = {
 };
 
 export type GetOnePaymentsSelections = {
-  paymentId?: Payment['id'];
+  iban?: Payment['iban'];
   phone?: Payment['phone'];
+  paymentId?: Payment['id'];
   status?: Payment['status'];
-  cardNumber?: Payment['cardNumber'];
   cardCvc?: Payment['cardCvc'];
+  cardNumber?: Payment['cardNumber'];
   cardExpYear?: Payment['cardExpYear'];
   cardExpMonth?: Payment['cardExpMonth'];
   organizationId?: Payment['organizationId'];

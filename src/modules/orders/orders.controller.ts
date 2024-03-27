@@ -14,8 +14,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
   addPagination,
 } from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
@@ -43,13 +43,13 @@ export class OrdersController {
   async findAllContributorsBy(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
     const { user } = req;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const orders = await this.ordersService.findAll({
@@ -67,7 +67,7 @@ export class OrdersController {
   async findAllOrderItems(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() PaginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
     @Query() query: GetOrderItemDto,
   ) {
@@ -80,7 +80,7 @@ export class OrdersController {
     } = query;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = PaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const orderItems = await this.orderItemsService.findAll({

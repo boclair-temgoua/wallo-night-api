@@ -1,7 +1,8 @@
 import { Organization } from '../../models';
 
 export type GetOneOrganizationSelections = {
-  organizationId: Organization['id'];
+  organizationId?: Organization['id'];
+  userId?: Organization['userId'];
 };
 
 export type UpdateOrganizationSelections = {

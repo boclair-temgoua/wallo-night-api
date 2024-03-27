@@ -15,14 +15,15 @@ export class CheckUserService {
     return sign(data, config.cookieKey, { expiresIn: expiry });
   }
 
-  async verifyToken(token: string): Promise<any> {
-    try {
-      return verify(token, config.cookieKey);
-    } catch (error) {
+  async verifyToken(token: string): Promise<JwtPayload> {
+    const payload = verify(token, config.cookieKey);
+
+    if (typeof payload == 'string')
       throw new HttpException(
         `Token not valid or expired`,
         HttpStatus.NOT_FOUND,
       );
-    }
+
+    return payload;
   }
 }

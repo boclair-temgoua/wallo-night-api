@@ -13,6 +13,7 @@ export type GetOneContributionSelections = {
   type?: Contribution['type'];
   userId?: Contribution['userId'];
   contributionId?: Contribution['id'];
+  organizationId?: Contribution['organizationId'];
 };
 
 export type UpdateContributionSelections = {

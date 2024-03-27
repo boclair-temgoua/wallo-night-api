@@ -246,7 +246,7 @@ export const codeConfirmationMail = async ({
                             font-size: 16px;
                             line-height: 1.5em;
                             margin-top: 0;
-                            text-align: center;
+                            text-align: left;
                           "
                         >
                           Thanks,<br />The ${config.datasite.name} Team

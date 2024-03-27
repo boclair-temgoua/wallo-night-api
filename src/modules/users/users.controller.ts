@@ -23,8 +23,8 @@ import { config } from '../../app/config';
 import { dateTimeNowUtc } from '../../app/utils/commons';
 import { validation_login_cookie_setting } from '../../app/utils/cookies';
 import {
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
   addPagination,
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
@@ -57,12 +57,12 @@ export class UsersController {
   async findAllUsers(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const users = await this.usersService.findAll({
@@ -179,7 +179,7 @@ export class UsersController {
         firstAddress,
         secondAddress,
         description,
-        image: fileName && { id: 'aws', patch: fileName },
+        image: fileName && { key: 'aws', patch: fileName },
       },
     );
 
@@ -202,6 +202,7 @@ export class UsersController {
     const findOneProfile = await this.profilesService.findOneBy({
       profileId,
     });
+
     if (!findOneProfile)
       throw new HttpException(
         `profile ${profileId} don't exist please change`,

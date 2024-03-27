@@ -14,8 +14,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
   addPagination,
 } from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
@@ -45,14 +45,14 @@ export class PaymentsController {
     @Res() res,
     @Req() req,
     @Query() query: GetPaymentsDto,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
     const { user } = req;
     const { type } = query;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const payments = await this.paymentsService.findAll({
@@ -92,6 +92,8 @@ export class PaymentsController {
     @Body() body: SendCodeVerifyPaymentsDto,
   ) {
     const { phone } = body;
+
+    console.log('phone ====>', phone);
 
     const otpMessageVoce = await otpMessageSend({ phone });
     if (!otpMessageVoce) {
@@ -158,7 +160,7 @@ export class PaymentsController {
       cardExpYear,
       cardCvc,
       type,
-      description,
+      iban,
     } = body;
 
     if (type === 'CARD') {
@@ -197,6 +199,30 @@ export class PaymentsController {
         status: 'ACTIVE',
         userId: user?.id,
         brand: paymentMethod?.card?.display_brand,
+        organizationId: user?.organizationId,
+      });
+    }
+
+    if (type === 'IBAN') {
+      const findOnePayment = await this.paymentsService.findOneBy({
+        iban,
+        status: 'ACTIVE',
+        organizationId: user?.organizationId,
+      });
+      if (findOnePayment)
+        throw new HttpException(
+          `Card ${iban} already exists please change`,
+          HttpStatus.NOT_FOUND,
+        );
+
+      await this.paymentsService.createOne({
+        iban,
+        email,
+        fullName,
+        type: 'IBAN',
+        action: 'WITHDRAWING',
+        status: 'PENDING',
+        userId: user?.id,
         organizationId: user?.organizationId,
       });
     }

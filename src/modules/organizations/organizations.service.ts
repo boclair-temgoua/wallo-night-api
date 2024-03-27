@@ -22,22 +22,18 @@ export class OrganizationsService {
   async findOneBy(
     selections: GetOneOrganizationSelections,
   ): Promise<Organization> {
-    const { organizationId } = selections;
-    let query = this.driver
-      .createQueryBuilder('organization')
-      .select('organization.id', 'id')
-      .addSelect('organization.name', 'name')
-      .addSelect('organization.color', 'color')
-      .addSelect('organization.image', 'image')
-      .addSelect('organization.userId', 'userId')
-      .addSelect('organization.firstAddress', 'firstAddress')
-      .addSelect('organization.secondAddress', 'secondAddress');
+    const { organizationId, userId } = selections;
+    let query = this.driver.createQueryBuilder('organization');
 
     if (organizationId) {
       query = query.where('organization.id = :id', { id: organizationId });
     }
 
-    const organization = await query.getRawOne();
+    if (userId) {
+      query = query.where('organization.userId = :userId', { userId });
+    }
+
+    const organization = await query.getOne();
 
     return organization;
   }

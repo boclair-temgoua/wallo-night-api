@@ -32,6 +32,7 @@ export class PaymentsService {
       .addSelect('payment.action', 'action')
       .addSelect('payment.cardNumber', 'cardNumber')
       .addSelect('payment.type', 'type')
+      .addSelect('payment.iban', 'iban')
       .addSelect('payment.brand', 'brand')
       .addSelect('payment.cardExpMonth', 'cardExpMonth')
       .addSelect('payment.cardExpYear', 'cardExpYear')
@@ -82,10 +83,15 @@ export class PaymentsService {
       cardCvc,
       phone,
       status,
+      iban,
     } = selections;
     let query = this.driver
       .createQueryBuilder('payment')
       .where('payment.deletedAt IS NULL');
+
+    if (iban) {
+      query = query.andWhere('payment.iban = :iban', { iban });
+    }
 
     if (paymentId) {
       query = query.andWhere('payment.id = :id', { id: paymentId });
@@ -148,6 +154,7 @@ export class PaymentsService {
       cardCvc,
       type,
       userId,
+      iban,
       organizationId,
     } = options;
 
@@ -161,6 +168,7 @@ export class PaymentsService {
     payment.cardCvc = cardCvc;
     payment.type = type;
     payment.brand = brand;
+    payment.iban = iban;
     payment.action = action;
     payment.userId = userId;
     payment.organizationId = organizationId;
@@ -189,6 +197,7 @@ export class PaymentsService {
       cardExpYear,
       cardCvc,
       type,
+      iban,
       status,
       deletedAt,
     } = options;
@@ -209,6 +218,7 @@ export class PaymentsService {
     payment.cardExpMonth = cardExpMonth;
     payment.cardExpYear = cardExpYear;
     payment.cardCvc = cardCvc;
+    payment.iban = iban;
     payment.type = type;
     payment.action = action;
     payment.status = status;

@@ -20,8 +20,8 @@ import { reply } from '../../app/utils/reply';
 
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import {
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
   addPagination,
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
@@ -47,13 +47,13 @@ export class CommissionsController {
     @Res() res,
     @Req() req,
     @Query() query: GetCommissionsDto,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
     const { organizationId, status } = query;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const commissions = await this.commissionsService.findAll({

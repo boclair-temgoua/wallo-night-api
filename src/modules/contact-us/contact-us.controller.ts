@@ -14,9 +14,9 @@ import {
 import { reply } from '../../app/utils/reply';
 
 import {
-  addPagination,
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
+  addPagination,
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
 import { UserAuthGuard } from '../users/middleware';
@@ -31,12 +31,12 @@ export class ContactUsController {
   @Get(`/`)
   async findAll(
     @Res() res,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const contactUs = await this.contactUsService.findAll({

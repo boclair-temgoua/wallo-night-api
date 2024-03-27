@@ -24,12 +24,13 @@ import {
   CreateOrUpdatePostsGalleriesDto,
   GetGalleriesDto,
   GetOnePostDto,
+  GetPostsDto,
 } from './posts.dto';
 
 import {
-  addPagination,
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
+  addPagination,
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
 import { FollowsService } from '../follows/follows.service';
@@ -50,10 +51,12 @@ export class PostsController {
   async findAllFollow(
     @Res() res,
     @Req() req,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
+    @Query() query: GetPostsDto,
   ) {
     const { user } = req;
+    const { model } = query;
     const { search } = searchQuery;
 
     let userFollows: string[] = [];
@@ -65,13 +68,14 @@ export class PostsController {
       userFollows.push(element.followerId);
     }
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = paginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const posts = await this.postsService.findAll({
       search,
       pagination,
       likeUserId: user?.id,
+      model,
       followerIds: [...userFollows, user?.id],
     });
 
@@ -84,20 +88,28 @@ export class PostsController {
     @Res() res,
     @Req() req,
     @Query() query: GetGalleriesDto,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() PaginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { type, albumId, organizationId, typeIds, status, userVisitorId } =
-      query;
+    const {
+      type,
+      model,
+      albumId,
+      organizationId,
+      typeIds,
+      status,
+      userVisitorId,
+    } = query;
     const { search } = searchQuery;
 
-    const { take, page, sort } = requestPaginationDto;
+    const { take, page, sort } = PaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const posts = await this.postsService.findAll({
       search,
       pagination,
       type,
+      model,
       albumId,
       organizationId,
       status: status?.toUpperCase(),

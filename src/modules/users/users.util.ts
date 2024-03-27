@@ -147,6 +147,7 @@ export class UsersUtil {
       } as TokenJwtModel,
       config.cookie_access.accessExpire,
     );
+
     return tokenUser;
   }
 }

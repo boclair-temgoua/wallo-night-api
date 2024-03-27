@@ -61,4 +61,10 @@ export const filterQueryTypeArrays = [
 
 export type WhoCanSeeType = 'PUBLIC' | 'MEMBERSHIP' | 'SUPPORTER';
 
-export const whoCanSeeTypeArrays = ['PUBLIC', 'MEMBERSHIP', 'SUPPORTER'];
+export const whoCanSeeTypeArrays = [
+  'PUBLIC',
+  'MEMBERSHIP',
+  'SUPPORTER',
+] as WhoCanSeeType[];
+
+export const visibilityArrays = ['VISIBLE', 'INVISIBLE'];

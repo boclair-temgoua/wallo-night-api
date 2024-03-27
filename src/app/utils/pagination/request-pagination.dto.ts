@@ -1,20 +1,19 @@
 import { Type } from 'class-transformer';
 import {
-  IsNotEmpty,
-  IsInt,
-  Min,
-  Max,
-  IsString,
-  IsPositive,
   IsIn,
+  IsInt,
+  IsNotEmpty,
   IsOptional,
+  IsPositive,
+  IsString,
+  Min,
 } from 'class-validator';
 
 export type SortType = 'ASC' | 'DESC';
 
 export type ProductStatus = 'ACTIVE' | 'PENDING';
 
-export class RequestPaginationDto {
+export class PaginationDto {
   @IsNotEmpty()
   @IsInt()
   @Min(1)

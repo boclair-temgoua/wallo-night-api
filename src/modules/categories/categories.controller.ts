@@ -17,8 +17,8 @@ import {
 import { reply } from '../../app/utils/reply';
 
 import {
+  PaginationDto,
   PaginationType,
-  RequestPaginationDto,
   addPagination,
 } from '../../app/utils/pagination';
 import { SearchQueryDto } from '../../app/utils/search-query';
@@ -36,11 +36,11 @@ export class CategoriesController {
     @Res() res,
     @Req() req,
     @Query() searchQuery: SearchQueryDto,
-    @Query() requestPaginationDto: RequestPaginationDto,
+    @Query() paginationDto: PaginationDto,
   ) {
     const { search, organizationId } = searchQuery;
 
-    const { take, page, sort, isPaginate } = requestPaginationDto;
+    const { take, page, sort, isPaginate } = paginationDto;
     const pagination: PaginationType = addPagination({
       page,
       take,

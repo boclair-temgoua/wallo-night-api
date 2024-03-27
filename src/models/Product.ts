@@ -22,6 +22,7 @@ import {
 } from '../modules/products/products.dto';
 import { Discount } from './Discount';
 import {
+  Affiliation,
   Cart,
   Category,
   Comment,
@@ -54,6 +55,9 @@ export class Product extends BaseDeleteEntity {
 
   @Column({ type: 'enum', enum: whoCanSeeTypeArrays, default: 'PUBLIC' })
   whoCanSee?: WhoCanSeeType;
+
+  @Column({ type: 'boolean', default: true })
+  isVisible: boolean;
 
   @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'PRODUCT' })
   model?: FilterQueryType;
@@ -139,4 +143,9 @@ export class Product extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   uploads?: Upload;
+
+  @OneToMany(() => Affiliation, (affiliation) => affiliation.product, {
+    onDelete: 'CASCADE',
+  })
+  affiliations?: Affiliation;
 }

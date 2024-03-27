@@ -4,6 +4,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './app/databases/orm';
 import { AppSeedDataSource } from './app/databases/orm/orm-config-seed';
+import { AffiliationsModule } from './modules/affiliations/affiliations.module';
 import { AlbumsModule } from './modules/albums/albums.module';
 import { CartOrdersModule } from './modules/cart-orders/cart-orders.module';
 import { CategoriesModule } from './modules/categories/categories.module';
@@ -64,6 +65,7 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     AlbumsModule,
     JobsModule,
     OrdersModule,
+    AffiliationsModule,
     UserAddressModule,
     OrderItemsModule,
     CartOrdersModule,

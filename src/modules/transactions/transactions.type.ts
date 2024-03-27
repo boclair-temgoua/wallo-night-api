@@ -1,9 +1,9 @@
 import { PaginationType } from '../../app/utils/pagination';
 import { Transaction } from '../../models/Transaction';
 
-export type TransactionType = 'PAYPAL' | 'CARD' | 'COUPON' | 'PHONE';
+export type TransactionType = 'PAYPAL' | 'CARD' | 'PHONE' | 'IBAN';
 
-export const transactionTypeArrays = ['PAYPAL', 'CARD', 'COUPON', 'PHONE'];
+export const transactionTypeArrays = ['PAYPAL', 'CARD', 'PHONE', 'IBAN'];
 
 export type GetTransactionsSelections = {
   search?: string;

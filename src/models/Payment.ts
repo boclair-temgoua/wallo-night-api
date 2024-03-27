@@ -13,7 +13,10 @@ import {
   actionPaymentArray,
   statusPaymentArray,
 } from '../modules/payments/payments.dto';
-import { TransactionType } from '../modules/transactions/transactions.type';
+import {
+  TransactionType,
+  transactionTypeArrays,
+} from '../modules/transactions/transactions.type';
 import { User } from './User';
 import { Organization } from './index';
 
@@ -41,6 +44,9 @@ export class Payment extends BaseDeleteEntity {
   action?: ActionPayment;
 
   @Column({ nullable: true })
+  iban?: string;
+
+  @Column({ nullable: true })
   cardNumber?: string;
 
   @Column({ nullable: true })
@@ -52,7 +58,7 @@ export class Payment extends BaseDeleteEntity {
   @Column({ nullable: true })
   cardCvc?: string;
 
-  @Column({ default: 'CARD' })
+  @Column({ type: 'enum', enum: transactionTypeArrays, default: 'CARD' })
   type?: TransactionType;
 
   @Column({ type: 'uuid', nullable: true })
