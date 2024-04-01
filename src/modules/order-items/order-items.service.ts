@@ -50,7 +50,6 @@ export class OrderItemsService {
       .addSelect('orderItem.model', 'model')
       .addSelect('orderItem.status', 'status')
       .addSelect('orderItem.currency', 'currency')
-      .addSelect('orderItem.commissionId', 'commissionId')
       .addSelect('orderItem.productId', 'productId')
       .addSelect('orderItem.orderId', 'orderId')
       .addSelect('orderItem.userId', 'userId')
@@ -116,16 +115,9 @@ export class OrderItemsService {
       //     GROUP BY "product"."id", "upl"."uploadableId"
       //     ) AS "uploadsFiles"`,
       // )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-              'id', "commission"."id",
-              'title', "commission"."title"
-          ) AS "commission"`,
-      )
       .where('orderItem.deletedAt IS NULL')
       .leftJoin('orderItem.order', 'order')
       .leftJoin('orderItem.product', 'product')
-      .leftJoin('orderItem.commission', 'commission')
       .leftJoin('orderItem.user', 'user')
       .leftJoin('user.profile', 'profile');
 
@@ -226,7 +218,6 @@ export class OrderItemsService {
       organizationSellerId,
       model,
       status,
-      commissionId,
       productId,
       orderId,
       uploadFiles,
@@ -245,7 +236,6 @@ export class OrderItemsService {
     orderItem.model = model;
     orderItem.status = status;
     orderItem.uploadFiles = uploadFiles;
-    orderItem.commissionId = commissionId;
     orderItem.productId = productId;
     orderItem.orderId = orderId;
 

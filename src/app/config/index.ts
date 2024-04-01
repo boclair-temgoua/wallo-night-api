@@ -96,11 +96,6 @@ export const config = {
     },
   },
   /**
-   * Show or not console.log
-   */
-  showLog: true,
-
-  /**
    * External implementations
    */
   implementations: {

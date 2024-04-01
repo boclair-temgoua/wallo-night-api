@@ -33,10 +33,6 @@ export class CreateOrUpdateCommentsDto {
   @IsString()
   productId: string;
 
-  @IsOptional()
-  @IsString()
-  commissionId: string;
-
   @IsNotEmpty()
   @IsString()
   @IsIn(filterQueryTypeArrays)

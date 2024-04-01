@@ -85,7 +85,7 @@ export class UsersController {
 
     if (!findOneUser)
       throw new HttpException(
-        `User ${userId || username} not valid please change`,
+        `User ${userId || username} invalid please change`,
         HttpStatus.NOT_FOUND,
       );
 

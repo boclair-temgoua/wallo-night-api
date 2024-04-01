@@ -15,7 +15,7 @@ import {
   OrderItemStatus,
   orderItemStatusArrays,
 } from '../modules/order-items/order-items.type';
-import { Commission, Order, Product, User } from './index';
+import { Order, Product, User } from './index';
 
 @Entity('order_item')
 export class OrderItem extends BaseDeleteEntity {
@@ -54,14 +54,6 @@ export class OrderItem extends BaseDeleteEntity {
 
   @Column({ nullable: true })
   currency: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  commissionId?: string;
-  @ManyToOne(() => Commission, (commission) => commission.orderItems, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  commission?: Commission;
 
   @Column({ type: 'uuid', nullable: true })
   productId?: string;

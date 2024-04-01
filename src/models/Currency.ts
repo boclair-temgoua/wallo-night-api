@@ -3,7 +3,7 @@ import { BaseEntity } from '../app/databases/common';
 import { Contribution } from './Contribution';
 import { Membership } from './Membership';
 import { Product } from './Product';
-import { Commission, Profile } from './index';
+import { Profile } from './index';
 
 @Entity('currency')
 export class Currency extends BaseEntity {
@@ -30,9 +30,6 @@ export class Currency extends BaseEntity {
 
   @OneToMany(() => Contribution, (contribution) => contribution.currency)
   contributions?: Contribution[];
-
-  @OneToMany(() => Commission, (commission) => commission.currency)
-  commissions?: Commission[];
 
   @OneToMany(() => Membership, (membership) => membership.currency)
   memberships?: Membership[];

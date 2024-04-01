@@ -12,7 +12,7 @@ import {
   filterQueryTypeArrays,
 } from '../app/utils/search-query';
 import { UploadType } from '../modules/uploads/uploads.type';
-import { Commission, Membership, Organization, Post, Product } from './index';
+import { Contact, Membership, Organization, Post, Product } from './index';
 
 @Entity('upload')
 export class Upload extends BaseDeleteEntity {
@@ -69,18 +69,18 @@ export class Upload extends BaseDeleteEntity {
   product?: Relation<Product>;
 
   @Column({ type: 'uuid', nullable: true })
-  commissionId?: string;
-  @ManyToOne(() => Commission, (commission) => commission.uploads, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  commission?: Relation<Commission>;
-
-  @Column({ type: 'uuid', nullable: true })
   membershipId?: string;
   @ManyToOne(() => Membership, (membership) => membership.uploads, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
   membership?: Relation<Membership>;
+
+  @Column({ type: 'uuid', nullable: true })
+  contactId?: string;
+  @ManyToOne(() => Contact, (contact) => contact.uploads, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'contactId', referencedColumnName: 'id' })
+  contact?: Relation<Contact>;
 }

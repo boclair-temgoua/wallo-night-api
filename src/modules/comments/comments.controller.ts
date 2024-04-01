@@ -116,7 +116,6 @@ export class CommentsController {
       description,
       postId,
       productId,
-      commissionId,
       userReceiveId,
       organizationId,
       model,
@@ -125,7 +124,6 @@ export class CommentsController {
     const comment = await this.commentsService.createOne({
       postId: isEmpty(postId) ? null : postId,
       productId: isEmpty(productId) ? null : productId,
-      commissionId: isEmpty(commissionId) ? null : commissionId,
       description,
       model,
       userId: user?.id,

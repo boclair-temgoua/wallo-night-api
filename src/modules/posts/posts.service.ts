@@ -47,7 +47,6 @@ export class PostsService {
       albumId,
       isVisible,
       categoryId,
-      model,
       organizationId,
     } = selections;
 
@@ -66,7 +65,6 @@ export class PostsService {
       .addSelect('post.organizationId', 'organizationId')
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.categoryId', 'categoryId')
-      .addSelect('post.model', 'model')
       .addSelect('post.createdAt', 'createdAt')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -206,10 +204,6 @@ export class PostsService {
 
     if (status) {
       query = query.andWhere('post.status = :status', { status });
-    }
-
-    if (model) {
-      query = query.andWhere('post.model = :model', { model });
     }
 
     if (type) {

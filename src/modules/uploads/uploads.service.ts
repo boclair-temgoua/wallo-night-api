@@ -64,8 +64,8 @@ export class UploadsService {
       model,
       userId,
       postId,
+      contactId,
       productId,
-      commissionId,
       membershipId,
       organizationId,
       uploadableId,
@@ -79,12 +79,12 @@ export class UploadsService {
     upload.userId = userId;
     upload.model = model;
     upload.size = size;
+    upload.contactId = contactId;
     upload.organizationId = organizationId;
     upload.uploadType = uploadType;
     upload.uploadableId = uploadableId;
     upload.postId = postId;
     upload.productId = productId;
-    upload.commissionId = commissionId;
     upload.membershipId = membershipId;
 
     const query = this.driver.save(upload);

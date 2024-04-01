@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { CommentsService } from '../comments/comments.service';
-import { CommissionsService } from '../commissions/commissions.service';
 import { OrdersUtil } from '../orders/orders.util';
+import { ProductsService } from '../products/products.service';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
 import { TransactionsService } from '../transactions/transactions.service';
 import { TransactionsUtil } from '../transactions/transactions.util';
@@ -25,13 +25,13 @@ export class PaymentsTransactionController {
   constructor(
     private readonly paymentsUtil: PaymentsUtil,
     private readonly paymentsService: PaymentsService,
+    private readonly productsService: ProductsService,
     private readonly walletsService: WalletsService,
     private readonly transactionsUtil: TransactionsUtil,
     private readonly subscribesUtil: SubscribesUtil,
     private readonly usersService: UsersService,
     private readonly commentsService: CommentsService,
     private readonly ordersUtil: OrdersUtil,
-    private readonly commissionsService: CommissionsService,
     private readonly transactionsService: TransactionsService,
   ) {}
 
@@ -401,20 +401,20 @@ export class PaymentsTransactionController {
       organizationSellerId,
       organizationBuyerId,
       userAddress,
-      commissionId,
+      productId,
       userReceiveId,
       userBuyerId,
       reference,
       card,
     } = body;
 
-    const findOneCommission = await this.commissionsService.findOneBy({
-      commissionId: commissionId,
+    const findOneProduct = await this.productsService.findOneBy({
+      productId: productId,
       organizationId: organizationSellerId,
     });
-    if (!findOneCommission) {
+    if (!findOneProduct) {
       throw new HttpException(
-        `This commission ${commissionId} dons't exist please change`,
+        `This product ${productId} dons't exist please change`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -432,7 +432,7 @@ export class PaymentsTransactionController {
       token: reference,
       userBuyerId,
       organizationBuyerId,
-      description: `Commission ${findOneCommission?.title}`,
+      description: `Commission ${findOneProduct?.title}`,
     });
     if (!paymentIntents) {
       throw new HttpException(
@@ -448,7 +448,7 @@ export class PaymentsTransactionController {
         organizationBuyerId,
         organizationSellerId,
         userBuyerId: userBuyerId,
-        commissionId: findOneCommission?.id,
+        productId: findOneProduct?.id,
       });
       const transaction = await this.transactionsService.createOne({
         userBuyerId,
@@ -489,18 +489,18 @@ export class PaymentsTransactionController {
       organizationSellerId,
       organizationBuyerId,
       userAddress,
-      commissionId,
+      productId,
       userReceiveId,
       userBuyerId,
       reference,
     } = body;
-    const findOneCommission = await this.commissionsService.findOneBy({
-      userId: commissionId,
+    const findOneProduct = await this.productsService.findOneBy({
+      productId: productId,
       organizationId: organizationSellerId,
     });
-    if (!findOneCommission) {
+    if (!findOneProduct) {
       throw new HttpException(
-        `This commission ${commissionId} dons't exist please change`,
+        `This product ${productId} dons't exist please change`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -517,7 +517,7 @@ export class PaymentsTransactionController {
       organizationBuyerId,
       organizationSellerId,
       userBuyerId: userBuyerId,
-      commissionId: findOneCommission?.id,
+      productId: findOneProduct?.id,
     });
 
     const transaction = await this.transactionsService.createOne({
@@ -530,7 +530,7 @@ export class PaymentsTransactionController {
       type: 'PAYPAL',
       token: reference,
       model: 'COMMISSION',
-      description: `Commission ${findOneCommission?.title}`,
+      description: `Commission ${findOneProduct?.title}`,
       amountConvert: amountValueConvert * 100,
     });
 

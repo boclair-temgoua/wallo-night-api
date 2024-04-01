@@ -115,6 +115,9 @@ export class PaymentsUtil {
       confirm: true,
       confirmation_method: 'manual', // For 3D Security
       return_url: `${config.url.client}/success?token=${token}`,
+      automatic_payment_methods: {
+        enabled: true,
+      },
     });
     if (!paymentIntents) {
       throw new HttpException(

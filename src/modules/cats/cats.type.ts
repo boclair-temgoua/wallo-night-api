@@ -8,7 +8,6 @@ type OnCart = {
   quantity: string;
   model: FilterQueryType;
   productId: string;
-  commissionId: string;
   userId: string;
   organizationSellerId: string;
   profileVendor: {

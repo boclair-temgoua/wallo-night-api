@@ -37,8 +37,8 @@ import { ProductsService } from './products.service';
 @Controller('products')
 export class ProductsController {
   constructor(
-    private readonly productsService: ProductsService,
     private readonly uploadsUtil: UploadsUtil,
+    private readonly productsService: ProductsService,
     private readonly discountsService: DiscountsService,
   ) {}
 
@@ -51,7 +51,7 @@ export class ProductsController {
     @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { organizationId, status } = query;
+    const { organizationId, status, modelIds, isVisible } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = paginationDto;
@@ -59,9 +59,11 @@ export class ProductsController {
 
     const products = await this.productsService.findAll({
       search,
+      isVisible,
       pagination,
       organizationId,
       status: status?.toUpperCase(),
+      modelIds: modelIds ? (String(modelIds).split(',') as []) : null,
     });
 
     return reply({ res, results: products });
@@ -84,6 +86,7 @@ export class ProductsController {
       enableLimitSlot,
       urlMedia,
       whoCanSee,
+      isVisible,
       productType,
       enableUrlRedirect,
       enableChooseQuantity,
@@ -92,33 +95,36 @@ export class ProductsController {
       limitSlot,
       enableDiscount,
       discountId,
+      model,
     } = body;
     const { user } = req;
 
     const product = await this.productsService.createOne({
       title,
-      price: Number(price),
-      limitSlot: Number(limitSlot),
+      model,
       urlMedia,
+      whoCanSee,
+      discountId,
+      productType,
       description,
       urlRedirect,
-      whoCanSee,
-      productType,
-      messageAfterPayment,
-      discountId,
-      enableDiscount: enableDiscount === 'true' ? true : false,
-      enableLimitSlot: enableLimitSlot === 'true' ? true : false,
-      enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
-      enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
       userId: user?.id,
+      messageAfterPayment,
+      price: Number(price),
+      limitSlot: Number(limitSlot),
       organizationId: user?.organizationId,
       currencyId: user?.profile?.currencyId,
+      isVisible: isVisible === 'true' ? true : false,
+      enableDiscount: enableDiscount === 'true' ? true : false,
+      enableLimitSlot: enableLimitSlot === 'true' ? true : false,
+      enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
+      enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
     });
 
     await this.uploadsUtil.saveOrUpdateAws({
       productId: product?.id,
       uploadableId: product?.id,
-      model: 'PRODUCT',
+      model: model,
       userId: product?.userId,
       folder: 'products',
       files,
@@ -140,6 +146,7 @@ export class ProductsController {
     @Param('productId', ParseUUIDPipe) productId: string,
   ) {
     const {
+      model,
       title,
       price,
       urlRedirect,
@@ -147,6 +154,7 @@ export class ProductsController {
       enableLimitSlot,
       urlMedia,
       whoCanSee,
+      isVisible,
       productType,
       enableChooseQuantity,
       messageAfterPayment,
@@ -171,20 +179,22 @@ export class ProductsController {
       { productId },
       {
         title,
-        price: Number(price),
+        model,
         urlMedia,
+        whoCanSee,
+        discountId,
+        productType,
         description,
         urlRedirect,
-        whoCanSee,
-        productType,
         messageAfterPayment,
+        price: Number(price),
         limitSlot: Number(limitSlot),
         currencyId: user?.profile?.currencyId,
-        discountId,
+        isVisible: isVisible === 'true' ? true : false,
         enableDiscount: enableDiscount === 'true' ? true : false,
         enableLimitSlot: enableLimitSlot === 'true' ? true : false,
-        enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
         enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
+        enableChooseQuantity: enableChooseQuantity === 'true' ? true : false,
       },
     );
 
@@ -192,7 +202,7 @@ export class ProductsController {
       productId: productId,
       userId: user?.id,
       uploadableId: productId,
-      model: 'PRODUCT',
+      model: model,
       folder: 'products',
       files,
       organizationId: user?.organizationId,
@@ -204,9 +214,10 @@ export class ProductsController {
   /** Get one Products */
   @Get(`/view`)
   async getOne(@Res() res, @Query() query: GetOneProductDto) {
-    const { productId, productSlug, organizationId } = query;
+    const { productId, productSlug, organizationId, isVisible } = query;
 
     const findOneProduct = await this.productsService.findOneBy({
+      isVisible,
       productId,
       productSlug,
       organizationId,

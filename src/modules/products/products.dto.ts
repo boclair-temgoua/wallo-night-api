@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsIn,
   IsNotEmpty,
@@ -6,7 +7,9 @@ import {
   IsUUID,
 } from 'class-validator';
 import {
+  FilterQueryType,
   WhoCanSeeType,
+  filterQueryTypeArrays,
   whoCanSeeTypeArrays,
 } from '../../app/utils/search-query';
 
@@ -19,10 +22,15 @@ export const productTypeArrays = ['DIGITAL', 'PHYSICAL'];
 export class CreateOrUpdateProductsDto {
   @IsNotEmpty()
   @IsString()
+  @IsIn(filterQueryTypeArrays)
+  model?: FilterQueryType;
+
+  @IsNotEmpty()
+  @IsString()
   @IsIn(whoCanSeeTypeArrays)
   whoCanSee: WhoCanSeeType;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @IsIn(productTypeArrays)
   productType: ProductType;
@@ -42,6 +50,10 @@ export class CreateOrUpdateProductsDto {
   @IsOptional()
   @IsString()
   urlRedirect: string;
+
+  @IsOptional()
+  @IsString()
+  isVisible: string;
 
   @IsOptional()
   @IsString()
@@ -79,6 +91,12 @@ export class CreateOrUpdateProductsDto {
 export class GetOneProductDto {
   @IsOptional()
   @IsString()
+  @IsIn(['TRUE', 'FALSE'])
+  @Type(() => String)
+  isVisible: string;
+
+  @IsOptional()
+  @IsString()
   @IsUUID()
   productId: string;
 
@@ -93,10 +111,20 @@ export class GetOneProductDto {
 }
 
 export class GetProductsDto {
+  @IsNotEmpty()
+  @IsString()
+  modelIds: FilterQueryType[];
+
   @IsOptional()
   @IsString()
   @IsUUID()
   userId: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['TRUE', 'FALSE'])
+  @Type(() => String)
+  isVisible: string;
 
   @IsOptional()
   @IsString()

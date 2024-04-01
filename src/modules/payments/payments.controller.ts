@@ -93,14 +93,9 @@ export class PaymentsController {
   ) {
     const { phone } = body;
 
-    console.log('phone ====>', phone);
-
     const otpMessageVoce = await otpMessageSend({ phone });
     if (!otpMessageVoce) {
-      throw new HttpException(
-        `OTP messageVoce not valid`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(`OTP messageVoce invalid`, HttpStatus.NOT_FOUND);
     }
 
     return reply({ res, results: 'OTP send successfully' });
@@ -132,7 +127,7 @@ export class PaymentsController {
       code: code,
     });
     if (!otpMessageVerifySid?.valid) {
-      throw new HttpException(`OTP verify not valid`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`OTP verify invalid`, HttpStatus.NOT_FOUND);
     }
 
     await this.paymentsService.updateOne(

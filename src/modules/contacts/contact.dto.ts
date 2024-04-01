@@ -1,18 +1,13 @@
-import { User } from '../../models/User';
 import {
-  IsString,
+  IsEmail,
   IsNotEmpty,
+  IsOptional,
+  IsString,
   MaxLength,
   MinLength,
-  IsIn,
-  IsOptional,
-  IsUUID,
-  IsEmail,
-  IsInt,
-  IsBoolean,
 } from 'class-validator';
 
-export class CreateOrUpdateContactUsDto {
+export class CreateOrUpdateContactDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
@@ -30,7 +25,7 @@ export class CreateOrUpdateContactUsDto {
   @MaxLength(100)
   email: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   phone: string;
 
@@ -40,5 +35,6 @@ export class CreateOrUpdateContactUsDto {
 
   @IsNotEmpty()
   @IsString()
+  @MinLength(3)
   description: string;
 }

@@ -166,7 +166,6 @@ export class OrdersController {
       if (!findOneProduct) {
         false;
       }
-      console.log('findOneProduct =====>', findOneProduct);
       const orderItemCreate = await this.orderItemsService.createOne({
         userId: order?.userId,
         currency: order?.currency,
@@ -177,7 +176,6 @@ export class OrdersController {
         organizationBuyerId: user?.organizationId,
         organizationSellerId: cart?.product?.organizationId,
         model: cart?.model,
-        commissionId: cart?.commissionId,
         productId: cart?.productId,
         orderId: order?.id,
         uploadFiles: [...findOneProduct?.uploadsFiles],

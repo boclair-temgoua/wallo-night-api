@@ -1,12 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Commission, User } from '.';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseDeleteEntity } from '../app/databases/common';
 import { Product } from './Product';
 @Entity('discount')
@@ -37,13 +29,10 @@ export class Discount extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;
-  @ManyToOne(() => User, (user) => user.discounts, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  user?: User;
+  // @ManyToOne(() => User, (user) => user.discounts, { onDelete: 'CASCADE' })
+  // @JoinColumn()
+  // user?: User;
 
   @OneToMany(() => Product, (product) => product.discount)
   products: Product[];
-
-  @OneToMany(() => Commission, (commission) => commission.discount)
-  commissions: Commission[];
 }

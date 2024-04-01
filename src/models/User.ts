@@ -14,7 +14,6 @@ import {
   Cart,
   Comment,
   Contributor,
-  Discount,
   Donation,
   Follow,
   Like,
@@ -78,8 +77,8 @@ export class User extends BaseDeleteEntity {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments?: Comment[];
 
-  @OneToMany(() => Discount, (discount) => discount.user)
-  discounts?: Discount[];
+  // @OneToMany(() => Discount, (discount) => discount.user)
+  // discounts?: Discount[];
 
   @OneToOne(() => Donation, (donation) => donation.user, {
     onDelete: 'CASCADE',

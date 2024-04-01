@@ -13,7 +13,6 @@ export type GetPostsSelections = {
   likeUserId?: Post['userId'];
   followerIds?: string[];
   typeIds?: [];
-  model: Post['model'];
   isVisible?: Post['isVisible'];
   albumId?: Post['albumId'];
   categoryId?: Post['categoryId'];

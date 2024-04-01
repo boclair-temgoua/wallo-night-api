@@ -13,7 +13,7 @@ import {
   FilterQueryType,
   filterQueryTypeArrays,
 } from '../app/utils/search-query';
-import { Commission, Product, User } from './index';
+import { Product, User } from './index';
 
 @Entity('cart')
 export class Cart extends BaseDeleteEntity {
@@ -32,7 +32,7 @@ export class Cart extends BaseDeleteEntity {
   @Column({ type: 'uuid', nullable: true })
   cartOrderId?: string;
 
-  @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'COMMISSION' })
+  @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'PRODUCT' })
   model?: FilterQueryType;
 
   @Column({ type: 'uuid', nullable: true })
@@ -40,12 +40,6 @@ export class Cart extends BaseDeleteEntity {
   @ManyToOne(() => Product, (product) => product.carts)
   @JoinColumn()
   product?: Relation<Product>;
-
-  @Column({ type: 'uuid', nullable: true })
-  commissionId?: string;
-  @ManyToOne(() => Commission, (commission) => commission.carts)
-  @JoinColumn()
-  commission?: Relation<Commission>;
 
   @Column({ type: 'uuid', nullable: true })
   userId?: string;

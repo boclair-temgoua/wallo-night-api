@@ -21,7 +21,7 @@ export class ProductsService {
   ) {}
 
   async findAll(selections: GetProductsSelections): Promise<any> {
-    const { search, pagination, isVisible, status, organizationId } =
+    const { search, pagination, isVisible, status, modelIds, organizationId } =
       selections;
 
     let query = this.driver
@@ -47,6 +47,7 @@ export class ProductsService {
       .addSelect('product.enableLimitSlot', 'enableLimitSlot')
       .addSelect('product.enableDiscount', 'enableDiscount')
       .addSelect('product.discountId', 'discountId')
+      .addSelect('product.organizationId', 'organizationId')
       .addSelect('product.model', 'model')
       .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
@@ -88,7 +89,7 @@ export class ProductsService {
           WHERE "upl"."uploadableId" = "product"."id"
           AND "upl"."productId" = "product"."id"
           AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."model" IN ('PRODUCT','COMMISSION')
           AND "upl"."uploadType" IN ('IMAGE')
           GROUP BY "product"."id", "upl"."uploadableId"
           ) AS "uploadsImages"`,
@@ -152,6 +153,10 @@ export class ProductsService {
       .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
 
+    if (modelIds && modelIds.length > 0) {
+      query = query.andWhere('product.model IN (:...modelIds)', { modelIds });
+    }
+
     if (organizationId) {
       query = query.andWhere('product.organizationId = :organizationId', {
         organizationId,
@@ -160,7 +165,7 @@ export class ProductsService {
 
     if (isVisible) {
       query = query.andWhere('product.isVisible = :isVisible', {
-        isVisible,
+        isVisible: true,
       });
     }
 
@@ -222,6 +227,7 @@ export class ProductsService {
       .addSelect('product.enableDiscount', 'enableDiscount')
       .addSelect('product.discountId', 'discountId')
       .addSelect('product.organizationId', 'organizationId')
+      .addSelect('product.organizationId', 'organizationId')
       .addSelect('product.model', 'model')
       .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
@@ -264,7 +270,7 @@ export class ProductsService {
           AND "upl"."productId" = "product"."id"
           AND "upl"."productId" = "product"."id"
           AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('PRODUCT')
+          AND "upl"."model" IN ('PRODUCT','COMMISSION')
           AND "upl"."uploadType" IN ('IMAGE')
           GROUP BY "product"."id", "upl"."uploadableId"
           ) AS "uploadsImages"`,
@@ -329,6 +335,12 @@ export class ProductsService {
       .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
 
+    if (isVisible) {
+      query = query.andWhere('product.isVisible = :isVisible', {
+        isVisible,
+      });
+    }
+
     if (productId) {
       query = query.andWhere('product.id = :id', { id: productId });
     }
@@ -341,7 +353,7 @@ export class ProductsService {
 
     if (isVisible) {
       query = query.andWhere('product.isVisible = :isVisible', {
-        isVisible,
+        isVisible: true,
       });
     }
 
@@ -361,6 +373,7 @@ export class ProductsService {
       subTitle,
       sku,
       price,
+      model,
       description,
       moreDescription,
       limitSlot,
@@ -386,6 +399,7 @@ export class ProductsService {
     product.title = title;
     product.price = price;
     product.sku = sku;
+    product.model = model;
     product.whoCanSee = whoCanSee;
     product.productType = productType;
     product.urlRedirect = urlRedirect;
@@ -426,6 +440,7 @@ export class ProductsService {
       title,
       subTitle,
       sku,
+      model,
       price,
       description,
       moreDescription,
@@ -459,6 +474,7 @@ export class ProductsService {
     product.title = title;
     product.price = price;
     product.sku = sku;
+    product.model = model;
     product.subTitle = subTitle;
     product.moreDescription = moreDescription;
     product.status = status;

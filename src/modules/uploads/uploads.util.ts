@@ -18,6 +18,7 @@ export class UploadsUtil {
   constructor(private readonly uploadsService: UploadsService) {} // private driver: Repository<Commission>, // @InjectRepository(Commission)
 
   async saveOrUpdateAws(options: {
+    contactId?: string;
     userId?: string;
     profileId?: string;
     model: FilterQueryType;
@@ -25,10 +26,9 @@ export class UploadsUtil {
     organizationId: string;
     postId?: string;
     productId?: string;
-    commissionId?: string;
     membershipId?: string;
 
-    folder: 'products' | 'commissions' | 'posts' | 'memberships' | 'profiles';
+    folder: 'products' | 'posts' | 'memberships' | 'profiles' | 'contacts';
     files?: Array<ExpressFile>;
     file?: ExpressFile;
   }): Promise<any> {
@@ -41,9 +41,9 @@ export class UploadsUtil {
       uploadableId,
       folder,
       postId,
+      contactId,
       productId,
       profileId,
-      commissionId,
       membershipId,
     } = options;
 
@@ -54,9 +54,9 @@ export class UploadsUtil {
         model,
         userId,
         postId,
+        contactId,
         profileId,
         productId,
-        commissionId,
         membershipId,
         organizationId,
         uploadableId,
@@ -71,8 +71,8 @@ export class UploadsUtil {
           model,
           userId,
           postId,
+          contactId,
           productId,
-          commissionId,
           membershipId,
           organizationId,
           uploadableId,
@@ -88,8 +88,8 @@ export class UploadsUtil {
           model: model,
           userId: userId,
           postId: postId,
+          contactId: contactId,
           productId: productId,
-          commissionId: commissionId,
           membershipId: membershipId,
           organizationId: organizationId,
           uploadableId: uploadableId,
@@ -105,10 +105,10 @@ export class UploadsUtil {
     folder: string;
     model?: FilterQueryType;
     userId?: string;
+    contactId?: string;
     postId?: string;
     profileId?: string;
     productId?: string;
-    commissionId?: string;
     membershipId?: string;
     organizationId?: string;
     uploadableId?: string;
@@ -121,7 +121,6 @@ export class UploadsUtil {
       postId,
       profileId,
       productId,
-      commissionId,
       membershipId,
       organizationId,
       uploadableId,
@@ -149,7 +148,6 @@ export class UploadsUtil {
       postId,
       profileId,
       productId,
-      commissionId,
       membershipId,
       organizationId,
       uploadableId,

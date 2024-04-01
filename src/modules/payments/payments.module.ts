@@ -4,7 +4,6 @@ import {
   Cart,
   CartOrder,
   Comment,
-  Commission,
   Currency,
   Follow,
   Membership,
@@ -20,7 +19,6 @@ import {
 import { CartOrdersService } from '../cart-orders/cart-orders.service';
 import { CartsService } from '../cats/cats.service';
 import { CommentsService } from '../comments/comments.service';
-import { CommissionsService } from '../commissions/commissions.service';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { FollowsService } from '../follows/follows.service';
 import { MembershipsService } from '../memberships/memberships.service';
@@ -54,7 +52,6 @@ import { PaymentsUtil } from './payments.util';
       Product,
       OrderItem,
       Cart,
-      Commission,
       CartOrder,
       Transaction,
     ]),
@@ -72,7 +69,6 @@ import { PaymentsUtil } from './payments.util';
     OrdersService,
     UsersService,
     PaymentsUtil,
-    CommissionsService,
     CartOrdersService,
     OrderItemsService,
     ProductsService,

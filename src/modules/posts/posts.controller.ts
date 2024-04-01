@@ -24,7 +24,6 @@ import {
   CreateOrUpdatePostsGalleriesDto,
   GetGalleriesDto,
   GetOnePostDto,
-  GetPostsDto,
 } from './posts.dto';
 
 import {
@@ -53,10 +52,8 @@ export class PostsController {
     @Req() req,
     @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
-    @Query() query: GetPostsDto,
   ) {
     const { user } = req;
-    const { model } = query;
     const { search } = searchQuery;
 
     let userFollows: string[] = [];
@@ -75,7 +72,6 @@ export class PostsController {
       search,
       pagination,
       likeUserId: user?.id,
-      model,
       followerIds: [...userFollows, user?.id],
     });
 
@@ -91,15 +87,8 @@ export class PostsController {
     @Query() PaginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const {
-      type,
-      model,
-      albumId,
-      organizationId,
-      typeIds,
-      status,
-      userVisitorId,
-    } = query;
+    const { type, albumId, organizationId, typeIds, status, userVisitorId } =
+      query;
     const { search } = searchQuery;
 
     const { take, page, sort } = PaginationDto;
@@ -109,7 +98,6 @@ export class PostsController {
       search,
       pagination,
       type,
-      model,
       albumId,
       organizationId,
       status: status?.toUpperCase(),

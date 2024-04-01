@@ -40,22 +40,21 @@ export type FilterQueryType =
   | 'PRODUCT'
   | 'COMMISSION'
   | 'MEMBERSHIP'
-  | 'HELP'
+  | 'CONTACT'
   | 'POST'
   | 'GALLERY'
-  | 'PROFILE'
   | 'PROFILE'
   | 'COMMENT';
 
 export const filterQueryTypeArrays = [
   'DONATION',
-  'MEMBERSHIP',
-  'COMMISSION',
   'PRODUCT',
-  'HELP',
+  'COMMISSION',
+  'MEMBERSHIP',
+  'CONTACT',
   'POST',
-  'PROFILE',
   'GALLERY',
+  'PROFILE',
   'COMMENT',
 ];
 

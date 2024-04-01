@@ -19,10 +19,7 @@ export class CheckUserService {
     const payload = verify(token, config.cookieKey);
 
     if (typeof payload == 'string')
-      throw new HttpException(
-        `Token not valid or expired`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(`Token invalid or expired`, HttpStatus.NOT_FOUND);
 
     return payload;
   }

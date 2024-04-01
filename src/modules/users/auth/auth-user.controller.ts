@@ -301,10 +301,7 @@ export class AuthUserController {
   async resendCode(@Res() res, @Req() req, @Cookies() cookies) {
     const token = cookies[config.cookie_access.namVerify];
     if (!token) {
-      throw new HttpException(
-        `Token not valid or expired`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(`Token invalid or expired`, HttpStatus.NOT_FOUND);
     }
     const payload = await this.checkUserService.verifyToken(token);
     const findOnUser = await this.usersService.findOneBy({
@@ -345,15 +342,12 @@ export class AuthUserController {
   async validCode(@Res() res, @Body('code') code: string, @Cookies() cookies) {
     const token = cookies[config.cookie_access.namVerify];
     if (!token) {
-      throw new HttpException(
-        `Token not valid or expired`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(`Token invalid or expired`, HttpStatus.NOT_FOUND);
     }
     const payload = await this.checkUserService.verifyToken(token);
     if (Number(payload?.code) !== Number(code)) {
       throw new HttpException(
-        `Code ${code} not valid or expired try resend`,
+        `Code ${code} invalid or expired try to resend`,
         HttpStatus.NOT_FOUND,
       );
     }

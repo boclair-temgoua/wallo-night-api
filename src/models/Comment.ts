@@ -11,7 +11,7 @@ import {
   FilterQueryType,
   filterQueryTypeArrays,
 } from '../app/utils/search-query';
-import { Commission, Organization, Post, Product, User } from './index';
+import { Organization, Post, Product, User } from './index';
 
 @Entity('comment')
 export class Comment extends BaseDeleteEntity {
@@ -51,14 +51,6 @@ export class Comment extends BaseDeleteEntity {
   })
   @JoinColumn()
   post?: Post;
-
-  @Column({ type: 'uuid', nullable: true })
-  commissionId?: string;
-  @ManyToOne(() => Commission, (commission) => commission.comments, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  commission?: Commission;
 
   @Column({ type: 'uuid', nullable: true })
   userReceiveId?: string;

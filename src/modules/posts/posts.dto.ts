@@ -8,9 +8,7 @@ import {
 } from 'class-validator';
 import { ProductStatus } from '../../app/utils/pagination';
 import {
-  FilterQueryType,
   WhoCanSeeType,
-  filterQueryTypeArrays,
   whoCanSeeTypeArrays,
 } from '../../app/utils/search-query';
 import { PostType, postTypeArrays } from './posts.type';
@@ -118,19 +116,7 @@ export class GetOnePostDto {
   type: string;
 }
 
-export class GetPostsDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(filterQueryTypeArrays)
-  model: FilterQueryType;
-}
-
 export class GetGalleriesDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(filterQueryTypeArrays)
-  model: FilterQueryType;
-
   @IsOptional()
   @IsString()
   @IsIn(postTypeArrays)

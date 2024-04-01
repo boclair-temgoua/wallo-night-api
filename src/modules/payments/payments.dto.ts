@@ -43,7 +43,7 @@ export class CreateOnePaymentDto {
   fullName: string;
 
   @IsOptional()
-  @IsIBAN({ message: 'IBAN not valid' })
+  @IsIBAN({ message: 'IBAN invalid' })
   @IsString()
   iban: string;
 
@@ -84,7 +84,7 @@ export class CreateSubscribePaymentsDto {
 
   @IsOptional()
   @IsString()
-  commissionId: string;
+  productId: string;
 
   @IsOptional()
   @IsString()

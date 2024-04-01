@@ -1,9 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
+import { Upload } from './Upload';
 
-@Entity('contact_us')
-export class ContactUs extends BaseDeleteEntity {
+@Entity('contact')
+export class Contact extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -36,4 +37,9 @@ export class ContactUs extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;
+
+  @OneToMany(() => Upload, (upload) => upload.contact, {
+    onDelete: 'CASCADE',
+  })
+  uploads?: Upload;
 }

@@ -95,7 +95,7 @@ export class Product extends BaseDeleteEntity {
   @Column({ default: 'ACTIVE' })
   status?: ProductStatus;
 
-  @Column({ type: 'enum', enum: productTypeArrays, default: 'PHYSICAL' })
+  @Column({ type: 'enum', enum: productTypeArrays, default: 'DIGITAL' })
   productType?: ProductType;
 
   @Column({ type: 'uuid', nullable: true })

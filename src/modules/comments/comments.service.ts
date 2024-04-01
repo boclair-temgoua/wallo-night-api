@@ -51,7 +51,6 @@ export class CommentsService {
       .addSelect('comment.email', 'email')
       .addSelect('comment.fullName', 'fullName')
       .addSelect('comment.organizationId', 'organizationId')
-      .addSelect('comment.commissionId', 'commissionId')
       .addSelect('comment.userReceiveId', 'userReceiveId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -195,7 +194,6 @@ export class CommentsService {
       fullName,
       organizationId,
       userReceiveId,
-      commissionId,
     } = options;
 
     const comment = new Comment();
@@ -205,7 +203,6 @@ export class CommentsService {
     comment.model = model;
     comment.color = color;
     comment.email = email;
-    comment.commissionId = commissionId;
     comment.fullName = fullName;
     comment.productId = productId;
     comment.description = description;

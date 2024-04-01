@@ -216,17 +216,6 @@ export class UsersService {
       .addSelect(
         /*sql*/ `(
         SELECT jsonb_build_object(
-        'count', CAST(COUNT(DISTINCT prod) AS INT)
-        )
-        FROM "product" "prod"
-        WHERE "prod"."organizationId" = "user"."organizationId"
-        AND "prod"."deletedAt" IS NULL
-        GROUP BY "prod"."organizationId", "user"."organizationId"
-        ) AS "product"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-        SELECT jsonb_build_object(
         'count', CAST(COUNT(DISTINCT po) AS INT)
         )
         FROM "post" "po"
@@ -239,12 +228,25 @@ export class UsersService {
       .addSelect(
         /*sql*/ `(
         SELECT jsonb_build_object(
-        'count', CAST(COUNT(DISTINCT comm) AS INT)
+        'count', CAST(COUNT(DISTINCT prod) AS INT)
         )
-        FROM "commission" "comm"
-        WHERE "comm"."organizationId" = "user"."organizationId"
-        AND "comm"."deletedAt" IS NULL
-        GROUP BY "comm"."organizationId", "user"."organizationId"
+        FROM "product" "prod"
+        WHERE "prod"."organizationId" = "user"."organizationId"
+        AND "prod"."model" IN ('PRODUCT')
+        AND "prod"."deletedAt" IS NULL
+        GROUP BY "prod"."organizationId", "user"."organizationId"
+        ) AS "product"`,
+      )
+      .addSelect(
+        /*sql*/ `(
+        SELECT jsonb_build_object(
+        'count', CAST(COUNT(DISTINCT prod) AS INT)
+        )
+        FROM "product" "prod"
+        WHERE "prod"."organizationId" = "user"."organizationId"
+        AND "prod"."model" IN ('COMMISSION')
+        AND "prod"."deletedAt" IS NULL
+        GROUP BY "prod"."organizationId", "user"."organizationId"
         ) AS "commission"`,
       )
       .addSelect(

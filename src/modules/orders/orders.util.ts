@@ -83,7 +83,6 @@ export class OrdersUtil {
         organizationBuyerId: organizationBuyerId,
         organizationSellerId: cart?.product?.organizationId,
         model: cart?.model,
-        commissionId: cart?.commissionId,
         productId: cart?.productId,
         orderId: order?.id,
         uploadFiles: [...findOneProduct?.uploadsFiles],
@@ -109,14 +108,14 @@ export class OrdersUtil {
   async orderCommissionCreate(options: {
     amount: AmountModel;
     userBuyerId: string;
-    commissionId: string;
+    productId: string;
     organizationBuyerId: string;
     organizationSellerId: string;
     userAddress?: any;
   }): Promise<any> {
     const {
       amount,
-      commissionId,
+      productId,
       userAddress,
       userBuyerId,
       organizationBuyerId,
@@ -138,7 +137,7 @@ export class OrdersUtil {
       organizationBuyerId: organizationBuyerId,
       organizationSellerId: organizationSellerId,
       model: 'COMMISSION',
-      commissionId: commissionId,
+      productId: productId,
       orderId: order?.id,
       status: 'DELIVERED',
     });

@@ -5,14 +5,15 @@ export type GetProductsSelections = {
   search?: string;
   pagination?: PaginationType;
   status?: string;
-  isVisible?: Product['isVisible'];
+  modelIds: [];
+  isVisible?: string;
   organizationId?: Product['organizationId'];
 };
 
 export type GetOneProductsSelections = {
   productId?: Product['id'];
   productSlug?: Product['slug'];
-  isVisible?: Product['isVisible'];
+  isVisible?: string;
   organizationId?: Product['organizationId'];
 };
 

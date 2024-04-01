@@ -10,8 +10,7 @@ import { CartOrdersModule } from './modules/cart-orders/cart-orders.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { CartsModule } from './modules/cats/cats.module';
 import { CommentsModule } from './modules/comments/comments.module';
-import { CommissionsModule } from './modules/commissions/commissions.module';
-import { ContactUsModule } from './modules/contact-us/contact-us.module';
+import { ContactModule } from './modules/contacts/contact.module';
 import { ContributionsModule } from './modules/contributions/contributions.module';
 import { ContributorsModule } from './modules/contributors/contributors.module';
 import { CountriesModule } from './modules/countries/countries.module';
@@ -71,10 +70,9 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     CartOrdersModule,
     OrganizationsModule,
     SubscribesModule,
-    CommissionsModule,
     ProvidersModule,
     ContributionsModule,
-    ContactUsModule,
+    ContactModule,
   ],
 })
 export class AppModule {}
