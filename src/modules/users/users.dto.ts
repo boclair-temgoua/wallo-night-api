@@ -71,6 +71,21 @@ export class PasswordResetDto {
 export class CreateRegisterUserDto {
   @IsNotEmpty()
   @IsString()
+  @MaxLength(6)
+  code: string;
+
+  @IsOptional()
+  @IsString()
+  phone: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
   @MaxLength(50)
   firstName: string;
 
@@ -82,12 +97,6 @@ export class CreateRegisterUserDto {
   @IsOptional()
   @IsString()
   codeVoucher: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(50)
-  @IsEmail()
-  email: string;
 
   @IsOptional()
   @IsString()
@@ -101,11 +110,6 @@ export class CreateRegisterUserDto {
   @MinLength(8)
   @IsString()
   password: string;
-
-  // @IsString()
-  // @MinLength(8)
-  // @Match('password')
-  // passwordConfirm: string;
 }
 
 export class UpdateOneEmailUserDto {
@@ -193,6 +197,31 @@ export class GetOneUserDto {
   @IsOptional()
   @IsString()
   username: string;
+}
+
+export class SendCodePhoneUserDto {
+  @IsNotEmpty()
+  @IsString()
+  phone: string;
+}
+
+export class SendCodeEmailUserDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  @IsEmail()
+  email: string;
+}
+
+export class LoginPhoneUserDto {
+  @IsNotEmpty()
+  @IsString()
+  phone: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(6)
+  code: string;
 }
 
 export class UpdateEnableProfileDto {

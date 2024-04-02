@@ -111,12 +111,18 @@ export class UsersService {
   }
 
   async findOneBy(selections: GetOneUserSelections): Promise<User> {
-    const { userId, email, token, username, provider, organizationId } =
+    const { userId, email, token, username, provider, organizationId, phone } =
       selections;
     let query = this.driver
       .createQueryBuilder('user')
       .where('user.deletedAt IS NULL')
       .leftJoinAndSelect('user.profile', 'profile');
+
+    if (phone) {
+      query = query
+        .andWhere('user.phone = :phone', { phone })
+        .andWhere('user.isValidPhone IS TRUE');
+    }
 
     if (userId) {
       query = query.andWhere('user.id = :id', { id: userId });
@@ -513,6 +519,8 @@ export class UsersService {
       username,
       password,
       profileId,
+      phone,
+      isValidPhone,
       organizationId,
     } = options;
 
@@ -523,6 +531,8 @@ export class UsersService {
     user.username = Slug(username.toLocaleLowerCase());
     user.provider = provider;
     user.profileId = profileId;
+    user.isValidPhone = isValidPhone;
+    user.phone = phone;
     user.organizationId = organizationId;
     user.confirmedAt = confirmedAt;
 
@@ -541,11 +551,13 @@ export class UsersService {
   ): Promise<User> {
     const { userId, profileId } = selections;
     const {
+      phone,
       email,
       username,
       password,
       organizationId,
       deletedAt,
+      isValidPhone,
       confirmedAt,
     } = options;
 
@@ -570,6 +582,8 @@ export class UsersService {
       user.password = await hashPassword(password);
     }
     user.deletedAt = deletedAt;
+    user.phone = phone;
+    user.isValidPhone = isValidPhone;
     user.organizationId = organizationId;
     user.confirmedAt = confirmedAt;
 

@@ -38,17 +38,18 @@ export class UsersUtil {
     firstName: string;
     lastName: string;
     username: string;
+    phone?: string;
     image?: Profile['image'];
     role: Contributor['role'];
     email_verified?: boolean;
     confirmedAt: Date;
   }): Promise<any> {
     const {
+      phone,
       username,
       email,
       role,
       provider,
-      email_verified,
       password,
       firstName,
       lastName,
@@ -77,6 +78,7 @@ export class UsersUtil {
 
     /** Create User */
     const user = await this.usersService.createOne({
+      phone,
       email,
       provider,
       password,
@@ -107,7 +109,7 @@ export class UsersUtil {
       userCreatedId: user?.id,
       role: role,
       organizationId: organization?.id,
-      confirmedAt: confirmedAt,
+      confirmedAt: user?.confirmedAt,
     });
 
     /** Create Donation */

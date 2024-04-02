@@ -27,6 +27,7 @@ import { reply } from '../../../app/utils/reply';
 import { ContributorsService } from '../../contributors/contributors.service';
 import { ContributorsUtil } from '../../contributors/contributors.util';
 import { getOneLocationIpApi } from '../../integrations/taux-live';
+import { otpMessageSend, otpVerifySid } from '../../integrations/twilio-otp';
 import { ProfilesService } from '../../profiles/profiles.service';
 import {
   CheckUserService,
@@ -38,8 +39,11 @@ import { UserVerifyAuthGuard } from '../middleware/cookie/user-verify-auth.guard
 import {
   CreateLoginUserDto,
   CreateRegisterUserDto,
+  LoginPhoneUserDto,
   PasswordResetDto,
   PasswordUpdatedDto,
+  SendCodeEmailUserDto,
+  SendCodePhoneUserDto,
   TokenUserDto,
   UpdateProfileDto,
 } from '../users.dto';
@@ -61,20 +65,62 @@ export class AuthUserController {
 
   /** Register new user */
   @Post(`/register`)
-  async createOneRegister(@Res() res, @Body() body: CreateRegisterUserDto) {
-    const { email, password, firstName, lastName } = body;
+  async createOneRegister(
+    @Res() res,
+    @Cookies() cookies,
+    @Body() body: CreateRegisterUserDto,
+  ) {
+    const { email, password, firstName, code, phone, lastName } = body;
 
-    const findOnUser = await this.usersService.findOneBy({
-      email,
-      provider: 'DEFAULT',
-    });
-    if (findOnUser)
-      throw new HttpException(
-        `Email ${email} already exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
+    if (phone && code) {
+      const findOnUserPhone = await this.usersService.findOneBy({
+        phone,
+        provider: 'DEFAULT',
+      });
+      if (findOnUserPhone)
+        throw new HttpException(
+          `This phone number ${phone} is associated to an account`,
+          HttpStatus.NOT_FOUND,
+        );
+      const otpMessageVerifySid = await otpVerifySid({
+        phone: phone,
+        code: code,
+      });
+      if (!otpMessageVerifySid?.valid) {
+        throw new HttpException(
+          `Code verify try to resend invalid`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
 
-    const { user, contributor } = await this.usersUtil.saveOrUpdate({
+    if (email && code) {
+      const findOnUserEmail = await this.usersService.findOneBy({
+        email,
+        provider: 'DEFAULT',
+      });
+      if (findOnUserEmail)
+        throw new HttpException(
+          `Email ${email} already exists please change`,
+          HttpStatus.NOT_FOUND,
+        );
+      const token = cookies[config.cookie_access.namVerify];
+      if (!token) {
+        throw new HttpException(
+          `Token invalid or expired`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const payload = await this.checkUserService.verifyToken(token);
+      if (payload?.code !== code) {
+        throw new HttpException(
+          `Code invalid or expired`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
+
+    const { user } = await this.usersUtil.saveOrUpdate({
       email,
       password,
       firstName,
@@ -82,39 +128,27 @@ export class AuthUserController {
       username: `${firstName}-${lastName}-${generateNumber(4)}`,
       provider: 'DEFAULT',
       role: 'ADMIN',
-      confirmedAt: null,
+      phone,
+      confirmedAt: dateTimeNowUtc(),
     });
 
-    const codeGenerate = generateNumber(6);
-    const tokenVerify = await this.checkUserService.createToken(
-      {
-        code: codeGenerate,
-        userId: user.id,
-        organizationId: user.organizationId,
-        contributorId: contributor?.id,
-      } as TokenJwtModel,
-      config.cookie_access.accessExpire,
-    );
+    const tokenUser = await this.usersUtil.createTokenLogin({
+      userId: user?.id,
+      organizationId: user?.organizationId,
+    });
 
     res.cookie(
+      config.cookie_access.nameLogin,
+      tokenUser,
+      validation_login_cookie_setting,
+    );
+
+    res.clearCookie(
       config.cookie_access.namVerify,
-      tokenVerify,
       validation_verify_cookie_setting,
     );
 
-    /** Send information to Job */
-    await codeConfirmationJob({
-      email: user?.email,
-      code: codeGenerate,
-    });
-
-    return reply({
-      res,
-      results: {
-        confirmedAt: user.confirmedAt,
-        organizationId: user.organizationId,
-      },
-    });
+    return reply({ res, results: 'User signed in successfully' });
   }
 
   /** Login user */
@@ -141,50 +175,101 @@ export class AuthUserController {
       throw new HttpException(`Invalid credentials`, HttpStatus.NOT_FOUND);
     }
 
-    if (findOnUser?.confirmedAt) {
-      const tokenUser = await this.usersUtil.createTokenLogin({
-        userId: findOnUser?.id,
-        organizationId: findOnUser?.organizationId,
-      });
+    const tokenUser = await this.usersUtil.createTokenLogin({
+      userId: findOnUser?.id,
+      organizationId: findOnUser?.organizationId,
+    });
 
-      res.cookie(
-        config.cookie_access.nameLogin,
-        tokenUser,
-        validation_login_cookie_setting,
-      );
-    } else {
-      const codeGenerate = generateNumber(6);
-      const tokenVerify = await this.checkUserService.createToken(
-        {
-          code: codeGenerate,
-          userId: findOnUser.id,
-          contributorId: findOnContributor?.id,
-          organizationId: findOnUser.organizationId,
-        } as TokenJwtModel,
-        config.cookie_access.accessExpire,
-      );
+    res.cookie(
+      config.cookie_access.nameLogin,
+      tokenUser,
+      validation_login_cookie_setting,
+    );
 
-      res.cookie(
-        config.cookie_access.namVerify,
-        tokenVerify,
-        validation_verify_cookie_setting,
-      );
-      /** Send information to Job */
-      await codeConfirmationJob({
-        email: findOnUser?.email,
-        code: codeGenerate,
-      });
+    return reply({ res, results: 'User log in in successfully' });
+  }
+
+  /** Send Code login email */
+  @Get(`/send-code-email/:email`)
+  async sendCodeEmailOne(@Res() res, @Param() param: SendCodeEmailUserDto) {
+    const { email } = param;
+    const codeGenerate = generateNumber(6);
+    const tokenVerify = await this.checkUserService.createToken(
+      { code: codeGenerate },
+      config.cookie_access.accessExpire,
+    );
+
+    res.cookie(
+      config.cookie_access.namVerify,
+      tokenVerify,
+      validation_verify_cookie_setting,
+    );
+
+    await codeConfirmationJob({
+      email: email,
+      code: codeGenerate,
+    });
+
+    return reply({ res, results: 'Email send code successfully' });
+  }
+
+  /** Send Code login phone */
+  @Get(`/send-code-phone/:phone`)
+  async sendCodePhoneOne(@Res() res, @Param() param: SendCodePhoneUserDto) {
+    const { phone } = param;
+    // const findOnUser = await this.usersService.findOneBy({
+    //   phone,
+    //   provider: 'DEFAULT',
+    // });
+    // if (!findOnUser)
+    //   throw new HttpException(
+    //     `This phone number not associate to the account`,
+    //     HttpStatus.NOT_FOUND,
+    //   );
+
+    const otpMessageVoce = await otpMessageSend({ phone });
+    if (!otpMessageVoce) {
+      throw new HttpException(`OTP messageVoce invalid`, HttpStatus.NOT_FOUND);
     }
 
-    return reply({
-      res,
-      results: {
-        id: findOnUser.id,
-        permission: findOnUser.permission,
-        confirmedAt: findOnUser.confirmedAt,
-        organizationId: findOnUser.organizationId,
-      },
+    return reply({ res, results: 'OTP send successfully' });
+  }
+
+  /** Login phone */
+  @Post(`/login-phone`)
+  async createOneLoginPhone(@Res() res, @Body() body: LoginPhoneUserDto) {
+    const { phone, code } = body;
+
+    const findOnUser = await this.usersService.findOneBy({
+      phone,
+      provider: 'DEFAULT',
     });
+    if (!findOnUser)
+      throw new HttpException(
+        `This phone number not associate to the account`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    const otpMessageVerifySid = await otpVerifySid({
+      phone: phone,
+      code: code,
+    });
+    if (!otpMessageVerifySid?.valid) {
+      throw new HttpException(`OTP verify invalid`, HttpStatus.NOT_FOUND);
+    }
+
+    const tokenUser = await this.usersUtil.createTokenLogin({
+      userId: findOnUser?.id,
+      organizationId: findOnUser?.organizationId,
+    });
+
+    res.cookie(
+      config.cookie_access.nameLogin,
+      tokenUser,
+      validation_login_cookie_setting,
+    );
+
+    return reply({ res, results: 'OTP send successfully' });
   }
 
   /** Reset password */

@@ -373,7 +373,7 @@ export const codeConfirmationMail = async ({
   await nodeMailServiceAdapter({
     from: `${config.implementations.resendSMTP.noReplayFrom}`,
     to: [`${email}`],
-    subject: `${config.datasite.name} - Login to your account with code: ${code}`,
+    subject: `${config.datasite.name} - Verify your email with code: ${code}`,
     html: output,
   });
 };
