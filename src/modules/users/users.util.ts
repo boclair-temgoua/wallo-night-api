@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { config } from '../../app/config/index';
-import { addYearsFormateDDMMYYDate } from '../../app/utils/formate-date';
+import {
+  addYearsFormateDDMMYYDate,
+  dateTimeNowUtc,
+} from '../../app/utils/formate-date';
 import { Contributor, Profile } from '../../models';
 import { ContributorsService } from '../contributors/contributors.service';
 import { CurrenciesService } from '../currencies/currencies.service';
@@ -82,10 +85,12 @@ export class UsersUtil {
       email,
       provider,
       password,
-      confirmedAt: confirmedAt,
-      profileId: profile?.id,
+      confirmedAt,
       username,
+      profileId: profile?.id,
       organizationId: organization?.id,
+      emailConfirmedAt: email ? dateTimeNowUtc() : null,
+      phoneConfirmedAt: phone ? dateTimeNowUtc() : null,
     });
 
     /** Create Contributor */

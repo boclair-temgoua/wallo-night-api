@@ -46,6 +46,9 @@ export class User extends BaseDeleteEntity {
   phone?: string;
 
   @Column({ nullable: true })
+  emailConfirmedAt?: Date;
+
+  @Column({ nullable: true })
   phoneConfirmedAt?: Date;
 
   @Column({ nullable: true })

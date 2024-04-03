@@ -77,11 +77,13 @@ export class AuthUserController {
         phone,
         provider: 'DEFAULT',
       });
-      if (findOnUserPhone?.phoneConfirmedAt)
+      if (findOnUserPhone?.phoneConfirmedAt) {
         throw new HttpException(
           `This phone number ${phone} is associated to an account`,
           HttpStatus.NOT_FOUND,
         );
+      }
+
       const otpMessageVerifySid = await otpVerifySid({
         phone: phone,
         code: code,
@@ -92,12 +94,6 @@ export class AuthUserController {
           HttpStatus.NOT_FOUND,
         );
       }
-
-      // Update valide phone user
-      await this.usersService.updateOne(
-        { userId: findOnUserPhone?.id },
-        { phoneConfirmedAt: dateTimeNowUtc() },
-      );
     }
 
     if (email && code) {
