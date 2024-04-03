@@ -119,9 +119,7 @@ export class UsersService {
       .leftJoinAndSelect('user.profile', 'profile');
 
     if (phone) {
-      query = query
-        .andWhere('user.phone = :phone', { phone })
-        .andWhere('user.isValidPhone IS TRUE');
+      query = query.andWhere('user.phone = :phone', { phone });
     }
 
     if (userId) {

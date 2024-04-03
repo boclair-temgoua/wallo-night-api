@@ -77,7 +77,7 @@ export class AuthUserController {
         phone,
         provider: 'DEFAULT',
       });
-      if (findOnUserPhone)
+      if (findOnUserPhone?.isValidPhone)
         throw new HttpException(
           `This phone number ${phone} is associated to an account`,
           HttpStatus.NOT_FOUND,
@@ -244,11 +244,11 @@ export class AuthUserController {
   async createOneLoginPhone(@Res() res, @Body() body: LoginPhoneUserDto) {
     const { phone, code } = body;
 
-    const findOnUser = await this.usersService.findOneBy({
+    const findOnUserPhone = await this.usersService.findOneBy({
       phone,
       provider: 'DEFAULT',
     });
-    if (!findOnUser)
+    if (!findOnUserPhone?.isValidPhone)
       throw new HttpException(
         `This phone number not associate to the account`,
         HttpStatus.NOT_FOUND,
@@ -263,8 +263,8 @@ export class AuthUserController {
     }
 
     const tokenUser = await this.usersUtil.createTokenLogin({
-      userId: findOnUser?.id,
-      organizationId: findOnUser?.organizationId,
+      userId: findOnUserPhone?.id,
+      organizationId: findOnUserPhone?.organizationId,
     });
 
     res.cookie(
