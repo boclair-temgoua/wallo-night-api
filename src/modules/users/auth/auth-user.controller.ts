@@ -77,7 +77,7 @@ export class AuthUserController {
         phone,
         provider: 'DEFAULT',
       });
-      if (findOnUserPhone?.isValidPhone)
+      if (findOnUserPhone?.phoneConfirmedAt)
         throw new HttpException(
           `This phone number ${phone} is associated to an account`,
           HttpStatus.NOT_FOUND,
@@ -96,7 +96,7 @@ export class AuthUserController {
       // Update valide phone user
       await this.usersService.updateOne(
         { userId: findOnUserPhone?.id },
-        { isValidPhone: true },
+        { phoneConfirmedAt: dateTimeNowUtc() },
       );
     }
 
@@ -248,7 +248,7 @@ export class AuthUserController {
       phone,
       provider: 'DEFAULT',
     });
-    if (!findOnUserPhone?.isValidPhone)
+    if (!findOnUserPhone?.phoneConfirmedAt)
       throw new HttpException(
         `This phone number not associate to the account`,
         HttpStatus.NOT_FOUND,

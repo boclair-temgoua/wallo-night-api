@@ -518,7 +518,7 @@ export class UsersService {
       password,
       profileId,
       phone,
-      isValidPhone,
+      phoneConfirmedAt,
       organizationId,
     } = options;
 
@@ -529,10 +529,10 @@ export class UsersService {
     user.username = Slug(username.toLocaleLowerCase());
     user.provider = provider;
     user.profileId = profileId;
-    user.isValidPhone = isValidPhone;
     user.phone = phone;
     user.organizationId = organizationId;
     user.confirmedAt = confirmedAt;
+    user.phoneConfirmedAt = phoneConfirmedAt;
 
     const query = this.driver.save(user);
 
@@ -555,7 +555,7 @@ export class UsersService {
       password,
       organizationId,
       deletedAt,
-      isValidPhone,
+      phoneConfirmedAt,
       confirmedAt,
     } = options;
 
@@ -581,7 +581,7 @@ export class UsersService {
     }
     user.deletedAt = deletedAt;
     user.phone = phone;
-    user.isValidPhone = isValidPhone;
+    user.phoneConfirmedAt = phoneConfirmedAt;
     user.organizationId = organizationId;
     user.confirmedAt = confirmedAt;
 
