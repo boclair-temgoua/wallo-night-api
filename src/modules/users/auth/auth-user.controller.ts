@@ -92,6 +92,12 @@ export class AuthUserController {
           HttpStatus.NOT_FOUND,
         );
       }
+
+      // Update valide phone user
+      await this.usersService.updateOne(
+        { userId: findOnUserPhone?.id },
+        { isValidPhone: true },
+      );
     }
 
     if (email && code) {
