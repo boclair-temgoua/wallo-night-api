@@ -112,9 +112,9 @@ export class AuthUserController {
         );
       }
       const payload = await this.checkUserService.verifyToken(token);
-      if (payload?.code !== code) {
+      if (payload?.code !== code && payload?.email !== email) {
         throw new HttpException(
-          `Code invalid or expired`,
+          `Code invalid or expired try to resend code`,
           HttpStatus.NOT_FOUND,
         );
       }
@@ -186,7 +186,14 @@ export class AuthUserController {
       validation_login_cookie_setting,
     );
 
-    return reply({ res, results: 'User log in in successfully' });
+    return reply({
+      res,
+      results: {
+        id: findOnUser?.id,
+        confirmedAt: findOnUser?.confirmedAt,
+        organizationId: findOnUser?.organizationId,
+      },
+    });
   }
 
   /** Send Code login email */
@@ -195,7 +202,7 @@ export class AuthUserController {
     const { email } = param;
     const codeGenerate = generateNumber(6);
     const tokenVerify = await this.checkUserService.createToken(
-      { code: codeGenerate },
+      { code: codeGenerate, email },
       config.cookie_access.accessExpire,
     );
 
@@ -217,19 +224,10 @@ export class AuthUserController {
   @Get(`/send-code-phone/:phone`)
   async sendCodePhoneOne(@Res() res, @Param() param: SendCodePhoneUserDto) {
     const { phone } = param;
-    // const findOnUser = await this.usersService.findOneBy({
-    //   phone,
-    //   provider: 'DEFAULT',
-    // });
-    // if (!findOnUser)
-    //   throw new HttpException(
-    //     `This phone number not associate to the account`,
-    //     HttpStatus.NOT_FOUND,
-    //   );
 
     const otpMessageVoce = await otpMessageSend({ phone });
     if (!otpMessageVoce) {
-      throw new HttpException(`OTP messageVoce invalid`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`OTP message voce invalid`, HttpStatus.NOT_FOUND);
     }
 
     return reply({ res, results: 'OTP send successfully' });
