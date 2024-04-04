@@ -202,11 +202,18 @@ export const passwordResetMail = async ({
                         font-family: Helvetica Neue Roman, Arial, sans-serif,
                           'Open Sans';
                       ">Reset your password</h2>
-  
-                        <span style="font-size: 16px">
-                          You are receiving this email because we received a
-                          password reset request for your account </span
-                        ><br /><br />
+
+                        <p
+                        style="
+                          text-align: center;
+                          font-family: Helvetica Neue Roman, Arial, sans-serif,
+                            'Open Sans';
+                            "
+                          >
+                        You are receiving this email because we received a
+                        password reset request for your account
+                        </p>
+                        <br />
   
                         <table
                           class="subcopy"
@@ -242,7 +249,7 @@ export const passwordResetMail = async ({
                             </td>
                           </tr>
                         </table>
-                        <br /><br />
+                        <br />
   
                         <p
                           style="
@@ -260,22 +267,6 @@ export const passwordResetMail = async ({
                         >
                           If you did not request a password reset, no further
                           action is required.
-                        </p>
-                        <p
-                          style="
-                            box-sizing: border-box;
-                            font-family: -apple-system, BlinkMacSystemFont,
-                              'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-                              'Apple Color Emoji', 'Segoe UI Emoji',
-                              'Segoe UI Symbol';
-                            position: relative;
-                            font-size: 16px;
-                            line-height: 1.5em;
-                            margin-top: 0;
-                            text-align: left;
-                          "
-                        >
-                          Thanks,<br />The ${config.datasite.name} Team
                         </p>
   
                         <table

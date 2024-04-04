@@ -233,24 +233,6 @@ export const codeConfirmationMail = async ({
                             >${code}</span
                           >
                         </div>
-                        <br />
-  
-                        <p
-                          style="
-                            box-sizing: border-box;
-                            font-family: -apple-system, BlinkMacSystemFont,
-                              'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-                              'Apple Color Emoji', 'Segoe UI Emoji',
-                              'Segoe UI Symbol';
-                            position: relative;
-                            font-size: 16px;
-                            line-height: 1.5em;
-                            margin-top: 0;
-                            text-align: left;
-                          "
-                        >
-                          Thanks,<br />The ${config.datasite.name} Team
-                        </p>
                       </td>
                     </tr>
                   </table>

@@ -64,6 +64,65 @@ export class AuthUserController {
     private readonly checkUserService: CheckUserService,
   ) {}
 
+  /** Register user */
+  @Post(`/register/check-email-or-phone`)
+  async registerCheckEmailOrPhone(
+    @Res() res,
+    @Body() body: CheckEmailOrPhoneUserDto,
+  ) {
+    const { email, phone } = body;
+
+    const findOnUser = await this.usersService.findOneBy({
+      phone,
+      email,
+      provider: 'DEFAULT',
+    });
+
+    if (phone) {
+      if (findOnUser && findOnUser?.phoneConfirmedAt) {
+        throw new HttpException(
+          `This phone number ${phone} is associated to an account`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const otpMessageVoce = await otpMessageSend({ phone });
+      if (!otpMessageVoce) {
+        throw new HttpException(
+          `OTP message voce invalid`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
+
+    if (email) {
+      if (findOnUser) {
+        throw new HttpException(
+          `This email ${email} is associated to an account`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const codeGenerate = generateNumber(6);
+      const tokenVerify = await this.checkUserService.createToken(
+        { code: codeGenerate, email },
+        config.cookie_access.accessExpire,
+      );
+
+      res.cookie(
+        config.cookie_access.namVerify,
+        tokenVerify,
+        validation_verify_cookie_setting,
+      );
+
+      await codeConfirmationJob({
+        email: email,
+        code: codeGenerate,
+      });
+    }
+
+    return reply({ res, results: 'user success' });
+  }
+
   /** Register new user */
   @Post(`/register`)
   async createOneRegister(
@@ -74,17 +133,6 @@ export class AuthUserController {
     const { email, password, firstName, code, phone, lastName } = body;
 
     if (phone && code) {
-      const findOnUserPhone = await this.usersService.findOneBy({
-        phone,
-        provider: 'DEFAULT',
-      });
-      if (findOnUserPhone?.phoneConfirmedAt) {
-        throw new HttpException(
-          `This phone number ${phone} is associated to an account`,
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
       const otpMessageVerifySid = await otpVerifySid({
         phone: phone,
         code: code,
@@ -98,15 +146,6 @@ export class AuthUserController {
     }
 
     if (email && code) {
-      const findOnUserEmail = await this.usersService.findOneBy({
-        email,
-        provider: 'DEFAULT',
-      });
-      if (findOnUserEmail)
-        throw new HttpException(
-          `Email ${email} already exists please change`,
-          HttpStatus.NOT_FOUND,
-        );
       const token = cookies[config.cookie_access.namVerify];
       if (!token) {
         throw new HttpException(
@@ -114,10 +153,11 @@ export class AuthUserController {
           HttpStatus.NOT_FOUND,
         );
       }
+
       const payload = await this.checkUserService.verifyToken(token);
-      if (payload?.code !== code && payload?.email !== email) {
+      if (payload?.code !== code || payload?.email !== email) {
         throw new HttpException(
-          `Code invalid or expired try to resend code`,
+          `6-digit code invalid or expired try to resend code`,
           HttpStatus.NOT_FOUND,
         );
       }
@@ -155,8 +195,11 @@ export class AuthUserController {
   }
 
   /** Login user */
-  @Post(`/check-email-or-phone`)
-  async checkEmailOrPhone(@Res() res, @Body() body: CheckEmailOrPhoneUserDto) {
+  @Post(`/login/check-email-or-phone`)
+  async loginCheckEmailOrPhone(
+    @Res() res,
+    @Body() body: CheckEmailOrPhoneUserDto,
+  ) {
     const { email, phone } = body;
 
     const findOnUser = await this.usersService.findOneBy({
@@ -182,11 +225,13 @@ export class AuthUserController {
       }
     }
 
-    if (email && !findOnUser) {
-      throw new HttpException(
-        `This email not associate to the account`,
-        HttpStatus.NOT_FOUND,
-      );
+    if (email) {
+      if (!findOnUser) {
+        throw new HttpException(
+          `This email not associate to the account`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
     }
 
     return reply({
