@@ -37,6 +37,7 @@ import { Cookies } from '../middleware/cookie.guard';
 import { UserAuthGuard } from '../middleware/cookie/user-auth.guard';
 import { UserVerifyAuthGuard } from '../middleware/cookie/user-verify-auth.guard';
 import {
+  CheckEmailOrPhoneUserDto,
   CreateLoginUserDto,
   CreateRegisterUserDto,
   LoginPhoneUserDto,
@@ -151,6 +152,47 @@ export class AuthUserController {
     );
 
     return reply({ res, results: 'User signed in successfully' });
+  }
+
+  /** Login user */
+  @Post(`/check-email-or-phone`)
+  async checkEmailOrPhone(@Res() res, @Body() body: CheckEmailOrPhoneUserDto) {
+    const { email, phone } = body;
+
+    const findOnUser = await this.usersService.findOneBy({
+      phone,
+      email,
+      provider: 'DEFAULT',
+    });
+
+    if (phone) {
+      if (!findOnUser && !findOnUser?.phoneConfirmedAt) {
+        throw new HttpException(
+          `This phone number not associate to the account`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const otpMessageVoce = await otpMessageSend({ phone });
+      if (!otpMessageVoce) {
+        throw new HttpException(
+          `OTP message voce invalid`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    }
+
+    if (email && !findOnUser) {
+      throw new HttpException(
+        `This email not associate to the account`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return reply({
+      res,
+      results: { email: findOnUser?.email, phone: findOnUser?.phone },
+    });
   }
 
   /** Login user */

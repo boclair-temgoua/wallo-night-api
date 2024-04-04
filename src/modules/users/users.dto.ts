@@ -237,3 +237,14 @@ export class UpdateEnableProfileDto {
   @IsString()
   enableCommission: string;
 }
+
+export class CheckEmailOrPhoneUserDto {
+  @IsOptional()
+  @IsString()
+  @IsEmail()
+  email: string;
+
+  @IsOptional()
+  @IsString()
+  phone: string;
+}
