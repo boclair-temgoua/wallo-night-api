@@ -56,9 +56,6 @@ export class Product extends BaseDeleteEntity {
   @Column({ type: 'enum', enum: whoCanSeeTypeArrays, default: 'PUBLIC' })
   whoCanSee?: WhoCanSeeType;
 
-  @Column({ type: 'boolean', default: true })
-  isVisible: boolean;
-
   @Column({ type: 'enum', enum: filterQueryTypeArrays, default: 'PRODUCT' })
   model?: FilterQueryType;
 
@@ -88,6 +85,12 @@ export class Product extends BaseDeleteEntity {
 
   @Column({ type: 'boolean', default: false })
   enableLimitSlot: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  enableVisibility: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  enableComment: boolean;
 
   @Column({ type: 'bigint', default: 0 })
   limitSlot: number;

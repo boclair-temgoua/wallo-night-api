@@ -49,7 +49,7 @@ export class Membership extends BaseDeleteEntity {
   model?: FilterQueryType;
 
   @Column({ type: 'boolean', default: true })
-  isVisible: boolean;
+  enableVisibility: boolean;
 
   @Column({ type: 'uuid', nullable: true })
   organizationId?: string;

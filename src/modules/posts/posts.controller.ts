@@ -148,6 +148,7 @@ export class PostsController {
       description,
       albumId,
       type,
+      enableVisibility,
     } = body;
 
     const post = await this.postsService.createOne({
@@ -160,6 +161,7 @@ export class PostsController {
       albumId: albumId,
       organizationId: user?.organizationId,
       allowDownload: allowDownload === 'true' ? true : false,
+      enableVisibility: enableVisibility === 'true' ? true : false,
     });
 
     await this.uploadsUtil.saveOrUpdateAws({
@@ -197,6 +199,7 @@ export class PostsController {
       enableUrlMedia,
       type,
       albumId,
+      enableVisibility,
     } = body;
 
     const post = await this.postsService.createOne({
@@ -212,6 +215,7 @@ export class PostsController {
       organizationId: user?.organizationId,
       allowDownload: allowDownload === 'true' ? true : false,
       enableUrlMedia: enableUrlMedia === 'true' ? true : false,
+      enableVisibility: enableVisibility === 'true' ? true : false,
     });
 
     await this.uploadsUtil.saveOrUpdateAws({
@@ -247,6 +251,7 @@ export class PostsController {
       urlMedia,
       whoCanSee,
       enableUrlMedia,
+      enableVisibility,
     } = body;
     const { user } = req;
 
@@ -271,6 +276,7 @@ export class PostsController {
         description,
         allowDownload: allowDownload === 'true' ? true : false,
         enableUrlMedia: enableUrlMedia === 'true' ? true : false,
+        enableVisibility: enableVisibility === 'true' ? true : false,
       },
     );
 

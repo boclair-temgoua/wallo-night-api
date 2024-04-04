@@ -34,7 +34,10 @@ export class Post extends BaseDeleteEntity {
   enableUrlMedia: boolean;
 
   @Column({ type: 'boolean', default: true })
-  isVisible: boolean;
+  enableVisibility: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  enableComment: boolean;
 
   @Column({ nullable: true })
   urlMedia?: string;

@@ -30,6 +30,10 @@ export class CreateOrUpdatePostsGalleriesDto {
 
   @IsOptional()
   @IsString()
+  enableVisibility: string;
+
+  @IsOptional()
+  @IsString()
   categoryId: string;
 
   @IsOptional()
@@ -63,6 +67,10 @@ export class CreateOrUpdatePostsDto {
   @IsOptional()
   @IsString()
   enableUrlMedia: string;
+
+  @IsOptional()
+  @IsString()
+  enableVisibility: string;
 
   @IsNotEmpty()
   @IsString()

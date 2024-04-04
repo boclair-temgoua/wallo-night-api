@@ -6,14 +6,14 @@ export type GetProductsSelections = {
   pagination?: PaginationType;
   status?: string;
   modelIds: [];
-  isVisible?: string;
+  enableVisibility?: string;
   organizationId?: Product['organizationId'];
 };
 
 export type GetOneProductsSelections = {
   productId?: Product['id'];
   productSlug?: Product['slug'];
-  isVisible?: string;
+  enableVisibility?: string;
   organizationId?: Product['organizationId'];
 };
 

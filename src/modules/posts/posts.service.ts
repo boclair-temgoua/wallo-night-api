@@ -45,7 +45,7 @@ export class PostsService {
       followerIds,
       typeIds,
       albumId,
-      isVisible,
+      enableVisibility,
       categoryId,
       organizationId,
     } = selections;
@@ -56,7 +56,6 @@ export class PostsService {
       .addSelect('post.status', 'status')
       .addSelect('post.id', 'id')
       .addSelect('post.slug', 'slug')
-      .addSelect('post.isVisible', 'isVisible')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
@@ -66,6 +65,8 @@ export class PostsService {
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.categoryId', 'categoryId')
       .addSelect('post.createdAt', 'createdAt')
+      .addSelect('post.enableComment', 'enableComment')
+      .addSelect('post.enableVisibility', 'enableVisibility')
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'id', "category"."id",
@@ -180,9 +181,9 @@ export class PostsService {
       query = query.andWhere('post.type IN (:...typeIds)', { typeIds });
     }
 
-    if (isVisible) {
-      query = query.andWhere('post.isVisible = :isVisible', {
-        isVisible,
+    if (enableVisibility) {
+      query = query.andWhere('post.enableVisibility = :enableVisibility', {
+        enableVisibility,
       });
     }
 
@@ -244,7 +245,7 @@ export class PostsService {
   async findOneBy(selections: GetOnePostSelections): Promise<Post> {
     const {
       postId,
-      isVisible,
+      enableVisibility,
       organizationId,
       postSlug,
       likeUserId,
@@ -257,7 +258,6 @@ export class PostsService {
       .addSelect('post.status', 'status')
       .addSelect('post.id', 'id')
       .addSelect('post.slug', 'slug')
-      .addSelect('post.isVisible', 'isVisible')
       .addSelect('post.allowDownload', 'allowDownload')
       .addSelect('post.userId', 'userId')
       .addSelect('post.type', 'type')
@@ -267,7 +267,9 @@ export class PostsService {
       .addSelect('post.whoCanSee', 'whoCanSee')
       .addSelect('post.categoryId', 'categoryId')
       .addSelect('post.createdAt', 'createdAt')
+      .addSelect('post.enableComment', 'enableComment')
       .addSelect('post.model', 'model')
+      .addSelect('post.enableVisibility', 'enableVisibility')
       .addSelect(
         /*sql*/ `jsonb_build_object(
             'id', "category"."id",
@@ -382,9 +384,9 @@ export class PostsService {
       });
     }
 
-    if (isVisible) {
-      query = query.andWhere('post.isVisible = :isVisible', {
-        isVisible,
+    if (enableVisibility) {
+      query = query.andWhere('post.enableVisibility = :enableVisibility', {
+        enableVisibility,
       });
     }
 
@@ -418,11 +420,12 @@ export class PostsService {
       albumId,
       urlMedia,
       whoCanSee,
-      isVisible,
       enableUrlMedia,
       allowDownload,
       description,
       categoryId,
+      enableComment,
+      enableVisibility,
       organizationId,
     } = options;
 
@@ -433,13 +436,14 @@ export class PostsService {
     post.urlMedia = urlMedia;
     post.whoCanSee = whoCanSee;
     post.albumId = albumId;
-    post.isVisible = isVisible;
     post.allowDownload = allowDownload;
     post.enableUrlMedia = enableUrlMedia;
     post.slug = `${
       title ? `${Slug(title)}-${generateNumber(4)}` : generateLongUUID(10)
     }`;
     post.status = status;
+    post.enableVisibility = enableVisibility;
+    post.enableComment = enableComment;
     post.organizationId = organizationId;
     post.description = description;
     post.albumId = isNotUndefined(albumId) ? albumId : null;
@@ -469,9 +473,10 @@ export class PostsService {
       description,
       urlMedia,
       albumId,
-      isVisible,
       deletedAt,
       categoryId,
+      enableVisibility,
+      enableComment,
     } = options;
 
     let findQuery = this.driver
@@ -492,10 +497,11 @@ export class PostsService {
     post.allowDownload = allowDownload;
     post.status = status;
     post.albumId = albumId;
-    post.isVisible = isVisible;
     post.description = description;
+    post.enableComment = enableComment;
     post.enableUrlMedia = enableUrlMedia;
     post.deletedAt = deletedAt;
+    post.enableVisibility = enableVisibility;
     post.categoryId = isNotUndefined(categoryId) ? categoryId : null;
 
     const query = this.driver.save(post);

@@ -25,7 +25,7 @@ export class MembershipsService {
   ) {}
 
   async findAll(selections: GetMembershipsSelections): Promise<any> {
-    const { search, pagination, isVisible, userId, organizationId } =
+    const { search, pagination, enableVisibility, userId, organizationId } =
       selections;
 
     let query = this.driver
@@ -34,7 +34,7 @@ export class MembershipsService {
       .addSelect('membership.title', 'title')
       .addSelect('membership.status', 'status')
       .addSelect('membership.month', 'month')
-      .addSelect('membership.isVisible', 'isVisible')
+      .addSelect('membership.enableVisibility', 'enableVisibility')
       .addSelect('membership.description', 'description')
       .addSelect('membership.organizationId', 'organizationId')
       .addSelect('membership.price', 'price')
@@ -115,10 +115,13 @@ export class MembershipsService {
       });
     }
 
-    if (isVisible) {
-      query = query.andWhere('membership.isVisible = :isVisible', {
-        isVisible,
-      });
+    if (enableVisibility) {
+      query = query.andWhere(
+        'membership.enableVisibility = :enableVisibility',
+        {
+          enableVisibility,
+        },
+      );
     }
 
     if (organizationId) {
@@ -161,14 +164,14 @@ export class MembershipsService {
   async findOneBy(
     selections: GetOneMembershipsSelections,
   ): Promise<Membership> {
-    const { membershipId, isVisible, organizationId } = selections;
+    const { membershipId, enableVisibility, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('membership')
       .select('membership.id', 'id')
       .addSelect('membership.title', 'title')
       .addSelect('membership.status', 'status')
       .addSelect('membership.month', 'month')
-      .addSelect('membership.isVisible', 'isVisible')
+      .addSelect('membership.enableVisibility', 'enableVisibility')
       .addSelect('membership.description', 'description')
       .addSelect('membership.organizationId', 'organizationId')
       .addSelect('membership.price', 'price')
@@ -235,10 +238,13 @@ export class MembershipsService {
       query = query.andWhere('membership.id = :id', { id: membershipId });
     }
 
-    if (isVisible) {
-      query = query.andWhere('membership.isVisible = :isVisible', {
-        isVisible,
-      });
+    if (enableVisibility) {
+      query = query.andWhere(
+        'membership.enableVisibility = :enableVisibility',
+        {
+          enableVisibility,
+        },
+      );
     }
 
     if (organizationId) {
@@ -263,7 +269,7 @@ export class MembershipsService {
       description,
       messageWelcome,
       price,
-      isVisible,
+      enableVisibility,
       currencyId,
       userId,
       organizationId,
@@ -275,7 +281,7 @@ export class MembershipsService {
     membership.description = description;
     membership.messageWelcome = messageWelcome;
     membership.price = price;
-    membership.isVisible = isVisible;
+    membership.enableVisibility = enableVisibility;
     membership.currencyId = currencyId;
     membership.userId = userId;
     membership.currencyId = currencyId;
@@ -304,7 +310,7 @@ export class MembershipsService {
       price,
       currencyId,
       userId,
-      isVisible,
+      enableVisibility,
       deletedAt,
     } = options;
 
@@ -323,7 +329,7 @@ export class MembershipsService {
     membership.description = description;
     membership.messageWelcome = messageWelcome;
     membership.price = price;
-    membership.isVisible = isVisible;
+    membership.enableVisibility = enableVisibility;
     membership.currencyId = currencyId;
     membership.userId = userId;
     membership.deletedAt = deletedAt;

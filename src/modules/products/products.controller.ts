@@ -51,7 +51,7 @@ export class ProductsController {
     @Query() paginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { organizationId, status, modelIds, isVisible } = query;
+    const { organizationId, status, modelIds, enableVisibility } = query;
     const { search } = searchQuery;
 
     const { take, page, sort } = paginationDto;
@@ -59,7 +59,7 @@ export class ProductsController {
 
     const products = await this.productsService.findAll({
       search,
-      isVisible,
+      enableVisibility,
       pagination,
       organizationId,
       status: status?.toUpperCase(),
@@ -86,7 +86,7 @@ export class ProductsController {
       enableLimitSlot,
       urlMedia,
       whoCanSee,
-      isVisible,
+      enableVisibility,
       productType,
       enableUrlRedirect,
       enableChooseQuantity,
@@ -114,7 +114,7 @@ export class ProductsController {
       limitSlot: Number(limitSlot),
       organizationId: user?.organizationId,
       currencyId: user?.profile?.currencyId,
-      isVisible: isVisible === 'true' ? true : false,
+      enableVisibility: enableVisibility === 'true' ? true : false,
       enableDiscount: enableDiscount === 'true' ? true : false,
       enableLimitSlot: enableLimitSlot === 'true' ? true : false,
       enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
@@ -154,7 +154,7 @@ export class ProductsController {
       enableLimitSlot,
       urlMedia,
       whoCanSee,
-      isVisible,
+      enableVisibility,
       productType,
       enableChooseQuantity,
       messageAfterPayment,
@@ -190,7 +190,7 @@ export class ProductsController {
         price: Number(price),
         limitSlot: Number(limitSlot),
         currencyId: user?.profile?.currencyId,
-        isVisible: isVisible === 'true' ? true : false,
+        enableVisibility: enableVisibility === 'true' ? true : false,
         enableDiscount: enableDiscount === 'true' ? true : false,
         enableLimitSlot: enableLimitSlot === 'true' ? true : false,
         enableUrlRedirect: enableUrlRedirect === 'true' ? true : false,
@@ -214,10 +214,10 @@ export class ProductsController {
   /** Get one Products */
   @Get(`/view`)
   async getOne(@Res() res, @Query() query: GetOneProductDto) {
-    const { productId, productSlug, organizationId, isVisible } = query;
+    const { productId, productSlug, organizationId, enableVisibility } = query;
 
     const findOneProduct = await this.productsService.findOneBy({
-      isVisible,
+      enableVisibility,
       productId,
       productSlug,
       organizationId,

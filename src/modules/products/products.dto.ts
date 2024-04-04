@@ -53,7 +53,7 @@ export class CreateOrUpdateProductsDto {
 
   @IsOptional()
   @IsString()
-  isVisible: string;
+  enableVisibility: string;
 
   @IsOptional()
   @IsString()
@@ -93,7 +93,7 @@ export class GetOneProductDto {
   @IsString()
   @IsIn(['TRUE', 'FALSE'])
   @Type(() => String)
-  isVisible: string;
+  enableVisibility: string;
 
   @IsOptional()
   @IsString()
@@ -124,7 +124,7 @@ export class GetProductsDto {
   @IsString()
   @IsIn(['TRUE', 'FALSE'])
   @Type(() => String)
-  isVisible: string;
+  enableVisibility: string;
 
   @IsOptional()
   @IsString()

@@ -21,8 +21,14 @@ export class ProductsService {
   ) {}
 
   async findAll(selections: GetProductsSelections): Promise<any> {
-    const { search, pagination, isVisible, status, modelIds, organizationId } =
-      selections;
+    const {
+      search,
+      pagination,
+      enableVisibility,
+      status,
+      modelIds,
+      organizationId,
+    } = selections;
 
     let query = this.driver
       .createQueryBuilder('product')
@@ -30,7 +36,6 @@ export class ProductsService {
       .addSelect('product.title', 'title')
       .addSelect('product.subTitle', 'subTitle')
       .addSelect('product.slug', 'slug')
-      .addSelect('product.isVisible', 'isVisible')
       .addSelect('product.whoCanSee', 'whoCanSee')
       .addSelect('product.productType', 'productType')
       .addSelect('product.userId', 'userId')
@@ -49,6 +54,8 @@ export class ProductsService {
       .addSelect('product.discountId', 'discountId')
       .addSelect('product.organizationId', 'organizationId')
       .addSelect('product.model', 'model')
+      .addSelect('product.enableComment', 'enableComment')
+      .addSelect('product.enableVisibility', 'enableVisibility')
       .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -163,9 +170,9 @@ export class ProductsService {
       });
     }
 
-    if (isVisible) {
-      query = query.andWhere('product.isVisible = :isVisible', {
-        isVisible: true,
+    if (enableVisibility) {
+      query = query.andWhere('product.enableVisibility = :enableVisibility', {
+        enableVisibility: true,
       });
     }
 
@@ -202,14 +209,14 @@ export class ProductsService {
   }
 
   async findOneBy(selections: GetOneProductsSelections): Promise<any> {
-    const { productId, isVisible, productSlug, organizationId } = selections;
+    const { productId, enableVisibility, productSlug, organizationId } =
+      selections;
     let query = this.driver
       .createQueryBuilder('product')
       .select('product.id', 'id')
       .addSelect('product.title', 'title')
       .addSelect('product.subTitle', 'subTitle')
       .addSelect('product.slug', 'slug')
-      .addSelect('product.isVisible', 'isVisible')
       .addSelect('product.userId', 'userId')
       .addSelect('product.urlMedia', 'urlMedia')
       .addSelect('product.whoCanSee', 'whoCanSee')
@@ -229,6 +236,8 @@ export class ProductsService {
       .addSelect('product.organizationId', 'organizationId')
       .addSelect('product.organizationId', 'organizationId')
       .addSelect('product.model', 'model')
+      .addSelect('product.enableComment', 'enableComment')
+      .addSelect('product.enableVisibility', 'enableVisibility')
       .addSelect('product.enableChooseQuantity', 'enableChooseQuantity')
       .addSelect(
         /*sql*/ `jsonb_build_object(
@@ -335,12 +344,6 @@ export class ProductsService {
       .leftJoin('organization.user', 'user')
       .leftJoin('user.profile', 'profile');
 
-    if (isVisible) {
-      query = query.andWhere('product.isVisible = :isVisible', {
-        isVisible,
-      });
-    }
-
     if (productId) {
       query = query.andWhere('product.id = :id', { id: productId });
     }
@@ -351,9 +354,9 @@ export class ProductsService {
       });
     }
 
-    if (isVisible) {
-      query = query.andWhere('product.isVisible = :isVisible', {
-        isVisible: true,
+    if (enableVisibility) {
+      query = query.andWhere('product.enableVisibility = :enableVisibility', {
+        enableVisibility: true,
       });
     }
 
@@ -391,8 +394,9 @@ export class ProductsService {
       enableUrlRedirect,
       messageAfterPayment,
       enableChooseQuantity,
-      isVisible,
       userId,
+      enableVisibility,
+      enableComment,
     } = options;
 
     const product = new Product();
@@ -408,7 +412,6 @@ export class ProductsService {
     product.moreDescription = moreDescription;
     product.limitSlot = limitSlot;
     product.status = status;
-    product.isVisible = isVisible;
     product.currencyId = currencyId;
     product.organizationId = organizationId;
     product.enableLimitSlot = enableLimitSlot;
@@ -419,6 +422,8 @@ export class ProductsService {
     product.slug = `${Slug(title)}-${generateNumber(4)}`;
     product.description = description;
     product.userId = userId;
+    product.enableVisibility = enableVisibility;
+    product.enableComment = enableComment;
     product.discountId = isNotUndefined(discountId) ? discountId : null;
     product.categoryId = isNotUndefined(categoryId) ? categoryId : null;
 
@@ -457,7 +462,8 @@ export class ProductsService {
       enableUrlRedirect,
       enableLimitSlot,
       enableDiscount,
-      isVisible,
+      enableComment,
+      enableVisibility,
       messageAfterPayment,
       enableChooseQuantity,
     } = options;
@@ -482,7 +488,6 @@ export class ProductsService {
     product.productType = productType;
     product.currencyId = currencyId;
     product.limitSlot = limitSlot;
-    product.isVisible = isVisible;
     product.urlRedirect = urlRedirect;
     product.enableUrlRedirect = enableUrlRedirect;
     product.enableLimitSlot = enableLimitSlot;
@@ -490,6 +495,8 @@ export class ProductsService {
     product.enableChooseQuantity = enableChooseQuantity;
     product.messageAfterPayment = messageAfterPayment;
     product.urlMedia = urlMedia;
+    product.enableVisibility = enableVisibility;
+    product.enableComment = enableComment;
     product.description = description;
     product.deletedAt = deletedAt;
     product.discountId = isNotUndefined(discountId) ? discountId : null;
