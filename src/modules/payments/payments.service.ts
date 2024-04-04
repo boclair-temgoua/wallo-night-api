@@ -155,6 +155,7 @@ export class PaymentsService {
       type,
       userId,
       iban,
+      status,
       organizationId,
     } = options;
 
@@ -171,6 +172,7 @@ export class PaymentsService {
     payment.iban = iban;
     payment.action = action;
     payment.userId = userId;
+    payment.status = status;
     payment.organizationId = organizationId;
 
     const query = this.driver.save(payment);

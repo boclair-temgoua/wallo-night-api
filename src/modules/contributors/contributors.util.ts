@@ -66,9 +66,18 @@ export class ContributorsUtil {
     const user = await this.usersService.findOneBy({ userId, email });
     if (!user) throw new UnauthorizedException('Invalid user');
 
+    const organization = await this.organizationsService.findOneBy({
+      organizationId: user?.organizationId,
+    });
+    if (!organization)
+      throw new HttpException(
+        `Organization don't exists please change`,
+        HttpStatus.NOT_FOUND,
+      );
+
     const contributor = await this.contributorsService.findOneBy({
       userId: user?.id,
-      organizationId: user?.organizationId,
+      organizationId: organization?.id,
       type: 'ORGANIZATION',
     });
     if (!contributor)
@@ -77,6 +86,6 @@ export class ContributorsUtil {
         HttpStatus.NOT_FOUND,
       );
 
-    return { user, contributor };
+    return { user, organization, contributor };
   }
 }

@@ -6,6 +6,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  Relation,
 } from 'typeorm';
 
 import { BaseDeleteEntity } from '../app/databases/common';
@@ -69,7 +70,7 @@ export class User extends BaseDeleteEntity {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  organization?: Organization;
+  organization?: Relation<Organization>;
 
   @Column({ type: 'uuid', nullable: true })
   profileId?: string;

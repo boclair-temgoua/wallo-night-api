@@ -20,14 +20,9 @@ import {
 } from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query';
-import { otpMessageSend, otpVerifySid } from '../integrations/twilio-otp';
+import { otpVerifySid } from '../integrations/twilio-otp';
 import { UserAuthGuard } from '../users/middleware';
-import {
-  CodeVerifyPaymentsDto,
-  CreateOnePaymentDto,
-  GetPaymentsDto,
-  SendCodeVerifyPaymentsDto,
-} from './payments.dto';
+import { CreateOnePaymentDto, GetPaymentsDto } from './payments.dto';
 import { PaymentsService } from './payments.service';
 import { PaymentsUtil } from './payments.util';
 
@@ -83,63 +78,6 @@ export class PaymentsController {
   //   return reply({ res, results: payment });
   // }
 
-  /** resend code one payment */
-  @Post(`/resend-code-verify-phone`)
-  @UseGuards(UserAuthGuard)
-  async sendCodeVerifyPhoneOne(
-    @Res() res,
-    @Req() req,
-    @Body() body: SendCodeVerifyPaymentsDto,
-  ) {
-    const { phone } = body;
-
-    const otpMessageVoce = await otpMessageSend({ phone });
-    if (!otpMessageVoce) {
-      throw new HttpException(`OTP messageVoce invalid`, HttpStatus.NOT_FOUND);
-    }
-
-    return reply({ res, results: 'OTP send successfully' });
-  }
-
-  /** Verify one payment */
-  @Post(`/code-verify-phone`)
-  @UseGuards(UserAuthGuard)
-  async codeVerifyPhoneOne(
-    @Res() res,
-    @Req() req,
-    @Body() body: CodeVerifyPaymentsDto,
-  ) {
-    const { user } = req;
-    const { phone, code } = body;
-
-    const findOnePayment = await this.paymentsService.findOneBy({
-      phone,
-      organizationId: user?.organizationId,
-    });
-    if (!findOnePayment)
-      throw new HttpException(
-        `Phone ${phone} already exists please change`,
-        HttpStatus.NOT_FOUND,
-      );
-
-    const otpMessageVerifySid = await otpVerifySid({
-      phone: findOnePayment?.phone,
-      code: code,
-    });
-    if (!otpMessageVerifySid?.valid) {
-      throw new HttpException(`OTP verify invalid`, HttpStatus.NOT_FOUND);
-    }
-
-    await this.paymentsService.updateOne(
-      { paymentId: findOnePayment?.id },
-      {
-        status: 'ACTIVE',
-      },
-    );
-
-    return reply({ res, results: 'OTP verified successfully' });
-  }
-
   /** Create one payment */
   @Post(`/create`)
   @UseGuards(UserAuthGuard)
@@ -156,6 +94,7 @@ export class PaymentsController {
       cardCvc,
       type,
       iban,
+      code,
     } = body;
 
     if (type === 'CARD') {
@@ -216,13 +155,13 @@ export class PaymentsController {
         fullName,
         type: 'IBAN',
         action: 'WITHDRAWING',
-        status: 'PENDING',
+        status: 'ACTIVE',
         userId: user?.id,
         organizationId: user?.organizationId,
       });
     }
 
-    if (type === 'PHONE') {
+    if (type === 'PHONE' && code) {
       const findOnePayment = await this.paymentsService.findOneBy({
         phone,
         organizationId: user?.organizationId,
@@ -233,12 +172,21 @@ export class PaymentsController {
           HttpStatus.NOT_FOUND,
         );
 
+      const otpMessageVerifySid = await otpVerifySid({
+        phone: phone,
+        code: code,
+      });
+      if (!otpMessageVerifySid?.valid) {
+        throw new HttpException(`OTP verify invalid`, HttpStatus.NOT_FOUND);
+      }
+
       await this.paymentsService.createOne({
         phone,
         fullName,
         type,
         action: 'WITHDRAWING',
         userId: user?.id,
+        status: 'ACTIVE',
         organizationId: user?.organizationId,
       });
     }

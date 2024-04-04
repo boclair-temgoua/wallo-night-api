@@ -34,6 +34,7 @@ import {
 } from '../../contributors/contributors.dto';
 import { ContributorsService } from '../../contributors/contributors.service';
 import { TokenContributorModel } from '../../contributors/contributors.type';
+import { OrganizationsService } from '../../organizations/organizations.service';
 import { ProfilesService } from '../../profiles/profiles.service';
 import { CheckUserService } from '../middleware/check-user.service';
 import { UserAuthGuard } from '../middleware/cookie/user-auth.guard';
@@ -47,6 +48,7 @@ export class ContributorUserController {
   constructor(
     private readonly usersUtil: UsersUtil,
     private readonly usersService: UsersService,
+    private readonly organizationService: OrganizationsService,
     private readonly profilesService: ProfilesService,
     private readonly checkUserService: CheckUserService,
     private readonly contributorsService: ContributorsService,
@@ -60,16 +62,16 @@ export class ContributorUserController {
     @Query() PaginationDto: PaginationDto,
     @Query() searchQuery: SearchQueryDto,
   ) {
-    const { user } = req;
-    const { search } = searchQuery;
+    const { search, organizationId, userId } = searchQuery;
 
     const { take, page, sort } = PaginationDto;
     const pagination: PaginationType = addPagination({ page, take, sort });
 
     const contributors = await this.contributorsService.findAll({
       search,
+      userId,
       pagination,
-      organizationId: user?.organizationId,
+      organizationId,
     });
 
     return reply({ res, results: contributors });
@@ -90,17 +92,19 @@ export class ContributorUserController {
     const findOneUser = await this.usersService.findOneBy({
       userId,
     });
-    if (!findOneUser && findOneUser?.id === user?.id)
+    if (!findOneUser || user?.id === userId) {
       throw new HttpException(
-        `User ${userId} invalid please change`,
+        `User invited not valid please change`,
         HttpStatus.NOT_FOUND,
       );
+    }
 
     contributor = await this.contributorsService.findOneBy({
       userId,
       organizationId: user?.organizationId,
     });
 
+    // cette controlle si le contributeur existe au cas contraire il le cree puis envoie l'email par la suite
     if (!contributor) {
       /** Create Contributor */
       contributor = await this.contributorsService.createOne({
@@ -224,6 +228,7 @@ export class ContributorUserController {
     @Param() params: TokenUserDto,
   ) {
     const { firstName, lastName, password } = body;
+
     const payload = (await this.checkUserService.verifyToken(
       params?.token,
     )) as TokenContributorModel;
@@ -239,7 +244,11 @@ export class ContributorUserController {
 
     await this.usersService.updateOne(
       { userId: findOnUser?.id },
-      { password, confirmedAt: dateTimeNowUtc() },
+      {
+        password,
+        confirmedAt: dateTimeNowUtc(),
+        emailConfirmedAt: dateTimeNowUtc(),
+      },
     );
 
     // Update contributor created by investor
@@ -302,29 +311,32 @@ export class ContributorUserController {
       contributorId,
       organizationId: user?.organizationId,
     });
-    if (!findOneContributor)
+    if (!findOneContributor) {
       throw new HttpException(
         `This contributor dons't exists please change`,
         HttpStatus.NOT_FOUND,
       );
+    }
 
-    const findOneOrganization = await this.contributorsService.findOneBy({
-      userId: findOneContributor?.userId,
-    });
-    if (!findOneOrganization)
+    const findOneOriginalOrganization =
+      await this.organizationService.findOneBy({
+        userId: findOneContributor?.userId,
+      });
+    if (!findOneOriginalOrganization) {
       throw new HttpException(
         `This organization dons't exists please change`,
         HttpStatus.NOT_FOUND,
       );
+    }
+
+    await this.usersService.updateOne(
+      { userId: findOneOriginalOrganization?.userId },
+      { organizationId: findOneOriginalOrganization?.id },
+    );
 
     await this.contributorsService.updateOne(
       { contributorId },
       { deletedAt: dateTimeNowUtc() },
-    );
-
-    await this.usersService.updateOne(
-      { userId: findOneOrganization?.userId },
-      { organizationId: findOneOrganization?.id },
     );
 
     return reply({ res, results: 'Contributor deleted successfully' });

@@ -5,7 +5,6 @@ import { OrganizationsService } from '../organizations/organizations.service';
 import { ProfilesService } from '../profiles/profiles.service';
 import { CheckUserService } from '../users/middleware/check-user.service';
 import { UsersService } from '../users/users.service';
-import { ContributorsController } from './contributors.controller';
 import { ContributorsService } from './contributors.service';
 import { ContributorsUtil } from './contributors.util';
 
@@ -13,7 +12,7 @@ import { ContributorsUtil } from './contributors.util';
   imports: [
     TypeOrmModule.forFeature([Contributor, User, Profile, Organization]),
   ],
-  controllers: [ContributorsController],
+  controllers: [],
   providers: [
     UsersService,
     CheckUserService,

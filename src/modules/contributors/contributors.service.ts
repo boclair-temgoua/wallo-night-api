@@ -53,13 +53,22 @@ export class ContributorsService {
       )
       .addSelect(
         /*sql*/ `jsonb_build_object(
+          'name', "organization"."name",
+          'firstAddress', "organization"."firstAddress",
+          'image', "organization"."image",
+          'color', "organization"."color"
+          ) AS "organization"`,
+      )
+      .addSelect(
+        /*sql*/ `jsonb_build_object(
           'name', "contributor"."role"
       ) AS "role"`,
       )
       .addSelect('contributor.createdAt', 'createdAt')
       .where('contributor.deletedAt IS NULL')
       .leftJoin('contributor.user', 'user')
-      .leftJoin('user.profile', 'profile');
+      .leftJoin('user.profile', 'profile')
+      .leftJoin('contributor.organization', 'organization');
 
     if (userId) {
       query = query.andWhere('contributor.userId = :userId', { userId });
@@ -79,12 +88,19 @@ export class ContributorsService {
             {
               search: `%${search}%`,
             },
-          ).orWhere(
-            '(user.email ::text ILIKE :search OR user.username ::text ILIKE :search)',
-            {
-              search: `%${search}%`,
-            },
-          );
+          )
+            .orWhere(
+              '(user.email ::text ILIKE :search OR user.username ::text ILIKE :search)',
+              {
+                search: `%${search}%`,
+              },
+            )
+            .orWhere(
+              '(organization.name ::text ILIKE :search OR organization.firstAddress ::text ILIKE :search)',
+              {
+                search: `%${search}%`,
+              },
+            );
         }),
       );
     }

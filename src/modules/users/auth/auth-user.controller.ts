@@ -90,7 +90,7 @@ export class AuthUserController {
       });
       if (!otpMessageVerifySid?.valid) {
         throw new HttpException(
-          `Code verify try to resend invalid`,
+          `6-digit code invalid resend another`,
           HttpStatus.NOT_FOUND,
         );
       }
@@ -194,6 +194,8 @@ export class AuthUserController {
         id: findOnUser?.id,
         confirmedAt: findOnUser?.confirmedAt,
         organizationId: findOnUser?.organizationId,
+        phoneConfirmedAt: findOnUser?.phoneConfirmedAt,
+        emailConfirmedAt: findOnUser?.emailConfirmedAt,
       },
     });
   }
@@ -255,7 +257,10 @@ export class AuthUserController {
       code: code,
     });
     if (!otpMessageVerifySid?.valid) {
-      throw new HttpException(`OTP verify invalid`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `6-digit code invalid resend another`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const tokenUser = await this.usersUtil.createTokenLogin({

@@ -43,6 +43,10 @@ export class CreateOnePaymentDto {
   fullName: string;
 
   @IsOptional()
+  @IsString()
+  code: string;
+
+  @IsOptional()
   @IsIBAN({ message: 'IBAN invalid' })
   @IsString()
   iban: string;

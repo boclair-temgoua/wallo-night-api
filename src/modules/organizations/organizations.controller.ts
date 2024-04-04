@@ -18,6 +18,7 @@ import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query';
 import { ContributorsService } from '../contributors/contributors.service';
 import { UserAuthGuard } from '../users/middleware';
+import { UsersService } from '../users/users.service';
 import { OrganizationsService } from './organizations.service';
 
 @Controller('organizations')
@@ -25,6 +26,7 @@ export class OrganizationsController {
   constructor(
     private readonly organizationsService: OrganizationsService,
     private readonly contributorsService: ContributorsService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Get(`/contributes`)
@@ -49,6 +51,20 @@ export class OrganizationsController {
     });
 
     return reply({ res, results: organizations });
+  }
+
+  @Get(`/:organizationId`)
+  @UseGuards(UserAuthGuard)
+  async changeOne(
+    @Res() res,
+    @Req() req,
+    @Query('organizationId', ParseUUIDPipe) organizationId: string,
+  ) {
+    const { user } = req;
+
+    await this.usersService.updateOne({ userId: user?.id }, { organizationId });
+
+    return reply({ res, results: 'Organization change successfully' });
   }
 
   @Get(`/view`)
