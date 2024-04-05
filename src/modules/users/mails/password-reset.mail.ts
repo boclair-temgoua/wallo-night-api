@@ -196,60 +196,99 @@ export const passwordResetMail = async ({
                             height="50px"
                           />
                         </div>
-                        <h2 style="
-                        text-align: center;
-                        color: #0d0c22;
-                        font-family: Helvetica Neue Roman, Arial, sans-serif,
-                          'Open Sans';
-                      ">Reset your password</h2>
-
-                        <p
+                        <h2
                         style="
                           text-align: center;
+                          color: #0d0c22;
                           font-family: Helvetica Neue Roman, Arial, sans-serif,
                             'Open Sans';
+                        "
+                      >
+                        Reset your password
+                      </h2>
+                      <div style="text-align: center">
+                        <p
+                          style="
+                            box-sizing: border-box;
+                            font-family: -apple-system, BlinkMacSystemFont,
+                              'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+                              'Apple Color Emoji', 'Segoe UI Emoji',
+                              'Segoe UI Symbol';
+                            position: relative;
+                            font-size: 16px;
+                            line-height: 1.5em;
+                            margin-top: 0;
+                          "
+                        >
+                          You are receiving this email because we received a
+                          password reset request for your account
+                        </p>
+                      </div>
+
+                      <table
+                        border="0"
+                        cellspacing="0"
+                        cellpadding="0"
+                        align="center"
+                        width="100%"
+                        style="
+                          box-sizing: border-box;
+                          border-spacing: 0;
+                          border-collapse: collapse;
+                          width: 100% !important;
+                          font-family: -apple-system, BlinkMacSystemFont,
+                            'Segoe UI', Helvetica, Arial, sans-serif,
+                            'Apple Color Emoji', 'Segoe UI Emoji' !important;
+                        "
+                      >
+                        <tbody>
+                          <tr
+                            style="
+                              box-sizing: border-box;
+                              font-family: -apple-system, BlinkMacSystemFont,
+                                'Segoe UI', Helvetica, Arial, sans-serif,
+                                'Apple Color Emoji', 'Segoe UI Emoji' !important;
                             "
                           >
-                        You are receiving this email because we received a
-                        password reset request for your account
-                        </p>
-                        <br />
-  
-                        <table
-                          class="subcopy"
-                          width="100%"
-                          cellpadding="0"
-                          cellspacing="0"
-                          role="presentation"
-                        >
-                          <tr>
-                            <td colspan="2">
-                              <div style="text-align: center">
+                            <td
+                              align="center"
+                              style="
+                                box-sizing: border-box;
+                                font-family: -apple-system, BlinkMacSystemFont,
+                                  'Segoe UI', Helvetica, Arial, sans-serif,
+                                  'Apple Color Emoji', 'Segoe UI Emoji' !important;
+                                padding: 0;
+                              "
+                            >
                               <a
-                                  href="${config.datasite.urlClient}/reset-password/${token}"
-                                  data-saferedirecturl="${config.datasite.urlClient}/reset-password/${token}"
-                                  style="
-                                  font-family: 'Google Sans', Roboto,
-                                    RobotoDraft, Helvetica, Arial, sans-serif;
-                                  line-height: 16px;
-                                  color: #ffffff;
-                                  font-weight: 400;
+                                href="${config.datasite.urlClient}/reset-password/${token}"
+                                rel="noopener noreferrer"
+                                style="
+                                  background-color: #4184f3 !important;
+                                  box-sizing: border-box;
+                                  color: #fff;
                                   text-decoration: none;
-                                  font-size: 14px;
                                   display: inline-block;
-                                  padding: 15px 30px;
-                                  background-color: #4184f3;
-                                  border-radius: 5px;
-                                  min-width: 90px;
+                                  font-size: inherit;
+                                  font-weight: 500;
+                                  line-height: 1.5;
+                                  white-space: nowrap;
+                                  vertical-align: middle;
+                                  border-radius: 0.5em;
+                                  font-family: -apple-system, BlinkMacSystemFont,
+                                    'Segoe UI', Helvetica, Arial, sans-serif,
+                                    'Apple Color Emoji', 'Segoe UI Emoji' !important;
+                                  padding: 0.75em 1.5em;
+                                  border: 1px solid #4184f3;
                                 "
                                 target="_blank"
                                 >Reset Password</a
                               >
-                            </div>
                             </td>
                           </tr>
-                        </table>
-                        <br />
+                        </tbody>
+                      </table>
+                      <br />
   
                         <p
                           style="

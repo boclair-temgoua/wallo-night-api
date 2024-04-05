@@ -8,9 +8,7 @@ import {
 } from 'class-validator';
 import {
   FilterQueryType,
-  WhoCanSeeType,
   filterQueryTypeArrays,
-  whoCanSeeTypeArrays,
 } from '../../app/utils/search-query';
 
 export type StatusProduct = 'ACTIVE' | 'PENDING';
@@ -24,11 +22,6 @@ export class CreateOrUpdateProductsDto {
   @IsString()
   @IsIn(filterQueryTypeArrays)
   model?: FilterQueryType;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(whoCanSeeTypeArrays)
-  whoCanSee: WhoCanSeeType;
 
   @IsOptional()
   @IsString()
