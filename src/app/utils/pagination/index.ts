@@ -1,6 +1,6 @@
 export * from './request-pagination.dto';
 
-import { SortType } from './request-pagination.dto';
+import { IsPaginate, SortType } from './request-pagination.dto';
 
 export type WithPaginationResponse = {
   pagination?: PaginationType;
@@ -14,7 +14,7 @@ export type PaginationType = {
   skip?: number;
   limit?: number;
   offset?: number;
-  isPaginate?: string;
+  isPaginate?: IsPaginate;
   sort: SortType;
 };
 
@@ -68,7 +68,7 @@ export const withPagination = async ({
     last_page: n_pages ? n_pages : undefined,
     skip: pagination?.skip,
     sort: pagination?.sort ?? 'DESC',
-    is_paginate: pagination?.isPaginate ?? 'false',
+    is_paginate: pagination?.isPaginate ?? 'TRUE',
     total_page: n_pages,
     total_value: Array.isArray(value) ? value.length : 0,
     value,

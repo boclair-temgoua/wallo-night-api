@@ -13,6 +13,7 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { ContactModule } from './modules/contacts/contact.module';
 import { ContributionsModule } from './modules/contributions/contributions.module';
 import { ContributorsModule } from './modules/contributors/contributors.module';
+import { ConversationsModule } from './modules/conversations/conversations.module';
 import { CountriesModule } from './modules/countries/countries.module';
 import { CurrenciesModule } from './modules/currencies/currencies.module';
 import { DiscountsModule } from './modules/discounts/discounts.module';
@@ -72,6 +73,7 @@ import { WalletsModule } from './modules/wallets/wallets.module';
     SubscribesModule,
     ProvidersModule,
     ContributionsModule,
+    ConversationsModule,
     ContactModule,
   ],
 })

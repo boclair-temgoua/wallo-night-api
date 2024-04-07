@@ -11,6 +11,8 @@ import {
 
 export type SortType = 'ASC' | 'DESC';
 
+export type IsPaginate = 'TRUE' | 'FALSE';
+
 export type ProductStatus = 'ACTIVE' | 'PENDING';
 
 export class PaginationDto {
@@ -35,7 +37,7 @@ export class PaginationDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['true', 'false'])
+  @IsIn(['TRUE', 'FALSE'])
   @Type(() => String)
-  isPaginate: string;
+  isPaginate: IsPaginate;
 }

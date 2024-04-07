@@ -48,13 +48,13 @@ export class AlbumsController {
       isPaginate,
     });
 
-    const Albums = await this.albumsService.findAll({
+    const albums = await this.albumsService.findAll({
       search,
       pagination,
       organizationId: organizationId,
     });
 
-    return reply({ res, results: Albums });
+    return reply({ res, results: albums });
   }
 
   /** Post one Albums */

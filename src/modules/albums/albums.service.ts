@@ -73,7 +73,7 @@ export class AlbumsService {
     const [errorRowCount, rowCount] = await useCatch(query.getCount());
     if (errorRowCount) throw new NotFoundException(errorRowCount);
 
-    if (pagination?.isPaginate === 'false') {
+    if (pagination?.isPaginate === 'FALSE') {
       const [error, albums] = await useCatch(
         query.orderBy('album.createdAt', pagination?.sort).getRawMany(),
       );

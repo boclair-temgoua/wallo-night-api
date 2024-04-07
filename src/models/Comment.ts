@@ -18,6 +18,9 @@ export class Comment extends BaseDeleteEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
+  @Column({ nullable: true })
+  readAt?: Date;
+
   @Column({ type: 'text', nullable: true })
   description?: string;
 
@@ -26,6 +29,9 @@ export class Comment extends BaseDeleteEntity {
 
   @Column({ type: 'uuid', nullable: true })
   parentId?: string;
+
+  @Column({ nullable: true })
+  fkConversationId?: string;
 
   @Column({ nullable: true })
   color: string;

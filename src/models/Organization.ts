@@ -12,6 +12,7 @@ import {
   CartOrder,
   Comment,
   Contributor,
+  Conversation,
   Membership,
   Post,
   Product,
@@ -95,4 +96,13 @@ export class Organization extends BaseEntity {
     onDelete: 'CASCADE',
   })
   contributors?: Contributor;
+
+  @OneToMany(
+    () => Conversation,
+    (conversation) => conversation.organizationTo,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  conversations?: Conversation;
 }

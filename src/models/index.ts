@@ -7,6 +7,7 @@ export * from './Comment';
 export * from './Contact';
 export * from './Contribution';
 export * from './Contributor';
+export * from './Conversation';
 export * from './Country';
 export * from './Currency';
 export * from './Discount';
