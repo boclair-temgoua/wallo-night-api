@@ -112,7 +112,12 @@ export class ConversationsController {
   ) {
     const { user } = req;
     const fkConversationId = generateLongUUID(30);
-    const { organizationToId, description } = body;
+    const { organizationToId, enableSendEmail, description } = body;
+
+    const { user: userTo } =
+      await this.conversationsUtil.findUserAnOrganization({
+        organizationId: organizationToId,
+      });
 
     const findOneConversationTo = await this.conversationsService.findOneBy({
       organizationToId: organizationToId,
@@ -121,8 +126,11 @@ export class ConversationsController {
     if (findOneConversationTo) {
       await this.conversationsUtil.saveOrUpdate({
         description,
+        enableSendEmail,
         fkConversationId: findOneConversationTo?.fkConversationId,
         organizationId: user?.organizationId,
+        email: userTo?.email,
+        fullName: `${user?.profile?.firstName} ${user?.profile?.lastName}`,
       });
     }
     if (!findOneConversationTo) {
@@ -156,7 +164,7 @@ export class ConversationsController {
     @Body() body: CreateMessageConversationsDto,
   ) {
     const { user } = req;
-    const { description, fkConversationId } = body;
+    const { description, enableSendEmail, fkConversationId } = body;
 
     const findOneConversationFrom = await this.conversationsService.findOneBy({
       fkConversationId,
@@ -167,11 +175,19 @@ export class ConversationsController {
       organizationToId: findOneConversationFrom?.organizationToId,
     });
 
+    const { user: userTo } =
+      await this.conversationsUtil.findUserAnOrganization({
+        organizationId: findOneConversationFrom?.organizationToId,
+      });
+
     if (findOneConversationFrom && findOneConversationTo) {
       await this.conversationsUtil.saveOrUpdate({
         description,
+        enableSendEmail,
         fkConversationId: fkConversationId,
         organizationId: user?.organizationId,
+        email: userTo?.email,
+        fullName: `${user?.profile?.firstName} ${user?.profile?.lastName}`,
       });
     }
 

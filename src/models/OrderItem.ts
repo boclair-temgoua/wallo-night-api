@@ -15,7 +15,7 @@ import {
   OrderItemStatus,
   orderItemStatusArrays,
 } from '../modules/order-items/order-items.type';
-import { Order, Product, User } from './index';
+import { Membership, Order, Product, User } from './index';
 
 @Entity('order_item')
 export class OrderItem extends BaseDeleteEntity {
@@ -62,6 +62,14 @@ export class OrderItem extends BaseDeleteEntity {
   })
   @JoinColumn()
   product?: Product;
+
+  @Column({ type: 'uuid', nullable: true })
+  membershipId?: string;
+  @ManyToOne(() => Membership, (membership) => membership.orderItems, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  membership?: Membership;
 
   @Column({ type: 'uuid', nullable: true })
   orderId?: string;

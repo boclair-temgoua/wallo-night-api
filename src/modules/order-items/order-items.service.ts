@@ -50,6 +50,7 @@ export class OrderItemsService {
       .addSelect('orderItem.model', 'model')
       .addSelect('orderItem.status', 'status')
       .addSelect('orderItem.currency', 'currency')
+      .addSelect('orderItem.membershipId', 'membershipId')
       .addSelect('orderItem.productId', 'productId')
       .addSelect('orderItem.orderId', 'orderId')
       .addSelect('orderItem.userId', 'userId')
@@ -219,6 +220,7 @@ export class OrderItemsService {
       model,
       status,
       productId,
+      membershipId,
       orderId,
       uploadFiles,
     } = options;
@@ -232,6 +234,7 @@ export class OrderItemsService {
     orderItem.orderNumber = generateNumber(10);
     orderItem.priceDiscount = priceDiscount;
     orderItem.organizationBuyerId = organizationBuyerId;
+    orderItem.membershipId = membershipId;
     orderItem.organizationSellerId = organizationSellerId;
     orderItem.model = model;
     orderItem.status = status;

@@ -7,16 +7,16 @@ import {
 import { FilterQueryType } from '../../app/utils/search-query';
 import { FollowsService } from '../follows/follows.service';
 import { MembershipsService } from '../memberships/memberships.service';
+import { OrdersUtil } from '../orders/orders.util';
 import { TransactionsService } from '../transactions/transactions.service';
 import { TransactionType } from '../transactions/transactions.type';
-import { TransactionsUtil } from '../transactions/transactions.util';
 import { AmountModel } from '../wallets/wallets.type';
 import { SubscribesService } from './subscribes.service';
 
 @Injectable()
 export class SubscribesUtil {
   constructor(
-    private readonly transactionsUtil: TransactionsUtil,
+    private readonly ordersUtil: OrdersUtil,
     private readonly followsService: FollowsService,
     private readonly subscribesService: SubscribesService,
     private readonly membershipsService: MembershipsService,
@@ -33,6 +33,9 @@ export class SubscribesUtil {
     description: string;
     token: string;
     amountValueConvert: number;
+    organizationBuyerId: string;
+    organizationSellerId: string;
+    userAddress: any;
   }): Promise<any> {
     const {
       membershipId,
@@ -44,6 +47,9 @@ export class SubscribesUtil {
       amount,
       model,
       token,
+      userAddress,
+      organizationBuyerId,
+      organizationSellerId,
     } = options;
 
     const findOneMembership = await this.membershipsService.findOneBy({
@@ -122,6 +128,18 @@ export class SubscribesUtil {
         }),
       });
 
+      const { order } = await this.ordersUtil.orderCommissionOrMembershipCreate(
+        {
+          amount,
+          userAddress,
+          model: 'MEMBERSHIP',
+          organizationBuyerId,
+          organizationSellerId,
+          userBuyerId: userBuyerId,
+          membershipId: findOneMembership?.id,
+        },
+      );
+
       const transaction = await this.transactionsService.createOne({
         type,
         model: model,
@@ -131,6 +149,7 @@ export class SubscribesUtil {
         userReceiveId: userReceiveId,
         organizationId: findOneMembership?.organizationId,
         subscribeId: subscribe?.id,
+        orderId: order?.id,
         amount: amount?.value,
         amountConvert: amountValueConvert,
         description: description,

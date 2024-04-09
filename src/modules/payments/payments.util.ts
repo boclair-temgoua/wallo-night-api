@@ -160,18 +160,22 @@ export class PaymentsUtil {
     reference: string;
     userBuyerId: string;
     card: CardModel;
-    organizationBuyerId: string;
     userReceiveId: string;
     membershipId: string;
+    userAddress: any;
+    organizationBuyerId: string;
+    organizationSellerId: string;
   }): Promise<any> {
     const {
       amount,
       reference,
       userBuyerId,
       card,
-      organizationBuyerId,
       userReceiveId,
       membershipId,
+      userAddress,
+      organizationBuyerId,
+      organizationSellerId,
     } = options;
 
     const { value: amountValueConvert } =
@@ -199,6 +203,10 @@ export class PaymentsUtil {
     if (paymentIntents) {
       const { transaction } =
         await this.subscribesUtil.createOrUpdateOneSubscribe({
+          userAddress,
+          organizationBuyerId,
+          organizationSellerId,
+
           userBuyerId: userBuyerId,
           userReceiveId: userReceiveId,
           amount: {

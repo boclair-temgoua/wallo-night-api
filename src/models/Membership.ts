@@ -16,6 +16,7 @@ import {
 import {
   Contribution,
   Currency,
+  OrderItem,
   Organization,
   Subscribe,
   Upload,
@@ -74,6 +75,9 @@ export class Membership extends BaseDeleteEntity {
   })
   @JoinColumn()
   user?: Relation<User>;
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.membership)
+  orderItems: OrderItem[];
 
   @OneToMany(() => Contribution, (contribution) => contribution.membership, {
     onDelete: 'CASCADE',

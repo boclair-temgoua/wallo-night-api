@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateOrUpdateConversationsDto {
   @IsNotEmpty()
@@ -9,6 +15,10 @@ export class CreateOrUpdateConversationsDto {
   @IsNotEmpty()
   @IsString()
   description: string;
+
+  @IsOptional()
+  @IsBoolean()
+  enableSendEmail: boolean;
 }
 
 export class CreateMessageConversationsDto {
@@ -19,6 +29,10 @@ export class CreateMessageConversationsDto {
   @IsNotEmpty()
   @IsString()
   fkConversationId: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  enableSendEmail: boolean;
 }
 
 export class GetMessageConversationsDto {

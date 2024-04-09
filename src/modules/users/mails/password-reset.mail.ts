@@ -510,7 +510,7 @@ export const passwordResetMail = async ({
   await nodeMailServiceAdapter({
     from: `${config.implementations.resendSMTP.noReplayFrom}`,
     to: [`${email}`],
-    subject: `${config.datasite.name} - Reset password`,
+    subject: `Reset password`,
     html: output,
   });
 };

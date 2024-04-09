@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
 import { CommentsService } from '../comments/comments.service';
+import { MembershipsService } from '../memberships/memberships.service';
 import { OrdersUtil } from '../orders/orders.util';
 import { ProductsService } from '../products/products.service';
 import { SubscribesUtil } from '../subscribes/subscribes.util';
@@ -32,6 +33,7 @@ export class PaymentsTransactionController {
     private readonly usersService: UsersService,
     private readonly commentsService: CommentsService,
     private readonly ordersUtil: OrdersUtil,
+    private readonly membershipsService: MembershipsService,
     private readonly transactionsService: TransactionsService,
   ) {}
 
@@ -42,8 +44,27 @@ export class PaymentsTransactionController {
     @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
-    const { amount, membershipId, userReceiveId, userBuyerId, reference } =
-      body;
+    const {
+      amount,
+      membershipId,
+      userReceiveId,
+      userBuyerId,
+      reference,
+      userAddress,
+      organizationBuyerId,
+      organizationSellerId,
+    } = body;
+
+    const findOneMembership = await this.membershipsService.findOneBy({
+      membershipId: membershipId,
+      organizationId: organizationSellerId,
+    });
+    if (!findOneMembership) {
+      throw new HttpException(
+        `This membership ${membershipId} dons't exist`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     const { value: amountValueConvert } =
       await this.transactionsUtil.convertedValue({
@@ -53,6 +74,9 @@ export class PaymentsTransactionController {
 
     const { transaction } =
       await this.subscribesUtil.createOrUpdateOneSubscribe({
+        userAddress,
+        organizationBuyerId,
+        organizationSellerId,
         userBuyerId: userBuyerId,
         userReceiveId: userReceiveId,
         amount: {
@@ -91,16 +115,30 @@ export class PaymentsTransactionController {
       userReceiveId,
       userBuyerId,
       reference,
-      organizationBuyerId,
       card,
+      userAddress,
+      organizationBuyerId,
+      organizationSellerId,
     } = body;
+    const findOneMembership = await this.membershipsService.findOneBy({
+      membershipId: membershipId,
+      organizationId: organizationSellerId,
+    });
+    if (!findOneMembership) {
+      throw new HttpException(
+        `This membership ${membershipId} dons't exist`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     await this.paymentsUtil.paymentsTransactionStripe({
+      userAddress,
+      organizationBuyerId,
+      organizationSellerId,
       amount,
       reference,
       userBuyerId,
       card,
-      organizationBuyerId,
       userReceiveId,
       membershipId,
     });
@@ -442,14 +480,17 @@ export class PaymentsTransactionController {
     }
 
     if (paymentIntents) {
-      const { order } = await this.ordersUtil.orderCommissionCreate({
-        amount,
-        userAddress,
-        organizationBuyerId,
-        organizationSellerId,
-        userBuyerId: userBuyerId,
-        productId: findOneProduct?.id,
-      });
+      const { order } = await this.ordersUtil.orderCommissionOrMembershipCreate(
+        {
+          amount,
+          userAddress,
+          model: 'COMMISSION',
+          organizationBuyerId,
+          organizationSellerId,
+          userBuyerId: userBuyerId,
+          productId: findOneProduct?.id,
+        },
+      );
       const transaction = await this.transactionsService.createOne({
         userBuyerId,
         userReceiveId: userReceiveId,
@@ -511,9 +552,10 @@ export class PaymentsTransactionController {
         value: amount?.value,
       });
 
-    const { order } = await this.ordersUtil.orderCommissionCreate({
+    const { order } = await this.ordersUtil.orderCommissionOrMembershipCreate({
       amount,
       userAddress,
+      model: 'COMMISSION',
       organizationBuyerId,
       organizationSellerId,
       userBuyerId: userBuyerId,

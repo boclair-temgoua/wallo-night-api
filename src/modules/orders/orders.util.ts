@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { FilterQueryType } from '../../app/utils/search-query';
 import { CartOrdersService } from '../cart-orders/cart-orders.service';
 import { CartsService } from '../cats/cats.service';
 import { OrderItemsService } from '../order-items/order-items.service';
@@ -105,17 +106,21 @@ export class OrdersUtil {
   }
 
   /** Create commission */
-  async orderCommissionCreate(options: {
+  async orderCommissionOrMembershipCreate(options: {
+    model: FilterQueryType;
     amount: AmountModel;
     userBuyerId: string;
-    productId: string;
+    productId?: string;
+    membershipId?: string;
     organizationBuyerId: string;
     organizationSellerId: string;
     userAddress?: any;
   }): Promise<any> {
     const {
+      model,
       amount,
       productId,
+      membershipId,
       userAddress,
       userBuyerId,
       organizationBuyerId,
@@ -136,8 +141,9 @@ export class OrdersUtil {
       price: Number(amount?.value) * 100,
       organizationBuyerId: organizationBuyerId,
       organizationSellerId: organizationSellerId,
-      model: 'COMMISSION',
+      model: model,
       productId: productId,
+      membershipId: membershipId,
       orderId: order?.id,
       status: 'DELIVERED',
     });

@@ -1,19 +1,16 @@
-import { config } from '../../../app/config/index';
-
+import { config } from '../../../app/config';
 import { nodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
 
-export const confirmInvitationMail = async ({
-  code,
+export const conversationMessageMail = async ({
   email,
-  token,
-  nameOrganization,
-  fullNameInviter,
+  fullName,
+  description,
+  fkConversationId,
 }: {
-  code?: string;
   email: string;
-  token: string;
-  fullNameInviter: string;
-  nameOrganization: string;
+  fullName: string;
+  description: string;
+  fkConversationId: string;
 }) => {
   const output = `
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -202,55 +199,114 @@ export const confirmInvitationMail = async ({
                             height="50px"
                           />
                         </div>
-                        <h2 style="
-                        text-align: center;
-                        color: #0d0c22;
-                        font-family: Helvetica Neue Roman, Arial, sans-serif,
-                          'Open Sans';
-                      ">Invitation to join ${nameOrganization}</h2>
-
-                      <div style="text-align: center">
-                        <span style="font-size: 16px">
-                            ${fullNameInviter} has invited you to join the ${nameOrganization}
-                            organization </span
-                          >
-                      </div><br />
-  
-                        <table
-                          class="subcopy"
-                          width="100%"
-                          cellpadding="0"
-                          cellspacing="0"
-                          role="presentation"
+                        <h2
+                          style="
+                            text-align: center;
+                            color: #0d0c22;
+                            font-family: Helvetica Neue Roman, Arial, sans-serif,
+                              'Open Sans';
+                          "
                         >
-                          <tr>
-                            <td colspan="2">
-                              <div style="text-align: center">
+                         New message from ${fullName}
+                        </h2>
+
+                        <div
+                        style="
+                          box-sizing: border-box;
+                          padding-top: 0rem;
+                          padding-right: 0rem;
+                          padding-bottom: 0rem;
+                          padding-left: 0rem;
+                          margin-top: 1.5rem;
+                          margin-right: 0rem;
+                          margin-bottom: 0rem;
+                          margin-left: 0rem;
+                        "
+                      >
+                        <span
+                          color="gray1"
+                          style="
+                            color: #241e12;
+                            font-family: aktiv-grotesk, sans-serif;
+                            margin: 0;
+                            text-align: left;
+                            font-weight: 400;
+                            font-size: 1rem;
+                            line-height: 1.5;
+                          "
+                          ><div>
+                            <p>
+                            ${description}
+                            </p>
+                          </div></span
+                        >
+                      </div>
+
+                        
+                        <table
+                          border="0"
+                          cellspacing="0"
+                          cellpadding="0"
+                          align="center"
+                          width="100%"
+                          style="
+                            box-sizing: border-box;
+                            border-spacing: 0;
+                            border-collapse: collapse;
+                            width: 100% !important;
+                            font-family: -apple-system, BlinkMacSystemFont,
+                              'Segoe UI', Helvetica, Arial, sans-serif,
+                              'Apple Color Emoji', 'Segoe UI Emoji' !important;
+                          "
+                        >
+                          <tbody>
+                            <tr
+                              style="
+                                box-sizing: border-box;
+                                font-family: -apple-system, BlinkMacSystemFont,
+                                  'Segoe UI', Helvetica, Arial, sans-serif,
+                                  'Apple Color Emoji', 'Segoe UI Emoji' !important;
+                              "
+                            >
+                              <td
+                                align="center"
+                                style="
+                                  box-sizing: border-box;
+                                  font-family: -apple-system, BlinkMacSystemFont,
+                                    'Segoe UI', Helvetica, Arial, sans-serif,
+                                    'Apple Color Emoji', 'Segoe UI Emoji' !important;
+                                  padding: 0;
+                                "
+                              >
                                 <a
-                                  href="${config.datasite.urlClient}/verify/confirm-contributor?code=${token}"
+                                  href="${config.datasite.urlClient}/messages/${fkConversationId}"
+                                  rel="noopener noreferrer"
                                   style="
-                                    font-family: 'Google Sans', Roboto,
-                                      RobotoDraft, Helvetica, Arial, sans-serif;
-                                    line-height: 16px;
-                                    color: #ffffff;
-                                    font-weight: 400;
+                                    background-color: #4184f3 !important;
+                                    box-sizing: border-box;
+                                    color: #fff;
                                     text-decoration: none;
-                                    font-size: 14px;
                                     display: inline-block;
-                                    padding: 15px 30px;
-                                    background-color: #4184f3;
-                                    border-radius: 5px;
-                                    min-width: 90px;
+                                    font-size: inherit;
+                                    font-weight: 500;
+                                    line-height: 1.5;
+                                    white-space: nowrap;
+                                    vertical-align: middle;
+                                    border-radius: 0.5em;
+                                    font-family: -apple-system, BlinkMacSystemFont,
+                                      'Segoe UI', Helvetica, Arial, sans-serif,
+                                      'Apple Color Emoji', 'Segoe UI Emoji' !important;
+                                    padding: 0.75em 1.5em;
+                                    border: 1px solid #4184f3;
                                   "
                                   target="_blank"
-                                  data-saferedirecturl="${config.datasite.urlClient}/verify/confirm-contributor?code=${token}"
-                                  >Join ${nameOrganization}</a
+                                  >View message</a
                                 >
-                              </div>
-                            </td>
-                          </tr>
+                              </td>
+                            </tr>
+                          </tbody>
                         </table>
-                        <br /><br />
+                        <br />
   
                         <table
                           class="subcopy"
@@ -281,54 +337,6 @@ export const confirmInvitationMail = async ({
                                 position: relative;
                               "
                             >
-                              <p
-                                style="
-                                  box-sizing: border-box;
-                                  font-family: -apple-system, BlinkMacSystemFont,
-                                    'Segoe UI', Roboto, Helvetica, Arial,
-                                    sans-serif, 'Apple Color Emoji',
-                                    'Segoe UI Emoji', 'Segoe UI Symbol';
-                                  position: relative;
-                                  line-height: 1.5em;
-                                  margin-top: 0;
-                                  text-align: left;
-                                  font-size: 14px;
-                                "
-                              >
-                                If you’re having trouble clicking the "Join
-                                ${nameOrganization}" button, copy and paste the URL
-                                below into your web browser is valid for 2 days:
-                                <span
-                                  class="break-all"
-                                  style="
-                                    box-sizing: border-box;
-                                    font-family: -apple-system, BlinkMacSystemFont,
-                                      'Segoe UI', Roboto, Helvetica, Arial,
-                                      sans-serif, 'Apple Color Emoji',
-                                      'Segoe UI Emoji', 'Segoe UI Symbol';
-                                    position: relative;
-                                    word-break: break-all;
-                                  "
-                                >
-                                  <a
-                                    target="_blank"
-                                    href="${config.datasite.urlClient}/verify/confirm-contributor?token=${token}"
-                                    data-saferedirecturl="${config.datasite.urlClient}/verify/confirm-contributor?code=${token}"
-                                    style="
-                                      box-sizing: border-box;
-                                      font-family: -apple-system,
-                                        BlinkMacSystemFont, 'Segoe UI', Roboto,
-                                        Helvetica, Arial, sans-serif,
-                                        'Apple Color Emoji', 'Segoe UI Emoji',
-                                        'Segoe UI Symbol';
-                                      position: relative;
-                                      color: #3869d4;
-                                    "
-                                  >
-                                    ${config.datasite.urlClient}/verify/confirm-contributor?token=${token}
-                                  </a></span
-                                >
-                              </p>
                             </td>
                           </tr>
                         </table>
@@ -449,13 +457,12 @@ export const confirmInvitationMail = async ({
       </table>
     </body>
   </html>
-  
       `;
 
   await nodeMailServiceAdapter({
     from: `${config.implementations.resendSMTP.noReplayFrom}`,
     to: [`${email}`],
-    subject: `${fullNameInviter} has invited you to join the ${nameOrganization}`,
+    subject: `New message from ${fullName}`,
     html: output,
   });
 };
