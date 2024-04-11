@@ -1,4 +1,10 @@
-import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 import {
   FilterQueryType,
@@ -11,10 +17,14 @@ import {
 export type StatusOderProduct = 'ORDERED' | 'DELIVERING';
 
 export class GetOrderItemDto {
-  @IsOptional()
+  // @IsOptional()
+  // @IsString()
+  // @IsIn(filterQueryTypeArrays)
+  // model: FilterQueryType;
+
+  @IsNotEmpty()
   @IsString()
-  @IsIn(filterQueryTypeArrays)
-  model: FilterQueryType;
+  modelIds: FilterQueryType[];
 
   @IsOptional()
   @IsString()

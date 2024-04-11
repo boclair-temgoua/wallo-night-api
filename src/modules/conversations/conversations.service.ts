@@ -38,6 +38,8 @@ export class ConversationsService {
       .addSelect('conversation.type', 'type')
       .addSelect('conversation.blockedAt', 'blockedAt')
       .addSelect('conversation.sendEmail', 'sendEmail')
+      .addSelect('conversation.organizationToId', 'organizationToId')
+      .addSelect('conversation.organizationFromId', 'organizationFromId')
       .addSelect(
         /*sql*/ `jsonb_build_object(
               'username', "user"."username",
@@ -158,6 +160,8 @@ export class ConversationsService {
       .addSelect('conversation.readAt', 'readAt')
       .addSelect('conversation.type', 'type')
       .addSelect('conversation.blockedAt', 'blockedAt')
+      .addSelect('conversation.organizationToId', 'organizationToId')
+      .addSelect('conversation.organizationFromId', 'organizationFromId')
       .addSelect('conversation.sendEmail', 'sendEmail')
       .addSelect(
         /*sql*/ `jsonb_build_object(

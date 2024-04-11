@@ -131,14 +131,14 @@ export class OrdersUtil {
       address: userAddress,
       userId: userBuyerId,
       currency: amount?.currency,
-      totalPriceDiscount: Number(amount?.value) * 100,
-      totalPriceNoDiscount: Number(amount?.value) * 100,
+      totalPriceDiscount: Number(amount?.value),
+      totalPriceNoDiscount: Number(amount?.value),
     });
     const orderItem = await this.orderItemsService.createOne({
       userId: order?.userId,
       currency: order?.currency,
       quantity: 1,
-      price: Number(amount?.value) * 100,
+      price: Number(amount?.value),
       organizationBuyerId: organizationBuyerId,
       organizationSellerId: organizationSellerId,
       model: model,

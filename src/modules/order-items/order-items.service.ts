@@ -32,7 +32,7 @@ export class OrderItemsService {
       pagination,
       userId,
       orderId,
-      model,
+      modelIds,
       organizationSellerId,
       organizationBuyerId,
     } = selections;
@@ -67,36 +67,6 @@ export class OrderItemsService {
               'username', "user"."username"
           ) AS "profile"`,
       )
-      .addSelect(
-        /*sql*/ `jsonb_build_object(
-              'title', "product"."title",
-              'slug', "product"."slug",
-              'productType', "product"."productType",
-              'urlRedirect', "product"."urlRedirect",
-              'model', "product"."model",
-              'enableUrlRedirect', "product"."enableUrlRedirect",
-              'messageAfterPayment', "product"."messageAfterPayment",
-              'id', "product"."id"
-          ) AS "product"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-          SELECT array_agg(jsonb_build_object(
-            'name', "upl"."name",
-            'path', "upl"."path",
-            'model', "upl"."model",
-            'size', "upl"."size",
-            'uploadType', "upl"."uploadType"
-          )) 
-          FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "product"."id"
-          AND "upl"."productId" = "product"."id"
-          AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('PRODUCT')
-          AND "upl"."uploadType" IN ('IMAGE')
-          GROUP BY "product"."id", "upl"."uploadableId"
-          ) AS "uploadsImages"`,
-      )
       .addSelect('orderItem.uploadFiles', 'uploadsFiles')
       // .addSelect(
       //   /*sql*/ `(
@@ -119,6 +89,7 @@ export class OrderItemsService {
       .where('orderItem.deletedAt IS NULL')
       .leftJoin('orderItem.order', 'order')
       .leftJoin('orderItem.product', 'product')
+      .leftJoin('orderItem.membership', 'membership')
       .leftJoin('orderItem.user', 'user')
       .leftJoin('user.profile', 'profile');
 
@@ -132,12 +103,60 @@ export class OrderItemsService {
       );
     }
 
-    if (userId) {
-      query = query.andWhere('orderItem.userId = :userId', { userId });
+    if (modelIds && modelIds.length > 0) {
+      if (modelIds.includes('PRODUCT')) {
+        query = query.addSelect(/*sql*/ `jsonb_build_object(
+                'title', "product"."title",
+                'slug', "product"."slug",
+                'productType', "product"."productType",
+                'urlRedirect', "product"."urlRedirect",
+                'model', "product"."model",
+                'enableUrlRedirect', "product"."enableUrlRedirect",
+                'messageAfterPayment', "product"."messageAfterPayment",
+                'id', "product"."id"
+            ) AS "product"`).addSelect(/*sql*/ `(
+            SELECT array_agg(jsonb_build_object(
+              'name', "upl"."name",
+              'path', "upl"."path",
+              'model', "upl"."model",
+              'size', "upl"."size",
+              'uploadType', "upl"."uploadType"
+            )) 
+            FROM "upload" "upl"
+            WHERE "upl"."uploadableId" = "product"."id"
+            AND "upl"."productId" = "product"."id"
+            AND "upl"."deletedAt" IS NULL
+            AND "upl"."model" IN ('PRODUCT')
+            AND "upl"."uploadType" IN ('IMAGE')
+            GROUP BY "product"."id", "upl"."uploadableId"
+            ) AS "uploadsImages"`);
+      }
+      if (modelIds.includes('MEMBERSHIP')) {
+        query = query.addSelect(/*sql*/ `jsonb_build_object(
+                'title', "membership"."title",
+                'id', "membership"."id"
+            ) AS "membership"`).addSelect(/*sql*/ `(
+            SELECT array_agg(jsonb_build_object(
+              'name', "upl"."name",
+              'path', "upl"."path",
+              'model', "upl"."model",
+              'size', "upl"."size",
+              'uploadType', "upl"."uploadType"
+            )) 
+            FROM "upload" "upl"
+            WHERE "upl"."uploadableId" = "membership"."id"
+            AND "upl"."membershipId" = "membership"."id"
+            AND "upl"."deletedAt" IS NULL
+            AND "upl"."model" IN ('MEMBERSHIP')
+            AND "upl"."uploadType" IN ('IMAGE')
+            GROUP BY "membership"."id", "upl"."uploadableId"
+            ) AS "uploadsImages"`);
+      }
+      query = query.andWhere('orderItem.model IN (:...modelIds)', { modelIds });
     }
 
-    if (model) {
-      query = query.andWhere('orderItem.model = :model', { model });
+    if (userId) {
+      query = query.andWhere('orderItem.userId = :userId', { userId });
     }
 
     if (organizationBuyerId) {

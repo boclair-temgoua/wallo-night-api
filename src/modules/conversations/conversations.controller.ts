@@ -6,8 +6,8 @@ import {
   HttpException,
   HttpStatus,
   Param,
-  ParseUUIDPipe,
   Post,
+  Put,
   Query,
   Req,
   Res,
@@ -123,6 +123,7 @@ export class ConversationsController {
       organizationToId: organizationToId,
       organizationFromId: user.organizationId,
     });
+
     if (findOneConversationTo) {
       await this.conversationsUtil.saveOrUpdate({
         description,
@@ -132,6 +133,12 @@ export class ConversationsController {
         email: userTo?.email,
         fullName: `${user?.profile?.firstName} ${user?.profile?.lastName}`,
       });
+
+      // Reset readAt
+      await this.conversationsService.updateOne(
+        { conversationId: findOneConversationTo?.id },
+        { readAt: null },
+      );
     }
     if (!findOneConversationTo) {
       const conversation = await this.conversationsService.createOne({
@@ -172,7 +179,7 @@ export class ConversationsController {
     });
     const findOneConversationTo = await this.conversationsService.findOneBy({
       fkConversationId,
-      organizationToId: findOneConversationFrom?.organizationToId,
+      organizationFromId: findOneConversationFrom?.organizationToId,
     });
 
     const { user: userTo } =
@@ -189,6 +196,12 @@ export class ConversationsController {
         email: userTo?.email,
         fullName: `${user?.profile?.firstName} ${user?.profile?.lastName}`,
       });
+
+      // Reset readAt
+      await this.conversationsService.updateOne(
+        { conversationId: findOneConversationTo?.id },
+        { readAt: null },
+      );
     }
 
     return reply({ res, results: 'Message save successfully' });
@@ -217,15 +230,44 @@ export class ConversationsController {
     return reply({ res, results: findOneConversation });
   }
 
+  /** Read Conversation */
+  @Put(`/:fkConversationId/readAt`)
+  @UseGuards(UserAuthGuard)
+  async readOneConversation(
+    @Res() res,
+    @Req() req,
+    @Param() param: GetMessageConversationsDto,
+  ) {
+    const { user } = req;
+    const { fkConversationId } = param;
+    const findOneConversation = await this.conversationsService.findOneBy({
+      fkConversationId,
+      organizationFromId: user?.organizationId,
+    });
+    if (!findOneConversation)
+      throw new HttpException(
+        `This conversation ${fkConversationId} dons't exist`,
+        HttpStatus.NOT_FOUND,
+      );
+
+    await this.conversationsService.updateOne(
+      { conversationId: findOneConversation?.id },
+      { readAt: new Date() },
+    );
+
+    return reply({ res, results: { id: fkConversationId } });
+  }
+
   /** Delete Conversation */
   @Delete(`/:fkConversationId`)
   @UseGuards(UserAuthGuard)
-  async deleteOneComment(
+  async deleteOneConversation(
     @Res() res,
     @Req() req,
-    @Param('fkConversationId', ParseUUIDPipe) fkConversationId: string,
+    @Param() param: GetMessageConversationsDto,
   ) {
     const { user } = req;
+    const { fkConversationId } = param;
     const findOneConversation = await this.conversationsService.findOneBy({
       fkConversationId,
       organizationFromId: user?.organizationId,

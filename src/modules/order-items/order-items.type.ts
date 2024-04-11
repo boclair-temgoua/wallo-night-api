@@ -18,6 +18,7 @@ export const orderItemStatusArrays = [
 
 export type GetOrderItemsSelections = {
   search?: string;
+  modelIds: any[];
   pagination?: PaginationType;
   userId?: OrderItem['userId'];
   orderId?: OrderItem['orderId'];

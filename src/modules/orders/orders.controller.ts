@@ -76,7 +76,7 @@ export class OrdersController {
       userId,
       organizationSellerId,
       organizationBuyerId,
-      model,
+      modelIds,
     } = query;
     const { search } = searchQuery;
 
@@ -87,10 +87,10 @@ export class OrdersController {
       search,
       pagination,
       orderId,
-      model,
       userId,
       organizationBuyerId,
       organizationSellerId,
+      modelIds: modelIds ? (String(modelIds).split(',') as []) : null,
     });
 
     return reply({ res, results: orderItems });

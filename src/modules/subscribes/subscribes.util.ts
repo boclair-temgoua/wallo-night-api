@@ -103,16 +103,21 @@ export class SubscribesUtil {
         },
       );
 
-      const transaction = await this.transactionsService.createOne({
-        token: token,
-        currency: amount?.currency,
+      const { transaction } = await this.createTransactionAndOrder({
+        amount,
+        userBuyerId,
+        userReceiveId,
+        type,
         model: model,
-        userBuyerId: userBuyerId,
-        subscribeId: findOneSubscribe?.id,
-        amount: amount?.value,
-        description: description,
-        amountConvert: amountValueConvert,
+        membershipId: findOneMembership?.id,
+        description,
+        token: token,
+        amountValueConvert,
         organizationId: findOneMembership?.organizationId,
+        subscribeId: findOneSubscribe?.id,
+        organizationBuyerId,
+        organizationSellerId,
+        userAddress,
       });
 
       return { transaction };
@@ -128,33 +133,85 @@ export class SubscribesUtil {
         }),
       });
 
-      const { order } = await this.ordersUtil.orderCommissionOrMembershipCreate(
-        {
-          amount,
-          userAddress,
-          model: 'MEMBERSHIP',
-          organizationBuyerId,
-          organizationSellerId,
-          userBuyerId: userBuyerId,
-          membershipId: findOneMembership?.id,
-        },
-      );
-
-      const transaction = await this.transactionsService.createOne({
+      const { transaction } = await this.createTransactionAndOrder({
+        amount,
+        userBuyerId,
+        userReceiveId,
         type,
         model: model,
+        membershipId,
+        description,
         token: token,
-        currency: amount?.currency,
-        userBuyerId: userBuyerId,
-        userReceiveId: userReceiveId,
+        amountValueConvert,
         organizationId: findOneMembership?.organizationId,
         subscribeId: subscribe?.id,
-        orderId: order?.id,
-        amount: amount?.value,
-        amountConvert: amountValueConvert,
-        description: description,
+        organizationBuyerId,
+        organizationSellerId,
+        userAddress,
       });
+
       return { transaction };
     }
+  }
+
+  async createTransactionAndOrder(options: {
+    amount: AmountModel;
+    userBuyerId: string;
+    userReceiveId: string;
+    type?: TransactionType;
+    model: FilterQueryType;
+    membershipId: string;
+    description: string;
+    token: string;
+    amountValueConvert: number;
+    organizationId: string;
+    subscribeId: string;
+    organizationBuyerId: string;
+    organizationSellerId: string;
+    userAddress: any;
+  }): Promise<any> {
+    const {
+      membershipId,
+      description,
+      type,
+      userBuyerId,
+      userReceiveId,
+      amount,
+      model,
+      token,
+      userAddress,
+      organizationId,
+      subscribeId,
+      amountValueConvert,
+      organizationBuyerId,
+      organizationSellerId,
+    } = options;
+
+    const { order } = await this.ordersUtil.orderCommissionOrMembershipCreate({
+      amount,
+      userAddress,
+      model: 'MEMBERSHIP',
+      organizationBuyerId,
+      organizationSellerId,
+      userBuyerId,
+      membershipId,
+    });
+
+    const transaction = await this.transactionsService.createOne({
+      type,
+      model,
+      token,
+      currency: amount?.currency,
+      userBuyerId,
+      userReceiveId,
+      organizationId,
+      subscribeId,
+      orderId: order?.id,
+      amount: amount?.value,
+      amountConvert: amountValueConvert,
+      description,
+    });
+
+    return { transaction, order };
   }
 }
