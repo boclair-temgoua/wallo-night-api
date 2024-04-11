@@ -75,22 +75,6 @@ export class MembershipsService {
           GROUP BY "membership"."id", "upl"."uploadableId"
           ) AS "uploadsImages"`,
       )
-      .addSelect(
-        /*sql*/ `(
-          SELECT array_agg(jsonb_build_object(
-            'name', "upl"."name",
-            'size', "upl"."size",
-            'path', "upl"."path"
-          )) 
-          FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "membership"."id"
-          AND "upl"."membershipId" = "membership"."id"
-          AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('MEMBERSHIP')
-          AND "upl"."uploadType" IN ('FILE')
-          GROUP BY "membership"."id", "upl"."uploadableId"
-          ) AS "uploadsFiles"`,
-      )
       // .addSelect(
       //   /*sql*/ `(
       //     SELECT jsonb_build_object(
@@ -161,9 +145,7 @@ export class MembershipsService {
     });
   }
 
-  async findOneBy(
-    selections: GetOneMembershipsSelections,
-  ): Promise<Membership> {
+  async findOneBy(selections: GetOneMembershipsSelections): Promise<any> {
     const { membershipId, enableVisibility, organizationId } = selections;
     let query = this.driver
       .createQueryBuilder('membership')
@@ -211,22 +193,6 @@ export class MembershipsService {
           AND "upl"."uploadType" IN ('IMAGE')
           GROUP BY "membership"."id", "upl"."uploadableId"
           ) AS "uploadsImages"`,
-      )
-      .addSelect(
-        /*sql*/ `(
-          SELECT array_agg(jsonb_build_object(
-            'name', "upl"."name",
-            'size', "upl"."size",
-            'path', "upl"."path"
-          )) 
-          FROM "upload" "upl"
-          WHERE "upl"."uploadableId" = "membership"."id"
-          AND "upl"."membershipId" = "membership"."id"
-          AND "upl"."deletedAt" IS NULL
-          AND "upl"."model" IN ('MEMBERSHIP')
-          AND "upl"."uploadType" IN ('FILE')
-          GROUP BY "membership"."id", "upl"."uploadableId"
-          ) AS "uploadsFiles"`,
       )
       .where('membership.deletedAt IS NULL')
       .leftJoin('membership.organization', 'organization')

@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FilterQueryType } from '../../app/utils/search-query';
 import { CartOrdersService } from '../cart-orders/cart-orders.service';
 import { CartsService } from '../cats/cats.service';
+import { MembershipsService } from '../memberships/memberships.service';
 import { OrderItemsService } from '../order-items/order-items.service';
 import { ProductsService } from '../products/products.service';
 import { AmountModel } from '../wallets/wallets.type';
@@ -12,6 +13,7 @@ export class OrdersUtil {
   constructor(
     private readonly ordersService: OrdersService,
     private readonly cartsService: CartsService,
+    private readonly membershipsService: MembershipsService,
     private readonly productsService: ProductsService,
     private readonly cartOrdersService: CartOrdersService,
     private readonly orderItemsService: OrderItemsService,
@@ -86,7 +88,8 @@ export class OrdersUtil {
         model: cart?.model,
         productId: cart?.productId,
         orderId: order?.id,
-        uploadFiles: [...findOneProduct?.uploadsFiles],
+        uploadsFiles: [...findOneProduct?.uploadsFiles],
+        uploadsImages: [...findOneProduct?.uploadsImages],
         status:
           findOneProduct?.productType === 'DIGITAL' ? 'DELIVERED' : 'PENDING',
       });
@@ -127,6 +130,20 @@ export class OrdersUtil {
       organizationSellerId,
     } = options;
 
+    const findOneMembership = await this.membershipsService.findOneBy({
+      membershipId,
+    });
+    if (!findOneMembership) {
+      false;
+    }
+
+    const findOneProduct = await this.productsService.findOneBy({
+      productId,
+    });
+    if (!findOneProduct) {
+      false;
+    }
+
     const order = await this.ordersService.createOne({
       address: userAddress,
       userId: userBuyerId,
@@ -146,6 +163,9 @@ export class OrdersUtil {
       membershipId: membershipId,
       orderId: order?.id,
       status: 'DELIVERED',
+      uploadsImages: membershipId
+        ? [...findOneMembership?.uploadsImages]
+        : [...findOneProduct?.uploadsImages],
     });
 
     return { order, orderItem };

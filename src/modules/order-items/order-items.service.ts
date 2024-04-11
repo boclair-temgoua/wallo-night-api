@@ -67,7 +67,8 @@ export class OrderItemsService {
               'username', "user"."username"
           ) AS "profile"`,
       )
-      .addSelect('orderItem.uploadFiles', 'uploadsFiles')
+      .addSelect('orderItem.uploadsFiles', 'uploadsFiles')
+      .addSelect('orderItem.uploadsImages', 'uploadsImages')
       // .addSelect(
       //   /*sql*/ `(
       //     SELECT array_agg(jsonb_build_object(
@@ -104,6 +105,8 @@ export class OrderItemsService {
     }
 
     if (modelIds && modelIds.length > 0) {
+      query = query.andWhere('orderItem.model IN (:...modelIds)', { modelIds });
+
       if (modelIds.includes('PRODUCT')) {
         query = query.addSelect(/*sql*/ `jsonb_build_object(
                 'title', "product"."title",
@@ -114,45 +117,15 @@ export class OrderItemsService {
                 'enableUrlRedirect', "product"."enableUrlRedirect",
                 'messageAfterPayment', "product"."messageAfterPayment",
                 'id', "product"."id"
-            ) AS "product"`).addSelect(/*sql*/ `(
-            SELECT array_agg(jsonb_build_object(
-              'name', "upl"."name",
-              'path', "upl"."path",
-              'model', "upl"."model",
-              'size', "upl"."size",
-              'uploadType', "upl"."uploadType"
-            )) 
-            FROM "upload" "upl"
-            WHERE "upl"."uploadableId" = "product"."id"
-            AND "upl"."productId" = "product"."id"
-            AND "upl"."deletedAt" IS NULL
-            AND "upl"."model" IN ('PRODUCT')
-            AND "upl"."uploadType" IN ('IMAGE')
-            GROUP BY "product"."id", "upl"."uploadableId"
-            ) AS "uploadsImages"`);
+            ) AS "product"`);
       }
+
       if (modelIds.includes('MEMBERSHIP')) {
         query = query.addSelect(/*sql*/ `jsonb_build_object(
                 'title', "membership"."title",
                 'id', "membership"."id"
-            ) AS "membership"`).addSelect(/*sql*/ `(
-            SELECT array_agg(jsonb_build_object(
-              'name', "upl"."name",
-              'path', "upl"."path",
-              'model', "upl"."model",
-              'size', "upl"."size",
-              'uploadType', "upl"."uploadType"
-            )) 
-            FROM "upload" "upl"
-            WHERE "upl"."uploadableId" = "membership"."id"
-            AND "upl"."membershipId" = "membership"."id"
-            AND "upl"."deletedAt" IS NULL
-            AND "upl"."model" IN ('MEMBERSHIP')
-            AND "upl"."uploadType" IN ('IMAGE')
-            GROUP BY "membership"."id", "upl"."uploadableId"
-            ) AS "uploadsImages"`);
+            ) AS "membership"`);
       }
-      query = query.andWhere('orderItem.model IN (:...modelIds)', { modelIds });
     }
 
     if (userId) {
@@ -241,7 +214,8 @@ export class OrderItemsService {
       productId,
       membershipId,
       orderId,
-      uploadFiles,
+      uploadsFiles,
+      uploadsImages,
     } = options;
 
     const orderItem = new OrderItem();
@@ -257,7 +231,8 @@ export class OrderItemsService {
     orderItem.organizationSellerId = organizationSellerId;
     orderItem.model = model;
     orderItem.status = status;
-    orderItem.uploadFiles = uploadFiles;
+    orderItem.uploadsFiles = uploadsFiles;
+    orderItem.uploadsImages = uploadsImages;
     orderItem.productId = productId;
     orderItem.orderId = orderId;
 

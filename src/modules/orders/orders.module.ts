@@ -1,8 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Cart, CartOrder, Order, OrderItem, Product, User } from '../../models';
+import {
+  Cart,
+  CartOrder,
+  Membership,
+  Order,
+  OrderItem,
+  Product,
+  User,
+} from '../../models';
 import { CartOrdersService } from '../cart-orders/cart-orders.service';
 import { CartsService } from '../cats/cats.service';
+import { MembershipsService } from '../memberships/memberships.service';
 import { OrderItemsService } from '../order-items/order-items.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
@@ -19,6 +28,7 @@ import { OrdersUtil } from './orders.util';
       CartOrder,
       Product,
       User,
+      Membership,
     ]),
   ],
   controllers: [OrdersController],
@@ -28,6 +38,7 @@ import { OrdersUtil } from './orders.util';
     OrdersUtil,
     ProductsService,
     UsersService,
+    MembershipsService,
     OrderItemsService,
     CartOrdersService,
   ],

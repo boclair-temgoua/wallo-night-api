@@ -178,7 +178,7 @@ export class OrdersController {
         model: cart?.model,
         productId: cart?.productId,
         orderId: order?.id,
-        uploadFiles: [...findOneProduct?.uploadsFiles],
+        uploadsFiles: [...findOneProduct?.uploadsFiles],
         status:
           findOneProduct?.productType === 'DIGITAL' ? 'ACCEPTED' : 'PENDING',
       });
