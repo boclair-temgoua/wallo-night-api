@@ -8,7 +8,7 @@ import { AmountModel, CardModel } from '../wallets/wallets.type';
 import { PaymentsService } from './payments.service';
 
 const apiVersion = '2024-04-10';
-const stripePrivate = new Stripe(
+export const stripePrivate = new Stripe(
   String(config.implementations.stripe.privateKey),
   { apiVersion },
 );
@@ -115,9 +115,6 @@ export class PaymentsUtil {
       confirm: true,
       confirmation_method: 'manual', // For 3D Security
       return_url: `${config.url.client}/success?token=${token}`,
-      // automatic_payment_methods: {
-      //   enabled: true,
-      // },
     });
     if (!paymentIntents) {
       throw new HttpException(

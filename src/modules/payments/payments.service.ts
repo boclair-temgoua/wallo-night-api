@@ -37,6 +37,7 @@ export class PaymentsService {
       .addSelect('payment.cardExpMonth', 'cardExpMonth')
       .addSelect('payment.cardExpYear', 'cardExpYear')
       .addSelect('payment.organizationId', 'organizationId')
+      .addSelect('payment.createdAt', 'createdAt')
       .where('payment.deletedAt IS NULL');
 
     if (type) {

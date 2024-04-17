@@ -149,3 +149,15 @@ export class GetPaymentsDto {
   @IsIn(['CARD', 'PHONE'])
   type: string;
 }
+
+export class CreateClientSecretStripeDto {
+  @IsNotEmpty()
+  @IsString()
+  reference: string;
+
+  @IsOptional()
+  amount: number;
+
+  @IsOptional()
+  currency: string;
+}

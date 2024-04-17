@@ -1,10 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Post,
-  Req,
+  Query,
   Res,
 } from '@nestjs/common';
 import { reply } from '../../app/utils/reply';
@@ -17,15 +18,16 @@ import { TransactionsService } from '../transactions/transactions.service';
 import { TransactionsUtil } from '../transactions/transactions.util';
 import { UsersService } from '../users/users.service';
 import { WalletsService } from '../wallets/wallets.service';
-import { CreateSubscribePaymentsDto } from './payments.dto';
-import { PaymentsService } from './payments.service';
-import { PaymentsUtil } from './payments.util';
+import {
+  CreateClientSecretStripeDto,
+  CreateSubscribePaymentsDto,
+} from './payments.dto';
+import { PaymentsUtil, stripePrivate } from './payments.util';
 
 @Controller('payments')
 export class PaymentsTransactionController {
   constructor(
     private readonly paymentsUtil: PaymentsUtil,
-    private readonly paymentsService: PaymentsService,
     private readonly productsService: ProductsService,
     private readonly walletsService: WalletsService,
     private readonly transactionsUtil: TransactionsUtil,
@@ -37,11 +39,37 @@ export class PaymentsTransactionController {
     private readonly transactionsService: TransactionsService,
   ) {}
 
+  /** Get subscribe */
+  @Get(`/stripe/client-secret`)
+  async createOneClientSecretStripe(
+    @Res() res,
+    @Query() query: CreateClientSecretStripeDto,
+  ) {
+    const { amount, currency, reference } = query;
+    const { value: amountValueConvert } =
+      await this.transactionsUtil.convertedValue({
+        currency: currency,
+        value: amount,
+      });
+
+    const paymentIntent = await stripePrivate.paymentIntents.create({
+      amount: amountValueConvert * 100,
+      currency: 'USD',
+      metadata: { reference },
+    });
+    if (!paymentIntent.client_secret) {
+      throw new HttpException(
+        `Stripe failed to create payment intent`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return reply({ res, results: paymentIntent });
+  }
   /** Create subscribe */
   @Post(`/paypal/subscribe`)
   async createOnePaypalSubscribe(
     @Res() res,
-    @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const {
@@ -106,7 +134,6 @@ export class PaymentsTransactionController {
   @Post(`/stripe/subscribe`)
   async createOneStripeSubscribe(
     @Res() res,
-    @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const {
@@ -150,7 +177,6 @@ export class PaymentsTransactionController {
   @Post(`/paypal/donation`)
   async createOnePaypalDonation(
     @Res() res,
-    @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const {
@@ -206,7 +232,6 @@ export class PaymentsTransactionController {
   @Post(`/stripe/donation`)
   async createOneStripeDonation(
     @Res() res,
-    @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const {
@@ -283,7 +308,6 @@ export class PaymentsTransactionController {
   @Post(`/paypal/shop`)
   async createOnePaypalShop(
     @Res() res,
-    @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const {
@@ -348,7 +372,6 @@ export class PaymentsTransactionController {
   @Post(`/stripe/shop`)
   async createOneStripeShop(
     @Res() res,
-    @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const {
@@ -431,7 +454,6 @@ export class PaymentsTransactionController {
   @Post(`/stripe/commission`)
   async createOneCommission(
     @Res() res,
-    @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const {
@@ -522,7 +544,6 @@ export class PaymentsTransactionController {
   @Post(`/paypal/commission`)
   async createOnePayPalCommission(
     @Res() res,
-    @Req() req,
     @Body() body: CreateSubscribePaymentsDto,
   ) {
     const {
