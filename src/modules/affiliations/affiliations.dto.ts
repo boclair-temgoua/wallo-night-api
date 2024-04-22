@@ -1,74 +1,69 @@
 import {
-  IsEmail,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsPositive,
-  IsString,
-  IsUUID,
-  Max,
-  MaxLength,
-  Min,
-  MinLength,
+    IsEmail,
+    IsInt,
+    IsNotEmpty,
+    IsOptional,
+    IsPositive,
+    IsString,
+    IsUUID,
+    Max,
+    MaxLength,
+    Min,
+    MinLength,
 } from 'class-validator';
 
 export class CreateOrUpdateAffiliationsDto {
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  @MinLength(3)
-  title: string;
+    @IsNotEmpty()
+    @IsString()
+    @IsEmail()
+    @MaxLength(100)
+    @MinLength(5)
+    email: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
-  @MaxLength(100)
-  @MinLength(5)
-  email: string;
+    @IsNotEmpty()
+    @IsInt()
+    @IsPositive()
+    @Min(1)
+    @Max(100)
+    percent: number;
 
-  @IsNotEmpty()
-  @IsString()
-  @IsUUID()
-  productId: string;
+    @IsNotEmpty()
+    @IsString()
+    @IsUUID()
+    productId: string;
 
-  @IsNotEmpty()
-  @IsString()
-  isOneProduct: string;
+    @IsOptional()
+    expiredAt: Date;
 
-  @IsNotEmpty()
-  @IsInt()
-  @IsPositive()
-  @Min(1)
-  @Max(100)
-  percent: number;
-
-  @IsOptional()
-  expiredAt: Date;
-
-  @IsOptional()
-  @IsString()
-  description: string;
+    @IsOptional()
+    @IsString()
+    description: string;
 }
 
 export class GetAffiliationDto {
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationSellerId: string;
+    @IsOptional()
+    @IsString()
+    @IsUUID()
+    organizationSellerId: string;
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationReceivedId: string;
+    @IsOptional()
+    @IsString()
+    @IsUUID()
+    organizationReceivedId: string;
+
+    @IsOptional()
+    @IsString()
+    @IsUUID()
+    productId: string;
 }
 
 export class GetOneAffiliationDto {
-  @IsOptional()
-  @IsString()
-  slug: string;
+    @IsOptional()
+    @IsString()
+    affiliate: string;
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  affiliationId: string;
+    @IsOptional()
+    @IsString()
+    @IsUUID()
+    affiliationId: string;
 }

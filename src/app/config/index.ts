@@ -113,6 +113,7 @@ export const config = {
     stripe: {
       privateKey: process.env.STRIPE_PRIVATE_KEY,
       publicKey: process.env.STRIPE_PUBLIC_KEY,
+      webhookKey: process.env.STRIPE_WEBHOOK_KEY,
     },
     /**
      * mailSMTP

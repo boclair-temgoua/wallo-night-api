@@ -4,8 +4,8 @@ import { Provider } from '../../models/Provider';
 import { ProvidersService } from './providers.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Provider])],
-  controllers: [],
-  providers: [ProvidersService],
+    imports: [TypeOrmModule.forFeature([Provider])],
+    controllers: [],
+    providers: [ProvidersService],
 })
 export class ProvidersModule {}
