@@ -2,14 +2,14 @@ import { config } from '../../../app/config/index';
 import { nodeMailServiceAdapter } from '../../integrations/node-mailer-service-adapter';
 // import { NodeMailServiceAdapter } from '../../integrations/aws/node-mailer-service-adapter';
 
-export const orderCommissionMail = async ({
-  email,
-  token,
+export const orderEventMail = async ({
+    email,
+    token,
 }: {
-  email: string;
-  token: string;
+    email: string;
+    token: string;
 }) => {
-  const output = `
+    const output = `
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
   <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -595,11 +595,11 @@ export const orderCommissionMail = async ({
   </body>
 </html>
       `;
-  // create reusable transporter object using the default SMTP transport
-  await nodeMailServiceAdapter({
-    from: `${config.implementations.resendSMTP.noReplayFrom}`,
-    to: [`${email}`],
-    subject: `${config.datasite.name} - Reset password`,
-    html: output,
-  });
+    // create reusable transporter object using the default SMTP transport
+    await nodeMailServiceAdapter({
+        from: `${config.implementations.resendSMTP.noReplayFrom}`,
+        to: [`${email}`],
+        subject: `${config.datasite.name} - Reset password`,
+        html: output,
+    });
 };

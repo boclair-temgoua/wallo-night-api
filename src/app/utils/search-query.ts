@@ -35,13 +35,10 @@ export class PasswordBodyDto {
 }
 
 export type FilterQueryType =
-    | 'AFFILIATION'
     | 'ORGANIZATION'
     | 'MESSAGE'
-    | 'DONATION'
     | 'PRODUCT'
-    | 'COMMISSION'
-    | 'MEMBERSHIP'
+    | 'EVENT'
     | 'CONTACT'
     | 'POST'
     | 'GALLERY'
@@ -49,12 +46,9 @@ export type FilterQueryType =
     | 'COMMENT';
 
 export const filterQueryTypeArrays = [
-    'AFFILIATION',
-    'DONATION',
     'MESSAGE',
     'PRODUCT',
-    'COMMISSION',
-    'MEMBERSHIP',
+    'EVENT',
     'CONTACT',
     'POST',
     'GALLERY',
@@ -62,12 +56,8 @@ export const filterQueryTypeArrays = [
     'COMMENT',
 ];
 
-export type WhoCanSeeType = 'PUBLIC' | 'MEMBERSHIP' | 'SUPPORTER';
+export type WhoCanSeeType = 'PUBLIC' | 'SUPPORTER';
 
-export const whoCanSeeTypeArrays = [
-    'PUBLIC',
-    'MEMBERSHIP',
-    'SUPPORTER',
-] as WhoCanSeeType[];
+export const whoCanSeeTypeArrays = ['PUBLIC', 'SUPPORTER'] as WhoCanSeeType[];
 
 export const visibilityArrays = ['VISIBLE', 'INVISIBLE'];

@@ -1,22 +1,22 @@
 import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  Put,
-  Query,
-  Req,
-  Res,
-  UseGuards,
+    Body,
+    Controller,
+    Get,
+    HttpException,
+    HttpStatus,
+    Param,
+    ParseUUIDPipe,
+    Post,
+    Put,
+    Query,
+    Req,
+    Res,
+    UseGuards,
 } from '@nestjs/common';
 import {
-  PaginationDto,
-  PaginationType,
-  addPagination,
+    PaginationDto,
+    PaginationType,
+    addPagination,
 } from '../../app/utils/pagination';
 import { reply } from '../../app/utils/reply';
 import { SearchQueryDto } from '../../app/utils/search-query';
@@ -30,196 +30,198 @@ import { OrdersService } from './orders.service';
 
 @Controller('orders')
 export class OrdersController {
-  constructor(
-    private readonly ordersService: OrdersService,
-    private readonly cartsService: CartsService,
-    private readonly productsService: ProductsService,
-    private readonly cartOrdersService: CartOrdersService,
-    private readonly orderItemsService: OrderItemsService,
-  ) {}
+    constructor(
+        private readonly ordersService: OrdersService,
+        private readonly cartsService: CartsService,
+        private readonly productsService: ProductsService,
+        private readonly cartOrdersService: CartOrdersService,
+        private readonly orderItemsService: OrderItemsService
+    ) {}
 
-  @Get(`/`)
-  @UseGuards(UserAuthGuard)
-  async findAllContributorsBy(
-    @Res() res,
-    @Req() req,
-    @Query() paginationDto: PaginationDto,
-    @Query() searchQuery: SearchQueryDto,
-  ) {
-    const { user } = req;
-    const { search } = searchQuery;
+    @Get(`/`)
+    @UseGuards(UserAuthGuard)
+    async findAllContributorsBy(
+        @Res() res,
+        @Req() req,
+        @Query() paginationDto: PaginationDto,
+        @Query() searchQuery: SearchQueryDto
+    ) {
+        const { user } = req;
+        const { search } = searchQuery;
 
-    const { take, page, sort } = paginationDto;
-    const pagination: PaginationType = addPagination({ page, take, sort });
+        const { take, page, sort } = paginationDto;
+        const pagination: PaginationType = addPagination({ page, take, sort });
 
-    const orders = await this.ordersService.findAll({
-      userId: user?.id,
-      search,
-      pagination,
-    });
+        const orders = await this.ordersService.findAll({
+            userId: user?.id,
+            search,
+            pagination,
+        });
 
-    return reply({ res, results: orders });
-  }
-
-  /** Get OrderItems */
-  @Get(`/order-items`)
-  @UseGuards(UserAuthGuard)
-  async findAllOrderItems(
-    @Res() res,
-    @Req() req,
-    @Query() PaginationDto: PaginationDto,
-    @Query() searchQuery: SearchQueryDto,
-    @Query() query: GetOrderItemDto,
-  ) {
-    const {
-      orderId,
-      userId,
-      organizationSellerId,
-      organizationBuyerId,
-      modelIds,
-    } = query;
-    const { search } = searchQuery;
-
-    const { take, page, sort } = PaginationDto;
-    const pagination: PaginationType = addPagination({ page, take, sort });
-
-    const orderItems = await this.orderItemsService.findAll({
-      search,
-      pagination,
-      orderId,
-      userId,
-      organizationBuyerId,
-      organizationSellerId,
-      modelIds: modelIds ? (String(modelIds).split(',') as []) : null,
-    });
-
-    return reply({ res, results: orderItems });
-  }
-
-  /** Get one Order */
-  @Get(`/:orderId`)
-  @UseGuards(UserAuthGuard)
-  async getOneOrder(
-    @Res() res,
-    @Req() req,
-    @Param('orderId', ParseUUIDPipe) orderId: string,
-  ) {
-    const findOneOrder = await this.ordersService.findOneBy({
-      orderId,
-    });
-    if (!findOneOrder)
-      throw new HttpException(
-        `Order ${orderId} don't exist please change`,
-        HttpStatus.NOT_FOUND,
-      );
-
-    return reply({
-      res,
-      results: findOneOrder,
-    });
-  }
-
-  /** Create Order */
-  @Post(`/:cartOrderId`)
-  @UseGuards(UserAuthGuard)
-  async createOne(
-    @Res() res,
-    @Req() req,
-    @Param('cartOrderId', ParseUUIDPipe) cartOrderId: string,
-  ) {
-    const { user } = req;
-
-    const findOneCartOrder = await this.cartOrdersService.findOneBy({
-      cartOrderId,
-      //userId: '53019e77-de96-4ac7-9464-da32a9a37d4b',
-    });
-    if (!findOneCartOrder) {
-      throw new HttpException(
-        `This order ${cartOrderId} dons't exist please change`,
-        HttpStatus.NOT_FOUND,
-      );
+        return reply({ res, results: orders });
     }
 
-    const carts = await this.cartsService.findAll({
-      status: 'ADDED',
-      userId: findOneCartOrder?.userId,
-      cartOrderId: findOneCartOrder?.id,
-    });
-    if (!carts?.summary?.userId) {
-      throw new HttpException(
-        `Carts dons't exist please try again`,
-        HttpStatus.NOT_FOUND,
-      );
+    /** Get OrderItems */
+    @Get(`/order-items`)
+    @UseGuards(UserAuthGuard)
+    async findAllOrderItems(
+        @Res() res,
+        @Req() req,
+        @Query() PaginationDto: PaginationDto,
+        @Query() searchQuery: SearchQueryDto,
+        @Query() query: GetOrderItemDto
+    ) {
+        const {
+            orderId,
+            userId,
+            organizationSellerId,
+            organizationBuyerId,
+            modelIds,
+        } = query;
+        const { search } = searchQuery;
+
+        const { take, page, sort } = PaginationDto;
+        const pagination: PaginationType = addPagination({ page, take, sort });
+
+        const orderItems = await this.orderItemsService.findAll({
+            search,
+            pagination,
+            orderId,
+            userId,
+            organizationBuyerId,
+            organizationSellerId,
+            modelIds: modelIds ? (String(modelIds).split(',') as []) : null,
+        });
+
+        return reply({ res, results: orderItems });
     }
 
-    const order = await this.ordersService.createOne({
-      userId: carts?.summary?.userId,
-      currency: carts?.summary?.currency,
-      totalPriceDiscount: carts?.summary?.totalPriceDiscount,
-      totalPriceNoDiscount: carts?.summary?.totalPriceNoDiscount,
-    });
+    /** Get one Order */
+    @Get(`/:orderId`)
+    @UseGuards(UserAuthGuard)
+    async getOneOrder(
+        @Res() res,
+        @Req() req,
+        @Param('orderId', ParseUUIDPipe) orderId: string
+    ) {
+        const findOneOrder = await this.ordersService.findOneBy({
+            orderId,
+        });
+        if (!findOneOrder)
+            throw new HttpException(
+                `Order ${orderId} don't exist please change`,
+                HttpStatus.NOT_FOUND
+            );
 
-    for (const cart of carts?.cartItems) {
-      const findOneProduct = await this.productsService.findOneBy({
-        productId: cart.productId,
-      });
-      if (!findOneProduct) {
-        false;
-      }
-      const orderItemCreate = await this.orderItemsService.createOne({
-        userId: order?.userId,
-        currency: order?.currency,
-        quantity: Number(cart?.quantity),
-        percentDiscount: cart?.product?.discount?.percent,
-        price: Number(cart?.product?.price) * 100,
-        priceDiscount: Number(cart?.product?.priceDiscount) * 100,
-        organizationBuyerId: user?.organizationId,
-        organizationSellerId: cart?.product?.organizationId,
-        model: cart?.model,
-        productId: cart?.productId,
-        orderId: order?.id,
-        uploadsFiles: [...findOneProduct?.uploadsFiles],
-        status:
-          findOneProduct?.productType === 'DIGITAL' ? 'ACCEPTED' : 'PENDING',
-      });
-
-      // if (orderItemCreate) {
-      //   await this.cartsService.updateOne(
-      //     { cartId: cart?.id },
-      //     {
-      //       status: 'COMPLETED',
-      //       deletedAt: new Date(),
-      //     },
-      //   );
-      // }
+        return reply({
+            res,
+            results: findOneOrder,
+        });
     }
 
-    return reply({ res, results: carts?.cartItems });
-  }
+    /** Create Order */
+    @Post(`/:cartOrderId`)
+    @UseGuards(UserAuthGuard)
+    async createOne(
+        @Res() res,
+        @Req() req,
+        @Param('cartOrderId', ParseUUIDPipe) cartOrderId: string
+    ) {
+        const { user } = req;
 
-  /** Create OrderItem */
-  @Put(`/order-items/:orderItemId`)
-  @UseGuards(UserAuthGuard)
-  async updateOne(
-    @Res() res,
-    @Req() req,
-    @Body() body: UpdateOrderItemDto,
-    @Param('orderItemId', ParseUUIDPipe) orderItemId: string,
-  ) {
-    const { status } = body;
-    const { user } = req;
-    const findOneOrderItem = await this.orderItemsService.findOneBy({
-      orderItemId,
-      organizationSellerId: user?.organizationId,
-    });
-    if (!findOneOrderItem)
-      throw new HttpException(
-        `This order item ${orderItemId} dons't exist please change`,
-        HttpStatus.NOT_FOUND,
-      );
+        const findOneCartOrder = await this.cartOrdersService.findOneBy({
+            cartOrderId,
+            //userId: '53019e77-de96-4ac7-9464-da32a9a37d4b',
+        });
+        if (!findOneCartOrder) {
+            throw new HttpException(
+                `This order ${cartOrderId} dons't exist please change`,
+                HttpStatus.NOT_FOUND
+            );
+        }
 
-    await this.orderItemsService.updateOne({ orderItemId }, { status });
+        const carts = await this.cartsService.findAll({
+            status: 'ADDED',
+            userId: findOneCartOrder?.userId,
+            cartOrderId: findOneCartOrder?.id,
+        });
+        if (!carts?.summary?.userId) {
+            throw new HttpException(
+                `Carts dons't exist please try again`,
+                HttpStatus.NOT_FOUND
+            );
+        }
 
-    return reply({ res, results: 'orderItem updated successfully' });
-  }
+        const order = await this.ordersService.createOne({
+            userId: carts?.summary?.userId,
+            currency: carts?.summary?.currency,
+            totalPriceDiscount: carts?.summary?.totalPriceDiscount,
+            totalPriceNoDiscount: carts?.summary?.totalPriceNoDiscount,
+        });
+
+        for (const cart of carts?.cartItems) {
+            const findOneProduct = await this.productsService.findOneBy({
+                productId: cart.productId,
+            });
+            if (!findOneProduct) {
+                false;
+            }
+            const orderItemCreate = await this.orderItemsService.createOne({
+                userId: order?.userId,
+                currency: order?.currency,
+                quantity: Number(cart?.quantity),
+                percentDiscount: cart?.product?.discount?.percent,
+                price: Number(cart?.product?.price) * 100,
+                priceDiscount: Number(cart?.product?.priceDiscount) * 100,
+                organizationBuyerId: user?.organizationId,
+                organizationSellerId: cart?.product?.organizationId,
+                model: cart?.model,
+                productId: cart?.productId,
+                orderId: order?.id,
+                uploadsFiles: [...findOneProduct?.uploadsFiles],
+                status:
+                    findOneProduct?.productType === 'DIGITAL'
+                        ? 'ACCEPTED'
+                        : 'PENDING',
+            });
+
+            // if (orderItemCreate) {
+            //   await this.cartsService.updateOne(
+            //     { cartId: cart?.id },
+            //     {
+            //       status: 'COMPLETED',
+            //       deletedAt: new Date(),
+            //     },
+            //   );
+            // }
+        }
+
+        return reply({ res, results: carts?.cartItems });
+    }
+
+    /** Create OrderItem */
+    @Put(`/order-items/:orderItemId`)
+    @UseGuards(UserAuthGuard)
+    async updateOne(
+        @Res() res,
+        @Req() req,
+        @Body() body: UpdateOrderItemDto,
+        @Param('orderItemId', ParseUUIDPipe) orderItemId: string
+    ) {
+        const { status } = body;
+        const { user } = req;
+        const findOneOrderItem = await this.orderItemsService.findOneBy({
+            orderItemId,
+            organizationSellerId: user?.organizationId,
+        });
+        if (!findOneOrderItem)
+            throw new HttpException(
+                `This order item ${orderItemId} dons't exist please change`,
+                HttpStatus.NOT_FOUND
+            );
+
+        await this.orderItemsService.updateOne({ orderItemId }, { status });
+
+        return reply({ res, results: 'orderItem updated successfully' });
+    }
 }

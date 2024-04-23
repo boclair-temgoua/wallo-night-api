@@ -1,14 +1,14 @@
 import { Type } from 'class-transformer';
 import {
-  IsIn,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
+    IsIn,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsUUID,
 } from 'class-validator';
 import {
-  FilterQueryType,
-  filterQueryTypeArrays,
+    FilterQueryType,
+    filterQueryTypeArrays,
 } from '../../app/utils/search-query';
 
 export type StatusProduct = 'ACTIVE' | 'PENDING';
@@ -18,117 +18,137 @@ export type ProductType = 'DIGITAL' | 'PHYSICAL';
 export const productTypeArrays = ['DIGITAL', 'PHYSICAL'];
 
 export class CreateOrUpdateProductsDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(filterQueryTypeArrays)
-  model?: FilterQueryType;
+    @IsNotEmpty()
+    @IsString()
+    @IsIn(filterQueryTypeArrays)
+    model?: FilterQueryType;
 
-  @IsOptional()
-  @IsString()
-  @IsIn(productTypeArrays)
-  productType: ProductType;
+    @IsOptional()
+    @IsString()
+    @IsIn(productTypeArrays)
+    productType: ProductType;
 
-  @IsNotEmpty()
-  @IsString()
-  title: string;
+    @IsNotEmpty()
+    @IsString()
+    title: string;
 
-  @IsOptional()
-  @IsString()
-  discountId: string;
+    @IsOptional()
+    @IsString()
+    discountId: string;
 
-  @IsOptional()
-  @IsString()
-  price: string;
+    @IsOptional()
+    @IsString()
+    city: string;
 
-  @IsOptional()
-  @IsString()
-  urlRedirect: string;
+    @IsOptional()
+    @IsString()
+    address: string;
 
-  @IsOptional()
-  @IsString()
-  enableVisibility: string;
+    @IsOptional()
+    @IsString()
+    countryId: string;
 
-  @IsOptional()
-  @IsString()
-  enableUrlRedirect: string;
+    @IsOptional()
+    @IsString()
+    categoryId: string;
 
-  @IsOptional()
-  @IsString()
-  limitSlot: string;
+    @IsOptional()
+    @IsString()
+    price: string;
 
-  @IsOptional()
-  @IsString()
-  enableLimitSlot: string;
+    @IsOptional()
+    @IsString()
+    urlRedirect: string;
 
-  @IsOptional()
-  @IsString()
-  enableDiscount: string;
+    @IsOptional()
+    @IsString()
+    expiredAt: Date;
 
-  @IsOptional()
-  @IsString()
-  urlMedia: string;
+    @IsOptional()
+    @IsString()
+    enableVisibility: string;
 
-  @IsOptional()
-  @IsString()
-  enableChooseQuantity: string;
+    @IsOptional()
+    @IsString()
+    enableUrlRedirect: string;
 
-  @IsOptional()
-  @IsString()
-  messageAfterPayment: string;
+    @IsOptional()
+    @IsString()
+    limitSlot: string;
 
-  @IsNotEmpty()
-  @IsString()
-  description: string;
+    @IsOptional()
+    @IsString()
+    enableLimitSlot: string;
+
+    @IsOptional()
+    @IsString()
+    enableDiscount: string;
+
+    @IsOptional()
+    @IsString()
+    urlMedia: string;
+
+    @IsOptional()
+    @IsString()
+    enableChooseQuantity: string;
+
+    @IsOptional()
+    @IsString()
+    messageAfterPayment: string;
+
+    @IsNotEmpty()
+    @IsString()
+    description: string;
 }
 
 export class GetOneProductDto {
-  @IsOptional()
-  @IsString()
-  @IsIn(['TRUE', 'FALSE'])
-  @Type(() => String)
-  enableVisibility: string;
+    @IsOptional()
+    @IsString()
+    @IsIn(['TRUE', 'FALSE'])
+    @Type(() => String)
+    enableVisibility: string;
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  productId: string;
+    @IsOptional()
+    @IsString()
+    @IsUUID()
+    productId: string;
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
+    @IsOptional()
+    @IsString()
+    @IsUUID()
+    organizationId: string;
 
-  @IsOptional()
-  @IsString()
-  productSlug: string;
+    @IsOptional()
+    @IsString()
+    productSlug: string;
 }
 
 export class GetProductsDto {
-  @IsNotEmpty()
-  @IsString()
-  modelIds: FilterQueryType[];
+    @IsNotEmpty()
+    @IsString()
+    modelIds: FilterQueryType[];
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  userId: string;
+    @IsOptional()
+    @IsString()
+    @IsUUID()
+    userId: string;
 
-  @IsOptional()
-  @IsString()
-  @IsIn(['TRUE', 'FALSE'])
-  @Type(() => String)
-  enableVisibility: string;
+    @IsOptional()
+    @IsString()
+    @IsIn(['TRUE', 'FALSE'])
+    @Type(() => String)
+    enableVisibility: string;
 
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  organizationId: string;
+    @IsOptional()
+    @IsString()
+    @IsUUID()
+    organizationId: string;
 
-  @IsOptional()
-  @IsString()
-  typeIds: string;
+    @IsOptional()
+    @IsString()
+    typeIds: string;
 
-  @IsOptional()
-  @IsString()
-  status: string;
+    @IsOptional()
+    @IsString()
+    status: string;
 }
